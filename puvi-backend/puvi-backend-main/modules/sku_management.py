@@ -1,7 +1,7 @@
-# File Path: puvi-backend/modules/sku_production.py
+# File Path: puvi-backend/modules/sku_management.py
 """
-SKU Production Module for PUVI Oil Manufacturing System
-Handles production entry, oil allocation, cost calculation, and traceable code generation
+SKU Management Module for PUVI Oil Manufacturing System
+Handles SKU master data, BOM configuration, and version management
 Version: 1.1 (Simplified - No cartons in production)
 """
 
@@ -14,15 +14,95 @@ from utils.date_utils import get_current_day_number, integer_to_date, parse_date
 from utils.validation import safe_decimal, validate_required_fields
 
 # Create Blueprint
-sku_production_bp = Blueprint('sku_production', __name__)
+sku_management_bp = Blueprint('sku_management', __name__)
 
 # ============================================
-# PRODUCTION PLANNING
+# SKU MASTER MANAGEMENT
 # ============================================
 
-@sku_production_bp.route('/api/sku/production/plan', methods=['POST'])
-def create_production_plan():
-    """Create production plan and check oil availability"""
+@sku_management_bp.route('/api/sku/master', methods=['GET'])
+def get_sku_master_list():
+    """Get list of all SKUs with basic information"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        # Get filter parameters
+        oil_type = request.args.get('oil_type')
+        package_size = request.args.get('package_size')
+        is_active = request.args.get('is_active', 'true').lower() == 'true'
+        
+        # Build query
+        query = """
+            SELECT 
+                s.sku_id,
+                s.sku_code,
+                s.product_name,
+                s.oil_type,
+                s.package_size,
+                s.bottle_type,
+                s.density,
+                s.is_active,
+                COALESCE(b.version_number, 0) as current_bom_version,
+                COALESCE(b.effective_from, 0) as bom_effective_from,
+                COUNT(DISTINCT p.production_id) as total_productions,
+                MAX(p.production_date) as last_production_date
+            FROM sku_master s
+            LEFT JOIN sku_bom_master b ON s.sku_id = b.sku_id AND b.is_current = true
+            LEFT JOIN sku_production p ON s.sku_id = p.sku_id
+            WHERE s.is_active = %s
+        """
+        params = [is_active]
+        
+        if oil_type:
+            query += " AND s.oil_type = %s"
+            params.append(oil_type)
+        
+        if package_size:
+            query += " AND s.package_size = %s"
+            params.append(package_size)
+        
+        query += """
+            GROUP BY s.sku_id, s.sku_code, s.product_name, s.oil_type, 
+                     s.package_size, s.bottle_type, s.density, s.is_active,
+                     b.version_number, b.effective_from
+            ORDER BY s.oil_type, s.package_size, s.sku_code
+        """
+        
+        cur.execute(query, params)
+        
+        skus = []
+        for row in cur.fetchall():
+            skus.append({
+                'sku_id': row[0],
+                'sku_code': row[1],
+                'product_name': row[2],
+                'oil_type': row[3],
+                'package_size': row[4],
+                'bottle_type': row[5],
+                'density': float(row[6]),
+                'is_active': row[7],
+                'current_bom_version': row[8],
+                'bom_effective_from': integer_to_date(row[9]) if row[9] else None,
+                'total_productions': row[10],
+                'last_production_date': integer_to_date(row[11]) if row[11] else None
+            })
+        
+        return jsonify({
+            'success': True,
+            'skus': skus,
+            'count': len(skus)
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+@sku_management_bp.route('/api/sku/master', methods=['POST'])
+def create_sku():
+    """Create a new SKU"""
     conn = get_db_connection()
     cur = conn.cursor()
     
@@ -30,7 +110,187 @@ def create_production_plan():
         data = request.json
         
         # Validate required fields
-        required_fields = ['sku_id', 'bottles_planned', 'production_date']
+        required_fields = ['sku_code', 'product_name', 'oil_type', 'package_size']
+        is_valid, missing_fields = validate_required_fields(data, required_fields)
+        
+        if not is_valid:
+            return jsonify({
+                'success': False,
+                'error': f'Missing required fields: {", ".join(missing_fields)}'
+            }), 400
+        
+        # Check if SKU code already exists
+        cur.execute("SELECT sku_id FROM sku_master WHERE sku_code = %s", (data['sku_code'],))
+        if cur.fetchone():
+            return jsonify({'success': False, 'error': 'SKU code already exists'}), 400
+        
+        # Insert new SKU
+        cur.execute("""
+            INSERT INTO sku_master (
+                sku_code, product_name, oil_type, package_size,
+                bottle_type, density, is_active, created_by
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+            RETURNING sku_id
+        """, (
+            data['sku_code'],
+            data['product_name'],
+            data['oil_type'],
+            data['package_size'],
+            data.get('bottle_type', 'PET'),
+            float(data.get('density', 0.91)),
+            data.get('is_active', True),
+            data.get('created_by', 'System')
+        ))
+        
+        sku_id = cur.fetchone()[0]
+        conn.commit()
+        
+        return jsonify({
+            'success': True,
+            'sku_id': sku_id,
+            'message': 'SKU created successfully'
+        }), 201
+        
+    except Exception as e:
+        conn.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+# ============================================
+# BOM CONFIGURATION
+# ============================================
+
+@sku_management_bp.route('/api/sku/bom/<int:sku_id>', methods=['GET'])
+def get_sku_bom(sku_id):
+    """Get current BOM for a SKU"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        # Get SKU details
+        cur.execute("""
+            SELECT sku_code, product_name, oil_type, package_size, density
+            FROM sku_master
+            WHERE sku_id = %s
+        """, (sku_id,))
+        
+        sku_data = cur.fetchone()
+        if not sku_data:
+            return jsonify({'success': False, 'error': 'SKU not found'}), 404
+        
+        # Get current BOM
+        cur.execute("""
+            SELECT 
+                b.bom_id,
+                b.version_number,
+                b.effective_from,
+                b.effective_to,
+                b.is_current,
+                b.notes
+            FROM sku_bom_master b
+            WHERE b.sku_id = %s AND b.is_current = true
+        """, (sku_id,))
+        
+        bom_data = cur.fetchone()
+        
+        bom_details = []
+        total_material_cost = 0
+        
+        if bom_data:
+            # Get BOM details
+            cur.execute("""
+                SELECT 
+                    bd.detail_id,
+                    bd.material_id,
+                    m.material_name,
+                    m.short_code,
+                    m.unit,
+                    bd.material_category,
+                    bd.quantity_per_unit,
+                    bd.is_shared,
+                    bd.applicable_sizes,
+                    m.current_cost,
+                    bd.notes
+                FROM sku_bom_details bd
+                JOIN materials m ON bd.material_id = m.material_id
+                WHERE bd.bom_id = %s
+                ORDER BY bd.material_category, m.material_name
+            """, (bom_data[0],))
+            
+            for detail in cur.fetchall():
+                item_cost = float(detail[6]) * float(detail[9])
+                total_material_cost += item_cost
+                
+                bom_details.append({
+                    'detail_id': detail[0],
+                    'material_id': detail[1],
+                    'material_name': detail[2],
+                    'short_code': detail[3],
+                    'unit': detail[4],
+                    'material_category': detail[5],
+                    'quantity_per_unit': float(detail[6]),
+                    'is_shared': detail[7],
+                    'applicable_sizes': detail[8],
+                    'current_cost': float(detail[9]),
+                    'total_cost': item_cost,
+                    'notes': detail[10]
+                })
+        
+        # Get labor cost for this package size
+        cur.execute("""
+            SELECT element_id, element_name, default_rate
+            FROM cost_elements_master
+            WHERE element_name LIKE %s
+            AND active = true
+        """, (f'Packing Labour {sku_data[3]}%',))
+        
+        labor_data = cur.fetchone()
+        labor_cost = float(labor_data[2]) if labor_data else 0
+        
+        return jsonify({
+            'success': True,
+            'sku': {
+                'sku_id': sku_id,
+                'sku_code': sku_data[0],
+                'product_name': sku_data[1],
+                'oil_type': sku_data[2],
+                'package_size': sku_data[3],
+                'density': float(sku_data[4])
+            },
+            'bom': {
+                'bom_id': bom_data[0] if bom_data else None,
+                'version_number': bom_data[1] if bom_data else 0,
+                'effective_from': integer_to_date(bom_data[2]) if bom_data else None,
+                'is_current': bom_data[4] if bom_data else False,
+                'notes': bom_data[5] if bom_data else None
+            } if bom_data else None,
+            'bom_details': bom_details,
+            'cost_summary': {
+                'material_cost_per_unit': total_material_cost,
+                'labor_cost_per_unit': labor_cost,
+                'total_cost_per_unit': total_material_cost + labor_cost
+            }
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+@sku_management_bp.route('/api/sku/bom', methods=['POST'])
+def create_or_update_bom():
+    """Create or update BOM for a SKU"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        data = request.json
+        
+        # Validate required fields
+        required_fields = ['sku_id', 'bom_details']
         is_valid, missing_fields = validate_required_fields(data, required_fields)
         
         if not is_valid:
@@ -40,149 +300,263 @@ def create_production_plan():
             }), 400
         
         sku_id = data['sku_id']
-        bottles_planned = int(data['bottles_planned'])
+        bom_details = data['bom_details']
+        
+        # Check if BOM exists
+        cur.execute("""
+            SELECT bom_id, version_number
+            FROM sku_bom_master
+            WHERE sku_id = %s AND is_current = true
+        """, (sku_id,))
+        
+        existing_bom = cur.fetchone()
+        
+        cur.execute("BEGIN")
+        
+        if existing_bom and not data.get('create_new_version', False):
+            # Update existing BOM
+            bom_id = existing_bom[0]
+            
+            # Delete existing details
+            cur.execute("DELETE FROM sku_bom_details WHERE bom_id = %s", (bom_id,))
+            
+            # Update BOM master
+            cur.execute("""
+                UPDATE sku_bom_master
+                SET notes = %s
+                WHERE bom_id = %s
+            """, (data.get('notes', ''), bom_id))
+        else:
+            # Create new version
+            new_version = existing_bom[1] + 1 if existing_bom else 1
+            
+            # Set current BOM as not current
+            if existing_bom:
+                cur.execute("""
+                    UPDATE sku_bom_master
+                    SET is_current = false,
+                        effective_to = %s
+                    WHERE sku_id = %s AND is_current = true
+                """, (get_current_day_number(), sku_id))
+            
+            # Create new BOM master
+            cur.execute("""
+                INSERT INTO sku_bom_master (
+                    sku_id, version_number, effective_from,
+                    is_current, notes, created_by
+                ) VALUES (%s, %s, %s, %s, %s, %s)
+                RETURNING bom_id
+            """, (
+                sku_id,
+                new_version,
+                get_current_day_number(),
+                True,
+                data.get('notes', ''),
+                data.get('created_by', 'System')
+            ))
+            
+            bom_id = cur.fetchone()[0]
+        
+        # Insert BOM details
+        for detail in bom_details:
+            cur.execute("""
+                INSERT INTO sku_bom_details (
+                    bom_id, material_id, material_category,
+                    quantity_per_unit, is_shared, applicable_sizes, notes
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s)
+            """, (
+                bom_id,
+                detail['material_id'],
+                detail['material_category'],
+                float(detail.get('quantity_per_unit', 1)),
+                detail.get('is_shared', False),
+                detail.get('applicable_sizes', []),
+                detail.get('notes', '')
+            ))
+        
+        conn.commit()
+        
+        return jsonify({
+            'success': True,
+            'bom_id': bom_id,
+            'message': 'BOM configured successfully'
+        })
+        
+    except Exception as e:
+        conn.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+# ============================================
+# MATERIAL LISTING FOR BOM
+# ============================================
+
+@sku_management_bp.route('/api/sku/materials', methods=['GET'])
+def get_materials_for_bom():
+    """Get materials suitable for BOM configuration"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        category = request.args.get('category')
+        search = request.args.get('search', '')
+        
+        query = """
+            SELECT 
+                material_id,
+                material_name,
+                short_code,
+                category,
+                unit,
+                current_cost
+            FROM materials
+            WHERE 1=1
+        """
+        params = []
+        
+        if category:
+            query += " AND category = %s"
+            params.append(category)
+        
+        if search:
+            query += " AND (material_name ILIKE %s OR short_code ILIKE %s)"
+            params.extend([f'%{search}%', f'%{search}%'])
+        
+        # Filter for packaging materials
+        query += """
+            AND category IN ('Packaging', 'Labels', 'Bottles', 'Caps', 'Secondary Packaging')
+            ORDER BY category, material_name
+        """
+        
+        cur.execute(query, params)
+        
+        materials = []
+        for row in cur.fetchall():
+            materials.append({
+                'material_id': row[0],
+                'material_name': row[1],
+                'short_code': row[2],
+                'category': row[3],
+                'unit': row[4],
+                'current_cost': float(row[5])
+            })
+        
+        # Get material categories
+        cur.execute("""
+            SELECT DISTINCT category
+            FROM materials
+            WHERE category IN ('Packaging', 'Labels', 'Bottles', 'Caps', 'Secondary Packaging')
+            ORDER BY category
+        """)
+        
+        categories = [row[0] for row in cur.fetchall()]
+        
+        return jsonify({
+            'success': True,
+            'materials': materials,
+            'categories': categories,
+            'count': len(materials)
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+# ============================================
+# COST PREVIEW
+# ============================================
+
+@sku_management_bp.route('/api/sku/cost-preview', methods=['POST'])
+def get_cost_preview():
+    """Calculate cost preview for SKU production"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        data = request.json
+        
+        sku_id = data.get('sku_id')
+        quantity = int(data.get('quantity', 1))
+        oil_cost_per_kg = float(data.get('oil_cost_per_kg', 0))
         
         # Get SKU details
         cur.execute("""
-            SELECT 
-                s.sku_code,
-                s.product_name,
-                s.oil_type,
-                s.package_size,
-                s.density,
-                b.bom_id
-            FROM sku_master s
-            LEFT JOIN sku_bom_master b ON s.sku_id = b.sku_id AND b.is_current = true
-            WHERE s.sku_id = %s
+            SELECT package_size, density
+            FROM sku_master
+            WHERE sku_id = %s
         """, (sku_id,))
         
         sku_data = cur.fetchone()
         if not sku_data:
             return jsonify({'success': False, 'error': 'SKU not found'}), 404
         
-        if not sku_data[5]:
-            return jsonify({'success': False, 'error': 'BOM not configured for this SKU'}), 400
+        package_size = sku_data[0]
+        density = float(sku_data[1])
         
         # Calculate oil requirement
-        package_size = sku_data[3]
         size_in_liters = float(package_size.replace('ml', '').replace('L', ''))
         if 'ml' in package_size:
             size_in_liters = size_in_liters / 1000
         
-        oil_per_bottle = size_in_liters * float(sku_data[4])  # kg
-        total_oil_required = oil_per_bottle * bottles_planned
+        oil_quantity_per_bottle = size_in_liters * density  # kg per bottle
+        total_oil_quantity = oil_quantity_per_bottle * quantity
+        oil_cost = total_oil_quantity * oil_cost_per_kg
         
-        # Check oil availability from batches and blends
-        oil_type = sku_data[2]
-        
-        # Get available oil from batches
+        # Get material costs from BOM
         cur.execute("""
             SELECT 
-                'batch' as source_type,
-                b.batch_id as source_id,
-                b.batch_code,
-                b.traceable_code,
-                (b.oil_yield - COALESCE(SUM(oa.quantity_allocated), 0)) as available_qty,
-                b.oil_cost_per_kg,
-                b.production_date
-            FROM batch b
-            LEFT JOIN sku_oil_allocation oa ON b.batch_id = oa.source_id 
-                AND oa.source_type = 'batch'
-            WHERE b.oil_type = %s
-            GROUP BY b.batch_id, b.batch_code, b.traceable_code, 
-                     b.oil_yield, b.oil_cost_per_kg, b.production_date
-            HAVING (b.oil_yield - COALESCE(SUM(oa.quantity_allocated), 0)) > 0
-            
-            UNION ALL
-            
-            SELECT 
-                'blend' as source_type,
-                bl.blend_id as source_id,
-                bl.blend_code,
-                bl.traceable_code,
-                (bl.total_quantity - COALESCE(SUM(oa.quantity_allocated), 0)) as available_qty,
-                bl.weighted_avg_cost as oil_cost_per_kg,
-                bl.blend_date as production_date
-            FROM blend_batches bl
-            LEFT JOIN sku_oil_allocation oa ON bl.blend_id = oa.source_id 
-                AND oa.source_type = 'blend'
-            WHERE EXISTS (
-                SELECT 1 FROM blend_batch_components bbc 
-                WHERE bbc.blend_id = bl.blend_id 
-                AND bbc.oil_type = %s
-            )
-            GROUP BY bl.blend_id, bl.blend_code, bl.traceable_code, 
-                     bl.total_quantity, bl.weighted_avg_cost, bl.blend_date
-            HAVING (bl.total_quantity - COALESCE(SUM(oa.quantity_allocated), 0)) > 0
-            
-            ORDER BY production_date
-        """, (oil_type, oil_type))
-        
-        available_sources = []
-        total_available = 0
-        
-        for row in cur.fetchall():
-            available_sources.append({
-                'source_type': row[0],
-                'source_id': row[1],
-                'source_code': row[2],
-                'traceable_code': row[3],
-                'available_qty': float(row[4]),
-                'oil_cost_per_kg': float(row[5]),
-                'production_date': integer_to_date(row[6])
-            })
-            total_available += float(row[4])
-        
-        # Check material availability from BOM
-        cur.execute("""
-            SELECT 
-                m.material_name,
-                bd.quantity_per_unit,
-                bd.quantity_per_unit * %s as required_qty,
-                COALESCE(i.closing_stock, 0) as available_stock,
-                m.unit
-            FROM sku_bom_details bd
+                SUM(bd.quantity_per_unit * m.current_cost)
+            FROM sku_bom_master b
+            JOIN sku_bom_details bd ON b.bom_id = bd.bom_id
             JOIN materials m ON bd.material_id = m.material_id
-            LEFT JOIN inventory i ON m.material_id = i.material_id
-            WHERE bd.bom_id = %s
-        """, (bottles_planned, sku_data[5]))
+            WHERE b.sku_id = %s AND b.is_current = true
+        """, (sku_id,))
         
-        material_requirements = []
-        materials_available = True
+        material_cost_per_unit = cur.fetchone()[0] or 0
+        material_cost = float(material_cost_per_unit) * quantity
         
-        for row in cur.fetchall():
-            required = float(row[2])
-            available = float(row[3])
-            is_available = available >= required
-            
-            material_requirements.append({
-                'material_name': row[0],
-                'quantity_per_unit': float(row[1]),
-                'required_qty': required,
-                'available_stock': available,
-                'unit': row[4],
-                'is_available': is_available
-            })
-            
-            if not is_available:
-                materials_available = False
+        # Get labor cost
+        cur.execute("""
+            SELECT default_rate
+            FROM cost_elements_master
+            WHERE element_name LIKE %s
+            AND active = true
+        """, (f'Packing Labour {package_size}%',))
+        
+        labor_rate = cur.fetchone()
+        labor_cost_per_unit = float(labor_rate[0]) if labor_rate else 0
+        labor_cost = labor_cost_per_unit * quantity
+        
+        # Calculate totals
+        total_cost = oil_cost + material_cost + labor_cost
+        cost_per_bottle = total_cost / quantity if quantity > 0 else 0
         
         return jsonify({
             'success': True,
-            'production_plan': {
-                'sku_code': sku_data[0],
-                'product_name': sku_data[1],
-                'bottles_planned': bottles_planned,
+            'cost_preview': {
+                'quantity': quantity,
                 'oil_requirement': {
-                    'per_bottle_kg': oil_per_bottle,
-                    'total_required_kg': total_oil_required,
-                    'total_available_kg': total_available,
-                    'is_sufficient': total_available >= total_oil_required
+                    'per_bottle_kg': oil_quantity_per_bottle,
+                    'total_kg': total_oil_quantity,
+                    'cost_per_kg': oil_cost_per_kg,
+                    'total_cost': oil_cost
                 },
-                'oil_sources': available_sources,
-                'material_requirements': material_requirements,
-                'materials_available': materials_available,
-                'can_proceed': (total_available >= total_oil_required) and materials_available
+                'material_cost': {
+                    'per_bottle': float(material_cost_per_unit),
+                    'total': material_cost
+                },
+                'labor_cost': {
+                    'per_bottle': labor_cost_per_unit,
+                    'total': labor_cost
+                },
+                'summary': {
+                    'total_production_cost': total_cost,
+                    'cost_per_bottle': cost_per_bottle
+                }
             }
         })
         
@@ -193,437 +567,48 @@ def create_production_plan():
 
 
 # ============================================
-# OIL ALLOCATION
+# BOM VERSION HISTORY
 # ============================================
 
-@sku_production_bp.route('/api/sku/production/allocate-oil', methods=['POST'])
-def allocate_oil_for_production():
-    """Allocate oil from batches/blends using FIFO"""
+@sku_management_bp.route('/api/sku/bom-history/<int:sku_id>', methods=['GET'])
+def get_bom_history(sku_id):
+    """Get BOM version history for a SKU"""
     conn = get_db_connection()
     cur = conn.cursor()
     
     try:
-        data = request.json
-        
-        sku_id = data['sku_id']
-        quantity_required = safe_decimal(data['quantity_required'])
-        
-        # Get oil type for SKU
-        cur.execute("SELECT oil_type FROM sku_master WHERE sku_id = %s", (sku_id,))
-        oil_type = cur.fetchone()[0]
-        
-        # Get available sources (FIFO order)
-        cur.execute("""
-            WITH available_oil AS (
-                SELECT 
-                    'batch' as source_type,
-                    b.batch_id as source_id,
-                    b.traceable_code,
-                    b.production_date,
-                    (b.oil_yield - COALESCE(SUM(oa.quantity_allocated), 0)) as available_qty,
-                    b.oil_cost_per_kg
-                FROM batch b
-                LEFT JOIN sku_oil_allocation oa ON b.batch_id = oa.source_id 
-                    AND oa.source_type = 'batch'
-                WHERE b.oil_type = %s
-                GROUP BY b.batch_id, b.traceable_code, b.oil_yield, 
-                         b.oil_cost_per_kg, b.production_date
-                HAVING (b.oil_yield - COALESCE(SUM(oa.quantity_allocated), 0)) > 0
-                
-                UNION ALL
-                
-                SELECT 
-                    'blend' as source_type,
-                    bl.blend_id as source_id,
-                    bl.traceable_code,
-                    bl.blend_date as production_date,
-                    (bl.total_quantity - COALESCE(SUM(oa.quantity_allocated), 0)) as available_qty,
-                    bl.weighted_avg_cost as oil_cost_per_kg
-                FROM blend_batches bl
-                LEFT JOIN sku_oil_allocation oa ON bl.blend_id = oa.source_id 
-                    AND oa.source_type = 'blend'
-                WHERE EXISTS (
-                    SELECT 1 FROM blend_batch_components bbc 
-                    WHERE bbc.blend_id = bl.blend_id 
-                    AND bbc.oil_type = %s
-                )
-                GROUP BY bl.blend_id, bl.traceable_code, bl.total_quantity, 
-                         bl.weighted_avg_cost, bl.blend_date
-                HAVING (bl.total_quantity - COALESCE(SUM(oa.quantity_allocated), 0)) > 0
-            )
-            SELECT * FROM available_oil
-            ORDER BY production_date  -- FIFO
-        """, (oil_type, oil_type))
-        
-        allocations = []
-        remaining_qty = quantity_required
-        total_cost = Decimal('0')
-        
-        for row in cur.fetchall():
-            if remaining_qty <= 0:
-                break
-            
-            source_type = row[0]
-            source_id = row[1]
-            traceable_code = row[2]
-            available = Decimal(str(row[4]))
-            cost_per_kg = Decimal(str(row[5]))
-            
-            # Calculate allocation
-            allocation_qty = min(remaining_qty, available)
-            allocation_cost = allocation_qty * cost_per_kg
-            
-            allocations.append({
-                'source_type': source_type,
-                'source_id': source_id,
-                'traceable_code': traceable_code,
-                'quantity_allocated': float(allocation_qty),
-                'oil_cost_per_kg': float(cost_per_kg),
-                'allocation_cost': float(allocation_cost)
-            })
-            
-            total_cost += allocation_cost
-            remaining_qty -= allocation_qty
-        
-        if remaining_qty > 0:
-            return jsonify({
-                'success': False,
-                'error': f'Insufficient oil. Short by {float(remaining_qty)} kg'
-            }), 400
-        
-        # Calculate weighted average cost
-        weighted_cost = total_cost / quantity_required
-        
-        return jsonify({
-            'success': True,
-            'allocations': allocations,
-            'total_quantity': float(quantity_required),
-            'weighted_oil_cost': float(weighted_cost),
-            'total_oil_cost': float(total_cost)
-        })
-        
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)}), 500
-    finally:
-        close_connection(conn, cur)
-
-
-# ============================================
-# PRODUCTION ENTRY
-# ============================================
-
-@sku_production_bp.route('/api/sku/production', methods=['POST'])
-def create_sku_production():
-    """Create SKU production entry with cost calculation"""
-    conn = get_db_connection()
-    cur = conn.cursor()
-    
-    try:
-        data = request.json
-        
-        # Validate required fields
-        required_fields = ['sku_id', 'bottles_produced', 'production_date', 
-                          'packing_date', 'oil_allocations']
-        is_valid, missing_fields = validate_required_fields(data, required_fields)
-        
-        if not is_valid:
-            return jsonify({
-                'success': False,
-                'error': f'Missing required fields: {", ".join(missing_fields)}'
-            }), 400
-        
-        sku_id = data['sku_id']
-        bottles_produced = int(data['bottles_produced'])
-        production_date = parse_date(data['production_date'])
-        packing_date = parse_date(data['packing_date'])
-        oil_allocations = data['oil_allocations']
-        
-        cur.execute("BEGIN")
-        
-        # Get SKU and BOM details
         cur.execute("""
             SELECT 
-                s.package_size,
-                s.density,
-                b.bom_id
-            FROM sku_master s
-            JOIN sku_bom_master b ON s.sku_id = b.sku_id AND b.is_current = true
-            WHERE s.sku_id = %s
+                bom_id,
+                version_number,
+                effective_from,
+                effective_to,
+                is_current,
+                notes,
+                created_by,
+                created_at
+            FROM sku_bom_master
+            WHERE sku_id = %s
+            ORDER BY version_number DESC
         """, (sku_id,))
         
-        sku_data = cur.fetchone()
-        if not sku_data:
-            raise Exception("SKU or BOM not found")
-        
-        # Generate production code
-        cur.execute("""
-            SELECT COUNT(*) + 1
-            FROM sku_production
-            WHERE EXTRACT(YEAR FROM created_at) = EXTRACT(YEAR FROM CURRENT_DATE)
-        """)
-        seq_num = cur.fetchone()[0]
-        production_code = f"SP-{seq_num:03d}-{datetime.now().year}"
-        
-        # Generate traceable code using first oil allocation
-        first_allocation = oil_allocations[0]
-        oil_traceable_code = first_allocation['traceable_code']
-        production_month = datetime.now().month
-        
-        # Extract variety codes from oil traceable code
-        code_parts = oil_traceable_code.split('-')
-        if len(code_parts) == 4:  # Single variety: GNO-K-05082025-PUV
-            variety_codes = code_parts[1]
-        else:  # Blend: GNOKU-07082025-PUV
-            variety_codes = code_parts[0][3:]  # Remove oil type prefix
-        
-        # Get sequence number for this variety-month combination
-        cur.execute("""
-            SELECT COALESCE(MAX(
-                CAST(SUBSTRING(traceable_code FROM '[0-9]{2}$') AS INTEGER)
-            ), 0) + 1
-            FROM sku_production
-            WHERE traceable_code LIKE %s
-            AND production_date >= %s
-        """, (
-            f"{variety_codes}{production_month}%",
-            int(f"{datetime.now().year}0401")  # April 1st of current year
-        ))
-        
-        sequence = cur.fetchone()[0]
-        traceable_code = f"{variety_codes}{production_month}{sequence:02d}"
-        
-        # Calculate costs
-        total_oil_quantity = sum(a['quantity_allocated'] for a in oil_allocations)
-        weighted_oil_cost = sum(a['quantity_allocated'] * a['oil_cost_per_kg'] 
-                               for a in oil_allocations) / total_oil_quantity
-        oil_cost_total = total_oil_quantity * weighted_oil_cost
-        
-        # Calculate material costs from BOM
-        cur.execute("""
-            SELECT 
-                bd.material_id,
-                bd.quantity_per_unit,
-                m.current_cost,
-                m.material_name
-            FROM sku_bom_details bd
-            JOIN materials m ON bd.material_id = m.material_id
-            WHERE bd.bom_id = %s
-        """, (sku_data[2],))
-        
-        material_cost_total = 0
-        material_consumptions = []
-        
-        for mat in cur.fetchall():
-            quantity_used = float(mat[1]) * bottles_produced
-            cost = quantity_used * float(mat[2])
-            material_cost_total += cost
-            
-            material_consumptions.append({
-                'material_id': mat[0],
-                'material_name': mat[3],
-                'planned_quantity': quantity_used,
-                'actual_quantity': quantity_used,
-                'material_cost_per_unit': float(mat[2]),
-                'total_cost': cost
-            })
-        
-        # Get labor cost
-        cur.execute("""
-            SELECT default_rate
-            FROM cost_elements_master
-            WHERE element_name LIKE %s
-            AND active = true
-        """, (f'Packing Labour {sku_data[0]}%',))
-        
-        labor_rate = cur.fetchone()
-        labor_cost_total = float(labor_rate[0] if labor_rate else 0) * bottles_produced
-        
-        # Calculate total costs
-        total_production_cost = oil_cost_total + material_cost_total + labor_cost_total
-        cost_per_bottle = total_production_cost / bottles_produced
-        
-        # Insert production record
-        cur.execute("""
-            INSERT INTO sku_production (
-                production_code, traceable_code, sku_id, bom_id,
-                production_date, packing_date,
-                total_oil_quantity, weighted_oil_cost,
-                bottles_planned, bottles_produced,
-                oil_cost_total, material_cost_total, labor_cost_total,
-                total_production_cost, cost_per_bottle,
-                production_status, operator_name, shift_number,
-                production_line, notes, created_by
-            ) VALUES (
-                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
-                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
-            ) RETURNING production_id
-        """, (
-            production_code, traceable_code, sku_id, sku_data[2],
-            production_date, packing_date,
-            total_oil_quantity, weighted_oil_cost,
-            data.get('bottles_planned', bottles_produced), bottles_produced,
-            oil_cost_total, material_cost_total, labor_cost_total,
-            total_production_cost, cost_per_bottle,
-            'completed', data.get('operator_name'), data.get('shift_number'),
-            data.get('production_line'), data.get('notes'),
-            data.get('created_by', 'System')
-        ))
-        
-        production_id = cur.fetchone()[0]
-        
-        # Insert oil allocations
-        for allocation in oil_allocations:
-            cur.execute("""
-                INSERT INTO sku_oil_allocation (
-                    production_id, source_type, source_id,
-                    source_traceable_code, quantity_allocated,
-                    oil_cost_per_kg, allocation_cost
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s)
-            """, (
-                production_id,
-                allocation['source_type'],
-                allocation['source_id'],
-                allocation['traceable_code'],
-                allocation['quantity_allocated'],
-                allocation['oil_cost_per_kg'],
-                allocation['allocation_cost']
-            ))
-        
-        # Insert material consumption
-        for consumption in material_consumptions:
-            cur.execute("""
-                INSERT INTO sku_material_consumption (
-                    production_id, material_id,
-                    planned_quantity, actual_quantity,
-                    material_cost_per_unit, total_cost
-                ) VALUES (%s, %s, %s, %s, %s, %s)
-            """, (
-                production_id,
-                consumption['material_id'],
-                consumption['planned_quantity'],
-                consumption['actual_quantity'],
-                consumption['material_cost_per_unit'],
-                consumption['total_cost']
-            ))
-        
-        conn.commit()
-        
-        return jsonify({
-            'success': True,
-            'production_id': production_id,
-            'production_code': production_code,
-            'traceable_code': traceable_code,
-            'cost_summary': {
-                'oil_cost': oil_cost_total,
-                'material_cost': material_cost_total,
-                'labor_cost': labor_cost_total,
-                'total_cost': total_production_cost,
-                'cost_per_bottle': cost_per_bottle
-            },
-            'message': 'Production recorded successfully'
-        }), 201
-        
-    except Exception as e:
-        conn.rollback()
-        import traceback
-        traceback.print_exc()
-        return jsonify({'success': False, 'error': str(e)}), 500
-    finally:
-        close_connection(conn, cur)
-
-
-# ============================================
-# PRODUCTION HISTORY
-# ============================================
-
-@sku_production_bp.route('/api/sku/production/history', methods=['GET'])
-def get_production_history():
-    """Get SKU production history with filters"""
-    conn = get_db_connection()
-    cur = conn.cursor()
-    
-    try:
-        # Get filter parameters
-        sku_id = request.args.get('sku_id')
-        oil_type = request.args.get('oil_type')
-        start_date = request.args.get('start_date')
-        end_date = request.args.get('end_date')
-        limit = int(request.args.get('limit', 50))
-        
-        query = """
-            SELECT 
-                p.production_id,
-                p.production_code,
-                p.traceable_code,
-                p.production_date,
-                p.packing_date,
-                s.sku_code,
-                s.product_name,
-                s.oil_type,
-                s.package_size,
-                p.bottles_produced,
-                p.total_oil_quantity,
-                p.oil_cost_total,
-                p.material_cost_total,
-                p.labor_cost_total,
-                p.total_production_cost,
-                p.cost_per_bottle,
-                p.operator_name,
-                p.created_at
-            FROM sku_production p
-            JOIN sku_master s ON p.sku_id = s.sku_id
-            WHERE 1=1
-        """
-        params = []
-        
-        if sku_id:
-            query += " AND p.sku_id = %s"
-            params.append(sku_id)
-        
-        if oil_type:
-            query += " AND s.oil_type = %s"
-            params.append(oil_type)
-        
-        if start_date:
-            query += " AND p.production_date >= %s"
-            params.append(parse_date(start_date))
-        
-        if end_date:
-            query += " AND p.production_date <= %s"
-            params.append(parse_date(end_date))
-        
-        query += " ORDER BY p.production_date DESC, p.production_id DESC LIMIT %s"
-        params.append(limit)
-        
-        cur.execute(query, params)
-        
-        productions = []
+        versions = []
         for row in cur.fetchall():
-            productions.append({
-                'production_id': row[0],
-                'production_code': row[1],
-                'traceable_code': row[2],
-                'production_date': integer_to_date(row[3]),
-                'packing_date': integer_to_date(row[4]),
-                'sku_code': row[5],
-                'product_name': row[6],
-                'oil_type': row[7],
-                'package_size': row[8],
-                'bottles_produced': row[9],
-                'total_oil_quantity': float(row[10]),
-                'oil_cost': float(row[11]),
-                'material_cost': float(row[12]),
-                'labor_cost': float(row[13]),
-                'total_cost': float(row[14]),
-                'cost_per_bottle': float(row[15]),
-                'operator_name': row[16],
-                'created_at': row[17].isoformat() if row[17] else None
+            versions.append({
+                'bom_id': row[0],
+                'version_number': row[1],
+                'effective_from': integer_to_date(row[2]) if row[2] else None,
+                'effective_to': integer_to_date(row[3]) if row[3] else None,
+                'is_current': row[4],
+                'notes': row[5],
+                'created_by': row[6],
+                'created_at': row[7].isoformat() if row[7] else None
             })
         
         return jsonify({
             'success': True,
-            'productions': productions,
-            'count': len(productions)
+            'versions': versions,
+            'count': len(versions)
         })
         
     except Exception as e:
