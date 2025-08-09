@@ -2,11 +2,11 @@
 """
 Main Flask Application for PUVI Oil Manufacturing System
 Integrates all modules including Cost Management and SKU modules
-Version: 8.0.0 - With SKU Management and Production
+Version: 8.0.1 - Fixed CORS preflight handling
 """
 
 import re
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_cors import CORS
 from datetime import datetime
 from db_utils import get_db_connection, close_connection
@@ -18,29 +18,44 @@ from modules.batch_production import batch_bp
 from modules.blending import blending_bp
 from modules.material_sales import material_sales_bp
 from modules.cost_management import cost_management_bp
-from modules.sku_management import sku_management_bp  # NEW - Import SKU management module
-from modules.sku_production import sku_production_bp   # NEW - Import SKU production module
+from modules.sku_management import sku_management_bp
+from modules.sku_production import sku_production_bp
 
 # Create Flask app
 app = Flask(__name__)
 
-# Enable CORS for all routes - with regex for proper wildcard matching
+# Enable CORS for all routes with proper preflight handling
 CORS(app, resources={
     r"/api/*": {
         "origins": [
             "http://localhost:3000",
             "http://localhost:3001",
             "https://puvi-frontend.vercel.app",
-            re.compile(r"^https://puvi-frontend-.*\.vercel\.app$"),  # Matches puvi-frontend-* preview URLs
-            re.compile(r"^https://.*-rajeshs-projects-8be31e4e\.vercel\.app$"),  # Matches all your project URLs
-            re.compile(r"^https://.*\.vercel\.app$")  # Fallback for any Vercel app
+            re.compile(r"^https://puvi-frontend-.*\.vercel\.app$"),
+            re.compile(r"^https://.*-rajeshs-projects-8be31e4e\.vercel\.app$"),
+            re.compile(r"^https://.*\.vercel\.app$")
         ],
-        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-        "allow_headers": ["Content-Type", "Authorization", "Access-Control-Allow-Origin"],
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+        "allow_headers": ["Content-Type", "Authorization", "Access-Control-Allow-Origin", "X-Requested-With"],
+        "expose_headers": ["Content-Type", "Authorization"],
         "supports_credentials": True,
-        "max_age": 3600
+        "max_age": 3600,
+        "send_wildcard": False,
+        "always_send": True
     }
 })
+
+# Add explicit OPTIONS handler for all routes (preflight handling)
+@app.before_request
+def handle_preflight():
+    if request.method == "OPTIONS":
+        response = jsonify({"status": "ok"})
+        response.headers.add("Access-Control-Allow-Origin", request.headers.get("Origin", "*"))
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type,Authorization")
+        response.headers.add("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS,PATCH")
+        response.headers.add("Access-Control-Max-Age", "3600")
+        response.headers.add("Access-Control-Allow-Credentials", "true")
+        return response, 200
 
 # Register all blueprints
 app.register_blueprint(purchase_bp)
@@ -49,8 +64,8 @@ app.register_blueprint(batch_bp)
 app.register_blueprint(blending_bp)
 app.register_blueprint(material_sales_bp)
 app.register_blueprint(cost_management_bp)
-app.register_blueprint(sku_management_bp)  # NEW - Register SKU management blueprint
-app.register_blueprint(sku_production_bp)  # NEW - Register SKU production blueprint
+app.register_blueprint(sku_management_bp)
+app.register_blueprint(sku_production_bp)
 
 # Configuration
 app.config['JSON_SORT_KEYS'] = False
@@ -62,7 +77,7 @@ def home():
     """Root endpoint to verify API is running"""
     return jsonify({
         'status': 'PUVI Backend API is running!',
-        'version': '8.0.0',
+        'version': '8.0.1',
         'modules': [
             'Purchase Management',
             'Material Writeoff',
@@ -70,8 +85,8 @@ def home():
             'Blending',
             'Material Sales',
             'Cost Management',
-            'SKU Management',  # NEW
-            'SKU Production'   # NEW
+            'SKU Management',
+            'SKU Production'
         ],
         'timestamp': datetime.now().isoformat()
     })
@@ -104,9 +119,9 @@ def health_check():
             'material_sales': "SELECT COUNT(*) FROM oil_cake_sales",
             'cost_elements': "SELECT COUNT(*) FROM cost_elements_master",
             'time_tracking': "SELECT COUNT(*) FROM batch_time_tracking",
-            'sku_master': "SELECT COUNT(*) FROM sku_master",  # NEW
-            'sku_productions': "SELECT COUNT(*) FROM sku_production",  # NEW
-            'sku_boms': "SELECT COUNT(*) FROM sku_bom_master",  # NEW
+            'sku_master': "SELECT COUNT(*) FROM sku_master",
+            'sku_productions': "SELECT COUNT(*) FROM sku_production",
+            'sku_boms': "SELECT COUNT(*) FROM sku_bom_master",
             'inventory_items': "SELECT COUNT(*) FROM inventory WHERE closing_stock > 0"
         }
         
@@ -116,44 +131,36 @@ def health_check():
                 cur.execute(query)
                 counts[key] = cur.fetchone()[0]
             except:
-                counts[key] = 0  # Table might not exist yet
+                counts[key] = 0
         
-        # Get database size
+        # Check database size
         cur.execute("""
-            SELECT pg_database_size(current_database()) as size
+            SELECT pg_database_size(current_database())
         """)
         db_size = cur.fetchone()[0]
         
-        # Get cost validation warnings count
-        try:
-            cur.execute("""
-                SELECT COUNT(DISTINCT b.batch_id)
-                FROM batch b
-                WHERE NOT EXISTS (
-                    SELECT 1 FROM batch_extended_costs bec
-                    WHERE bec.batch_id = b.batch_id
-                )
-                AND b.production_date >= (
-                    SELECT MAX(production_date) - 30 FROM batch
-                )
-            """)
-            validation_warnings = cur.fetchone()[0]
-        except:
-            validation_warnings = 0
+        # Check for cost elements validation
+        cur.execute("""
+            SELECT COUNT(*)
+            FROM cost_elements_master
+            WHERE active = true
+            AND default_rate <= 0
+        """)
+        invalid_cost_elements = cur.fetchone()[0]
         
-        # Check SKU BOM configuration status (NEW)
-        try:
-            cur.execute("""
-                SELECT COUNT(*)
-                FROM sku_master s
-                WHERE NOT EXISTS (
-                    SELECT 1 FROM sku_bom_master b
-                    WHERE b.sku_id = s.sku_id AND b.is_current = true
-                )
-            """)
-            skus_without_bom = cur.fetchone()[0]
-        except:
-            skus_without_bom = 0
+        validation_warnings = []
+        if invalid_cost_elements > 0:
+            validation_warnings.append(f"{invalid_cost_elements} cost elements have invalid rates")
+        
+        # Check for SKUs without BOM
+        cur.execute("""
+            SELECT COUNT(DISTINCT s.sku_id)
+            FROM sku_master s
+            LEFT JOIN sku_bom_master b ON s.sku_id = b.sku_id AND b.is_current = true
+            WHERE s.is_active = true
+            AND b.bom_id IS NULL
+        """)
+        skus_without_bom = cur.fetchone()[0]
         
         # Get active modules
         active_modules = []
@@ -168,12 +175,12 @@ def health_check():
         return jsonify({
             'status': 'healthy',
             'database': 'connected',
-            'version': '8.0.0',
+            'version': '8.0.1',
             'counts': counts,
             'database_size_mb': round(db_size / 1024 / 1024, 2),
             'active_modules': sorted(active_modules),
             'cost_validation_warnings': validation_warnings,
-            'skus_without_bom': skus_without_bom,  # NEW
+            'skus_without_bom': skus_without_bom,
             'timestamp': datetime.now().isoformat()
         })
         
