@@ -17,6 +17,8 @@ const ProductionHistory = () => {
   const [selectedProduction, setSelectedProduction] = useState(null);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
+  const [sortField, setSortField] = useState('production_date');
+  const [sortOrder, setSortOrder] = useState('desc');
 
   useEffect(() => {
     fetchSKUs();
@@ -25,14 +27,16 @@ const ProductionHistory = () => {
 
   useEffect(() => {
     applyFilters();
-  }, [productions, filters]);
+  }, [productions, filters, sortField, sortOrder]);
 
   const fetchSKUs = async () => {
     try {
       const response = await fetch('https://puvi-backend.onrender.com/api/sku/master?is_active=true');
       if (!response.ok) throw new Error('Failed to fetch SKUs');
       const data = await response.json();
-      setSKUList(Array.isArray(data) ? data : []);
+      
+      // FIX: Handle wrapped response
+      setSKUList(data.skus || []);
     } catch (error) {
       console.error('Error fetching SKUs:', error);
       setSKUList([]);
@@ -45,8 +49,20 @@ const ProductionHistory = () => {
       const response = await fetch('https://puvi-backend.onrender.com/api/sku/production/history');
       if (!response.ok) throw new Error('Failed to fetch production history');
       const data = await response.json();
-      setProductions(Array.isArray(data) ? data : []);
-      setFilteredProductions(Array.isArray(data) ? data : []);
+      
+      // FIX: Handle wrapped response and proper field names
+      if (data.success && data.productions) {
+        setProductions(data.productions);
+        setFilteredProductions(data.productions);
+      } else if (Array.isArray(data)) {
+        // Handle if backend returns plain array
+        setProductions(data);
+        setFilteredProductions(data);
+      } else {
+        setProductions([]);
+        setFilteredProductions([]);
+        setMessage({ type: 'info', text: 'No production records found' });
+      }
     } catch (error) {
       console.error('Error fetching production history:', error);
       setMessage({ type: 'error', text: 'Failed to load production history' });
@@ -60,23 +76,25 @@ const ProductionHistory = () => {
   const applyFilters = () => {
     let filtered = [...productions];
     
+    // Apply filters
     if (filters.sku_id) {
       filtered = filtered.filter(p => p.sku_id === parseInt(filters.sku_id));
     }
     
     if (filters.start_date) {
-      const startTimestamp = new Date(filters.start_date).getTime() / 1000;
       filtered = filtered.filter(p => {
-        const prodDate = p.production_date || 0;
-        return prodDate >= startTimestamp;
+        const prodDate = formatDateForComparison(p.production_date);
+        const filterDate = new Date(filters.start_date);
+        return prodDate >= filterDate;
       });
     }
     
     if (filters.end_date) {
-      const endTimestamp = new Date(filters.end_date).getTime() / 1000 + 86400; // Add 1 day for inclusive
       filtered = filtered.filter(p => {
-        const prodDate = p.production_date || 0;
-        return prodDate < endTimestamp;
+        const prodDate = formatDateForComparison(p.production_date);
+        const filterDate = new Date(filters.end_date);
+        filterDate.setDate(filterDate.getDate() + 1); // Include end date
+        return prodDate < filterDate;
       });
     }
     
@@ -92,41 +110,65 @@ const ProductionHistory = () => {
       );
     }
     
+    // Apply sorting
+    filtered.sort((a, b) => {
+      let aVal, bVal;
+      
+      switch(sortField) {
+        case 'production_date':
+          aVal = formatDateForComparison(a.production_date);
+          bVal = formatDateForComparison(b.production_date);
+          break;
+        case 'total_production_cost':
+          aVal = parseFloat(a.total_production_cost || 0);
+          bVal = parseFloat(b.total_production_cost || 0);
+          break;
+        case 'bottles_produced':
+          aVal = parseInt(a.bottles_produced || 0);
+          bVal = parseInt(b.bottles_produced || 0);
+          break;
+        case 'cost_per_bottle':
+          aVal = parseFloat(a.cost_per_bottle || 0);
+          bVal = parseFloat(b.cost_per_bottle || 0);
+          break;
+        default:
+          aVal = a[sortField] || '';
+          bVal = b[sortField] || '';
+      }
+      
+      if (sortOrder === 'asc') {
+        return aVal > bVal ? 1 : aVal < bVal ? -1 : 0;
+      } else {
+        return aVal < bVal ? 1 : aVal > bVal ? -1 : 0;
+      }
+    });
+    
     setFilteredProductions(filtered);
   };
 
-  const handleFilterChange = (field, value) => {
-    setFilters(prev => ({ ...prev, [field]: value }));
-  };
-
-  const handleClearFilters = () => {
-    setFilters({
-      sku_id: '',
-      start_date: '',
-      end_date: '',
-      traceable_code: '',
-      operator: ''
-    });
-  };
-
-  const handleViewDetails = async (productionId) => {
-    try {
-      const response = await fetch(`https://puvi-backend.onrender.com/api/sku/production/${productionId}`);
-      if (!response.ok) throw new Error('Failed to fetch production details');
-      const data = await response.json();
-      setSelectedProduction(data);
-    } catch (error) {
-      setMessage({ type: 'error', text: 'Failed to load production details' });
+  const formatDateForComparison = (dateValue) => {
+    if (!dateValue) return new Date(0);
+    
+    // Handle Unix timestamp (integer days since 1970)
+    if (typeof dateValue === 'number') {
+      if (dateValue < 100000) {
+        // Days since 1970-01-01
+        return new Date(dateValue * 86400000);
+      } else {
+        // Unix timestamp in seconds
+        return new Date(dateValue * 1000);
+      }
     }
+    
+    // Handle date string
+    return new Date(dateValue);
   };
 
-  const formatDate = (timestamp) => {
-    if (!timestamp) return 'N/A';
+  const formatDate = (dateValue) => {
+    if (!dateValue) return 'N/A';
+    
     try {
-      // Handle both Unix timestamps and date strings
-      const date = typeof timestamp === 'number' 
-        ? new Date(timestamp * 1000) 
-        : new Date(timestamp);
+      const date = formatDateForComparison(dateValue);
       
       if (isNaN(date.getTime())) return 'Invalid Date';
       
@@ -145,6 +187,47 @@ const ProductionHistory = () => {
     return `₹${parseFloat(amount || 0).toFixed(2)}`;
   };
 
+  const handleFilterChange = (field, value) => {
+    setFilters(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleClearFilters = () => {
+    setFilters({
+      sku_id: '',
+      start_date: '',
+      end_date: '',
+      traceable_code: '',
+      operator: ''
+    });
+  };
+
+  const handleSort = (field) => {
+    if (sortField === field) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortOrder('desc');
+    }
+  };
+
+  const handleViewDetails = async (productionId) => {
+    try {
+      const response = await fetch(`https://puvi-backend.onrender.com/api/sku/production/${productionId}`);
+      if (!response.ok) throw new Error('Failed to fetch production details');
+      const data = await response.json();
+      
+      // Handle wrapped response
+      if (data.success && data.production) {
+        setSelectedProduction(data.production);
+      } else {
+        setSelectedProduction(data);
+      }
+    } catch (error) {
+      console.error('Error fetching production details:', error);
+      setMessage({ type: 'error', text: 'Failed to load production details' });
+    }
+  };
+
   const exportToCSV = () => {
     const headers = [
       'Production Code',
@@ -155,9 +238,13 @@ const ProductionHistory = () => {
       'Bottles Planned',
       'Bottles Produced',
       'Oil Used (kg)',
+      'Oil Cost',
+      'Material Cost',
+      'Labor Cost',
       'Total Cost',
       'Cost per Bottle',
-      'Operator'
+      'Operator',
+      'Shift'
     ];
     
     const rows = filteredProductions.map(p => {
@@ -170,10 +257,14 @@ const ProductionHistory = () => {
         formatDate(p.production_date),
         p.bottles_planned || 0,
         p.bottles_produced || 0,
-        p.total_oil_quantity || 0,
+        p.total_oil_quantity || p.oil_required || 0,
+        p.oil_cost_total || 0,
+        p.material_cost_total || 0,
+        p.labor_cost_total || 0,
         p.total_production_cost || 0,
-        p.cost_per_bottle || 0,
-        p.operator_name || ''
+        p.cost_per_bottle || (p.total_production_cost / p.bottles_produced).toFixed(2) || 0,
+        p.operator_name || '',
+        p.shift_number || ''
       ];
     });
     
@@ -194,20 +285,33 @@ const ProductionHistory = () => {
   const calculateSummary = () => {
     const summary = {
       totalProductions: filteredProductions.length,
+      totalBottlesPlanned: 0,
       totalBottlesProduced: 0,
       totalOilUsed: 0,
+      totalOilCost: 0,
+      totalMaterialCost: 0,
+      totalLaborCost: 0,
       totalCost: 0,
-      avgCostPerBottle: 0
+      avgCostPerBottle: 0,
+      productionEfficiency: 0
     };
     
     filteredProductions.forEach(p => {
+      summary.totalBottlesPlanned += parseInt(p.bottles_planned || 0);
       summary.totalBottlesProduced += parseInt(p.bottles_produced || 0);
-      summary.totalOilUsed += parseFloat(p.total_oil_quantity || 0);
+      summary.totalOilUsed += parseFloat(p.total_oil_quantity || p.oil_required || 0);
+      summary.totalOilCost += parseFloat(p.oil_cost_total || 0);
+      summary.totalMaterialCost += parseFloat(p.material_cost_total || 0);
+      summary.totalLaborCost += parseFloat(p.labor_cost_total || 0);
       summary.totalCost += parseFloat(p.total_production_cost || 0);
     });
     
     if (summary.totalBottlesProduced > 0) {
       summary.avgCostPerBottle = summary.totalCost / summary.totalBottlesProduced;
+    }
+    
+    if (summary.totalBottlesPlanned > 0) {
+      summary.productionEfficiency = (summary.totalBottlesProduced / summary.totalBottlesPlanned * 100);
     }
     
     return summary;
@@ -293,27 +397,53 @@ const ProductionHistory = () => {
       </div>
       
       <div className="summary-section">
-        <h3>Summary</h3>
+        <h3>Production Summary</h3>
         <div className="summary-grid">
           <div className="summary-item">
             <label>Total Productions:</label>
-            <span>{summary.totalProductions}</span>
+            <span className="value">{summary.totalProductions}</span>
           </div>
           <div className="summary-item">
-            <label>Total Bottles:</label>
-            <span>{summary.totalBottlesProduced.toLocaleString()}</span>
+            <label>Bottles Produced:</label>
+            <span className="value">{summary.totalBottlesProduced.toLocaleString()}</span>
+            <span className="sub-value">({summary.totalBottlesPlanned.toLocaleString()} planned)</span>
+          </div>
+          <div className="summary-item">
+            <label>Production Efficiency:</label>
+            <span className="value">{summary.productionEfficiency.toFixed(1)}%</span>
           </div>
           <div className="summary-item">
             <label>Total Oil Used:</label>
-            <span>{summary.totalOilUsed.toFixed(2)} kg</span>
+            <span className="value">{summary.totalOilUsed.toFixed(2)} kg</span>
           </div>
-          <div className="summary-item">
-            <label>Total Cost:</label>
-            <span>{formatCurrency(summary.totalCost)}</span>
-          </div>
-          <div className="summary-item">
-            <label>Avg Cost/Bottle:</label>
-            <span>{formatCurrency(summary.avgCostPerBottle)}</span>
+        </div>
+        
+        <div className="cost-summary">
+          <h4>Cost Summary</h4>
+          <div className="summary-grid">
+            <div className="summary-item">
+              <label>Oil Cost:</label>
+              <span className="value">{formatCurrency(summary.totalOilCost)}</span>
+              <span className="percentage">({summary.totalCost > 0 ? ((summary.totalOilCost/summary.totalCost)*100).toFixed(1) : 0}%)</span>
+            </div>
+            <div className="summary-item">
+              <label>Material Cost:</label>
+              <span className="value">{formatCurrency(summary.totalMaterialCost)}</span>
+              <span className="percentage">({summary.totalCost > 0 ? ((summary.totalMaterialCost/summary.totalCost)*100).toFixed(1) : 0}%)</span>
+            </div>
+            <div className="summary-item">
+              <label>Labor Cost:</label>
+              <span className="value">{formatCurrency(summary.totalLaborCost)}</span>
+              <span className="percentage">({summary.totalCost > 0 ? ((summary.totalLaborCost/summary.totalCost)*100).toFixed(1) : 0}%)</span>
+            </div>
+            <div className="summary-item total">
+              <label>Total Cost:</label>
+              <span className="value">{formatCurrency(summary.totalCost)}</span>
+            </div>
+            <div className="summary-item">
+              <label>Avg Cost/Bottle:</label>
+              <span className="value">{formatCurrency(summary.avgCostPerBottle)}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -321,21 +451,53 @@ const ProductionHistory = () => {
       <div className="history-table">
         <h3>Production Records</h3>
         {loading ? (
-          <div className="loading">Loading...</div>
+          <div className="loading">Loading production history...</div>
         ) : filteredProductions.length === 0 ? (
-          <div className="no-data">No production records found</div>
+          <div className="no-data">
+            {productions.length === 0 
+              ? "No production records found. Start by creating a production entry."
+              : "No records match the current filters. Try adjusting your filter criteria."}
+          </div>
         ) : (
-          <table>
+          <table className="production-table">
             <thead>
               <tr>
-                <th>Production Code</th>
+                <th onClick={() => handleSort('production_code')}>
+                  Production Code
+                  {sortField === 'production_code' && (
+                    <span className="sort-indicator">{sortOrder === 'asc' ? ' ↑' : ' ↓'}</span>
+                  )}
+                </th>
                 <th>Traceable Code</th>
                 <th>SKU</th>
-                <th>Date</th>
-                <th>Bottles</th>
+                <th onClick={() => handleSort('production_date')}>
+                  Date
+                  {sortField === 'production_date' && (
+                    <span className="sort-indicator">{sortOrder === 'asc' ? ' ↑' : ' ↓'}</span>
+                  )}
+                </th>
+                <th onClick={() => handleSort('bottles_produced')}>
+                  Bottles
+                  {sortField === 'bottles_produced' && (
+                    <span className="sort-indicator">{sortOrder === 'asc' ? ' ↑' : ' ↓'}</span>
+                  )}
+                </th>
                 <th>Oil (kg)</th>
-                <th>Total Cost</th>
-                <th>Cost/Bottle</th>
+                <th>Oil Cost</th>
+                <th>Material Cost</th>
+                <th>Labor Cost</th>
+                <th onClick={() => handleSort('total_production_cost')}>
+                  Total Cost
+                  {sortField === 'total_production_cost' && (
+                    <span className="sort-indicator">{sortOrder === 'asc' ? ' ↑' : ' ↓'}</span>
+                  )}
+                </th>
+                <th onClick={() => handleSort('cost_per_bottle')}>
+                  Cost/Bottle
+                  {sortField === 'cost_per_bottle' && (
+                    <span className="sort-indicator">{sortOrder === 'asc' ? ' ↑' : ' ↓'}</span>
+                  )}
+                </th>
                 <th>Operator</th>
                 <th>Action</th>
               </tr>
@@ -343,22 +505,31 @@ const ProductionHistory = () => {
             <tbody>
               {filteredProductions.map(prod => {
                 const sku = skuList.find(s => s.sku_id === prod.sku_id);
+                const costPerBottle = prod.cost_per_bottle || 
+                  (prod.bottles_produced > 0 ? prod.total_production_cost / prod.bottles_produced : 0);
+                
                 return (
                   <tr key={prod.production_id}>
-                    <td>{prod.production_code}</td>
-                    <td className="traceable-code">{prod.traceable_code}</td>
-                    <td>{sku ? `${sku.sku_code}` : 'N/A'}</td>
+                    <td className="production-code">{prod.production_code || `PROD-${prod.production_id}`}</td>
+                    <td className="traceable-code">{prod.traceable_code || '-'}</td>
+                    <td>{sku ? `${sku.sku_code} - ${sku.product_name}` : '-'}</td>
                     <td>{formatDate(prod.production_date)}</td>
                     <td>
-                      {prod.bottles_produced}/{prod.bottles_planned}
+                      {prod.bottles_produced || 0}
+                      {prod.bottles_planned && prod.bottles_planned !== prod.bottles_produced && (
+                        <span className="planned"> ({prod.bottles_planned} planned)</span>
+                      )}
                     </td>
-                    <td>{parseFloat(prod.total_oil_quantity || 0).toFixed(2)}</td>
-                    <td>{formatCurrency(prod.total_production_cost)}</td>
-                    <td>{formatCurrency(prod.cost_per_bottle)}</td>
-                    <td>{prod.operator_name}</td>
+                    <td>{(prod.total_oil_quantity || prod.oil_required || 0).toFixed(2)}</td>
+                    <td className="cost-cell">{formatCurrency(prod.oil_cost_total)}</td>
+                    <td className="cost-cell">{formatCurrency(prod.material_cost_total)}</td>
+                    <td className="cost-cell">{formatCurrency(prod.labor_cost_total)}</td>
+                    <td className="cost-cell total">{formatCurrency(prod.total_production_cost)}</td>
+                    <td className="cost-cell">{formatCurrency(costPerBottle)}</td>
+                    <td>{prod.operator_name || '-'}</td>
                     <td>
                       <button 
-                        className="btn-sm btn-primary"
+                        className="btn-link"
                         onClick={() => handleViewDetails(prod.production_id)}
                       >
                         View
@@ -376,95 +547,69 @@ const ProductionHistory = () => {
         <div className="modal-overlay" onClick={() => setSelectedProduction(null)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <h3>Production Details</h3>
+            <button className="close-btn" onClick={() => setSelectedProduction(null)}>×</button>
+            
             <div className="detail-grid">
-              <div className="detail-item">
-                <label>Production Code:</label>
-                <span>{selectedProduction.production_code}</span>
+              <div className="detail-section">
+                <h4>Basic Information</h4>
+                <p><strong>Production Code:</strong> {selectedProduction.production_code}</p>
+                <p><strong>Traceable Code:</strong> {selectedProduction.traceable_code}</p>
+                <p><strong>Production Date:</strong> {formatDate(selectedProduction.production_date)}</p>
+                <p><strong>Operator:</strong> {selectedProduction.operator_name}</p>
+                <p><strong>Shift:</strong> {selectedProduction.shift_number}</p>
               </div>
-              <div className="detail-item">
-                <label>Traceable Code:</label>
-                <span className="traceable-code">{selectedProduction.traceable_code}</span>
+              
+              <div className="detail-section">
+                <h4>Production Metrics</h4>
+                <p><strong>Bottles Planned:</strong> {selectedProduction.bottles_planned}</p>
+                <p><strong>Bottles Produced:</strong> {selectedProduction.bottles_produced}</p>
+                <p><strong>Efficiency:</strong> {((selectedProduction.bottles_produced / selectedProduction.bottles_planned) * 100).toFixed(1)}%</p>
+                <p><strong>Oil Used:</strong> {(selectedProduction.total_oil_quantity || 0).toFixed(2)} kg</p>
               </div>
-              <div className="detail-item">
-                <label>Production Date:</label>
-                <span>{formatDate(selectedProduction.production_date)}</span>
+              
+              <div className="detail-section">
+                <h4>Cost Breakdown</h4>
+                <p><strong>Oil Cost:</strong> {formatCurrency(selectedProduction.oil_cost_total)}</p>
+                <p><strong>Material Cost:</strong> {formatCurrency(selectedProduction.material_cost_total)}</p>
+                <p><strong>Labor Cost:</strong> {formatCurrency(selectedProduction.labor_cost_total)}</p>
+                <p className="total"><strong>Total Cost:</strong> {formatCurrency(selectedProduction.total_production_cost)}</p>
+                <p><strong>Cost per Bottle:</strong> {formatCurrency(selectedProduction.cost_per_bottle || 
+                  (selectedProduction.total_production_cost / selectedProduction.bottles_produced))}</p>
               </div>
-              <div className="detail-item">
-                <label>Packing Date:</label>
-                <span>{formatDate(selectedProduction.packing_date)}</span>
-              </div>
-              <div className="detail-item">
-                <label>Bottles Planned:</label>
-                <span>{selectedProduction.bottles_planned}</span>
-              </div>
-              <div className="detail-item">
-                <label>Bottles Produced:</label>
-                <span>{selectedProduction.bottles_produced}</span>
-              </div>
-              <div className="detail-item">
-                <label>Oil Cost:</label>
-                <span>{formatCurrency(selectedProduction.oil_cost_total)}</span>
-              </div>
-              <div className="detail-item">
-                <label>Material Cost:</label>
-                <span>{formatCurrency(selectedProduction.material_cost_total)}</span>
-              </div>
-              <div className="detail-item">
-                <label>Labor Cost:</label>
-                <span>{formatCurrency(selectedProduction.labor_cost_total)}</span>
-              </div>
-              <div className="detail-item">
-                <label>Total Cost:</label>
-                <span>{formatCurrency(selectedProduction.total_production_cost)}</span>
-              </div>
-              <div className="detail-item">
-                <label>Cost per Bottle:</label>
-                <span>{formatCurrency(selectedProduction.cost_per_bottle)}</span>
-              </div>
-              <div className="detail-item">
-                <label>Operator:</label>
-                <span>{selectedProduction.operator_name}</span>
-              </div>
-            </div>
-            
-            {selectedProduction.oil_allocations && selectedProduction.oil_allocations.length > 0 && (
-              <>
-                <h4>Oil Sources</h4>
-                <table className="detail-table">
-                  <thead>
-                    <tr>
-                      <th>Source</th>
-                      <th>Traceable Code</th>
-                      <th>Quantity (kg)</th>
-                      <th>Cost/kg</th>
-                      <th>Total Cost</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {selectedProduction.oil_allocations.map((alloc, idx) => (
-                      <tr key={idx}>
-                        <td>{alloc.source_type}</td>
-                        <td>{alloc.source_traceable_code}</td>
-                        <td>{alloc.quantity_allocated}</td>
-                        <td>{formatCurrency(alloc.oil_cost_per_kg)}</td>
-                        <td>{formatCurrency(alloc.allocation_cost)}</td>
+              
+              {selectedProduction.oil_allocations && selectedProduction.oil_allocations.length > 0 && (
+                <div className="detail-section full-width">
+                  <h4>Oil Sources Used</h4>
+                  <table className="allocation-detail">
+                    <thead>
+                      <tr>
+                        <th>Source</th>
+                        <th>Type</th>
+                        <th>Quantity (kg)</th>
+                        <th>Cost</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </>
-            )}
-            
-            {selectedProduction.notes && (
-              <div className="notes-section">
-                <h4>Notes</h4>
-                <p>{selectedProduction.notes}</p>
-              </div>
-            )}
-            
-            <button className="btn-primary" onClick={() => setSelectedProduction(null)}>
-              Close
-            </button>
+                    </thead>
+                    <tbody>
+                      {selectedProduction.oil_allocations.map((alloc, idx) => (
+                        <tr key={idx}>
+                          <td>{alloc.source_code}</td>
+                          <td>{alloc.source_type}</td>
+                          <td>{alloc.quantity.toFixed(2)}</td>
+                          <td>{formatCurrency(alloc.quantity * alloc.cost_per_kg)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+              
+              {selectedProduction.notes && (
+                <div className="detail-section full-width">
+                  <h4>Notes</h4>
+                  <p>{selectedProduction.notes}</p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}
