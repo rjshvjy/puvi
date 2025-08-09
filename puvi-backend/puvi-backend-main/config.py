@@ -8,3 +8,4 @@ DB_URL = "postgresql://postgres.jkhyjizbfxhmhopqweat:Puvi1570dbUfc@aws-0-ap-sout
 
 
 
+
