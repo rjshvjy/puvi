@@ -1,7 +1,8 @@
-// Production Entry Component for SKU Management
+// Production Entry Component for SKU Management with MRP and Expiry
 // File Path: puvi-frontend/src/modules/SKUManagement/components/ProductionEntry.js
 
 import React, { useState, useEffect } from 'react';
+import api, { skuDateUtils, expiryUtils, formatUtils } from '../../../services/api';
 
 const ProductionEntry = () => {
   const [step, setStep] = useState(1);
@@ -13,9 +14,17 @@ const ProductionEntry = () => {
   const [oilType, setOilType] = useState('');
   const [selectedSKU, setSelectedSKU] = useState(null);
   
+  // MRP and Expiry related state - NEW
+  const [currentMRP, setCurrentMRP] = useState(null);
+  const [shelfLife, setShelfLife] = useState(null);
+  const [expiryDate, setExpiryDate] = useState(null);
+  const [daysToExpiry, setDaysToExpiry] = useState(null);
+  const [expiryStatus, setExpiryStatus] = useState('normal');
+  
   const [productionData, setProductionData] = useState({
     sku_id: '',
     production_date: new Date().toISOString().split('T')[0],
+    packing_date: new Date().toISOString().split('T')[0], // NEW - Required for v2.0
     bottles_planned: '',
     oil_required: 0,
     oil_allocations: [],
@@ -29,11 +38,16 @@ const ProductionEntry = () => {
     labor_cost_total: 0,
     total_production_cost: 0,
     labor_hours: 0,
-    labor_rate: 0
+    labor_rate: 0,
+    // MRP and Expiry fields - NEW
+    mrp_at_production: 0,
+    expiry_date: null,
+    shelf_life_months: null
   });
   
   const [loading, setLoading] = useState(false);
   const [loadingOilSources, setLoadingOilSources] = useState(false);
+  const [loadingMRP, setLoadingMRP] = useState(false);
   const [message, setMessage] = useState({ type: '', text: '' });
 
   // Fetch SKUs on component mount
@@ -43,7 +57,7 @@ const ProductionEntry = () => {
     fetchLaborRates();
   }, []);
 
-  // Update oil type when SKU is selected
+  // Update oil type and fetch MRP/shelf life when SKU is selected
   useEffect(() => {
     if (productionData.sku_id && skuList.length > 0) {
       const selected = skuList.find(s => s.sku_id === parseInt(productionData.sku_id));
@@ -51,6 +65,7 @@ const ProductionEntry = () => {
         setSelectedSKU(selected);
         setOilType(selected.oil_type);
         fetchBOMDetails(selected.sku_id);
+        fetchSKUDetailsWithMRP(selected.sku_id); // NEW - Fetch MRP and shelf life
       }
     }
   }, [productionData.sku_id, skuList]);
@@ -62,17 +77,85 @@ const ProductionEntry = () => {
     }
   }, [oilType]);
 
+  // Calculate expiry date when production date or shelf life changes - NEW
+  useEffect(() => {
+    if (productionData.production_date && shelfLife) {
+      const calculatedExpiry = skuDateUtils.calculateExpiryDate(
+        productionData.production_date, 
+        shelfLife
+      );
+      setExpiryDate(calculatedExpiry);
+      
+      // Calculate days to expiry
+      const days = skuDateUtils.calculateDaysToExpiry(calculatedExpiry);
+      setDaysToExpiry(days);
+      
+      // Get expiry status
+      const status = expiryUtils.getStatus(days);
+      setExpiryStatus(status);
+      
+      // Update production data with expiry
+      setProductionData(prev => ({
+        ...prev,
+        expiry_date: calculatedExpiry,
+        shelf_life_months: shelfLife
+      }));
+    }
+  }, [productionData.production_date, shelfLife]);
+
+  // NEW - Fetch SKU details including MRP and shelf life
+  const fetchSKUDetailsWithMRP = async (skuId) => {
+    setLoadingMRP(true);
+    try {
+      // Fetch SKU details for shelf life
+      const skuDetailsResponse = await api.sku.getSKUDetails(skuId);
+      if (skuDetailsResponse.success && skuDetailsResponse.sku) {
+        const skuData = skuDetailsResponse.sku;
+        setShelfLife(skuData.shelf_life_months);
+        
+        // If MRP is in SKU details, use it
+        if (skuData.mrp_current) {
+          setCurrentMRP(skuData.mrp_current);
+          setProductionData(prev => ({
+            ...prev,
+            mrp_at_production: skuData.mrp_current
+          }));
+        }
+      }
+      
+      // Also fetch current MRP from dedicated endpoint
+      const mrpResponse = await api.sku.getCurrentMRP(skuId);
+      if (mrpResponse.success && mrpResponse.current_mrp) {
+        const mrpAmount = mrpResponse.current_mrp.mrp_amount || 0;
+        setCurrentMRP(mrpAmount);
+        setProductionData(prev => ({
+          ...prev,
+          mrp_at_production: mrpAmount
+        }));
+      }
+    } catch (error) {
+      console.error('Error fetching SKU details with MRP:', error);
+      setMessage({ 
+        type: 'warning', 
+        text: 'Could not fetch MRP/shelf life. Some features may be limited.' 
+      });
+    } finally {
+      setLoadingMRP(false);
+    }
+  };
+
   const fetchSKUs = async () => {
     try {
-      const response = await fetch('https://puvi-backend.onrender.com/api/sku/master?is_active=true');
-      if (!response.ok) throw new Error('Failed to fetch SKUs');
-      const data = await response.json();
+      const response = await api.sku.getMasterList({ is_active: true });
       
-      // FIX: Access data.skus instead of expecting plain array
-      setSKUList(data.skus || []);
-      
-      if (data.skus && data.skus.length === 0) {
-        setMessage({ type: 'warning', text: 'No active SKUs found. Please configure SKUs first.' });
+      if (response.success && response.skus) {
+        setSKUList(response.skus);
+        
+        if (response.skus.length === 0) {
+          setMessage({ type: 'warning', text: 'No active SKUs found. Please configure SKUs first.' });
+        }
+      } else {
+        setSKUList([]);
       }
     } catch (error) {
       console.error('Error fetching SKUs:', error);
@@ -86,42 +169,33 @@ const ProductionEntry = () => {
     
     setLoadingOilSources(true);
     try {
-      // FIX: Use correct unified endpoint with oil_type parameter
-      const response = await fetch(`https://puvi-backend.onrender.com/api/batches_for_oil_type?oil_type=${encodeURIComponent(oilType)}`);
+      const response = await api.blending.getBatchesForOilType(oilType);
       
-      if (!response.ok) {
-        throw new Error(`Failed to fetch oil sources: ${response.status}`);
-      }
-      
-      const data = await response.json();
-      
-      if (!data.success) {
-        throw new Error(data.error || 'Invalid response');
-      }
+      if (response.success && response.batches) {
+        const sources = response.batches.filter(s => s.available_quantity > 0);
+        
+        const mappedSources = sources.map(source => ({
+          id: source.batch_id,
+          type: source.source_type === 'extraction' ? 'batch' : 
+                source.source_type === 'blended' ? 'blend' : 
+                source.source_type,
+          code: source.batch_code || `Source ${source.batch_id}`,
+          oil_type: source.oil_type || oilType,
+          available: source.available_quantity || 0,
+          cost_per_kg: source.cost_per_kg || 0,
+          traceable_code: source.traceable_code || ''
+        }));
 
-      // Access data.batches (combined list of extraction batches and blends)
-      const sources = (data.batches || []).filter(s => s.available_quantity > 0);
-
-      // Map to expected format with correct source_type mapping
-      const mappedSources = sources.map(source => ({
-        id: source.batch_id,
-        type: source.source_type === 'extraction' ? 'batch' : 
-              source.source_type === 'blended' ? 'blend' : 
-              source.source_type,
-        code: source.batch_code || `Source ${source.batch_id}`,
-        oil_type: source.oil_type || oilType,
-        available: source.available_quantity || 0,
-        cost_per_kg: source.cost_per_kg || 0,
-        traceable_code: source.traceable_code || ''
-      }));
-
-      setOilSources(mappedSources);
-      
-      if (mappedSources.length === 0) {
-        setMessage({ 
-          type: 'warning', 
-          text: `No ${oilType} oil available. Please check batch production or blending modules.` 
-        });
+        setOilSources(mappedSources);
+        
+        if (mappedSources.length === 0) {
+          setMessage({ 
+            type: 'warning', 
+            text: `No ${oilType} oil available. Please check batch production or blending modules.` 
+          });
+        }
+      } else {
+        setOilSources([]);
       }
     } catch (error) {
       console.error('Error fetching oil sources:', error);
@@ -137,16 +211,9 @@ const ProductionEntry = () => {
 
   const fetchBOMDetails = async (skuId) => {
     try {
-      const response = await fetch(`https://puvi-backend.onrender.com/api/sku/bom/${skuId}`);
-      if (!response.ok) {
-        console.warn('No BOM configured for this SKU');
-        setBomDetails([]);
-        return;
-      }
-      
-      const data = await response.json();
-      if (data.success && data.bom && data.bom.details) {
-        setBomDetails(data.bom.details);
+      const response = await api.sku.getBOM(skuId);
+      if (response.success && response.bom && response.bom_details) {
+        setBomDetails(response.bom_details);
       } else {
         setBomDetails([]);
       }
@@ -158,10 +225,12 @@ const ProductionEntry = () => {
 
   const fetchMaterials = async () => {
     try {
-      const response = await fetch('https://puvi-backend.onrender.com/api/materials?category=Packing');
-      if (!response.ok) throw new Error('Failed to fetch materials');
-      const data = await response.json();
-      setMaterials(data.materials || data || []);
+      const response = await api.purchase.getMaterials({ category: 'Packing' });
+      if (response.success) {
+        setMaterials(response.materials || []);
+      } else {
+        setMaterials([]);
+      }
     } catch (error) {
       console.error('Error fetching materials:', error);
       setMaterials([]);
@@ -170,24 +239,21 @@ const ProductionEntry = () => {
 
   const fetchLaborRates = async () => {
     try {
-      const response = await fetch('https://puvi-backend.onrender.com/api/cost_elements/master');
-      if (!response.ok) throw new Error('Failed to fetch labor rates');
-      const data = await response.json();
-      
-      // Filter for labor category costs
-      const laborElements = (data.elements || data || []).filter(
-        e => e.category === 'Labor' || e.element_name?.includes('Packaging')
-      );
-      
-      setLaborRates(laborElements);
-      
-      // Set default labor rate if available
-      if (laborElements.length > 0) {
-        const packagingLabor = laborElements.find(e => e.element_name?.includes('Packaging')) || laborElements[0];
-        setProductionData(prev => ({
-          ...prev,
-          labor_rate: packagingLabor.default_rate || 0
-        }));
+      const response = await api.costManagement.getCostElementsMaster();
+      if (response.success) {
+        const laborElements = (response.elements || []).filter(
+          e => e.category === 'Labor' || e.element_name?.includes('Packaging')
+        );
+        
+        setLaborRates(laborElements);
+        
+        if (laborElements.length > 0) {
+          const packagingLabor = laborElements.find(e => e.element_name?.includes('Packaging')) || laborElements[0];
+          setProductionData(prev => ({
+            ...prev,
+            labor_rate: packagingLabor.default_rate || 0
+          }));
+        }
       }
     } catch (error) {
       console.error('Error fetching labor rates:', error);
@@ -198,7 +264,6 @@ const ProductionEntry = () => {
   const calculateOilRequired = (bottlesPlanned) => {
     if (!selectedSKU || !bottlesPlanned) return 0;
     
-    // Extract package size (e.g., "1L" -> 1, "500ml" -> 0.5, "5L" -> 5)
     const packageSize = selectedSKU.package_size || '1L';
     let liters = 1;
     
@@ -208,8 +273,7 @@ const ProductionEntry = () => {
       liters = parseFloat(packageSize);
     }
     
-    // Convert to kg (oil density = 0.91 kg/L for groundnut oil)
-    const oilDensity = 0.91;
+    const oilDensity = selectedSKU.density || 0.91;
     return bottlesPlanned * liters * oilDensity;
   };
 
@@ -222,7 +286,7 @@ const ProductionEntry = () => {
       const material = materials.find(m => m.material_id === item.material_id);
       if (material) {
         const quantityNeeded = item.quantity_per_unit * productionData.bottles_planned;
-        const cost = quantityNeeded * (material.rate || material.cost_per_unit || 0);
+        const cost = quantityNeeded * (material.current_cost || material.rate || material.cost_per_unit || 0);
         totalMaterialCost += cost;
       }
     });
@@ -278,7 +342,6 @@ const ProductionEntry = () => {
     const oilRequired = calculateOilRequired(productionData.bottles_planned);
     setProductionData(prev => ({ ...prev, oil_required: oilRequired }));
     
-    // Check if enough oil is available
     const totalAvailable = oilSources.reduce((sum, source) => sum + source.available, 0);
     
     if (totalAvailable < oilRequired) {
@@ -314,7 +377,6 @@ const ProductionEntry = () => {
       oil_allocations: allocations 
     }));
     
-    // Calculate initial costs
     updateTotalCosts();
     
     setMessage({ type: 'success', text: 'Oil availability checked. Please review allocation.' });
@@ -327,7 +389,6 @@ const ProductionEntry = () => {
       return;
     }
     
-    // Update costs after any manual allocation changes
     updateTotalCosts();
     
     setMessage({ type: 'success', text: 'Oil allocated successfully. Proceed to production entry.' });
@@ -342,62 +403,90 @@ const ProductionEntry = () => {
     
     setLoading(true);
     try {
-      // Final cost calculation
       updateTotalCosts();
       
+      // Prepare payload for v2.0 endpoint
       const payload = {
-        ...productionData,
+        sku_id: parseInt(productionData.sku_id),
         production_date: productionData.production_date,
-        oil_cost_total: productionData.oil_cost_total,
-        material_cost_total: productionData.material_cost_total,
-        labor_cost_total: productionData.labor_cost_total,
-        total_production_cost: productionData.total_production_cost
+        packing_date: productionData.packing_date,
+        bottles_planned: parseInt(productionData.bottles_planned),
+        bottles_produced: parseInt(productionData.bottles_produced),
+        oil_allocations: productionData.oil_allocations.map(alloc => ({
+          source_id: alloc.source_id,
+          source_type: alloc.source_type,
+          quantity_allocated: alloc.quantity,
+          source_traceable_code: alloc.traceable_code
+        })),
+        material_consumptions: bomDetails.map(item => ({
+          material_id: item.material_id,
+          planned_quantity: item.quantity_per_unit * productionData.bottles_planned,
+          actual_quantity: item.quantity_per_unit * productionData.bottles_produced,
+          material_cost_per_unit: materials.find(m => m.material_id === item.material_id)?.current_cost || 0,
+          total_cost: 0 // Will be calculated by backend
+        })),
+        labor_hours: productionData.labor_hours,
+        labor_rate: productionData.labor_rate,
+        operator_name: productionData.operator_name,
+        shift_number: productionData.shift_number,
+        notes: productionData.notes
       };
       
-      const response = await fetch('https://puvi-backend.onrender.com/api/sku/production/save', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
+      // Use new v2.0 endpoint
+      const response = await api.sku.createProduction(payload);
       
-      if (!response.ok) throw new Error('Failed to save production');
-      
-      const data = await response.json();
-      
-      if (!data.success) {
-        throw new Error(data.error || 'Failed to save production');
-      }
-      
-      setMessage({ type: 'success', text: 'Production saved successfully!' });
-      
-      // Reset form after 2 seconds
-      setTimeout(() => {
-        setStep(1);
-        setProductionData({
-          sku_id: '',
-          production_date: new Date().toISOString().split('T')[0],
-          bottles_planned: '',
-          oil_required: 0,
-          oil_allocations: [],
-          bottles_produced: '',
-          operator_name: '',
-          shift_number: 1,
-          notes: '',
-          oil_cost_total: 0,
-          material_cost_total: 0,
-          labor_cost_total: 0,
-          total_production_cost: 0,
-          labor_hours: 0,
-          labor_rate: productionData.labor_rate
+      if (response.success) {
+        setMessage({ 
+          type: 'success', 
+          text: `Production saved successfully! Code: ${response.production_code}. 
+                 MRP: ₹${response.mrp_at_production}, 
+                 Expiry: ${skuDateUtils.formatDateForDisplay(response.expiry_date)}` 
         });
-        setOilSources([]);
-      }, 2000);
+        
+        // Reset form after 3 seconds
+        setTimeout(() => {
+          resetForm();
+        }, 3000);
+      } else {
+        throw new Error(response.error || 'Failed to save production');
+      }
     } catch (error) {
       console.error('Error saving production:', error);
       setMessage({ type: 'error', text: error.message || 'Failed to save production' });
     } finally {
       setLoading(false);
     }
+  };
+
+  const resetForm = () => {
+    setStep(1);
+    setProductionData({
+      sku_id: '',
+      production_date: new Date().toISOString().split('T')[0],
+      packing_date: new Date().toISOString().split('T')[0],
+      bottles_planned: '',
+      oil_required: 0,
+      oil_allocations: [],
+      bottles_produced: '',
+      operator_name: '',
+      shift_number: 1,
+      notes: '',
+      oil_cost_total: 0,
+      material_cost_total: 0,
+      labor_cost_total: 0,
+      total_production_cost: 0,
+      labor_hours: 0,
+      labor_rate: productionData.labor_rate,
+      mrp_at_production: 0,
+      expiry_date: null,
+      shelf_life_months: null
+    });
+    setOilSources([]);
+    setCurrentMRP(null);
+    setShelfLife(null);
+    setExpiryDate(null);
+    setDaysToExpiry(null);
+    setExpiryStatus('normal');
   };
 
   return (
@@ -435,14 +524,73 @@ const ProductionEntry = () => {
             </select>
           </div>
           
+          {/* MRP and Shelf Life Display - NEW */}
+          {selectedSKU && (
+            <div className="sku-details-panel">
+              <div className="detail-row">
+                <label>Current MRP:</label>
+                <span className="value">
+                  {loadingMRP ? 'Loading...' : formatUtils.currency(currentMRP)}
+                </span>
+              </div>
+              <div className="detail-row">
+                <label>Shelf Life:</label>
+                <span className="value">
+                  {shelfLife ? `${shelfLife} months` : 'Not configured'}
+                </span>
+              </div>
+            </div>
+          )}
+          
           <div className="form-group">
             <label>Production Date *</label>
             <input 
               type="date"
               value={productionData.production_date}
-              onChange={(e) => setProductionData(prev => ({ ...prev, production_date: e.target.value }))}
+              onChange={(e) => setProductionData(prev => ({ 
+                ...prev, 
+                production_date: e.target.value,
+                packing_date: e.target.value // Auto-update packing date
+              }))}
             />
           </div>
+          
+          <div className="form-group">
+            <label>Packing Date *</label>
+            <input 
+              type="date"
+              value={productionData.packing_date}
+              onChange={(e) => setProductionData(prev => ({ ...prev, packing_date: e.target.value }))}
+              min={productionData.production_date}
+            />
+          </div>
+          
+          {/* Expiry Date Display - NEW */}
+          {expiryDate && (
+            <div className="expiry-info-panel">
+              <div className="detail-row">
+                <label>Expiry Date:</label>
+                <span className="value">
+                  {skuDateUtils.formatDateForDisplay(expiryDate)}
+                </span>
+              </div>
+              <div className="detail-row">
+                <label>Days to Expiry:</label>
+                <span className={`value expiry-status-${expiryStatus}`}>
+                  {daysToExpiry} days
+                  <span className="status-badge" style={{
+                    backgroundColor: expiryUtils.getStatusColor(expiryStatus),
+                    marginLeft: '10px',
+                    padding: '2px 8px',
+                    borderRadius: '4px',
+                    color: expiryStatus === 'warning' ? '#000' : '#fff'
+                  }}>
+                    {expiryStatus.toUpperCase()}
+                  </span>
+                </span>
+              </div>
+            </div>
+          )}
           
           <div className="form-group">
             <label>Bottles Planned *</label>
@@ -461,13 +609,14 @@ const ProductionEntry = () => {
             <div className="oil-requirement">
               <p>Oil Required: {calculateOilRequired(productionData.bottles_planned).toFixed(2)} kg</p>
               <p>Package Size: {selectedSKU.package_size}</p>
+              <p>Density: {selectedSKU.density || 0.91} kg/L</p>
             </div>
           )}
           
           <button 
             className="btn-primary"
             onClick={handleCheckAvailability}
-            disabled={!productionData.sku_id || !productionData.bottles_planned || loadingOilSources}
+            disabled={!productionData.sku_id || !productionData.bottles_planned || loadingOilSources || loadingMRP}
           >
             {loadingOilSources ? 'Loading Oil Sources...' : 'Check Oil Availability'}
           </button>
@@ -481,6 +630,8 @@ const ProductionEntry = () => {
           <div className="allocation-summary">
             <p><strong>Oil Required:</strong> {productionData.oil_required.toFixed(2)} kg</p>
             <p><strong>Bottles Planned:</strong> {productionData.bottles_planned}</p>
+            <p><strong>MRP:</strong> {formatUtils.currency(currentMRP)}</p>
+            <p><strong>Expiry Date:</strong> {skuDateUtils.formatDateForDisplay(expiryDate)}</p>
           </div>
           
           <h4>Oil Sources Allocation</h4>
@@ -503,7 +654,7 @@ const ProductionEntry = () => {
                     <td>{allocation.source_code}</td>
                     <td>{allocation.source_type}</td>
                     <td>{source?.available.toFixed(2)}</td>
-                    <td>₹{source?.cost_per_kg.toFixed(2)}</td>
+                    <td>{formatUtils.currency(source?.cost_per_kg)}</td>
                     <td>
                       <input 
                         type="number"
@@ -518,7 +669,7 @@ const ProductionEntry = () => {
                         step="0.01"
                       />
                     </td>
-                    <td>₹{(allocation.quantity * (source?.cost_per_kg || 0)).toFixed(2)}</td>
+                    <td>{formatUtils.currency(allocation.quantity * (source?.cost_per_kg || 0))}</td>
                   </tr>
                 );
               })}
@@ -527,7 +678,7 @@ const ProductionEntry = () => {
               <tr>
                 <td colSpan="4"><strong>Total</strong></td>
                 <td><strong>{productionData.oil_allocations.reduce((sum, a) => sum + a.quantity, 0).toFixed(2)}</strong></td>
-                <td><strong>₹{calculateOilCost().toFixed(2)}</strong></td>
+                <td><strong>{formatUtils.currency(calculateOilCost())}</strong></td>
               </tr>
             </tfoot>
           </table>
@@ -538,19 +689,19 @@ const ProductionEntry = () => {
               <tbody>
                 <tr>
                   <td>Oil Cost:</td>
-                  <td>₹{calculateOilCost().toFixed(2)}</td>
+                  <td>{formatUtils.currency(calculateOilCost())}</td>
                 </tr>
                 <tr>
                   <td>Material Cost (BOM):</td>
-                  <td>₹{calculateMaterialCost().toFixed(2)}</td>
+                  <td>{formatUtils.currency(calculateMaterialCost())}</td>
                 </tr>
                 <tr>
                   <td>Labor Cost (Est. 2 hrs):</td>
-                  <td>₹{(2 * productionData.labor_rate).toFixed(2)}</td>
+                  <td>{formatUtils.currency(2 * productionData.labor_rate)}</td>
                 </tr>
                 <tr className="total-row">
                   <td><strong>Total Estimated Cost:</strong></td>
-                  <td><strong>₹{(calculateOilCost() + calculateMaterialCost() + (2 * productionData.labor_rate)).toFixed(2)}</strong></td>
+                  <td><strong>{formatUtils.currency(calculateOilCost() + calculateMaterialCost() + (2 * productionData.labor_rate))}</strong></td>
                 </tr>
               </tbody>
             </table>
@@ -570,6 +721,30 @@ const ProductionEntry = () => {
       {step === 3 && (
         <div className="step-content">
           <h3>Step 3: Enter Production Details</h3>
+          
+          {/* Production Info Panel - Enhanced */}
+          <div className="production-info-panel">
+            <div className="info-grid">
+              <div className="info-item">
+                <label>MRP at Production:</label>
+                <span className="value">{formatUtils.currency(currentMRP)}</span>
+              </div>
+              <div className="info-item">
+                <label>Expiry Date:</label>
+                <span className="value">{skuDateUtils.formatDateForDisplay(expiryDate)}</span>
+              </div>
+              <div className="info-item">
+                <label>Days to Expiry:</label>
+                <span className="value">{daysToExpiry} days</span>
+              </div>
+              <div className="info-item">
+                <label>Status:</label>
+                <span className={`value expiry-status-${expiryStatus}`}>
+                  {expiryStatus.toUpperCase()}
+                </span>
+              </div>
+            </div>
+          </div>
           
           <div className="form-group">
             <label>Bottles Produced *</label>
@@ -653,24 +828,24 @@ const ProductionEntry = () => {
               <tbody>
                 <tr>
                   <td>Oil Cost:</td>
-                  <td>₹{productionData.oil_cost_total.toFixed(2)}</td>
+                  <td>{formatUtils.currency(productionData.oil_cost_total)}</td>
                 </tr>
                 <tr>
                   <td>Material Cost:</td>
-                  <td>₹{productionData.material_cost_total.toFixed(2)}</td>
+                  <td>{formatUtils.currency(productionData.material_cost_total)}</td>
                 </tr>
                 <tr>
                   <td>Labor Cost ({productionData.labor_hours} hrs × ₹{productionData.labor_rate}):</td>
-                  <td>₹{productionData.labor_cost_total.toFixed(2)}</td>
+                  <td>{formatUtils.currency(productionData.labor_cost_total)}</td>
                 </tr>
                 <tr className="total-row">
                   <td><strong>Total Production Cost:</strong></td>
-                  <td><strong>₹{productionData.total_production_cost.toFixed(2)}</strong></td>
+                  <td><strong>{formatUtils.currency(productionData.total_production_cost)}</strong></td>
                 </tr>
                 {productionData.bottles_produced > 0 && (
                   <tr>
                     <td>Cost per Bottle:</td>
-                    <td>₹{(productionData.total_production_cost / productionData.bottles_produced).toFixed(2)}</td>
+                    <td>{formatUtils.currency(productionData.total_production_cost / productionData.bottles_produced)}</td>
                   </tr>
                 )}
               </tbody>
