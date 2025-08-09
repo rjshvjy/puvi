@@ -1,4 +1,4 @@
-// BOM Configuration Component for SKU Management
+// BOM Configuration Component for SKU Management with MRP & Shelf Life
 // File Path: puvi-frontend/src/modules/SKUManagement/components/BOMConfig.js
 
 import React, { useState, useEffect } from 'react';
@@ -14,6 +14,8 @@ const BOMConfig = () => {
   const [message, setMessage] = useState({ type: '', text: '' });
   const [bomHistory, setBomHistory] = useState([]);
   const [showHistory, setShowHistory] = useState(false);
+  const [currentMRP, setCurrentMRP] = useState(null);
+  const [mrpHistory, setMrpHistory] = useState([]);
 
   useEffect(() => {
     fetchSKUs();
@@ -26,10 +28,11 @@ const BOMConfig = () => {
       if (!response.ok) throw new Error('Failed to fetch SKUs');
       const data = await response.json();
       
-      // FIX: Handle wrapped response
-      setSKUList(data.skus || []);
+      // Handle both wrapped and unwrapped responses
+      const skuData = data.skus || data || [];
+      setSKUList(Array.isArray(skuData) ? skuData : []);
       
-      if (data.skus && data.skus.length === 0) {
+      if (skuData.length === 0) {
         setMessage({ type: 'warning', text: 'No active SKUs found. Please configure SKUs first.' });
       }
     } catch (error) {
@@ -45,9 +48,9 @@ const BOMConfig = () => {
       if (!response.ok) throw new Error('Failed to fetch materials');
       const data = await response.json();
       
-      // FIX: Handle wrapped response and correct field names
+      // Handle wrapped response and correct field names
       const materialsList = data.materials || data || [];
-      setMaterials(materialsList);
+      setMaterials(Array.isArray(materialsList) ? materialsList : []);
       
       if (materialsList.length === 0) {
         setMessage({ type: 'info', text: 'No packing materials found. Please add materials first.' });
@@ -59,13 +62,41 @@ const BOMConfig = () => {
     }
   };
 
+  const fetchCurrentMRP = async (skuId) => {
+    try {
+      const response = await fetch(`https://puvi-backend.onrender.com/api/sku/current-mrp/${skuId}`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.current_mrp) {
+          setCurrentMRP(data.current_mrp);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching current MRP:', error);
+    }
+  };
+
+  const fetchMRPHistory = async (skuId) => {
+    try {
+      const response = await fetch(`https://puvi-backend.onrender.com/api/sku/mrp-history/${skuId}`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success && data.mrp_history) {
+          setMrpHistory(data.mrp_history);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching MRP history:', error);
+    }
+  };
+
   const fetchBOM = async (skuId) => {
     try {
       const response = await fetch(`https://puvi-backend.onrender.com/api/sku/bom/${skuId}`);
       if (response.ok) {
         const data = await response.json();
         
-        // FIX: Handle wrapped response
+        // Handle wrapped response
         if (data.success && data.bom) {
           setCurrentBOM(data.bom);
           setBomDetails(data.bom.details || []);
@@ -103,11 +134,15 @@ const BOMConfig = () => {
       const sku = skuList.find(s => s.sku_id === parseInt(skuId));
       setSelectedSKUData(sku);
       fetchBOM(skuId);
+      fetchCurrentMRP(skuId);
+      fetchMRPHistory(skuId);
     } else {
       setSelectedSKUData(null);
       setCurrentBOM(null);
       setBomDetails([]);
       setBomHistory([]);
+      setCurrentMRP(null);
+      setMrpHistory([]);
     }
   };
 
@@ -156,7 +191,7 @@ const BOMConfig = () => {
           updated[index].applicable_sizes = ['1L', '500ml'];
         }
         
-        // Update cost fields - FIX: Use correct field names
+        // Update cost fields - Use correct field names
         const unitCost = material.rate || material.cost_per_unit || material.current_cost || 0;
         updated[index].unit_cost = unitCost;
         updated[index].total_cost = unitCost * updated[index].quantity_per_unit;
@@ -316,6 +351,8 @@ const BOMConfig = () => {
     return breakdown;
   };
 
+
+
   return (
     <div className="bom-config">
       <h2>BOM Configuration</h2>
@@ -343,11 +380,31 @@ const BOMConfig = () => {
           <>
             <div className="sku-info">
               <h4>SKU Details</h4>
-              <p><strong>Product:</strong> {selectedSKUData.product_name}</p>
-              <p><strong>Oil Type:</strong> {selectedSKUData.oil_type}</p>
-              <p><strong>Package Size:</strong> {selectedSKUData.package_size}</p>
-              <p><strong>Status:</strong> {selectedSKUData.is_active ? 'Active' : 'Inactive'}</p>
+              <div className="info-grid">
+                <div>
+                  <p><strong>Product:</strong> {selectedSKUData.product_name}</p>
+                  <p><strong>Oil Type:</strong> {selectedSKUData.oil_type}</p>
+                  <p><strong>Package Size:</strong> {selectedSKUData.package_size}</p>
+                  <p><strong>Status:</strong> {selectedSKUData.is_active ? 'Active' : 'Inactive'}</p>
+                </div>
+                <div>
+                  <p><strong>Current MRP:</strong> <span className="highlight-mrp">₹{selectedSKUData.mrp_current || 'Not set'}</span></p>
+                  <p><strong>Shelf Life:</strong> {selectedSKUData.shelf_life_months || 'Not set'} months</p>
+                  <p><strong>MRP Effective:</strong> {selectedSKUData.mrp_effective_date || 'N/A'}</p>
+                  <p><strong>Density:</strong> {selectedSKUData.density || 0.92} kg/L</p>
+                </div>
+              </div>
             </div>
+
+            {/* MRP History Summary */}
+            {mrpHistory.length > 0 && (
+              <div className="mrp-history-summary">
+                <p className="mrp-info">
+                  <strong>MRP Changes:</strong> {mrpHistory.length} revision(s) | 
+                  Last changed by: {mrpHistory[0]?.changed_by || 'N/A'}
+                </p>
+              </div>
+            )}
 
             {currentBOM && (
               <div className="bom-info">
@@ -579,6 +636,32 @@ const BOMConfig = () => {
           </>
         )}
       </div>
+
+      <style jsx>{`
+        .info-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 20px;
+        }
+
+        .highlight-mrp {
+          color: #4CAF50;
+          font-size: 1.2em;
+          font-weight: bold;
+        }
+
+        .mrp-history-summary {
+          background: #f0f8ff;
+          padding: 10px;
+          border-radius: 4px;
+          margin: 10px 0;
+        }
+
+        .mrp-info {
+          margin: 0;
+          color: #2196F3;
+        }
+      `}</style>
     </div>
   );
 };
