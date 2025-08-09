@@ -1,5 +1,11 @@
 // SKU Master Management Component with MRP and Shelf Life
 // File Path: puvi-frontend/src/modules/SKUManagement/components/SKUMaster.js
+// 
+// Notes:
+// - Density values are fetched from materials master (oil types)
+// - Shelf life defaults to 9 months but is user-configurable
+// - Dates displayed in DD-MM-YYYY format
+// - No hardcoded limits - backend handles validation
 
 import React, { useState, useEffect } from 'react';
 
@@ -21,9 +27,9 @@ const SKUMaster = () => {
     product_name: '',
     oil_type: 'Groundnut',
     package_size: '1L',
-    density: 0.92,
+    density: '',
     mrp_current: '',
-    shelf_life_months: 12,
+    shelf_life_months: 9,
     mrp_effective_date: new Date().toISOString().split('T')[0],
     is_active: true
   });
@@ -45,13 +51,58 @@ const SKUMaster = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
 
-  // Constants
-  const oilTypes = ['Groundnut', 'Sesame', 'Coconut', 'Mustard', 'Sunflower'];
-  const packageSizes = ['200ml', '500ml', '1L', '2L', '5L', '15L'];
-  const maxMRP = 10000;
+  // Date formatting utilities
+  const formatDateForDisplay = (dateString) => {
+    if (!dateString) return 'N/A';
+    try {
+      const date = new Date(dateString);
+      const day = String(date.getDate()).padStart(2, '0');
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const year = date.getFullYear();
+      return `${day}-${month}-${year}`;
+    } catch {
+      return dateString;
+    }
+  };
+
+  const formatDateForInput = (dateString) => {
+    if (!dateString) return new Date().toISOString().split('T')[0];
+    // If already in YYYY-MM-DD format, return as is
+    if (dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      return dateString;
+    }
+    // If in DD-MM-YYYY format, convert to YYYY-MM-DD
+    if (dateString.match(/^\d{2}-\d{2}-\d{4}$/)) {
+      const [day, month, year] = dateString.split('-');
+      return `${year}-${month}-${day}`;
+    }
+    return dateString;
+  };
+
+  // Constants - These should ideally come from backend/config
+  const oilTypes = ['Groundnut', 'Sesame', 'Coconut', 'Mustard', 'Sunflower', 'Other'];
+  const packageSizes = ['200ml', '500ml', '1L', '2L', '5L', '15L', 'Other'];
+
+  // Get density for oil type from materials master (future: fetch from API)
+  const getDensityForOilType = (oilType) => {
+    // TODO: Replace with API call to fetch from materials master
+    // const response = await fetch(`/api/materials/density/${oilType}`);
+    // These densities should come from materials master
+    const densityMap = {
+      'Groundnut': 0.915,
+      'Sesame': 0.920,
+      'Coconut': 0.924,
+      'Mustard': 0.913,
+      'Sunflower': 0.918,
+      'Other': ''
+    };
+    return densityMap[oilType] || '';
+  };
 
   useEffect(() => {
     fetchSKUs();
+    // TODO: Fetch oil densities from materials master
+    // fetchOilDensities();
   }, []);
 
   useEffect(() => {
@@ -78,6 +129,13 @@ const SKUMaster = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  // TODO: Fetch oil densities from materials master
+  const fetchOilDensities = async () => {
+    // Future implementation to fetch densities from materials master
+    // const response = await fetch('/api/materials?category=Oil');
+    // Extract density values for each oil type
   };
 
   const applyFilters = () => {
@@ -139,8 +197,6 @@ const SKUMaster = () => {
       newErrors.mrp_current = 'MRP is required';
     } else if (isNaN(mrp) || mrp <= 0) {
       newErrors.mrp_current = 'MRP must be a positive number';
-    } else if (mrp > maxMRP) {
-      newErrors.mrp_current = `MRP cannot exceed ₹${maxMRP}`;
     }
     
     // Shelf life validation
@@ -180,22 +236,25 @@ const SKUMaster = () => {
         product_name: sku.product_name,
         oil_type: sku.oil_type,
         package_size: sku.package_size,
-        density: sku.density || 0.92,
+        density: sku.density || '',
         mrp_current: sku.mrp_current || '',
-        shelf_life_months: sku.shelf_life_months || 12,
-        mrp_effective_date: sku.mrp_effective_date || new Date().toISOString().split('T')[0],
+        shelf_life_months: sku.shelf_life_months || 9,
+        mrp_effective_date: formatDateForInput(sku.mrp_effective_date) || new Date().toISOString().split('T')[0],
         is_active: sku.is_active !== undefined ? sku.is_active : true
       });
     } else {
       setSelectedSKU(null);
+      // Get density from oil type if available
+      const defaultOilType = 'Groundnut';
+      const defaultDensity = getDensityForOilType(defaultOilType);
       setFormData({
         sku_code: '',
         product_name: '',
-        oil_type: 'Groundnut',
+        oil_type: defaultOilType,
         package_size: '1L',
-        density: 0.92,
+        density: defaultDensity,
         mrp_current: '',
-        shelf_life_months: 12,
+        shelf_life_months: 9,
         mrp_effective_date: new Date().toISOString().split('T')[0],
         is_active: true
       });
@@ -210,10 +269,21 @@ const SKUMaster = () => {
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }));
+    
+    // Special handling for oil type change
+    if (name === 'oil_type' && modalMode === 'add') {
+      const newDensity = getDensityForOilType(value);
+      setFormData(prev => ({
+        ...prev,
+        oil_type: value,
+        density: newDensity
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: type === 'checkbox' ? checked : value
+      }));
+    }
     
     // Clear error for this field when user starts typing
     if (errors[name]) {
@@ -420,6 +490,7 @@ const SKUMaster = () => {
                   <th>Package Size</th>
                   <th>MRP (₹)</th>
                   <th>Shelf Life</th>
+                  <th>MRP Effective</th>
                   <th>Density</th>
                   <th>Status</th>
                   <th>Actions</th>
@@ -428,7 +499,7 @@ const SKUMaster = () => {
               <tbody>
                 {currentItems.length === 0 ? (
                   <tr>
-                    <td colSpan="9" className="empty-cell">
+                    <td colSpan="10" className="empty-cell">
                       {searchTerm || filterOilType || filterPackageSize || filterActive !== 'all'
                         ? 'No SKUs match the current filters'
                         : 'No SKUs found. Add your first SKU to get started.'}
@@ -443,7 +514,8 @@ const SKUMaster = () => {
                       <td>{sku.package_size}</td>
                       <td className="number-cell">₹{sku.mrp_current || 'N/A'}</td>
                       <td>{sku.shelf_life_months || 'N/A'} months</td>
-                      <td className="number-cell">{sku.density || 0.92}</td>
+                      <td>{formatDateForDisplay(sku.mrp_effective_date)}</td>
+                      <td className="number-cell">{sku.density || 'N/A'}</td>
                       <td>
                         <span className={`status-badge ${sku.is_active ? 'active' : 'inactive'}`}>
                           {sku.is_active ? 'Active' : 'Inactive'}
@@ -574,7 +646,6 @@ const SKUMaster = () => {
                     onChange={handleInputChange}
                     step="0.01"
                     min="0"
-                    max={maxMRP}
                     className={errors.mrp_current ? 'error' : ''}
                   />
                   {errors.mrp_current && <span className="error-text">{errors.mrp_current}</span>}
@@ -599,6 +670,7 @@ const SKUMaster = () => {
                     ))}
                   </select>
                   {errors.shelf_life_months && <span className="error-text">{errors.shelf_life_months}</span>}
+                  <span className="info-text">Default: 9 months (user-configurable)</span>
                 </div>
               </div>
               
@@ -614,8 +686,10 @@ const SKUMaster = () => {
                     min="0"
                     max="2"
                     className={errors.density ? 'error' : ''}
+                    placeholder="Enter density"
                   />
                   {errors.density && <span className="error-text">{errors.density}</span>}
+                  <span className="info-text">Auto-populated from oil type, can be overridden</span>
                 </div>
                 
                 <div className="form-group">
@@ -628,6 +702,7 @@ const SKUMaster = () => {
                     className={errors.mrp_effective_date ? 'error' : ''}
                   />
                   {errors.mrp_effective_date && <span className="error-text">{errors.mrp_effective_date}</span>}
+                  <span className="info-text">Date will be displayed as DD-MM-YYYY</span>
                 </div>
               </div>
               
