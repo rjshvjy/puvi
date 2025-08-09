@@ -84,8 +84,8 @@ const ProductionEntry = () => {
     
     if (skuId) {
       const sku = skuList.find(s => s.sku_id === parseInt(skuId));
-      if (sku && prev.bottles_planned) {
-        const oilRequired = calculateOilRequired(sku, prev.bottles_planned);
+      if (sku && productionData.bottles_planned) {
+        const oilRequired = calculateOilRequired(sku, productionData.bottles_planned);
         setProductionData(prev => ({ ...prev, oil_required: oilRequired }));
       }
     }
