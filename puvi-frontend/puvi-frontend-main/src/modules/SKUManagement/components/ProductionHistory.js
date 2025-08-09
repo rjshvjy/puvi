@@ -1,7 +1,8 @@
-// Production History Component for SKU Management
+// Production History Component with MRP and Expiry Tracking
 // File Path: puvi-frontend/src/modules/SKUManagement/components/ProductionHistory.js
 
 import React, { useState, useEffect } from 'react';
+import api, { skuDateUtils, expiryUtils, formatUtils } from '../../../services/api';
 
 const ProductionHistory = () => {
   const [productions, setProductions] = useState([]);
@@ -12,7 +13,8 @@ const ProductionHistory = () => {
     start_date: '',
     end_date: '',
     traceable_code: '',
-    operator: ''
+    operator: '',
+    expiry_status: '' // NEW - Expiry status filter
   });
   const [selectedProduction, setSelectedProduction] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -31,12 +33,12 @@ const ProductionHistory = () => {
 
   const fetchSKUs = async () => {
     try {
-      const response = await fetch('https://puvi-backend.onrender.com/api/sku/master?is_active=true');
-      if (!response.ok) throw new Error('Failed to fetch SKUs');
-      const data = await response.json();
-      
-      // FIX: Handle wrapped response
-      setSKUList(data.skus || []);
+      const response = await api.sku.getMasterList({ is_active: true });
+      if (response.success && response.skus) {
+        setSKUList(response.skus);
+      } else {
+        setSKUList([]);
+      }
     } catch (error) {
       console.error('Error fetching SKUs:', error);
       setSKUList([]);
@@ -46,18 +48,49 @@ const ProductionHistory = () => {
   const fetchProductions = async () => {
     setLoading(true);
     try {
-      const response = await fetch('https://puvi-backend.onrender.com/api/sku/production/history');
-      if (!response.ok) throw new Error('Failed to fetch production history');
-      const data = await response.json();
+      const response = await api.sku.getProductionHistory();
       
-      // FIX: Handle wrapped response and proper field names
-      if (data.success && data.productions) {
-        setProductions(data.productions);
-        setFilteredProductions(data.productions);
-      } else if (Array.isArray(data)) {
+      if (response.success && response.productions) {
+        // Process productions to add calculated fields
+        const processedProductions = response.productions.map(prod => {
+          // Calculate days to expiry if expiry_date exists
+          let daysToExpiry = null;
+          let expiryStatus = 'unknown';
+          
+          if (prod.expiry_date) {
+            daysToExpiry = skuDateUtils.calculateDaysToExpiry(prod.expiry_date);
+            expiryStatus = expiryUtils.getStatus(daysToExpiry);
+          }
+          
+          return {
+            ...prod,
+            days_to_expiry: daysToExpiry !== null ? daysToExpiry : prod.days_to_expiry,
+            expiry_status: expiryStatus !== 'unknown' ? expiryStatus : prod.expiry_status
+          };
+        });
+        
+        setProductions(processedProductions);
+        setFilteredProductions(processedProductions);
+      } else if (Array.isArray(response)) {
         // Handle if backend returns plain array
-        setProductions(data);
-        setFilteredProductions(data);
+        const processedProductions = response.map(prod => {
+          let daysToExpiry = null;
+          let expiryStatus = 'unknown';
+          
+          if (prod.expiry_date) {
+            daysToExpiry = skuDateUtils.calculateDaysToExpiry(prod.expiry_date);
+            expiryStatus = expiryUtils.getStatus(daysToExpiry);
+          }
+          
+          return {
+            ...prod,
+            days_to_expiry: daysToExpiry !== null ? daysToExpiry : prod.days_to_expiry,
+            expiry_status: expiryStatus !== 'unknown' ? expiryStatus : prod.expiry_status
+          };
+        });
+        
+        setProductions(processedProductions);
+        setFilteredProductions(processedProductions);
       } else {
         setProductions([]);
         setFilteredProductions([]);
@@ -110,6 +143,11 @@ const ProductionHistory = () => {
       );
     }
     
+    // NEW - Expiry status filter
+    if (filters.expiry_status) {
+      filtered = filtered.filter(p => p.expiry_status === filters.expiry_status);
+    }
+    
     // Apply sorting
     filtered.sort((a, b) => {
       let aVal, bVal;
@@ -118,6 +156,18 @@ const ProductionHistory = () => {
         case 'production_date':
           aVal = formatDateForComparison(a.production_date);
           bVal = formatDateForComparison(b.production_date);
+          break;
+        case 'expiry_date': // NEW
+          aVal = a.expiry_date ? formatDateForComparison(a.expiry_date) : new Date(9999, 11, 31);
+          bVal = b.expiry_date ? formatDateForComparison(b.expiry_date) : new Date(9999, 11, 31);
+          break;
+        case 'days_to_expiry': // NEW
+          aVal = a.days_to_expiry !== null ? a.days_to_expiry : 9999;
+          bVal = b.days_to_expiry !== null ? b.days_to_expiry : 9999;
+          break;
+        case 'mrp_at_production': // NEW
+          aVal = parseFloat(a.mrp_at_production || 0);
+          bVal = parseFloat(b.mrp_at_production || 0);
           break;
         case 'total_production_cost':
           aVal = parseFloat(a.total_production_cost || 0);
@@ -168,23 +218,12 @@ const ProductionHistory = () => {
     if (!dateValue) return 'N/A';
     
     try {
-      const date = formatDateForComparison(dateValue);
-      
-      if (isNaN(date.getTime())) return 'Invalid Date';
-      
-      return date.toLocaleDateString('en-IN', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-      });
+      // Use the utility function for consistent formatting
+      return skuDateUtils.formatDateForDisplay(dateValue);
     } catch (error) {
       console.error('Date formatting error:', error);
       return 'N/A';
     }
-  };
-
-  const formatCurrency = (amount) => {
-    return `₹${parseFloat(amount || 0).toFixed(2)}`;
   };
 
   const handleFilterChange = (field, value) => {
@@ -197,7 +236,8 @@ const ProductionHistory = () => {
       start_date: '',
       end_date: '',
       traceable_code: '',
-      operator: ''
+      operator: '',
+      expiry_status: ''
     });
   };
 
@@ -212,15 +252,12 @@ const ProductionHistory = () => {
 
   const handleViewDetails = async (productionId) => {
     try {
-      const response = await fetch(`https://puvi-backend.onrender.com/api/sku/production/${productionId}`);
-      if (!response.ok) throw new Error('Failed to fetch production details');
-      const data = await response.json();
+      const response = await api.sku.getProductionDetails(productionId);
       
-      // Handle wrapped response
-      if (data.success && data.production) {
-        setSelectedProduction(data.production);
+      if (response.success && response.production) {
+        setSelectedProduction(response.production);
       } else {
-        setSelectedProduction(data);
+        setSelectedProduction(response);
       }
     } catch (error) {
       console.error('Error fetching production details:', error);
@@ -243,6 +280,10 @@ const ProductionHistory = () => {
       'Labor Cost',
       'Total Cost',
       'Cost per Bottle',
+      'MRP at Production', // NEW
+      'Expiry Date', // NEW
+      'Days to Expiry', // NEW
+      'Status', // NEW
       'Operator',
       'Shift'
     ];
@@ -263,6 +304,10 @@ const ProductionHistory = () => {
         p.labor_cost_total || 0,
         p.total_production_cost || 0,
         p.cost_per_bottle || (p.total_production_cost / p.bottles_produced).toFixed(2) || 0,
+        p.mrp_at_production || 0, // NEW
+        formatDate(p.expiry_date), // NEW
+        p.days_to_expiry !== null ? p.days_to_expiry : 'N/A', // NEW
+        p.expiry_status || 'N/A', // NEW
         p.operator_name || '',
         p.shift_number || ''
       ];
@@ -293,7 +338,14 @@ const ProductionHistory = () => {
       totalLaborCost: 0,
       totalCost: 0,
       avgCostPerBottle: 0,
-      productionEfficiency: 0
+      productionEfficiency: 0,
+      // NEW - Expiry related summary
+      expiredCount: 0,
+      criticalCount: 0,
+      warningCount: 0,
+      normalCount: 0,
+      avgMRP: 0,
+      totalMRPValue: 0
     };
     
     filteredProductions.forEach(p => {
@@ -304,10 +356,22 @@ const ProductionHistory = () => {
       summary.totalMaterialCost += parseFloat(p.material_cost_total || 0);
       summary.totalLaborCost += parseFloat(p.labor_cost_total || 0);
       summary.totalCost += parseFloat(p.total_production_cost || 0);
+      
+      // NEW - Count by expiry status
+      if (p.expiry_status === 'expired') summary.expiredCount++;
+      else if (p.expiry_status === 'critical') summary.criticalCount++;
+      else if (p.expiry_status === 'warning') summary.warningCount++;
+      else if (p.expiry_status === 'normal') summary.normalCount++;
+      
+      // NEW - MRP calculations
+      if (p.mrp_at_production) {
+        summary.totalMRPValue += parseFloat(p.mrp_at_production) * parseInt(p.bottles_produced || 0);
+      }
     });
     
     if (summary.totalBottlesProduced > 0) {
       summary.avgCostPerBottle = summary.totalCost / summary.totalBottlesProduced;
+      summary.avgMRP = summary.totalMRPValue / summary.totalBottlesProduced;
     }
     
     if (summary.totalBottlesPlanned > 0) {
@@ -318,6 +382,11 @@ const ProductionHistory = () => {
   };
 
   const summary = calculateSummary();
+
+  // NEW - Get row class based on expiry status
+  const getRowClass = (expiryStatus) => {
+    return `production-row expiry-${expiryStatus || 'unknown'}`;
+  };
 
   return (
     <div className="production-history">
@@ -384,6 +453,22 @@ const ProductionHistory = () => {
               placeholder="Search operator..."
             />
           </div>
+          
+          {/* NEW - Expiry status filter */}
+          <div className="filter-item">
+            <label>Expiry Status:</label>
+            <select 
+              value={filters.expiry_status} 
+              onChange={(e) => handleFilterChange('expiry_status', e.target.value)}
+            >
+              <option value="">All Status</option>
+              <option value="expired">Expired</option>
+              <option value="critical">Critical (&lt;30 days)</option>
+              <option value="warning">Warning (30-60 days)</option>
+              <option value="caution">Caution (60-90 days)</option>
+              <option value="normal">Normal (&gt;90 days)</option>
+            </select>
+          </div>
         </div>
         
         <div className="filter-actions">
@@ -418,31 +503,65 @@ const ProductionHistory = () => {
           </div>
         </div>
         
+        {/* NEW - Expiry Status Summary */}
+        <div className="expiry-summary">
+          <h4>Expiry Status Overview</h4>
+          <div className="expiry-grid">
+            {summary.expiredCount > 0 && (
+              <div className="expiry-item expired">
+                <label>Expired:</label>
+                <span className="value">{summary.expiredCount}</span>
+              </div>
+            )}
+            {summary.criticalCount > 0 && (
+              <div className="expiry-item critical">
+                <label>Critical:</label>
+                <span className="value">{summary.criticalCount}</span>
+              </div>
+            )}
+            {summary.warningCount > 0 && (
+              <div className="expiry-item warning">
+                <label>Warning:</label>
+                <span className="value">{summary.warningCount}</span>
+              </div>
+            )}
+            <div className="expiry-item normal">
+              <label>Normal:</label>
+              <span className="value">{summary.normalCount}</span>
+            </div>
+          </div>
+        </div>
+        
         <div className="cost-summary">
           <h4>Cost Summary</h4>
           <div className="summary-grid">
             <div className="summary-item">
               <label>Oil Cost:</label>
-              <span className="value">{formatCurrency(summary.totalOilCost)}</span>
+              <span className="value">{formatUtils.currency(summary.totalOilCost)}</span>
               <span className="percentage">({summary.totalCost > 0 ? ((summary.totalOilCost/summary.totalCost)*100).toFixed(1) : 0}%)</span>
             </div>
             <div className="summary-item">
               <label>Material Cost:</label>
-              <span className="value">{formatCurrency(summary.totalMaterialCost)}</span>
+              <span className="value">{formatUtils.currency(summary.totalMaterialCost)}</span>
               <span className="percentage">({summary.totalCost > 0 ? ((summary.totalMaterialCost/summary.totalCost)*100).toFixed(1) : 0}%)</span>
             </div>
             <div className="summary-item">
               <label>Labor Cost:</label>
-              <span className="value">{formatCurrency(summary.totalLaborCost)}</span>
+              <span className="value">{formatUtils.currency(summary.totalLaborCost)}</span>
               <span className="percentage">({summary.totalCost > 0 ? ((summary.totalLaborCost/summary.totalCost)*100).toFixed(1) : 0}%)</span>
             </div>
             <div className="summary-item total">
               <label>Total Cost:</label>
-              <span className="value">{formatCurrency(summary.totalCost)}</span>
+              <span className="value">{formatUtils.currency(summary.totalCost)}</span>
             </div>
             <div className="summary-item">
               <label>Avg Cost/Bottle:</label>
-              <span className="value">{formatCurrency(summary.avgCostPerBottle)}</span>
+              <span className="value">{formatUtils.currency(summary.avgCostPerBottle)}</span>
+            </div>
+            {/* NEW - Average MRP */}
+            <div className="summary-item">
+              <label>Avg MRP/Bottle:</label>
+              <span className="value">{formatUtils.currency(summary.avgMRP)}</span>
             </div>
           </div>
         </div>
@@ -483,6 +602,29 @@ const ProductionHistory = () => {
                   )}
                 </th>
                 <th>Oil (kg)</th>
+                {/* NEW - MRP Column */}
+                <th onClick={() => handleSort('mrp_at_production')}>
+                  MRP
+                  {sortField === 'mrp_at_production' && (
+                    <span className="sort-indicator">{sortOrder === 'asc' ? ' ↑' : ' ↓'}</span>
+                  )}
+                </th>
+                {/* NEW - Expiry Date Column */}
+                <th onClick={() => handleSort('expiry_date')}>
+                  Expiry
+                  {sortField === 'expiry_date' && (
+                    <span className="sort-indicator">{sortOrder === 'asc' ? ' ↑' : ' ↓'}</span>
+                  )}
+                </th>
+                {/* NEW - Days to Expiry Column */}
+                <th onClick={() => handleSort('days_to_expiry')}>
+                  Days
+                  {sortField === 'days_to_expiry' && (
+                    <span className="sort-indicator">{sortOrder === 'asc' ? ' ↑' : ' ↓'}</span>
+                  )}
+                </th>
+                {/* NEW - Status Column */}
+                <th>Status</th>
                 <th>Oil Cost</th>
                 <th>Material Cost</th>
                 <th>Labor Cost</th>
@@ -509,7 +651,7 @@ const ProductionHistory = () => {
                   (prod.bottles_produced > 0 ? prod.total_production_cost / prod.bottles_produced : 0);
                 
                 return (
-                  <tr key={prod.production_id}>
+                  <tr key={prod.production_id} className={getRowClass(prod.expiry_status)}>
                     <td className="production-code">{prod.production_code || `PROD-${prod.production_id}`}</td>
                     <td className="traceable-code">{prod.traceable_code || '-'}</td>
                     <td>{sku ? `${sku.sku_code} - ${sku.product_name}` : '-'}</td>
@@ -521,11 +663,35 @@ const ProductionHistory = () => {
                       )}
                     </td>
                     <td>{(prod.total_oil_quantity || prod.oil_required || 0).toFixed(2)}</td>
-                    <td className="cost-cell">{formatCurrency(prod.oil_cost_total)}</td>
-                    <td className="cost-cell">{formatCurrency(prod.material_cost_total)}</td>
-                    <td className="cost-cell">{formatCurrency(prod.labor_cost_total)}</td>
-                    <td className="cost-cell total">{formatCurrency(prod.total_production_cost)}</td>
-                    <td className="cost-cell">{formatCurrency(costPerBottle)}</td>
+                    {/* NEW - MRP Cell */}
+                    <td className="mrp-cell">{formatUtils.currency(prod.mrp_at_production)}</td>
+                    {/* NEW - Expiry Date Cell */}
+                    <td className="expiry-date-cell">{formatDate(prod.expiry_date)}</td>
+                    {/* NEW - Days to Expiry Cell */}
+                    <td className={`days-to-expiry-cell ${prod.expiry_status}`}>
+                      {prod.days_to_expiry !== null ? prod.days_to_expiry : 'N/A'}
+                    </td>
+                    {/* NEW - Status Cell with Badge */}
+                    <td className="status-cell">
+                      <span 
+                        className="expiry-status-badge"
+                        style={{
+                          backgroundColor: expiryUtils.getStatusColor(prod.expiry_status),
+                          color: prod.expiry_status === 'warning' || prod.expiry_status === 'caution' ? '#000' : '#fff',
+                          padding: '2px 8px',
+                          borderRadius: '4px',
+                          fontSize: '11px',
+                          fontWeight: 'bold'
+                        }}
+                      >
+                        {(prod.expiry_status || 'unknown').toUpperCase()}
+                      </span>
+                    </td>
+                    <td className="cost-cell">{formatUtils.currency(prod.oil_cost_total)}</td>
+                    <td className="cost-cell">{formatUtils.currency(prod.material_cost_total)}</td>
+                    <td className="cost-cell">{formatUtils.currency(prod.labor_cost_total)}</td>
+                    <td className="cost-cell total">{formatUtils.currency(prod.total_production_cost)}</td>
+                    <td className="cost-cell">{formatUtils.currency(costPerBottle)}</td>
                     <td>{prod.operator_name || '-'}</td>
                     <td>
                       <button 
@@ -543,6 +709,7 @@ const ProductionHistory = () => {
         )}
       </div>
       
+      {/* Production Details Modal */}
       {selectedProduction && (
         <div className="modal-overlay" onClick={() => setSelectedProduction(null)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
@@ -559,6 +726,28 @@ const ProductionHistory = () => {
                 <p><strong>Shift:</strong> {selectedProduction.shift_number}</p>
               </div>
               
+              {/* NEW - MRP and Expiry Section */}
+              <div className="detail-section">
+                <h4>MRP & Expiry Information</h4>
+                <p><strong>MRP at Production:</strong> {formatUtils.currency(selectedProduction.mrp_at_production)}</p>
+                <p><strong>Expiry Date:</strong> {formatDate(selectedProduction.expiry_date)}</p>
+                <p><strong>Days to Expiry:</strong> {selectedProduction.days_to_expiry || 'N/A'}</p>
+                <p><strong>Status:</strong> 
+                  <span 
+                    className="expiry-status-badge"
+                    style={{
+                      backgroundColor: expiryUtils.getStatusColor(selectedProduction.expiry_status),
+                      color: selectedProduction.expiry_status === 'warning' || selectedProduction.expiry_status === 'caution' ? '#000' : '#fff',
+                      padding: '2px 8px',
+                      borderRadius: '4px',
+                      marginLeft: '10px'
+                    }}
+                  >
+                    {(selectedProduction.expiry_status || 'unknown').toUpperCase()}
+                  </span>
+                </p>
+              </div>
+              
               <div className="detail-section">
                 <h4>Production Metrics</h4>
                 <p><strong>Bottles Planned:</strong> {selectedProduction.bottles_planned}</p>
@@ -569,11 +758,11 @@ const ProductionHistory = () => {
               
               <div className="detail-section">
                 <h4>Cost Breakdown</h4>
-                <p><strong>Oil Cost:</strong> {formatCurrency(selectedProduction.oil_cost_total)}</p>
-                <p><strong>Material Cost:</strong> {formatCurrency(selectedProduction.material_cost_total)}</p>
-                <p><strong>Labor Cost:</strong> {formatCurrency(selectedProduction.labor_cost_total)}</p>
-                <p className="total"><strong>Total Cost:</strong> {formatCurrency(selectedProduction.total_production_cost)}</p>
-                <p><strong>Cost per Bottle:</strong> {formatCurrency(selectedProduction.cost_per_bottle || 
+                <p><strong>Oil Cost:</strong> {formatUtils.currency(selectedProduction.oil_cost_total)}</p>
+                <p><strong>Material Cost:</strong> {formatUtils.currency(selectedProduction.material_cost_total)}</p>
+                <p><strong>Labor Cost:</strong> {formatUtils.currency(selectedProduction.labor_cost_total)}</p>
+                <p className="total"><strong>Total Cost:</strong> {formatUtils.currency(selectedProduction.total_production_cost)}</p>
+                <p><strong>Cost per Bottle:</strong> {formatUtils.currency(selectedProduction.cost_per_bottle || 
                   (selectedProduction.total_production_cost / selectedProduction.bottles_produced))}</p>
               </div>
               
@@ -586,16 +775,18 @@ const ProductionHistory = () => {
                         <th>Source</th>
                         <th>Type</th>
                         <th>Quantity (kg)</th>
-                        <th>Cost</th>
+                        <th>Cost/kg</th>
+                        <th>Total Cost</th>
                       </tr>
                     </thead>
                     <tbody>
                       {selectedProduction.oil_allocations.map((alloc, idx) => (
                         <tr key={idx}>
-                          <td>{alloc.source_code}</td>
+                          <td>{alloc.source_code || alloc.source_traceable_code}</td>
                           <td>{alloc.source_type}</td>
-                          <td>{alloc.quantity.toFixed(2)}</td>
-                          <td>{formatCurrency(alloc.quantity * alloc.cost_per_kg)}</td>
+                          <td>{(alloc.quantity_allocated || alloc.quantity || 0).toFixed(2)}</td>
+                          <td>{formatUtils.currency(alloc.oil_cost_per_kg || alloc.cost_per_kg || 0)}</td>
+                          <td>{formatUtils.currency((alloc.quantity_allocated || alloc.quantity || 0) * (alloc.oil_cost_per_kg || alloc.cost_per_kg || 0))}</td>
                         </tr>
                       ))}
                     </tbody>
