@@ -1,3 +1,4 @@
+# File Path: puvi-backend/utils/date_utils.py
 """
 Date utilities for PUVI Oil Manufacturing System
 Handles date conversions between different formats and database storage
@@ -135,6 +136,34 @@ def format_date_for_display(date_value):
         try:
             days = parse_date(date_value)
             return integer_to_date(days)
+        except:
+            return date_value
+    return ''
+
+
+def format_date_indian(date_value):
+    """
+    Format date in Indian format (DD-MM-YYYY)
+    This function is used by sku_production module for report formatting
+    
+    Args:
+        date_value: Integer (days since epoch), date object, or string
+    
+    Returns:
+        str: Date formatted as DD-MM-YYYY
+    """
+    if date_value is None:
+        return ''
+    
+    if isinstance(date_value, int):
+        return integer_to_date(date_value, '%d-%m-%Y')
+    elif isinstance(date_value, (datetime, date)):
+        return date_value.strftime('%d-%m-%Y')
+    elif isinstance(date_value, str):
+        try:
+            # Try to parse and reformat
+            days = parse_date(date_value)
+            return integer_to_date(days, '%d-%m-%Y')
         except:
             return date_value
     return ''
