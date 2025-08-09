@@ -1,13 +1,7 @@
-// SKU Master Management Component with MRP and Shelf Life
 // File Path: puvi-frontend/src/modules/SKUManagement/components/SKUMaster.js
-// 
-// Notes:
-// - Density values are fetched from materials master (oil types)
-// - Shelf life defaults to 9 months but is user-configurable
-// - Dates displayed in DD-MM-YYYY format
-// - Oil types and densities fetched dynamically from materials API
 
 import React, { useState, useEffect } from 'react';
+import './SKUMaster.css';
 
 const SKUMaster = () => {
   // State management
@@ -21,12 +15,13 @@ const SKUMaster = () => {
   const [modalMode, setModalMode] = useState('add'); // 'add' or 'edit'
   const [selectedSKU, setSelectedSKU] = useState(null);
   
-  // Materials and oil types states - FIXED
-  const [oilMaterials, setOilMaterials] = useState([]);
-  const [oilTypes, setOilTypes] = useState([]);
-  const [densityMap, setDensityMap] = useState({});
-  const [packageSizes, setPackageSizes] = useState([]);
-  const [loadingMaterials, setLoadingMaterials] = useState(false);
+  // Delete confirmation
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  
+  // Oil types and package sizes
+  const [oilTypes, setOilTypes] = useState(['Groundnut Oil', 'Coconut Oil', 'Sesame Oil']);
+  const [packageSizes, setPackageSizes] = useState(['500ml', '1L', '5L', '15L']);
   
   // Form states
   const [formData, setFormData] = useState({
@@ -34,7 +29,7 @@ const SKUMaster = () => {
     product_name: '',
     oil_type: '',
     package_size: '1L',
-    density: '',
+    density: 0.91,
     mrp_current: '',
     shelf_life_months: 9,
     mrp_effective_date: new Date().toISOString().split('T')[0],
@@ -53,209 +48,45 @@ const SKUMaster = () => {
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
-  
-  // Delete confirmation
-  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
-  const [deleteTarget, setDeleteTarget] = useState(null);
 
-  // Date formatting utilities
-  const formatDateForDisplay = (dateString) => {
-    if (!dateString) return 'N/A';
-    try {
-      const date = new Date(dateString);
-      const day = String(date.getDate()).padStart(2, '0');
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const year = date.getFullYear();
-      return `${day}-${month}-${year}`;
-    } catch {
-      return dateString;
-    }
-  };
-
-  const formatDateForInput = (dateString) => {
-    if (!dateString) return new Date().toISOString().split('T')[0];
-    // If already in YYYY-MM-DD format, return as is
-    if (dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
-      return dateString;
-    }
-    // If in DD-MM-YYYY format, convert to YYYY-MM-DD
-    if (dateString.match(/^\d{2}-\d{2}-\d{4}$/)) {
-      const [day, month, year] = dateString.split('-');
-      return `${year}-${month}-${day}`;
-    }
-    return dateString;
-  };
-
-  // Fetch oil materials and extract density - FIXED
-  const fetchOilMaterials = async () => {
-    setLoadingMaterials(true);
-    try {
-      const response = await fetch('https://puvi-backend.onrender.com/api/materials?category=Oil');
-      if (!response.ok) throw new Error('Failed to fetch materials');
-      
-      const data = await response.json();
-      
-      // Handle wrapped response
-      const materials = data.materials || data || [];
-      
-      if (Array.isArray(materials) && materials.length > 0) {
-        setOilMaterials(materials);
-        
-        // Create density map and oil types from materials
-        const newDensityMap = {};
-        const uniqueOilTypes = new Set();
-        
-        materials.forEach(material => {
-          // Extract oil type from material name
-          // e.g., "Groundnut Oil" -> "Groundnut"
-          const materialName = material.material_name || '';
-          let oilType = materialName.replace(/\s*Oil\s*$/i, '').trim();
-          
-          // Only process if we have a valid oil type and density
-          if (oilType && material.density) {
-            uniqueOilTypes.add(oilType);
-            // Use the density from the material, default to 0.91 if not present
-            newDensityMap[oilType] = parseFloat(material.density) || 0.91;
-          }
-        });
-        
-        // Convert Set to Array and sort
-        const oilTypesArray = Array.from(uniqueOilTypes).sort();
-        
-        // Add 'Other' option if not present
-        if (!oilTypesArray.includes('Other')) {
-          oilTypesArray.push('Other');
-        }
-        
-        setOilTypes(oilTypesArray);
-        setDensityMap(newDensityMap);
-        
-        console.log('Loaded oil types:', oilTypesArray);
-        console.log('Density map:', newDensityMap);
-      } else {
-        // If no materials found, set default values
-        console.warn('No oil materials found, using defaults');
-        setOilTypes(['Groundnut', 'Sesame', 'Coconut', 'Mustard', 'Sunflower', 'Other']);
-        setDensityMap({
-          'Groundnut': 0.915,
-          'Sesame': 0.920,
-          'Coconut': 0.924,
-          'Mustard': 0.913,
-          'Sunflower': 0.918
-        });
-      }
-    } catch (error) {
-      console.error('Error fetching oil materials:', error);
-      // Set fallback values if API fails
-      setOilTypes(['Groundnut', 'Sesame', 'Coconut', 'Mustard', 'Sunflower', 'Other']);
-      setDensityMap({
-        'Groundnut': 0.915,
-        'Sesame': 0.920,
-        'Coconut': 0.924,
-        'Mustard': 0.913,
-        'Sunflower': 0.918
-      });
-      setMessage({ 
-        type: 'warning', 
-        text: 'Could not fetch oil materials. Using default values.' 
-      });
-    } finally {
-      setLoadingMaterials(false);
-    }
-  };
-
-  // Fetch package sizes from existing SKUs - NEW
-  const fetchPackageSizes = async () => {
-    try {
-      const response = await fetch('https://puvi-backend.onrender.com/api/sku/master');
-      if (!response.ok) throw new Error('Failed to fetch SKUs for package sizes');
-      
-      const data = await response.json();
-      
-      if (data.success && data.skus) {
-        const sizes = new Set();
-        
-        // Add standard sizes first
-        ['200ml', '500ml', '1L', '2L', '5L', '15L'].forEach(size => sizes.add(size));
-        
-        // Add any unique sizes from existing SKUs
-        data.skus.forEach(sku => {
-          if (sku.package_size) {
-            sizes.add(sku.package_size);
-          }
-        });
-        
-        // Convert to array and sort
-        const sizesArray = Array.from(sizes).sort((a, b) => {
-          // Custom sort to put ml before L
-          const aVal = a.includes('ml') ? parseFloat(a) : parseFloat(a) * 1000;
-          const bVal = b.includes('ml') ? parseFloat(b) : parseFloat(b) * 1000;
-          return aVal - bVal;
-        });
-        
-        // Add 'Other' at the end if not present
-        if (!sizesArray.includes('Other')) {
-          sizesArray.push('Other');
-        }
-        
-        setPackageSizes(sizesArray);
-      } else {
-        // Default package sizes
-        setPackageSizes(['200ml', '500ml', '1L', '2L', '5L', '15L', 'Other']);
-      }
-    } catch (error) {
-      console.error('Error fetching package sizes:', error);
-      // Set default package sizes
-      setPackageSizes(['200ml', '500ml', '1L', '2L', '5L', '15L', 'Other']);
-    }
-  };
-
-  // Get density for oil type from materials master
-  const getDensityForOilType = (oilType) => {
-    // Use density from fetched materials
-    return densityMap[oilType] || '';
-  };
-
+  // Fetch SKUs on component mount
   useEffect(() => {
-    // Fetch materials first, then SKUs
-    fetchOilMaterials().then(() => {
-      fetchSKUs();
-      fetchPackageSizes();
-    });
+    fetchSKUs();
   }, []);
 
+  // Apply filters whenever filter values or SKU list changes
   useEffect(() => {
     applyFilters();
   }, [searchTerm, filterOilType, filterPackageSize, filterActive, skuList]);
 
+  // Fetch SKUs from API
   const fetchSKUs = async () => {
     setLoading(true);
     try {
       const response = await fetch('https://puvi-backend.onrender.com/api/sku/master');
-      if (!response.ok) throw new Error('Failed to fetch SKUs');
-      
       const data = await response.json();
       
-      if (data.success) {
+      if (response.ok && data.success) {
         setSKUList(data.skus || []);
       } else {
         throw new Error(data.error || 'Failed to fetch SKUs');
       }
     } catch (error) {
       console.error('Error fetching SKUs:', error);
-      setMessage({ type: 'error', text: error.message });
+      setMessage({ type: 'error', text: 'Failed to load SKUs' });
       setSKUList([]);
     } finally {
       setLoading(false);
     }
   };
 
+  // Apply filters to SKU list
   const applyFilters = () => {
     let filtered = [...skuList];
     
     // Search filter
     if (searchTerm) {
-      filtered = filtered.filter(sku => 
+      filtered = filtered.filter(sku =>
         sku.sku_code.toLowerCase().includes(searchTerm.toLowerCase()) ||
         sku.product_name.toLowerCase().includes(searchTerm.toLowerCase())
       );
@@ -272,154 +103,138 @@ const SKUMaster = () => {
     }
     
     // Active status filter
-    if (filterActive !== 'all') {
-      filtered = filtered.filter(sku => 
-        filterActive === 'active' ? sku.is_active : !sku.is_active
-      );
+    if (filterActive === 'active') {
+      filtered = filtered.filter(sku => sku.is_active);
+    } else if (filterActive === 'inactive') {
+      filtered = filtered.filter(sku => !sku.is_active);
     }
     
     setFilteredList(filtered);
     setCurrentPage(1); // Reset to first page when filters change
   };
 
-  const validateForm = () => {
-    const newErrors = {};
+  // Pagination
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredList.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredList.length / itemsPerPage);
+
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+
+  // Format date for display
+  const formatDateForDisplay = (dateInt) => {
+    if (!dateInt) return 'N/A';
     
-    // SKU Code validation
-    if (!formData.sku_code.trim()) {
-      newErrors.sku_code = 'SKU Code is required';
-    } else if (modalMode === 'add') {
-      // Check for duplicate SKU code only in add mode
-      const duplicate = skuList.find(s => 
-        s.sku_code.toLowerCase() === formData.sku_code.toLowerCase()
-      );
-      if (duplicate) {
-        newErrors.sku_code = 'SKU Code already exists';
+    try {
+      if (typeof dateInt === 'number') {
+        // Convert integer date to readable format
+        const dateStr = dateInt.toString();
+        const year = parseInt(dateStr.substring(0, 4));
+        const month = parseInt(dateStr.substring(4, 6));
+        const day = parseInt(dateStr.substring(6, 8));
+        return `${day.toString().padStart(2, '0')}-${month.toString().padStart(2, '0')}-${year}`;
+      } else if (typeof dateInt === 'string') {
+        const date = new Date(dateInt);
+        return date.toLocaleDateString('en-IN');
       }
+      return 'N/A';
+    } catch (error) {
+      return 'N/A';
     }
-    
-    // Product name validation
-    if (!formData.product_name.trim()) {
-      newErrors.product_name = 'Product Name is required';
-    }
-    
-    // Oil type validation
-    if (!formData.oil_type) {
-      newErrors.oil_type = 'Oil Type is required';
-    }
-    
-    // Package size validation
-    if (!formData.package_size) {
-      newErrors.package_size = 'Package Size is required';
-    }
-    
-    // MRP validation
-    const mrp = parseFloat(formData.mrp_current);
-    if (!formData.mrp_current) {
-      newErrors.mrp_current = 'MRP is required';
-    } else if (isNaN(mrp) || mrp <= 0) {
-      newErrors.mrp_current = 'MRP must be a positive number';
-    }
-    
-    // Shelf life validation
-    const shelfLife = parseInt(formData.shelf_life_months);
-    if (!formData.shelf_life_months) {
-      newErrors.shelf_life_months = 'Shelf Life is required';
-    } else if (isNaN(shelfLife) || shelfLife < 1 || shelfLife > 60) {
-      newErrors.shelf_life_months = 'Shelf Life must be between 1 and 60 months';
-    }
-    
-    // Density validation
-    const density = parseFloat(formData.density);
-    if (!formData.density) {
-      newErrors.density = 'Density is required';
-    } else if (isNaN(density) || density <= 0 || density > 2) {
-      newErrors.density = 'Density must be between 0 and 2';
-    }
-    
-    // MRP Effective Date validation
-    if (!formData.mrp_effective_date) {
-      newErrors.mrp_effective_date = 'MRP Effective Date is required';
-    }
-    
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
   };
 
+  // Handle modal open
   const handleOpenModal = (mode, sku = null) => {
     setModalMode(mode);
-    setShowModal(true);
-    setErrors({});
+    setSelectedSKU(sku);
     
     if (mode === 'edit' && sku) {
-      setSelectedSKU(sku);
       setFormData({
         sku_code: sku.sku_code,
         product_name: sku.product_name,
         oil_type: sku.oil_type,
         package_size: sku.package_size,
-        density: sku.density || '',
+        density: sku.density || 0.91,
         mrp_current: sku.mrp_current || '',
         shelf_life_months: sku.shelf_life_months || 9,
-        mrp_effective_date: formatDateForInput(sku.mrp_effective_date) || new Date().toISOString().split('T')[0],
+        mrp_effective_date: sku.mrp_effective_date || new Date().toISOString().split('T')[0],
         is_active: sku.is_active !== undefined ? sku.is_active : true
       });
     } else {
-      setSelectedSKU(null);
-      // Set first oil type as default if available
-      const defaultOilType = oilTypes.length > 0 ? oilTypes[0] : '';
-      const defaultDensity = defaultOilType ? getDensityForOilType(defaultOilType) : '';
-      
+      // Reset form for add mode
       setFormData({
         sku_code: '',
         product_name: '',
-        oil_type: defaultOilType,
+        oil_type: '',
         package_size: '1L',
-        density: defaultDensity,
+        density: 0.91,
         mrp_current: '',
         shelf_life_months: 9,
         mrp_effective_date: new Date().toISOString().split('T')[0],
         is_active: true
       });
     }
+    
+    setErrors({});
+    setShowModal(true);
   };
 
+  // Handle modal close
   const handleCloseModal = () => {
     setShowModal(false);
     setSelectedSKU(null);
+    setFormData({
+      sku_code: '',
+      product_name: '',
+      oil_type: '',
+      package_size: '1L',
+      density: 0.91,
+      mrp_current: '',
+      shelf_life_months: 9,
+      mrp_effective_date: new Date().toISOString().split('T')[0],
+      is_active: true
+    });
     setErrors({});
   };
 
+  // Handle input change
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
     
-    // Special handling for oil type change
-    if (name === 'oil_type') {
-      const newDensity = getDensityForOilType(value);
-      setFormData(prev => ({
-        ...prev,
-        oil_type: value,
-        density: newDensity // Auto-populate density, user can override
-      }));
-    } else {
-      setFormData(prev => ({
-        ...prev,
-        [name]: type === 'checkbox' ? checked : value
-      }));
-    }
-    
-    // Clear error for this field when user starts typing
+    // Clear error for this field
     if (errors[name]) {
       setErrors(prev => ({ ...prev, [name]: '' }));
     }
   };
 
+  // Validate form
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!formData.sku_code) newErrors.sku_code = 'SKU Code is required';
+    if (!formData.product_name) newErrors.product_name = 'Product Name is required';
+    if (!formData.oil_type) newErrors.oil_type = 'Oil Type is required';
+    if (!formData.package_size) newErrors.package_size = 'Package Size is required';
+    if (!formData.mrp_current || formData.mrp_current <= 0) {
+      newErrors.mrp_current = 'Valid MRP is required';
+    }
+    if (!formData.shelf_life_months || formData.shelf_life_months <= 0) {
+      newErrors.shelf_life_months = 'Valid shelf life is required';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!validateForm()) {
-      return;
-    }
+    if (!validateForm()) return;
     
     setLoading(true);
     try {
@@ -429,25 +244,10 @@ const SKUMaster = () => {
       
       const method = modalMode === 'add' ? 'POST' : 'PUT';
       
-      // Prepare data for submission
-      const submitData = {
-        ...formData,
-        mrp_current: parseFloat(formData.mrp_current),
-        shelf_life_months: parseInt(formData.shelf_life_months),
-        density: parseFloat(formData.density)
-      };
-      
-      // Add change reason for MRP updates
-      if (modalMode === 'edit' && selectedSKU && 
-          parseFloat(formData.mrp_current) !== parseFloat(selectedSKU.mrp_current)) {
-        submitData.change_reason = 'MRP Update via SKU Master';
-        submitData.changed_by = 'User'; // In production, get from auth context
-      }
-      
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(submitData)
+        body: JSON.stringify(formData)
       });
       
       const data = await response.json();
@@ -472,17 +272,19 @@ const SKUMaster = () => {
     }
   };
 
+  // Handle delete
   const handleDelete = (sku) => {
     setDeleteTarget(sku);
     setShowDeleteConfirm(true);
   };
 
+  // Confirm delete
   const confirmDelete = async () => {
     if (!deleteTarget) return;
     
     setLoading(true);
     try {
-      // For now, we'll just deactivate instead of deleting
+      // Deactivate instead of hard delete
       const response = await fetch(
         `https://puvi-backend.onrender.com/api/sku/master/${deleteTarget.sku_id}`,
         {
@@ -510,6 +312,7 @@ const SKUMaster = () => {
     }
   };
 
+  // Clear filters
   const clearFilters = () => {
     setSearchTerm('');
     setFilterOilType('');
@@ -517,50 +320,34 @@ const SKUMaster = () => {
     setFilterActive('all');
   };
 
-  // Pagination calculations
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = filteredList.slice(indexOfFirstItem, indexOfLastItem);
-  const totalPages = Math.ceil(filteredList.length / itemsPerPage);
-
-  const paginate = (pageNumber) => setCurrentPage(pageNumber);
-
-  // Generate shelf life options (1-60 months)
-  const shelfLifeOptions = Array.from({ length: 60 }, (_, i) => i + 1);
-
   return (
-    <div className="sku-master">
-      <div className="header-section">
+    <div className="sku-master-container">
+      {/* Header with Add Button */}
+      <div className="sku-header">
         <h2>SKU Master Management</h2>
         <button 
-          className="btn-primary" 
+          className="btn-add-sku" 
           onClick={() => handleOpenModal('add')}
-          disabled={loadingMaterials || oilTypes.length === 0}
         >
           + Add New SKU
         </button>
       </div>
 
+      {/* Message Display */}
       {message.text && (
-        <div className={`alert ${message.type}`}>
+        <div className={`message ${message.type}`}>
           {message.text}
-          <button onClick={() => setMessage({ type: '', text: '' })} className="close-alert">×</button>
+          <button onClick={() => setMessage({ type: '', text: '' })}>×</button>
         </div>
       )}
 
-      {loadingMaterials && (
-        <div className="info-message">
-          Loading oil materials and density information...
-        </div>
-      )}
-
-      {/* Filters Section */}
+      {/* Filters */}
       <div className="filters-section">
         <div className="filter-row">
           <div className="filter-group search-group">
             <input
               type="text"
-              placeholder="Search by SKU Code or Product Name..."
+              placeholder="Search by SKU Code or Product Name"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="search-input"
@@ -602,7 +389,7 @@ const SKUMaster = () => {
             </select>
           </div>
           
-          <button className="btn-secondary" onClick={clearFilters}>
+          <button className="btn-clear-filters" onClick={clearFilters}>
             Clear Filters
           </button>
         </div>
@@ -645,10 +432,16 @@ const SKUMaster = () => {
                       <td>{sku.product_name}</td>
                       <td>{sku.oil_type}</td>
                       <td>{sku.package_size}</td>
-                      <td className="number-cell">₹{sku.mrp_current || 'N/A'}</td>
-                      <td>{sku.shelf_life_months || 'N/A'} months</td>
+                      <td className="number-cell">
+                        {sku.mrp_current ? `₹${sku.mrp_current}` : 'N/A'}
+                      </td>
+                      <td>
+                        {sku.shelf_life_months ? `${sku.shelf_life_months} months` : 'N/A'}
+                      </td>
                       <td>{formatDateForDisplay(sku.mrp_effective_date)}</td>
-                      <td className="number-cell">{sku.density || 'N/A'}</td>
+                      <td className="number-cell">
+                        {sku.density ? sku.density.toFixed(2) : '0.91'}
+                      </td>
                       <td>
                         <span className={`status-badge ${sku.is_active ? 'active' : 'inactive'}`}>
                           {sku.is_active ? 'Active' : 'Inactive'}
@@ -750,17 +543,12 @@ const SKUMaster = () => {
                     onChange={handleInputChange}
                     className={errors.oil_type ? 'error' : ''}
                   >
-                    <option value="">-- Select Oil Type --</option>
+                    <option value="">Select Oil Type</option>
                     {oilTypes.map(type => (
                       <option key={type} value={type}>{type}</option>
                     ))}
                   </select>
                   {errors.oil_type && <span className="error-text">{errors.oil_type}</span>}
-                  {formData.oil_type && densityMap[formData.oil_type] && (
-                    <span className="info-text">
-                      Standard density: {densityMap[formData.oil_type]} kg/L
-                    </span>
-                  )}
                 </div>
                 
                 <div className="form-group">
@@ -771,7 +559,6 @@ const SKUMaster = () => {
                     onChange={handleInputChange}
                     className={errors.package_size ? 'error' : ''}
                   >
-                    <option value="">-- Select Package Size --</option>
                     {packageSizes.map(size => (
                       <option key={size} value={size}>{size}</option>
                     ))}
@@ -788,69 +575,50 @@ const SKUMaster = () => {
                     name="mrp_current"
                     value={formData.mrp_current}
                     onChange={handleInputChange}
-                    step="0.01"
                     min="0"
+                    step="0.01"
                     className={errors.mrp_current ? 'error' : ''}
                   />
                   {errors.mrp_current && <span className="error-text">{errors.mrp_current}</span>}
-                  {modalMode === 'edit' && selectedSKU && 
-                   parseFloat(formData.mrp_current) !== parseFloat(selectedSKU.mrp_current) && (
-                    <span className="info-text">MRP change will be tracked in history</span>
-                  )}
                 </div>
                 
                 <div className="form-group">
-                  <label>Shelf Life (months) <span className="required">*</span></label>
-                  <select
-                    name="shelf_life_months"
-                    value={formData.shelf_life_months}
-                    onChange={handleInputChange}
-                    className={errors.shelf_life_months ? 'error' : ''}
-                  >
-                    {shelfLifeOptions.map(month => (
-                      <option key={month} value={month}>
-                        {month} {month === 1 ? 'month' : 'months'}
-                      </option>
-                    ))}
-                  </select>
-                  {errors.shelf_life_months && <span className="error-text">{errors.shelf_life_months}</span>}
-                  <span className="info-text">Default: 9 months (user-configurable)</span>
-                </div>
-              </div>
-              
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Density (kg/L) <span className="required">*</span></label>
-                  <input
-                    type="number"
-                    name="density"
-                    value={formData.density}
-                    onChange={handleInputChange}
-                    step="0.001"
-                    min="0"
-                    max="2"
-                    className={errors.density ? 'error' : ''}
-                    placeholder="Enter density"
-                  />
-                  {errors.density && <span className="error-text">{errors.density}</span>}
-                  <span className="info-text">
-                    {formData.oil_type && densityMap[formData.oil_type] 
-                      ? 'Auto-populated from materials master, can be overridden'
-                      : 'Enter density manually for this oil type'}
-                  </span>
-                </div>
-                
-                <div className="form-group">
-                  <label>MRP Effective Date <span className="required">*</span></label>
+                  <label>MRP Effective Date</label>
                   <input
                     type="date"
                     name="mrp_effective_date"
                     value={formData.mrp_effective_date}
                     onChange={handleInputChange}
-                    className={errors.mrp_effective_date ? 'error' : ''}
                   />
-                  {errors.mrp_effective_date && <span className="error-text">{errors.mrp_effective_date}</span>}
-                  <span className="info-text">Date will be displayed as DD-MM-YYYY</span>
+                </div>
+              </div>
+              
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Shelf Life (Months) <span className="required">*</span></label>
+                  <input
+                    type="number"
+                    name="shelf_life_months"
+                    value={formData.shelf_life_months}
+                    onChange={handleInputChange}
+                    min="1"
+                    max="36"
+                    className={errors.shelf_life_months ? 'error' : ''}
+                  />
+                  {errors.shelf_life_months && <span className="error-text">{errors.shelf_life_months}</span>}
+                </div>
+                
+                <div className="form-group">
+                  <label>Density</label>
+                  <input
+                    type="number"
+                    name="density"
+                    value={formData.density}
+                    onChange={handleInputChange}
+                    min="0.1"
+                    max="2"
+                    step="0.01"
+                  />
                 </div>
               </div>
               
@@ -865,17 +633,14 @@ const SKUMaster = () => {
                     />
                     Active Status
                   </label>
-                  <span className="info-text">
-                    Inactive SKUs cannot be used in production
-                  </span>
                 </div>
               </div>
               
-              <div className="modal-footer">
+              <div className="form-actions">
                 <button type="button" className="btn-cancel" onClick={handleCloseModal}>
                   Cancel
                 </button>
-                <button type="submit" className="btn-primary" disabled={loading}>
+                <button type="submit" className="btn-submit" disabled={loading}>
                   {loading ? 'Saving...' : (modalMode === 'add' ? 'Create SKU' : 'Update SKU')}
                 </button>
               </div>
@@ -884,7 +649,7 @@ const SKUMaster = () => {
         </div>
       )}
 
-      {/* Delete Confirmation */}
+      {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
         <div className="modal-overlay">
           <div className="modal-content small">
@@ -894,458 +659,30 @@ const SKUMaster = () => {
             <div className="modal-body">
               <p>Are you sure you want to deactivate this SKU?</p>
               <p><strong>{deleteTarget?.sku_code} - {deleteTarget?.product_name}</strong></p>
-              <p className="warning-text">This SKU will no longer be available for production.</p>
-            </div>
-            <div className="modal-footer">
-              <button 
-                className="btn-cancel" 
-                onClick={() => setShowDeleteConfirm(false)}
-              >
-                Cancel
-              </button>
-              <button 
-                className="btn-danger" 
-                onClick={confirmDelete}
-                disabled={loading}
-              >
-                {loading ? 'Deactivating...' : 'Deactivate'}
-              </button>
+              <p className="warning-text">This will mark the SKU as inactive.</p>
+              
+              <div className="form-actions">
+                <button 
+                  className="btn-cancel" 
+                  onClick={() => {
+                    setShowDeleteConfirm(false);
+                    setDeleteTarget(null);
+                  }}
+                >
+                  Cancel
+                </button>
+                <button 
+                  className="btn-danger" 
+                  onClick={confirmDelete}
+                  disabled={loading}
+                >
+                  {loading ? 'Deactivating...' : 'Deactivate'}
+                </button>
+              </div>
             </div>
           </div>
         </div>
       )}
-
-      <style jsx>{`
-        .sku-master {
-          padding: 20px;
-        }
-
-        .header-section {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 20px;
-        }
-
-        .header-section h2 {
-          margin: 0;
-          color: #2c3e50;
-        }
-
-        .alert {
-          padding: 12px 40px 12px 20px;
-          border-radius: 4px;
-          margin-bottom: 20px;
-          position: relative;
-        }
-
-        .alert.success {
-          background: #d4edda;
-          color: #155724;
-          border: 1px solid #c3e6cb;
-        }
-
-        .alert.error {
-          background: #f8d7da;
-          color: #721c24;
-          border: 1px solid #f5c6cb;
-        }
-
-        .alert.warning {
-          background: #fff3e4;
-          color: #856404;
-          border: 1px solid #ffeaa7;
-        }
-
-        .info-message {
-          background: #e3f2fd;
-          color: #1976d2;
-          padding: 10px;
-          border-radius: 4px;
-          margin-bottom: 20px;
-          text-align: center;
-        }
-
-        .close-alert {
-          position: absolute;
-          right: 10px;
-          top: 50%;
-          transform: translateY(-50%);
-          background: none;
-          border: none;
-          font-size: 24px;
-          cursor: pointer;
-          color: inherit;
-        }
-
-        .filters-section {
-          background: #f8f9fa;
-          padding: 20px;
-          border-radius: 6px;
-          margin-bottom: 20px;
-        }
-
-        .filter-row {
-          display: flex;
-          gap: 15px;
-          flex-wrap: wrap;
-          align-items: center;
-        }
-
-        .filter-group {
-          flex: 1;
-          min-width: 150px;
-        }
-
-        .search-group {
-          flex: 2;
-        }
-
-        .filter-group input,
-        .filter-group select {
-          width: 100%;
-          padding: 8px 12px;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-          font-size: 14px;
-        }
-
-        .search-input {
-          width: 100%;
-        }
-
-        .table-container {
-          background: white;
-          border-radius: 6px;
-          overflow: hidden;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .sku-table {
-          width: 100%;
-          border-collapse: collapse;
-        }
-
-        .sku-table th,
-        .sku-table td {
-          padding: 12px;
-          text-align: left;
-          border-bottom: 1px solid #e0e0e0;
-        }
-
-        .sku-table th {
-          background: #f5f5f5;
-          font-weight: 600;
-          color: #555;
-          font-size: 14px;
-        }
-
-        .sku-table tbody tr:hover {
-          background: #f8f9fa;
-        }
-
-        .code-cell {
-          font-family: monospace;
-          font-weight: 500;
-        }
-
-        .number-cell {
-          text-align: right;
-        }
-
-        .status-badge {
-          padding: 4px 10px;
-          border-radius: 12px;
-          font-size: 12px;
-          font-weight: 500;
-        }
-
-        .status-badge.active {
-          background: #d4edda;
-          color: #155724;
-        }
-
-        .status-badge.inactive {
-          background: #f8d7da;
-          color: #721c24;
-        }
-
-        .actions-cell {
-          display: flex;
-          gap: 8px;
-        }
-
-        .btn-edit,
-        .btn-delete {
-          background: none;
-          border: none;
-          cursor: pointer;
-          font-size: 16px;
-          padding: 4px 8px;
-          border-radius: 4px;
-          transition: background 0.2s;
-        }
-
-        .btn-edit:hover {
-          background: #e3f2fd;
-        }
-
-        .btn-delete:hover {
-          background: #ffebee;
-        }
-
-        .empty-cell {
-          text-align: center;
-          color: #999;
-          font-style: italic;
-          padding: 40px;
-        }
-
-        .loading {
-          text-align: center;
-          padding: 40px;
-          color: #666;
-        }
-
-        .pagination {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          gap: 20px;
-          padding: 20px;
-          background: #f8f9fa;
-        }
-
-        .pagination-btn {
-          padding: 8px 16px;
-          background: #2196F3;
-          color: white;
-          border: none;
-          border-radius: 4px;
-          cursor: pointer;
-          font-weight: 500;
-        }
-
-        .pagination-btn:hover:not(:disabled) {
-          background: #1976D2;
-        }
-
-        .pagination-btn:disabled {
-          background: #ccc;
-          cursor: not-allowed;
-        }
-
-        .pagination-info {
-          color: #666;
-          font-size: 14px;
-        }
-
-        .modal-overlay {
-          position: fixed;
-          top: 0;
-          left: 0;
-          right: 0;
-          bottom: 0;
-          background: rgba(0, 0, 0, 0.5);
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          z-index: 1000;
-        }
-
-        .modal-content {
-          background: white;
-          border-radius: 8px;
-          width: 90%;
-          max-width: 700px;
-          max-height: 90vh;
-          overflow-y: auto;
-        }
-
-        .modal-content.small {
-          max-width: 500px;
-        }
-
-        .modal-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          padding: 20px;
-          border-bottom: 1px solid #e0e0e0;
-        }
-
-        .modal-header h3 {
-          margin: 0;
-          color: #2c3e50;
-        }
-
-        .close-btn {
-          background: none;
-          border: none;
-          font-size: 28px;
-          cursor: pointer;
-          color: #999;
-          padding: 0;
-          width: 30px;
-          height: 30px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .close-btn:hover {
-          color: #333;
-        }
-
-        .modal-body {
-          padding: 20px;
-        }
-
-        .form-row {
-          display: flex;
-          gap: 20px;
-          margin-bottom: 20px;
-        }
-
-        .form-group {
-          flex: 1;
-        }
-
-        .form-group label {
-          display: block;
-          margin-bottom: 5px;
-          color: #555;
-          font-weight: 500;
-          font-size: 14px;
-        }
-
-        .form-group input,
-        .form-group select {
-          width: 100%;
-          padding: 8px 12px;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-          font-size: 14px;
-        }
-
-        .form-group input.error,
-        .form-group select.error {
-          border-color: #f44336;
-        }
-
-        .required {
-          color: #f44336;
-        }
-
-        .error-text {
-          color: #f44336;
-          font-size: 12px;
-          margin-top: 4px;
-          display: block;
-        }
-
-        .info-text {
-          color: #2196F3;
-          font-size: 12px;
-          margin-top: 4px;
-          display: block;
-        }
-
-        .warning-text {
-          color: #ff9800;
-          font-size: 14px;
-          margin-top: 10px;
-        }
-
-        .checkbox-group {
-          display: flex;
-          flex-direction: column;
-        }
-
-        .checkbox-group label {
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          cursor: pointer;
-        }
-
-        .modal-footer {
-          display: flex;
-          justify-content: flex-end;
-          gap: 10px;
-          padding: 20px;
-          border-top: 1px solid #e0e0e0;
-        }
-
-        .btn-primary,
-        .btn-secondary,
-        .btn-cancel,
-        .btn-danger {
-          padding: 10px 20px;
-          border: none;
-          border-radius: 4px;
-          cursor: pointer;
-          font-weight: 500;
-          font-size: 14px;
-          transition: background 0.2s;
-        }
-
-        .btn-primary {
-          background: #4CAF50;
-          color: white;
-        }
-
-        .btn-primary:hover:not(:disabled) {
-          background: #45a049;
-        }
-
-        .btn-secondary {
-          background: #607d8b;
-          color: white;
-        }
-
-        .btn-secondary:hover {
-          background: #546e7a;
-        }
-
-        .btn-cancel {
-          background: #f5f5f5;
-          color: #333;
-        }
-
-        .btn-cancel:hover {
-          background: #e0e0e0;
-        }
-
-        .btn-danger {
-          background: #f44336;
-          color: white;
-        }
-
-        .btn-danger:hover:not(:disabled) {
-          background: #d32f2f;
-        }
-
-        .btn-primary:disabled,
-        .btn-danger:disabled {
-          opacity: 0.6;
-          cursor: not-allowed;
-        }
-
-        @media (max-width: 768px) {
-          .filter-row {
-            flex-direction: column;
-          }
-          
-          .form-row {
-            flex-direction: column;
-          }
-          
-          .modal-content {
-            width: 95%;
-          }
-        }
-      `}</style>
     </div>
   );
 };
