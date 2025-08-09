@@ -1,4 +1,4 @@
-/* File Path: puvi-frontend/src/modules/SKUManagement/components/SKUMaster.css */
+/* File Path: puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.css */
 
 .sku-master-container {
   padding: 20px;
@@ -443,8 +443,25 @@
   margin: 15px 0;
 }
 
+/* Animation */
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
+  .sku-header {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
   .form-row {
     flex-direction: column;
   }
@@ -459,5 +476,14 @@
   
   .modal-content {
     width: 95%;
+  }
+  
+  .sku-table {
+    font-size: 13px;
+  }
+  
+  .sku-table th,
+  .sku-table td {
+    padding: 8px;
   }
 }
