@@ -5,7 +5,7 @@
 // - Density values are fetched from materials master (oil types)
 // - Shelf life defaults to 9 months but is user-configurable
 // - Dates displayed in DD-MM-YYYY format
-// - No hardcoded limits - backend handles validation
+// - Oil types and densities fetched dynamically from materials API
 
 import React, { useState, useEffect } from 'react';
 
@@ -21,11 +21,18 @@ const SKUMaster = () => {
   const [modalMode, setModalMode] = useState('add'); // 'add' or 'edit'
   const [selectedSKU, setSelectedSKU] = useState(null);
   
+  // Materials and oil types states - FIXED
+  const [oilMaterials, setOilMaterials] = useState([]);
+  const [oilTypes, setOilTypes] = useState([]);
+  const [densityMap, setDensityMap] = useState({});
+  const [packageSizes, setPackageSizes] = useState([]);
+  const [loadingMaterials, setLoadingMaterials] = useState(false);
+  
   // Form states
   const [formData, setFormData] = useState({
     sku_code: '',
     product_name: '',
-    oil_type: 'Groundnut',
+    oil_type: '',
     package_size: '1L',
     density: '',
     mrp_current: '',
@@ -79,30 +86,142 @@ const SKUMaster = () => {
     return dateString;
   };
 
-  // Constants - These should ideally come from backend/config
-  const oilTypes = ['Groundnut', 'Sesame', 'Coconut', 'Mustard', 'Sunflower', 'Other'];
-  const packageSizes = ['200ml', '500ml', '1L', '2L', '5L', '15L', 'Other'];
+  // Fetch oil materials and extract density - FIXED
+  const fetchOilMaterials = async () => {
+    setLoadingMaterials(true);
+    try {
+      const response = await fetch('https://puvi-backend.onrender.com/api/materials?category=Oil');
+      if (!response.ok) throw new Error('Failed to fetch materials');
+      
+      const data = await response.json();
+      
+      // Handle wrapped response
+      const materials = data.materials || data || [];
+      
+      if (Array.isArray(materials) && materials.length > 0) {
+        setOilMaterials(materials);
+        
+        // Create density map and oil types from materials
+        const newDensityMap = {};
+        const uniqueOilTypes = new Set();
+        
+        materials.forEach(material => {
+          // Extract oil type from material name
+          // e.g., "Groundnut Oil" -> "Groundnut"
+          const materialName = material.material_name || '';
+          let oilType = materialName.replace(/\s*Oil\s*$/i, '').trim();
+          
+          // Only process if we have a valid oil type and density
+          if (oilType && material.density) {
+            uniqueOilTypes.add(oilType);
+            // Use the density from the material, default to 0.91 if not present
+            newDensityMap[oilType] = parseFloat(material.density) || 0.91;
+          }
+        });
+        
+        // Convert Set to Array and sort
+        const oilTypesArray = Array.from(uniqueOilTypes).sort();
+        
+        // Add 'Other' option if not present
+        if (!oilTypesArray.includes('Other')) {
+          oilTypesArray.push('Other');
+        }
+        
+        setOilTypes(oilTypesArray);
+        setDensityMap(newDensityMap);
+        
+        console.log('Loaded oil types:', oilTypesArray);
+        console.log('Density map:', newDensityMap);
+      } else {
+        // If no materials found, set default values
+        console.warn('No oil materials found, using defaults');
+        setOilTypes(['Groundnut', 'Sesame', 'Coconut', 'Mustard', 'Sunflower', 'Other']);
+        setDensityMap({
+          'Groundnut': 0.915,
+          'Sesame': 0.920,
+          'Coconut': 0.924,
+          'Mustard': 0.913,
+          'Sunflower': 0.918
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching oil materials:', error);
+      // Set fallback values if API fails
+      setOilTypes(['Groundnut', 'Sesame', 'Coconut', 'Mustard', 'Sunflower', 'Other']);
+      setDensityMap({
+        'Groundnut': 0.915,
+        'Sesame': 0.920,
+        'Coconut': 0.924,
+        'Mustard': 0.913,
+        'Sunflower': 0.918
+      });
+      setMessage({ 
+        type: 'warning', 
+        text: 'Could not fetch oil materials. Using default values.' 
+      });
+    } finally {
+      setLoadingMaterials(false);
+    }
+  };
 
-  // Get density for oil type from materials master (future: fetch from API)
+  // Fetch package sizes from existing SKUs - NEW
+  const fetchPackageSizes = async () => {
+    try {
+      const response = await fetch('https://puvi-backend.onrender.com/api/sku/master');
+      if (!response.ok) throw new Error('Failed to fetch SKUs for package sizes');
+      
+      const data = await response.json();
+      
+      if (data.success && data.skus) {
+        const sizes = new Set();
+        
+        // Add standard sizes first
+        ['200ml', '500ml', '1L', '2L', '5L', '15L'].forEach(size => sizes.add(size));
+        
+        // Add any unique sizes from existing SKUs
+        data.skus.forEach(sku => {
+          if (sku.package_size) {
+            sizes.add(sku.package_size);
+          }
+        });
+        
+        // Convert to array and sort
+        const sizesArray = Array.from(sizes).sort((a, b) => {
+          // Custom sort to put ml before L
+          const aVal = a.includes('ml') ? parseFloat(a) : parseFloat(a) * 1000;
+          const bVal = b.includes('ml') ? parseFloat(b) : parseFloat(b) * 1000;
+          return aVal - bVal;
+        });
+        
+        // Add 'Other' at the end if not present
+        if (!sizesArray.includes('Other')) {
+          sizesArray.push('Other');
+        }
+        
+        setPackageSizes(sizesArray);
+      } else {
+        // Default package sizes
+        setPackageSizes(['200ml', '500ml', '1L', '2L', '5L', '15L', 'Other']);
+      }
+    } catch (error) {
+      console.error('Error fetching package sizes:', error);
+      // Set default package sizes
+      setPackageSizes(['200ml', '500ml', '1L', '2L', '5L', '15L', 'Other']);
+    }
+  };
+
+  // Get density for oil type from materials master
   const getDensityForOilType = (oilType) => {
-    // TODO: Replace with API call to fetch from materials master
-    // const response = await fetch(`/api/materials/density/${oilType}`);
-    // These densities should come from materials master
-    const densityMap = {
-      'Groundnut': 0.915,
-      'Sesame': 0.920,
-      'Coconut': 0.924,
-      'Mustard': 0.913,
-      'Sunflower': 0.918,
-      'Other': ''
-    };
+    // Use density from fetched materials
     return densityMap[oilType] || '';
   };
 
   useEffect(() => {
-    fetchSKUs();
-    // TODO: Fetch oil densities from materials master
-    // fetchOilDensities();
+    // Fetch materials first, then SKUs
+    fetchOilMaterials().then(() => {
+      fetchSKUs();
+      fetchPackageSizes();
+    });
   }, []);
 
   useEffect(() => {
@@ -129,13 +248,6 @@ const SKUMaster = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  // TODO: Fetch oil densities from materials master
-  const fetchOilDensities = async () => {
-    // Future implementation to fetch densities from materials master
-    // const response = await fetch('/api/materials?category=Oil');
-    // Extract density values for each oil type
   };
 
   const applyFilters = () => {
@@ -191,6 +303,16 @@ const SKUMaster = () => {
       newErrors.product_name = 'Product Name is required';
     }
     
+    // Oil type validation
+    if (!formData.oil_type) {
+      newErrors.oil_type = 'Oil Type is required';
+    }
+    
+    // Package size validation
+    if (!formData.package_size) {
+      newErrors.package_size = 'Package Size is required';
+    }
+    
     // MRP validation
     const mrp = parseFloat(formData.mrp_current);
     if (!formData.mrp_current) {
@@ -244,9 +366,10 @@ const SKUMaster = () => {
       });
     } else {
       setSelectedSKU(null);
-      // Get density from oil type if available
-      const defaultOilType = 'Groundnut';
-      const defaultDensity = getDensityForOilType(defaultOilType);
+      // Set first oil type as default if available
+      const defaultOilType = oilTypes.length > 0 ? oilTypes[0] : '';
+      const defaultDensity = defaultOilType ? getDensityForOilType(defaultOilType) : '';
+      
       setFormData({
         sku_code: '',
         product_name: '',
@@ -271,12 +394,12 @@ const SKUMaster = () => {
     const { name, value, type, checked } = e.target;
     
     // Special handling for oil type change
-    if (name === 'oil_type' && modalMode === 'add') {
+    if (name === 'oil_type') {
       const newDensity = getDensityForOilType(value);
       setFormData(prev => ({
         ...prev,
         oil_type: value,
-        density: newDensity
+        density: newDensity // Auto-populate density, user can override
       }));
     } else {
       setFormData(prev => ({
@@ -409,7 +532,11 @@ const SKUMaster = () => {
     <div className="sku-master">
       <div className="header-section">
         <h2>SKU Master Management</h2>
-        <button className="btn-primary" onClick={() => handleOpenModal('add')}>
+        <button 
+          className="btn-primary" 
+          onClick={() => handleOpenModal('add')}
+          disabled={loadingMaterials || oilTypes.length === 0}
+        >
           + Add New SKU
         </button>
       </div>
@@ -418,6 +545,12 @@ const SKUMaster = () => {
         <div className={`alert ${message.type}`}>
           {message.text}
           <button onClick={() => setMessage({ type: '', text: '' })} className="close-alert">×</button>
+        </div>
+      )}
+
+      {loadingMaterials && (
+        <div className="info-message">
+          Loading oil materials and density information...
         </div>
       )}
 
@@ -615,11 +748,19 @@ const SKUMaster = () => {
                     name="oil_type"
                     value={formData.oil_type}
                     onChange={handleInputChange}
+                    className={errors.oil_type ? 'error' : ''}
                   >
+                    <option value="">-- Select Oil Type --</option>
                     {oilTypes.map(type => (
                       <option key={type} value={type}>{type}</option>
                     ))}
                   </select>
+                  {errors.oil_type && <span className="error-text">{errors.oil_type}</span>}
+                  {formData.oil_type && densityMap[formData.oil_type] && (
+                    <span className="info-text">
+                      Standard density: {densityMap[formData.oil_type]} kg/L
+                    </span>
+                  )}
                 </div>
                 
                 <div className="form-group">
@@ -628,11 +769,14 @@ const SKUMaster = () => {
                     name="package_size"
                     value={formData.package_size}
                     onChange={handleInputChange}
+                    className={errors.package_size ? 'error' : ''}
                   >
+                    <option value="">-- Select Package Size --</option>
                     {packageSizes.map(size => (
                       <option key={size} value={size}>{size}</option>
                     ))}
                   </select>
+                  {errors.package_size && <span className="error-text">{errors.package_size}</span>}
                 </div>
               </div>
               
@@ -689,7 +833,11 @@ const SKUMaster = () => {
                     placeholder="Enter density"
                   />
                   {errors.density && <span className="error-text">{errors.density}</span>}
-                  <span className="info-text">Auto-populated from oil type, can be overridden</span>
+                  <span className="info-text">
+                    {formData.oil_type && densityMap[formData.oil_type] 
+                      ? 'Auto-populated from materials master, can be overridden'
+                      : 'Enter density manually for this oil type'}
+                  </span>
                 </div>
                 
                 <div className="form-group">
@@ -801,6 +949,21 @@ const SKUMaster = () => {
           background: #f8d7da;
           color: #721c24;
           border: 1px solid #f5c6cb;
+        }
+
+        .alert.warning {
+          background: #fff3e4;
+          color: #856404;
+          border: 1px solid #ffeaa7;
+        }
+
+        .info-message {
+          background: #e3f2fd;
+          color: #1976d2;
+          padding: 10px;
+          border-radius: 4px;
+          margin-bottom: 20px;
+          text-align: center;
         }
 
         .close-alert {
