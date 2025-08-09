@@ -8,7 +8,8 @@ import MaterialWriteoff from './modules/MaterialWriteoff';
 import BatchProduction from './modules/BatchProduction';
 import Blending from './modules/Blending';
 import MaterialSales from './modules/MaterialSales';
-import CostManagement from './modules/CostManagement';  // NEW - Import Cost Management
+import CostManagement from './modules/CostManagement';
+import SKUManagement from './modules/SKUManagement';  // NEW - Import SKU Management
 
 function App() {
   const [activeModule, setActiveModule] = useState('info');
@@ -108,6 +109,22 @@ function App() {
         </button>
         
         <button 
+          onClick={() => setActiveModule('sku')}
+          style={{
+            padding: '10px 20px',
+            backgroundColor: activeModule === 'sku' ? '#f39c12' : '#ecf0f1',
+            color: activeModule === 'sku' ? 'white' : '#2c3e50',
+            border: 'none',
+            borderRadius: '5px',
+            cursor: 'pointer',
+            fontWeight: activeModule === 'sku' ? 'bold' : 'normal',
+            transition: 'all 0.2s ease'
+          }}
+        >
+          SKU Management
+        </button>
+        
+        <button 
           onClick={() => setActiveModule('sales')}
           style={{
             padding: '10px 20px',
@@ -149,10 +166,23 @@ function App() {
             <li>✅ Batch Production - With Traceability</li>
             <li>✅ Blending Module - Functional</li>
             <li>✅ Material Sales - With FIFO & Cost Reconciliation</li>
-            <li>🔄 Cost Management - Frontend Complete, Integration Pending</li>
+            <li>✅ Cost Management - Frontend Complete, Integration Pending</li>
+            <li>✅ SKU Management - Frontend Complete (BOM, Production, History)</li>
             <li>🔄 Traceability System - Partially Implemented</li>
-            <li>📋 SKU Production/Packaging - To be implemented</li>
             <li>📋 Reports & Analytics - To be implemented</li>
+          </ul>
+          
+          <h3 style={{ marginTop: '30px' }}>SKU Management Module Status</h3>
+          <ul>
+            <li>✅ <strong>Backend:</strong> sku_management.py & sku_production.py complete</li>
+            <li>✅ <strong>Database:</strong> All SKU tables created in Supabase</li>
+            <li>✅ <strong>BOM Configuration:</strong> Material selection, versioning, shared materials</li>
+            <li>✅ <strong>Production Entry:</strong> 3-step workflow with oil allocation</li>
+            <li>✅ <strong>Production History:</strong> Advanced filtering, CSV export</li>
+            <li>✅ <strong>Traceability:</strong> Material variety codes (K, U, R) propagated</li>
+            <li>✅ <strong>Cost Tracking:</strong> Oil + Materials + Labor (no cartons)</li>
+            <li>⏳ <strong>Testing:</strong> Pending data setup</li>
+            <li>📋 <strong>Future:</strong> Carton costs at sales stage</li>
           </ul>
           
           <h3 style={{ marginTop: '30px' }}>Cost Management Module Status</h3>
@@ -176,23 +206,26 @@ function App() {
             <li><strong>Transport:</strong> Oil Outward (₹1.20/kg - optional)</li>
           </ul>
           
-          <h3 style={{ marginTop: '30px' }}>Recent Updates - Cost Management</h3>
+          <h3 style={{ marginTop: '30px' }}>Recent Updates - SKU Management</h3>
           <ul>
-            <li>🔔 <strong>NEW:</strong> Cost Management Module frontend completed</li>
-            <li>🔔 View and manage all 14 cost elements</li>
-            <li>🔔 Time tracking for crushing process (labour + electricity)</li>
-            <li>🔔 Batch cost review with validation warnings</li>
-            <li>🔔 Cost override capability with audit trail</li>
-            <li>🔔 Validation report showing batches with missing costs</li>
-            <li>🔔 Phase 1 mode - warnings only, operations not blocked</li>
+            <li>🔔 <strong>NEW:</strong> SKU Management Module frontend completed</li>
+            <li>🔔 BOM Configuration with material versioning</li>
+            <li>🔔 Production Entry with 3-step workflow</li>
+            <li>🔔 Oil allocation from batches/blends</li>
+            <li>🔔 Traceable code generation (KU801 format)</li>
+            <li>🔔 Production History with filters and CSV export</li>
+            <li>🔔 Cost calculation: Oil + Materials + Labor</li>
+            <li>🔔 Shared materials support (Fliptop cap for 1L & 500ml)</li>
           </ul>
           
           <h3 style={{ marginTop: '30px' }}>Next Steps</h3>
           <ul>
+            <li>📌 Setup test data for SKU Management (materials, SKUs, BOMs)</li>
+            <li>📌 Test production workflow end-to-end</li>
             <li>📌 Integrate TimeTracker component into BatchProduction Step 3</li>
             <li>📌 Add extended costs display to BatchProduction Step 4</li>
             <li>📌 Create supporting components (CostCapture, CostSummary)</li>
-            <li>📌 Test complete cost flow from batch creation to validation</li>
+            <li>📌 Test complete cost flow from batch creation to SKU production</li>
             <li>📌 Phase 2: Implement blocking validation (future)</li>
           </ul>
         </div>
@@ -202,6 +235,7 @@ function App() {
       {activeModule === 'writeoff' && <MaterialWriteoff />}
       {activeModule === 'batch' && <BatchProduction />}
       {activeModule === 'blending' && <Blending />}
+      {activeModule === 'sku' && <SKUManagement />}
       {activeModule === 'sales' && <MaterialSales />}
       {activeModule === 'costManagement' && <CostManagement />}
     </div>
