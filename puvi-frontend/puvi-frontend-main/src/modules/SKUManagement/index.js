@@ -9,7 +9,7 @@ import ProductionEntry from './components/ProductionEntry';
 import ProductionHistory from './components/ProductionHistory';
 import MRPHistory from './components/MRPHistory';
 import ProductionSummaryReport from './components/ProductionSummaryReport';
-// import ExpiryAlert from './components/ExpiryAlert'; // TODO: Create this component
+import ExpiryAlert from './components/ExpiryAlert';
 import './SKUManagement.css';
 
 const SKUManagement = () => {
@@ -59,14 +59,13 @@ const SKUManagement = () => {
       component: ProductionSummaryReport,
       description: 'Generate printable production reports'
     },
-    // TODO: Uncomment when ExpiryAlert component is created
-    // {
-    //   id: 'expiry-alert',
-    //   label: 'Expiry Alerts',
-    //   icon: '⚠️',
-    //   component: ExpiryAlert,
-    //   description: 'Monitor product expiry dates'
-    // }
+    {
+      id: 'expiry-alert',
+      label: 'Expiry Alerts',
+      icon: '⚠️',
+      component: ExpiryAlert,
+      description: 'Monitor product expiry dates'
+    }
   ];
   
   // Get active component
@@ -108,9 +107,9 @@ const SKUManagement = () => {
       {/* Module Footer */}
       <div className="module-footer">
         <div className="footer-info">
-          <span>SKU Module v2.0 | MRP & Expiry Tracking Enabled</span>
+          <span>SKU Module v2.0 | Complete MRP & Expiry Management System</span>
           <span className="separator">•</span>
-          <span>Features: MRP History | Shelf Life | FEFO | Production Reports</span>
+          <span>All Features Active: MRP History | Shelf Life | FEFO | Expiry Alerts | Production Reports</span>
         </div>
       </div>
     </div>
