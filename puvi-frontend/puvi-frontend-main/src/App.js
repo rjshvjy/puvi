@@ -23,17 +23,10 @@ function App() {
   const [systemStats, setSystemStats] = useState({
     totalMaterials: 0,
     activeSuppliers: 0,
-    pendingOrders: 0,
-    lowStock: 0,
-    production: 0,
-    revenue: 0
-  });
-  
-  // User info (can be fetched from API)
-  const [userInfo] = useState({
-    name: 'Admin User',
-    role: 'System Administrator',
-    initials: 'AU'
+    totalPurchases: 0,
+    totalBatches: 0,
+    isLoading: true,
+    hasError: false
   });
 
   // Navigation structure
@@ -42,7 +35,7 @@ function App() {
       section: 'MAIN',
       items: [
         { id: 'dashboard', label: 'Dashboard', icon: '📊', badge: null },
-        { id: 'openingBalance', label: 'Opening Balance', icon: '💼', badge: '!' }
+        { id: 'openingBalance', label: 'Opening Balance', icon: '💼', badge: !systemStats.totalMaterials && !systemStats.isLoading ? '!' : null }
       ]
     },
     {
@@ -75,18 +68,57 @@ function App() {
     setMobileMenuOpen(false);
   }, [activeModule]);
 
-  // Fetch system stats (mock data for now)
+  // Helper function to check API connectivity
+  const checkAPIConnection = async () => {
+    try {
+      const response = await fetch('https://puvi-backend.onrender.com/api/suppliers');
+      return response.ok;
+    } catch (error) {
+      console.error('API connection error:', error);
+      return false;
+    }
+  };
+
+  // Fetch real system stats from API
   useEffect(() => {
-    // In real app, fetch from API
-    setSystemStats({
-      totalMaterials: 156,
-      activeSuppliers: 24,
-      pendingOrders: 8,
-      lowStock: 12,
-      production: 4520,
-      revenue: 145600
-    });
+    fetchSystemStats();
   }, []);
+
+  const fetchSystemStats = async () => {
+    setSystemStats(prev => ({ ...prev, isLoading: true, hasError: false }));
+    try {
+      // Fetch actual counts from the API - with better error handling
+      const fetchWithFallback = async (url) => {
+        try {
+          const response = await fetch(url);
+          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+          return await response.json();
+        } catch (error) {
+          console.warn(`Failed to fetch from ${url}:`, error);
+          return null;
+        }
+      };
+
+      const [materials, suppliers, purchases, batches] = await Promise.all([
+        fetchWithFallback('https://puvi-backend.onrender.com/api/materials'),
+        fetchWithFallback('https://puvi-backend.onrender.com/api/suppliers'),
+        fetchWithFallback('https://puvi-backend.onrender.com/api/purchase_history?limit=1'),
+        fetchWithFallback('https://puvi-backend.onrender.com/api/batch_history?limit=1')
+      ]);
+      
+      setSystemStats({
+        totalMaterials: materials?.materials?.length || 0,
+        activeSuppliers: suppliers?.suppliers?.length || 0,
+        totalPurchases: purchases?.total_count || 0,
+        totalBatches: batches?.batches?.length || 0,
+        isLoading: false,
+        hasError: false
+      });
+    } catch (error) {
+      console.error('Error fetching system stats:', error);
+      setSystemStats(prev => ({ ...prev, isLoading: false, hasError: true }));
+    }
+  };
 
   // Toggle sidebar
   const toggleSidebar = () => {
@@ -155,7 +187,7 @@ function App() {
         return <OpeningBalanceModule />;
       case 'dashboard':
       default:
-        return <DashboardContent stats={systemStats} onNavigate={setActiveModule} />;
+        return <DashboardContent stats={systemStats} onNavigate={setActiveModule} onRefresh={fetchSystemStats} />;
     }
   };
 
@@ -201,10 +233,10 @@ function App() {
 
         {/* Sidebar Footer */}
         <div className="sidebar-footer">
-          <div className="user-avatar">{userInfo.initials}</div>
+          <div className="user-avatar">👤</div>
           <div className="user-info">
-            <div className="user-name">{userInfo.name}</div>
-            <div className="user-role">{userInfo.role}</div>
+            <div className="user-name">User</div>
+            <div className="user-role">Operator</div>
           </div>
         </div>
       </aside>
@@ -227,20 +259,6 @@ function App() {
               >
                 ☰
               </button>
-              
-              {/* Quick Actions */}
-              {activeModule === 'dashboard' && (
-                <>
-                  <button className="header-button">
-                    <span>📥</span>
-                    <span>Import Data</span>
-                  </button>
-                  <button className="header-button">
-                    <span>📊</span>
-                    <span>Generate Report</span>
-                  </button>
-                </>
-              )}
             </div>
           </div>
         </header>
@@ -257,7 +275,7 @@ function App() {
 }
 
 // Dashboard Component
-const DashboardContent = ({ stats, onNavigate }) => {
+const DashboardContent = ({ stats, onNavigate, onRefresh }) => {
   const quickActions = [
     { id: 'purchase', icon: '🛒', title: 'New Purchase', color: '#3b82f6' },
     { id: 'batch', icon: '🏭', title: 'Start Production', color: '#10b981' },
@@ -267,54 +285,31 @@ const DashboardContent = ({ stats, onNavigate }) => {
     { id: 'cost', icon: '💵', title: 'View Costs', color: '#06b6d4' }
   ];
 
+  // Only show real data from API
   const statCards = [
     { 
       title: 'Total Materials', 
-      value: stats.totalMaterials, 
-      change: '+12%', 
-      positive: true,
+      value: stats.isLoading ? '...' : stats.totalMaterials, 
       color: '#3b82f6',
       icon: '📦'
     },
     { 
       title: 'Active Suppliers', 
-      value: stats.activeSuppliers, 
-      change: '+5%', 
-      positive: true,
+      value: stats.isLoading ? '...' : stats.activeSuppliers, 
       color: '#10b981',
       icon: '🏢'
     },
     { 
-      title: 'Pending Orders', 
-      value: stats.pendingOrders, 
-      change: '-2', 
-      positive: false,
+      title: 'Total Purchases', 
+      value: stats.isLoading ? '...' : stats.totalPurchases, 
       color: '#f59e0b',
       icon: '📋'
     },
     { 
-      title: 'Low Stock Items', 
-      value: stats.lowStock, 
-      change: '3 critical', 
-      positive: false,
-      color: '#ef4444',
-      icon: '⚠️'
-    },
-    { 
-      title: 'Production (kg)', 
-      value: stats.production.toLocaleString(), 
-      change: '+18%', 
-      positive: true,
+      title: 'Production Batches', 
+      value: stats.isLoading ? '...' : stats.totalBatches, 
       color: '#8b5cf6',
       icon: '🏭'
-    },
-    { 
-      title: 'Revenue (₹)', 
-      value: stats.revenue.toLocaleString(), 
-      change: '+22%', 
-      positive: true,
-      color: '#06b6d4',
-      icon: '💰'
     }
   ];
 
@@ -328,7 +323,7 @@ const DashboardContent = ({ stats, onNavigate }) => {
           and cost tracking with advanced MRP and expiry management features.
         </p>
         
-        {/* System Status */}
+        {/* System Status - Only show real status */}
         <div style={{ 
           display: 'flex', 
           gap: '1rem', 
@@ -339,26 +334,39 @@ const DashboardContent = ({ stats, onNavigate }) => {
         }}>
           <div style={{ flex: '1', minWidth: '200px' }}>
             <div style={{ fontSize: '0.875rem', opacity: 0.8 }}>System Status</div>
-            <div style={{ fontSize: '1.25rem', fontWeight: 600, color: '#10b981' }}>
-              ✓ Operational
+            <div style={{ fontSize: '1.25rem', fontWeight: 600, color: stats.hasError ? '#ef4444' : '#10b981' }}>
+              {stats.hasError ? '⚠ Connection Error' : '✓ Connected'}
             </div>
           </div>
           <div style={{ flex: '1', minWidth: '200px' }}>
-            <div style={{ fontSize: '0.875rem', opacity: 0.8 }}>Last Backup</div>
-            <div style={{ fontSize: '1.25rem', fontWeight: 600 }}>
-              Today, 2:00 AM
+            <div style={{ fontSize: '0.875rem', opacity: 0.8 }}>API Endpoint</div>
+            <div style={{ fontSize: '1rem', fontWeight: 600 }}>
+              puvi-backend.onrender.com
             </div>
           </div>
           <div style={{ flex: '1', minWidth: '200px' }}>
-            <div style={{ fontSize: '0.875rem', opacity: 0.8 }}>Active Users</div>
-            <div style={{ fontSize: '1.25rem', fontWeight: 600 }}>
-              5 Online
-            </div>
+            <div style={{ fontSize: '0.875rem', opacity: 0.8 }}>Actions</div>
+            <button 
+              onClick={onRefresh}
+              style={{
+                padding: '0.25rem 0.75rem',
+                background: 'rgba(255,255,255,0.2)',
+                border: '1px solid rgba(255,255,255,0.3)',
+                borderRadius: '0.375rem',
+                color: 'white',
+                cursor: 'pointer',
+                fontSize: '0.875rem',
+                marginTop: '0.25rem'
+              }}
+              disabled={stats.isLoading}
+            >
+              {stats.isLoading ? 'Loading...' : '🔄 Refresh Stats'}
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Stats Grid */}
+      {/* Stats Grid - Real Data Only */}
       <div className="stats-grid">
         {statCards.map((stat, idx) => (
           <div key={idx} className="stat-card">
@@ -374,11 +382,14 @@ const DashboardContent = ({ stats, onNavigate }) => {
               </div>
             </div>
             <div className="stat-card-title">{stat.title}</div>
-            <div className="stat-card-value">{stat.value}</div>
-            <div className={`stat-card-change ${stat.positive ? 'positive' : 'negative'}`}>
-              <span>{stat.positive ? '↑' : '↓'}</span>
-              <span>{stat.change}</span>
+            <div className="stat-card-value">
+              {stats.hasError ? 'Error' : stat.value}
             </div>
+            {!stats.isLoading && !stats.hasError && (
+              <div style={{ fontSize: '0.75rem', color: '#6b7280', marginTop: '0.5rem' }}>
+                Live data from system
+              </div>
+            )}
           </div>
         ))}
       </div>
@@ -406,43 +417,48 @@ const DashboardContent = ({ stats, onNavigate }) => {
         </div>
       </div>
 
-      {/* Recent Activity */}
+      {/* System Information */}
       <div style={{ marginTop: '2rem' }}>
-        <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Recent Activity</h2>
+        <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>System Information</h2>
         <div style={{ 
           background: 'white', 
           borderRadius: '0.75rem', 
           padding: '1.5rem',
           boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
         }}>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-            {[
-              { time: '2 hours ago', action: 'Purchase Order #PO-2024-156 created', user: 'John Doe' },
-              { time: '4 hours ago', action: 'Batch Production #BP-2024-089 completed', user: 'Jane Smith' },
-              { time: '6 hours ago', action: 'SKU #SKU-001 stock updated', user: 'Admin' },
-              { time: '1 day ago', action: 'Material writeoff recorded for expired items', user: 'System' }
-            ].map((activity, idx) => (
-              <div 
-                key={idx} 
-                style={{ 
-                  display: 'flex', 
-                  justifyContent: 'space-between',
-                  padding: '0.75rem',
-                  background: '#f9fafb',
-                  borderRadius: '0.5rem'
-                }}
-              >
-                <div>
-                  <div style={{ fontWeight: 500 }}>{activity.action}</div>
-                  <div style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '0.25rem' }}>
-                    by {activity.user}
-                  </div>
-                </div>
-                <div style={{ fontSize: '0.875rem', color: '#9ca3af' }}>
-                  {activity.time}
-                </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.5rem' }}>
+            <div>
+              <h3 style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '0.5rem' }}>
+                Getting Started
+              </h3>
+              <ul style={{ fontSize: '0.875rem', color: '#374151', lineHeight: 1.8 }}>
+                <li>✓ Configure suppliers in Masters</li>
+                <li>✓ Add materials and set opening balance</li>
+                <li>✓ Start recording purchases</li>
+                <li>✓ Begin production tracking</li>
+              </ul>
+            </div>
+            <div>
+              <h3 style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '0.5rem' }}>
+                Key Features
+              </h3>
+              <ul style={{ fontSize: '0.875rem', color: '#374151', lineHeight: 1.8 }}>
+                <li>• Multi-item purchase management</li>
+                <li>• Batch production with cost tracking</li>
+                <li>• SKU management with MRP</li>
+                <li>• Inventory and expiry tracking</li>
+              </ul>
+            </div>
+            <div>
+              <h3 style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '0.5rem' }}>
+                Support
+              </h3>
+              <div style={{ fontSize: '0.875rem', color: '#374151', lineHeight: 1.8 }}>
+                <p>For assistance, please contact:</p>
+                <p>• System Administrator</p>
+                <p>• Technical Support Team</p>
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </div>
