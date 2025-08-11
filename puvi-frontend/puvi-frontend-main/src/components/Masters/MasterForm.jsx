@@ -1,8 +1,8 @@
-// MasterForm Component - Dynamic form generation for all master types
 // File Path: puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx
-// Enhanced with auto-formatting and better guidelines
+// Professional Master Form Component with Enterprise UI
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import './MasterForm.css';
 
 // API configuration
 const API_BASE_URL = 'https://puvi-backend.onrender.com';
@@ -31,250 +31,367 @@ const apiCall = async (url, options = {}) => {
   }
 };
 
-// Short Code Guidelines Component
-const ShortCodeGuidelines = ({ masterType, category }) => {
-  if (masterType === 'suppliers') {
-    return (
-      <div style={{ backgroundColor: '#f0f8ff', padding: '10px', borderRadius: '5px', marginBottom: '10px', fontSize: '13px' }}>
-        <strong>📋 SUPPLIER SHORT CODE</strong>
-        <ul style={{ marginTop: '5px', marginBottom: 0, paddingLeft: '20px' }}>
-          <li>Must be EXACTLY 3 letters</li>
-          <li>Will be auto-converted to uppercase</li>
-          <li>Examples: SKM, ABC, XYZ</li>
-        </ul>
+// ==================== Sub-Components ====================
+
+// Form Section Component
+const FormSection = ({ title, description, children, className = '' }) => (
+  <div className={`form-section ${className}`}>
+    {title && (
+      <div className="form-section-header">
+        <h3 className="form-section-title">{title}</h3>
+        {description && <p className="form-section-desc">{description}</p>}
       </div>
-    );
-  }
-  
-  if (masterType === 'materials') {
-    let categoryHelp = '';
-    if (category === 'Seeds') {
-      categoryHelp = '💡 Seed varieties: K=Kathiri, B=Bold, J=Java, R=Red, W=White';
-    } else if (category === 'Packing') {
-      categoryHelp = '💡 Packaging sizes: S=Small/500ml, 1=1L, 5=5L, L=Large';
-    } else if (category === 'Chemical') {
-      categoryHelp = '💡 Chemical grades: F=Food, I=Industrial, P=Premium, S=Standard';
+    )}
+    <div className="form-section-body">
+      {children}
+    </div>
+  </div>
+);
+
+// Guidelines Component
+const Guidelines = ({ type, category, expanded, onToggle }) => {
+  const getGuidelines = () => {
+    if (type === 'supplier-short-code') {
+      return {
+        title: 'Supplier Short Code Guidelines',
+        content: (
+          <>
+            <ul>
+              <li>Must be exactly <strong>3 letters</strong></li>
+              <li>Will be auto-converted to uppercase</li>
+              <li>Must be unique across all suppliers</li>
+              <li>Examples: <code>SKM</code>, <code>ABC</code>, <code>XYZ</code></li>
+            </ul>
+          </>
+        )
+      };
     }
     
-    return (
-      <div style={{ backgroundColor: '#f0f8ff', padding: '10px', borderRadius: '5px', marginBottom: '10px', fontSize: '13px' }}>
-        <strong>📋 MATERIAL SHORT CODE FORMAT</strong>
-        <div style={{ marginTop: '5px' }}>
-          <div>Structure: <code>XXX-YY</code></div>
-          <ul style={{ marginTop: '5px', marginBottom: '5px', paddingLeft: '20px' }}>
-            <li>Before hyphen: Material type (1-3 chars)</li>
-            <li>After hyphen: Variety/Grade (1-2 chars)</li>
-            <li>Auto-uppercase applied</li>
-          </ul>
-          {categoryHelp && <div style={{ marginTop: '8px', color: '#0066cc' }}>{categoryHelp}</div>}
-          <div style={{ marginTop: '8px' }}>
-            <strong>Examples:</strong>
-            {category === 'Seeds' && (
-              <div>GNS-K (Groundnut Kathiri), SES-W (Sesame White)</div>
+    if (type === 'material-short-code') {
+      const categoryExamples = {
+        Seeds: 'Seed varieties: K=Kathiri, B=Bold, J=Java, R=Red, W=White',
+        Packing: 'Packaging sizes: S=Small/500ml, 1=1L, 5=5L, L=Large',
+        Chemical: 'Chemical grades: F=Food, I=Industrial, P=Premium',
+        Oil: 'Oil types: G=Groundnut, C=Coconut, S=Sesame'
+      };
+      
+      return {
+        title: 'Material Short Code Format',
+        content: (
+          <>
+            <p>Structure: <code>XXX-YY</code></p>
+            <ul>
+              <li><strong>XXX</strong>: Material type (3 letters)</li>
+              <li><strong>YY</strong>: Variety/Grade (1-2 letters/numbers)</li>
+            </ul>
+            {category && categoryExamples[category] && (
+              <p className="guidelines-info">{categoryExamples[category]}</p>
             )}
-            {category === 'Packing' && (
-              <div>PBS-5 (Plastic 500ml), GBS-1 (Glass 1L)</div>
-            )}
-            {category === 'Chemical' && (
-              <div>CHM-F (Chemical Food Grade), CAU-P (Caustic Premium)</div>
-            )}
-            {!category && (
-              <div>GNS-K, PBS-5, CHM-F</div>
-            )}
-          </div>
-          <div style={{ marginTop: '8px', padding: '5px', backgroundColor: '#fffbf0', borderRadius: '3px' }}>
-            <strong>⚠️ Important:</strong> Code describes the material, not the supplier. 
-            Same variety gets same code regardless of supplier.
-          </div>
-        </div>
-      </div>
-    );
-  }
+            <p>Examples: <code>GNS-K</code>, <code>PBS-5</code>, <code>CHM-F</code></p>
+          </>
+        )
+      };
+    }
+    
+    if (type === 'material-naming') {
+      return {
+        title: 'Material Naming Convention',
+        content: (
+          <>
+            <p>Follow this pattern for consistency:</p>
+            <p><code>[Material Type] [Variety] - [Supplier Code]</code></p>
+            <ul>
+              <li>Example: <code>Groundnut Seed Kathiri - SKM</code></li>
+              <li>Example: <code>Plastic Bottle 1L - ABC</code></li>
+            </ul>
+            <p className="guidelines-warning">
+              ⚠ Include supplier code at the end for easy identification
+            </p>
+          </>
+        )
+      };
+    }
+    
+    return null;
+  };
   
-  return null;
-};
-
-// Material Naming Guidelines Component
-const MaterialNamingGuidelines = ({ masterType }) => {
-  if (masterType !== 'materials') return null;
+  const guidelines = getGuidelines();
+  if (!guidelines) return null;
   
   return (
-    <div style={{ backgroundColor: '#f9f9f9', padding: '10px', borderRadius: '5px', marginBottom: '15px', fontSize: '13px', border: '1px solid #e0e0e0' }}>
-      <strong>📋 MATERIAL NAMING CONVENTION</strong>
-      <div style={{ marginTop: '8px' }}>
-        Format: <code>[Product Type] [Variety] - [Supplier Code]</code>
+    <div className={`guidelines ${!expanded ? 'collapsed' : ''}`}>
+      <div className="guidelines-header">
+        <div className="guidelines-title">{guidelines.title}</div>
+        <button 
+          type="button"
+          className="guidelines-toggle"
+          onClick={() => onToggle(type)}
+        >
+          {expanded ? 'Hide' : 'Show'}
+        </button>
       </div>
-      <div style={{ marginTop: '8px' }}>
-        <strong>Examples:</strong>
-        <ul style={{ marginTop: '5px', marginBottom: 0, paddingLeft: '20px' }}>
-          <li>Groundnut Seed Kathiri - SKM</li>
-          <li>Plastic Bottle 500ml - ABC</li>
-          <li>Chemical Food Grade - XYZ</li>
-        </ul>
-      </div>
-      <div style={{ marginTop: '8px', padding: '5px', backgroundColor: '#fff0f0', borderRadius: '3px' }}>
-        <strong>❌ Do NOT create entries for:</strong> Oil, Cake, Sludge (tracked in production)
-      </div>
+      {expanded && (
+        <div className="guidelines-content">
+          {guidelines.content}
+        </div>
+      )}
     </div>
   );
 };
 
-// Auto-formatting functions
-const formatSupplierShortCode = (input) => {
-  return input
-    .toUpperCase()
-    .replace(/[^A-Z]/g, '')  // Remove non-letters
-    .slice(0, 3);            // Limit to 3 chars
-};
+// Field Components
+const TextField = ({ id, label, value, onChange, error, required, disabled, placeholder, help, maxLength, onBlur }) => (
+  <div className="field">
+    <label htmlFor={id} className="label">
+      {label}
+      {required && <span className="required">*</span>}
+    </label>
+    <input
+      type="text"
+      id={id}
+      className={`input ${error ? 'error' : ''}`}
+      value={value || ''}
+      onChange={(e) => onChange(e.target.value)}
+      onBlur={onBlur}
+      disabled={disabled}
+      placeholder={placeholder}
+      maxLength={maxLength}
+      aria-invalid={!!error}
+      aria-describedby={error ? `${id}-error` : help ? `${id}-help` : undefined}
+    />
+    {error && <div id={`${id}-error`} className="form-error">{error}</div>}
+    {help && !error && <div id={`${id}-help`} className="form-help">{help}</div>}
+  </div>
+);
 
-const formatMaterialShortCode = (input) => {
-  let clean = input.toUpperCase().replace(/[^A-Z0-9-]/g, '');
-  
-  // Remove any existing hyphens first
-  clean = clean.replace(/-/g, '');
-  
-  // Only add hyphen after 3 characters
-  if (clean.length > 3) {
-    // Insert hyphen after position 3
-    clean = clean.slice(0, 3) + '-' + clean.slice(3, 5);
-  }
-  
-  // Validate format
-  const parts = clean.split('-');
-  if (parts.length === 2) {
-    parts[0] = parts[0].slice(0, 3); // Max 3 before hyphen
-    parts[1] = parts[1].slice(0, 2); // Max 2 after hyphen
-    clean = parts.join('-');
-  }
-  
-  return clean;
-};
+const NumberField = ({ id, label, value, onChange, error, required, disabled, min, max, step, help }) => (
+  <div className="field">
+    <label htmlFor={id} className="label">
+      {label}
+      {required && <span className="required">*</span>}
+    </label>
+    <input
+      type="number"
+      id={id}
+      className={`input ${error ? 'error' : ''}`}
+      value={value || ''}
+      onChange={(e) => onChange(e.target.value)}
+      disabled={disabled}
+      min={min}
+      max={max}
+      step={step}
+      aria-invalid={!!error}
+      aria-describedby={error ? `${id}-error` : help ? `${id}-help` : undefined}
+    />
+    {error && <div id={`${id}-error`} className="form-error">{error}</div>}
+    {help && !error && <div id={`${id}-help`} className="form-help">{help}</div>}
+  </div>
+);
 
-// Field Input Component - Renders different input types
-const FieldInput = ({ field, value, onChange, error, disabled, masterType, formData, suppliers = [] }) => {
-  const handleChange = (e) => {
-    let newValue = e.target.value;
-    
-    // Apply auto-formatting for short codes
-    if (field.name === 'short_code') {
-      if (masterType === 'suppliers') {
-        newValue = formatSupplierShortCode(newValue);
-      } else if (masterType === 'materials') {
-        newValue = formatMaterialShortCode(newValue);
-      }
-    }
-    
-    // Apply other transformations
-    if (field.transform === 'uppercase' && field.name !== 'short_code') {
-      newValue = newValue.toUpperCase();
-    } else if (field.transform === 'lowercase') {
-      newValue = newValue.toLowerCase();
-    } else if (field.transform === 'capitalize') {
-      newValue = newValue.charAt(0).toUpperCase() + newValue.slice(1);
-    }
-    
-    onChange(field.name, newValue);
-  };
+const SelectField = ({ id, label, value, onChange, options, error, required, disabled, help }) => (
+  <div className="field">
+    <label htmlFor={id} className="label">
+      {label}
+      {required && <span className="required">*</span>}
+    </label>
+    <select
+      id={id}
+      className={`select ${error ? 'error' : ''}`}
+      value={value || ''}
+      onChange={(e) => onChange(e.target.value)}
+      disabled={disabled}
+      aria-invalid={!!error}
+      aria-describedby={error ? `${id}-error` : help ? `${id}-help` : undefined}
+    >
+      <option value="">Select {label}</option>
+      {options.map(option => (
+        <option key={option} value={option}>
+          {option}
+        </option>
+      ))}
+    </select>
+    {error && <div id={`${id}-error`} className="form-error">{error}</div>}
+    {help && !error && <div id={`${id}-help`} className="form-help">{help}</div>}
+  </div>
+);
 
-  // Get placeholder based on field and master type
-  const getPlaceholder = () => {
-    if (field.name === 'short_code') {
-      if (masterType === 'suppliers') return 'e.g., SKM';
-      if (masterType === 'materials') return 'e.g., GNS-K';
-    }
-    if (field.name === 'material_name' && masterType === 'materials') {
-      return 'e.g., Groundnut Seed Kathiri - SKM';
-    }
-    return field.placeholder || '';
-  };
+const TextareaField = ({ id, label, value, onChange, error, required, disabled, placeholder, help, rows = 3 }) => (
+  <div className="field">
+    <label htmlFor={id} className="label">
+      {label}
+      {required && <span className="required">*</span>}
+    </label>
+    <textarea
+      id={id}
+      className={`textarea ${error ? 'error' : ''}`}
+      value={value || ''}
+      onChange={(e) => onChange(e.target.value)}
+      disabled={disabled}
+      placeholder={placeholder}
+      rows={rows}
+      aria-invalid={!!error}
+      aria-describedby={error ? `${id}-error` : help ? `${id}-help` : undefined}
+    />
+    {error && <div id={`${id}-error`} className="form-error">{error}</div>}
+    {help && !error && <div id={`${id}-help`} className="form-help">{help}</div>}
+  </div>
+);
 
-  // Handle reference fields (supplier dropdown)
-  if (field.type === 'reference' && field.reference_table === 'suppliers') {
-    return (
+const ReferenceField = ({ id, label, value, onChange, options, error, required, disabled, help }) => {
+  const [filter, setFilter] = useState('');
+  
+  const filteredOptions = options.filter(opt => 
+    opt.supplier_name.toLowerCase().includes(filter.toLowerCase()) ||
+    opt.short_code.toLowerCase().includes(filter.toLowerCase())
+  );
+  
+  const showFilter = options.length > 10;
+  
+  return (
+    <div className="field reference-field">
+      <label htmlFor={id} className="label">
+        {label}
+        {required && <span className="required">*</span>}
+      </label>
+      {showFilter && (
+        <div className="reference-filter">
+          <span className="reference-filter-icon">🔍</span>
+          <input
+            type="text"
+            className="reference-filter-input"
+            placeholder="Filter suppliers..."
+            value={filter}
+            onChange={(e) => setFilter(e.target.value)}
+          />
+        </div>
+      )}
       <select
+        id={id}
+        className={`select ${error ? 'error' : ''}`}
         value={value || ''}
-        onChange={handleChange}
+        onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
-        required={field.required}
-        className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-          error ? 'border-red-500' : 'border-gray-300'
-        }`}
-        style={{ width: '100%', padding: '8px', borderRadius: '4px', border: error ? '1px solid #dc3545' : '1px solid #ced4da' }}
+        aria-invalid={!!error}
+        aria-describedby={error ? `${id}-error` : help ? `${id}-help` : undefined}
       >
-        <option value="">Select Supplier</option>
-        {suppliers.map(supplier => (
+        <option value="">Select {label}</option>
+        {filteredOptions.map(supplier => (
           <option key={supplier.supplier_id} value={supplier.supplier_id}>
             {supplier.supplier_name} ({supplier.short_code})
           </option>
         ))}
       </select>
-    );
-  }
-
-  // Render based on field type
-  switch (field.type) {
-    case 'select':
-      return (
-        <select
-          value={value || ''}
-          onChange={handleChange}
-          disabled={disabled}
-          className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-            error ? 'border-red-500' : 'border-gray-300'
-          }`}
-          style={{ width: '100%', padding: '8px', borderRadius: '4px', border: error ? '1px solid #dc3545' : '1px solid #ced4da' }}
-        >
-          <option value="">Select {field.label}</option>
-          {field.options?.map(option => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-      );
-
-    case 'textarea':
-      return (
-        <textarea
-          value={value || ''}
-          onChange={handleChange}
-          disabled={disabled}
-          placeholder={getPlaceholder()}
-          rows={3}
-          className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-            error ? 'border-red-500' : 'border-gray-300'
-          }`}
-          style={{ width: '100%', padding: '8px', borderRadius: '4px', border: error ? '1px solid #dc3545' : '1px solid #ced4da' }}
-        />
-      );
-
-    case 'reference':
-      // Already handled above for suppliers
-      return null;
-
-    default: // text, email, decimal, integer
-      return (
-        <input
-          type={field.type === 'email' ? 'email' : field.type === 'decimal' || field.type === 'integer' ? 'number' : 'text'}
-          value={value || ''}
-          onChange={handleChange}
-          disabled={disabled}
-          placeholder={getPlaceholder()}
-          maxLength={field.max_length}
-          pattern={field.pattern}
-          step={field.type === 'decimal' ? '0.01' : field.type === 'integer' ? '1' : undefined}
-          min={field.min}
-          max={field.max}
-          className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${
-            error ? 'border-red-500' : 'border-gray-300'
-          }`}
-          style={{ width: '100%', padding: '8px', borderRadius: '4px', border: error ? '1px solid #dc3545' : '1px solid #ced4da' }}
-        />
-      );
-  }
+      {error && <div id={`${id}-error`} className="form-error">{error}</div>}
+      {help && !error && <div id={`${id}-help`} className="form-help">{help}</div>}
+    </div>
+  );
 };
 
-// Main MasterForm Component
+// Inline Alert Component
+const InlineAlert = ({ type, title, message, onRetry }) => (
+  <div className={`inline-alert ${type}`}>
+    <div className="inline-alert-icon"></div>
+    <div className="inline-alert-content">
+      {title && <div className="inline-alert-title">{title}</div>}
+      <div className="inline-alert-message">{message}</div>
+    </div>
+    {onRetry && (
+      <button type="button" className="btn btn-ghost" onClick={onRetry}>
+        Retry
+      </button>
+    )}
+  </div>
+);
+
+// Loading Skeleton Component
+const FieldSkeleton = () => (
+  <div className="field">
+    <div className="skeleton skeleton-text"></div>
+    <div className="skeleton skeleton-input"></div>
+  </div>
+);
+
+// ==================== Utility Functions ====================
+
+const formatSupplierShortCodeOnBlur = (value) => {
+  return value
+    .toUpperCase()
+    .replace(/[^A-Z]/g, '')
+    .slice(0, 3);
+};
+
+const formatMaterialShortCodeOnBlur = (value) => {
+  let clean = value.toUpperCase().replace(/[^A-Z0-9-]/g, '');
+  clean = clean.replace(/-/g, '');
+  
+  if (clean.length > 3) {
+    clean = clean.slice(0, 3) + '-' + clean.slice(3, 5);
+  }
+  
+  return clean;
+};
+
+const validateField = (field, value, schema) => {
+  // Required check
+  if (field.required && (!value || value === '')) {
+    return `${field.label} is required`;
+  }
+  
+  // Skip further validation if empty and not required
+  if (!value && !field.required) return '';
+  
+  // Pattern validation
+  if (field.pattern) {
+    const pattern = field.pattern.startsWith('^') ? field.pattern : `^${field.pattern}$`;
+    const regex = new RegExp(pattern);
+    if (!regex.test(value)) {
+      if (field.name === 'short_code') {
+        return field.masterType === 'suppliers' 
+          ? 'Must be exactly 3 uppercase letters'
+          : 'Format must be XXX-YY';
+      }
+      if (field.name === 'gst_number') {
+        return 'GST number must be 15 characters (e.g., 22AAAAA0000A1Z5)';
+      }
+      return `${field.label} format is invalid`;
+    }
+  }
+  
+  // Email validation
+  if (field.type === 'email' && value) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(value)) {
+      return 'Please enter a valid email address';
+    }
+  }
+  
+  // Number validation
+  if (field.type === 'decimal' || field.type === 'integer') {
+    const num = parseFloat(value);
+    if (isNaN(num)) {
+      return 'Please enter a valid number';
+    }
+    if (field.min !== undefined && num < field.min) {
+      return `Minimum value is ${field.min}`;
+    }
+    if (field.max !== undefined && num > field.max) {
+      return `Maximum value is ${field.max}`;
+    }
+    if (field.type === 'integer' && !Number.isInteger(num)) {
+      return 'Please enter a whole number';
+    }
+  }
+  
+  // Max length validation
+  if (field.max_length && value.length > field.max_length) {
+    return `Maximum length is ${field.max_length} characters`;
+  }
+  
+  return '';
+};
+
+// ==================== Main Component ====================
+
 const MasterForm = ({ 
   masterType,
   editData = null,
@@ -282,16 +399,27 @@ const MasterForm = ({
   onCancel,
   isOpen = true
 }) => {
+  // State
   const [formData, setFormData] = useState({});
   const [schema, setSchema] = useState(null);
   const [errors, setErrors] = useState({});
-  const [loading, setLoading] = useState(false);
+  const [touchedFields, setTouchedFields] = useState({});
+  const [loadingSchema, setLoadingSchema] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [suppliers, setSuppliers] = useState([]); // For materials reference
-  const [showGuidelines, setShowGuidelines] = useState(true);
-
+  const [suppliers, setSuppliers] = useState([]);
+  const [alert, setAlert] = useState(null);
+  const [expandedGuidelines, setExpandedGuidelines] = useState({
+    'supplier-short-code': true,
+    'material-short-code': true,
+    'material-naming': true
+  });
+  
+  // Refs
+  const firstErrorRef = useRef(null);
+  const formRef = useRef(null);
+  
   const isEditMode = !!editData;
-
+  
   // Master type display names
   const masterDisplayNames = {
     suppliers: 'Supplier',
@@ -300,7 +428,7 @@ const MasterForm = ({
     writeoff_reasons: 'Writeoff Reason',
     cost_elements: 'Cost Element'
   };
-
+  
   // Load schema and initial data
   useEffect(() => {
     if (isOpen && masterType) {
@@ -312,39 +440,46 @@ const MasterForm = ({
         setFormData({});
       }
       setErrors({});
+      setTouchedFields({});
+      setAlert(null);
     }
   }, [masterType, editData, isOpen]);
-
-  // Load schema for current master type
+  
+  // Load schema
   const loadSchema = async () => {
-    setLoading(true);
+    setLoadingSchema(true);
+    setAlert(null);
     try {
       const response = await apiCall(`/api/masters/${masterType}/schema`);
       if (response.success) {
         setSchema(response);
       }
     } catch (error) {
-      console.error('Error loading schema:', error);
+      setAlert({
+        type: 'error',
+        title: 'Failed to load form',
+        message: error.message,
+        onRetry: loadSchema
+      });
     } finally {
-      setLoading(false);
+      setLoadingSchema(false);
     }
   };
-
-  // Load reference data (suppliers for materials, etc.)
+  
+  // Load references
   const loadReferences = async () => {
     try {
-      // Load suppliers if we're editing materials
       if (masterType === 'materials') {
         const response = await apiCall('/api/masters/suppliers?per_page=100');
         if (response.success) {
-          setSuppliers(response.records);
+          setSuppliers(response.records || []);
         }
       }
     } catch (error) {
       console.error('Error loading references:', error);
     }
   };
-
+  
   // Handle field change
   const handleFieldChange = (fieldName, value) => {
     setFormData(prev => ({
@@ -352,8 +487,8 @@ const MasterForm = ({
       [fieldName]: value
     }));
     
-    // Clear error for this field
-    if (errors[fieldName]) {
+    // Clear error if field is modified
+    if (errors[fieldName] && touchedFields[fieldName]) {
       setErrors(prev => {
         const newErrors = { ...prev };
         delete newErrors[fieldName];
@@ -361,248 +496,432 @@ const MasterForm = ({
       });
     }
   };
-
-  // Validate form
-  const validateForm = () => {
-    const newErrors = {};
+  
+  // Handle field blur (validation)
+  const handleFieldBlur = (field) => {
+    setTouchedFields(prev => ({ ...prev, [field.name]: true }));
     
-    if (!schema || !schema.fields) return true;
-
-    schema.fields.forEach(field => {
-      const value = formData[field.name];
+    // Format short codes on blur
+    if (field.name === 'short_code') {
+      const formatted = masterType === 'suppliers'
+        ? formatSupplierShortCodeOnBlur(formData[field.name] || '')
+        : formatMaterialShortCodeOnBlur(formData[field.name] || '');
       
-      // Required field check
-      if (field.required && !value && value !== 0 && value !== false) {
-        newErrors[field.name] = `${field.label} is required`;
-        return;
+      handleFieldChange(field.name, formatted);
+      
+      // Validate after formatting
+      const error = validateField(field, formatted, schema);
+      if (error) {
+        setErrors(prev => ({ ...prev, [field.name]: error }));
+      } else {
+        setErrors(prev => {
+          const newErrors = { ...prev };
+          delete newErrors[field.name];
+          return newErrors;
+        });
       }
-
-      // Skip further validation if field is empty and not required
-      if (!value && !field.required) return;
-
-      // Pattern validation for text fields
-      if (field.pattern && value) {
-        const regex = new RegExp(field.pattern);
-        if (!regex.test(value)) {
-          if (field.name === 'gst_number') {
-            newErrors[field.name] = 'GST number must be 15 characters (e.g., 22AAAAA0000A1Z5)';
-          } else if (field.name === 'short_code') {
-            if (masterType === 'suppliers') {
-              newErrors[field.name] = 'Short code must be exactly 3 uppercase letters';
-            } else if (masterType === 'materials') {
-              newErrors[field.name] = 'Format must be XXX-YY where XXX is material type and YY is variety/grade';
-            }
-          } else {
-            newErrors[field.name] = `${field.label} format is invalid`;
-          }
-        }
+    } else {
+      // Validate other fields
+      const error = validateField(field, formData[field.name], schema);
+      if (error) {
+        setErrors(prev => ({ ...prev, [field.name]: error }));
       }
-
-      // Email validation
-      if (field.type === 'email' && value) {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(value)) {
-          newErrors[field.name] = 'Invalid email address';
-        }
-      }
-
-      // Number validation
-      if ((field.type === 'decimal' || field.type === 'integer') && value) {
-        const numValue = parseFloat(value);
-        if (isNaN(numValue)) {
-          newErrors[field.name] = `${field.label} must be a number`;
-        } else {
-          if (field.min !== undefined && numValue < field.min) {
-            newErrors[field.name] = `${field.label} must be at least ${field.min}`;
-          }
-          if (field.max !== undefined && numValue > field.max) {
-            newErrors[field.name] = `${field.label} must not exceed ${field.max}`;
-          }
-        }
-      }
-
-      // Max length validation
-      if (field.max_length && value && value.length > field.max_length) {
-        newErrors[field.name] = `${field.label} must not exceed ${field.max_length} characters`;
+    }
+  };
+  
+  // Toggle guidelines
+  const toggleGuideline = (type) => {
+    setExpandedGuidelines(prev => ({
+      ...prev,
+      [type]: !prev[type]
+    }));
+  };
+  
+  // Validate entire form
+  const validateForm = () => {
+    if (!schema || !schema.fields) return {};
+    
+    const newErrors = {};
+    schema.fields.forEach(field => {
+      const error = validateField(field, formData[field.name], schema);
+      if (error) {
+        newErrors[field.name] = error;
       }
     });
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    
+    return newErrors;
   };
-
-  // Handle form submit
+  
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!validateForm()) {
+    // Validate all fields
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      setTouchedFields(
+        schema.fields.reduce((acc, field) => ({ ...acc, [field.name]: true }), {})
+      );
+      
+      // Scroll to first error
+      const firstErrorField = Object.keys(validationErrors)[0];
+      const element = document.getElementById(`${masterType}-${firstErrorField}`);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        element.focus();
+      }
+      
       return;
     }
-
+    
+    // Save data
     setSaving(true);
+    setAlert(null);
+    
     try {
-      let response;
-      if (isEditMode) {
-        const id = editData[schema.primary_key];
-        response = await apiCall(`/api/masters/${masterType}/${id}`, {
-          method: 'PUT',
-          body: JSON.stringify(formData)
-        });
-      } else {
-        response = await apiCall(`/api/masters/${masterType}`, {
-          method: 'POST',
-          body: JSON.stringify(formData)
-        });
-      }
-
+      const url = isEditMode
+        ? `/api/masters/${masterType}/${editData[schema.primary_key]}`
+        : `/api/masters/${masterType}`;
+      
+      const method = isEditMode ? 'PUT' : 'POST';
+      
+      // Only send fields defined in schema
+      const dataToSend = {};
+      schema.fields.forEach(field => {
+        if (formData[field.name] !== undefined) {
+          dataToSend[field.name] = formData[field.name];
+        }
+      });
+      
+      const response = await apiCall(url, {
+        method,
+        body: JSON.stringify(dataToSend)
+      });
+      
       if (response.success) {
-        onSave(response);
-      } else if (response.errors) {
-        setErrors(response.errors);
+        setAlert({
+          type: 'success',
+          message: `${masterDisplayNames[masterType]} ${isEditMode ? 'updated' : 'created'} successfully!`
+        });
+        
+        // Call parent callback
+        setTimeout(() => {
+          onSave(response);
+        }, 1000);
       }
     } catch (error) {
-      // Handle unique constraint errors
-      if (error.message.includes('already exists')) {
-        const field = error.message.includes('short_code') ? 'short_code' : 
-                     error.message.includes('email') ? 'email' : 
-                     error.message.includes('gst_number') ? 'gst_number' :
-                     schema.name_field;
-        setErrors({ [field]: error.message });
-      } else {
-        alert(`Error: ${error.message}`);
-      }
+      setAlert({
+        type: 'error',
+        title: 'Save failed',
+        message: error.message
+      });
     } finally {
       setSaving(false);
     }
   };
-
-  if (loading) {
-    return <div style={{ padding: '20px', textAlign: 'center' }}>Loading form...</div>;
+  
+  // Render field based on schema
+  const renderField = (field) => {
+    const fieldId = `${masterType}-${field.name}`;
+    const value = formData[field.name];
+    const error = touchedFields[field.name] ? errors[field.name] : null;
+    const commonProps = {
+      id: fieldId,
+      label: field.label,
+      value,
+      onChange: (val) => handleFieldChange(field.name, val),
+      error,
+      required: field.required,
+      disabled: saving,
+      onBlur: () => handleFieldBlur(field)
+    };
+    
+    // Reference field (supplier dropdown) - FIXED BUG HERE
+    if (field.type === 'reference' && field.reference_table === 'suppliers') {
+      return (
+        <ReferenceField
+          {...commonProps}
+          options={suppliers}
+          help={field.help}
+        />
+      );
+    }
+    
+    // Select field
+    if (field.type === 'select' && field.options) {
+      return (
+        <SelectField
+          {...commonProps}
+          options={field.options}
+          help={field.help}
+        />
+      );
+    }
+    
+    // Textarea field
+    if (field.type === 'textarea') {
+      return (
+        <TextareaField
+          {...commonProps}
+          placeholder={field.placeholder}
+          help={field.help}
+          rows={field.rows || 3}
+        />
+      );
+    }
+    
+    // Number fields
+    if (field.type === 'decimal' || field.type === 'integer') {
+      return (
+        <NumberField
+          {...commonProps}
+          min={field.min}
+          max={field.max}
+          step={field.type === 'decimal' ? 0.01 : 1}
+          help={field.help}
+        />
+      );
+    }
+    
+    // Text/Email fields
+    return (
+      <TextField
+        {...commonProps}
+        placeholder={field.placeholder}
+        help={field.help || (field.name === 'short_code' ? `Example: ${masterType === 'suppliers' ? 'SKM' : 'GNS-K'}` : '')}
+        maxLength={field.max_length}
+      />
+    );
+  };
+  
+  // Group fields into sections
+  const getFieldSections = () => {
+    if (!schema || !schema.fields) return [];
+    
+    if (masterType === 'materials') {
+      return [
+        {
+          title: 'Basic Information',
+          description: 'Core material details',
+          fields: schema.fields.filter(f => 
+            ['material_name', 'description'].includes(f.name)
+          )
+        },
+        {
+          title: 'Classification',
+          description: 'Category and measurement',
+          fields: schema.fields.filter(f => 
+            ['category', 'unit'].includes(f.name)
+          )
+        },
+        {
+          title: 'Cost & Pricing',
+          description: 'Financial information',
+          fields: schema.fields.filter(f => 
+            ['current_cost', 'gst_rate'].includes(f.name)
+          )
+        },
+        {
+          title: 'Supplier & Reference',
+          description: 'Link to supplier',
+          fields: schema.fields.filter(f => 
+            ['supplier_id'].includes(f.name)
+          )
+        },
+        {
+          title: 'Identification',
+          description: 'Unique codes and identifiers',
+          fields: schema.fields.filter(f => 
+            ['short_code'].includes(f.name)
+          ),
+          guidelines: ['material-short-code', 'material-naming']
+        }
+      ];
+    }
+    
+    if (masterType === 'suppliers') {
+      return [
+        {
+          title: 'Business Details',
+          description: 'Company information',
+          fields: schema.fields.filter(f => 
+            ['supplier_name', 'gst_number'].includes(f.name)
+          )
+        },
+        {
+          title: 'Contact Information',
+          description: 'Communication details',
+          fields: schema.fields.filter(f => 
+            ['contact_person', 'email', 'phone'].includes(f.name)
+          )
+        },
+        {
+          title: 'Address',
+          description: 'Location details',
+          fields: schema.fields.filter(f => 
+            ['address', 'city', 'state', 'pincode'].includes(f.name)
+          )
+        },
+        {
+          title: 'Identification',
+          description: 'Unique identifier',
+          fields: schema.fields.filter(f => 
+            ['short_code'].includes(f.name)
+          ),
+          guidelines: ['supplier-short-code']
+        }
+      ];
+    }
+    
+    // Default single section for other master types
+    return [{
+      title: null,
+      fields: schema.fields
+    }];
+  };
+  
+  // Render loading state
+  if (loadingSchema) {
+    return (
+      <div className="form-container">
+        <div className="page-header">
+          <h2 className="page-title">Loading...</h2>
+        </div>
+        <div className="form-grid">
+          <FormSection>
+            <FieldSkeleton />
+            <FieldSkeleton />
+            <FieldSkeleton />
+          </FormSection>
+          <FormSection>
+            <FieldSkeleton />
+            <FieldSkeleton />
+            <FieldSkeleton />
+          </FormSection>
+        </div>
+      </div>
+    );
   }
-
-  if (!schema) {
-    return <div style={{ padding: '20px', textAlign: 'center' }}>No schema available</div>;
+  
+  // Render error state
+  if (!schema && alert?.type === 'error') {
+    return (
+      <div className="form-container">
+        <div className="page-header">
+          <h2 className="page-title">Error</h2>
+        </div>
+        <InlineAlert {...alert} />
+      </div>
+    );
   }
-
+  
+  const sections = getFieldSections();
+  const hasValidationErrors = Object.keys(errors).length > 0 && Object.keys(touchedFields).length > 0;
+  
   return (
-    <div style={{ maxHeight: '80vh', overflowY: 'auto' }}>
-      <form onSubmit={handleSubmit} style={{ padding: '20px' }}>
-        <h2 style={{ marginBottom: '20px' }}>
-          {isEditMode ? 'Edit' : 'Add New'} {masterDisplayNames[masterType] || masterType}
-        </h2>
-
-        {/* Show naming guidelines for materials */}
-        {masterType === 'materials' && !isEditMode && showGuidelines && (
-          <MaterialNamingGuidelines masterType={masterType} />
-        )}
-
-        {/* Render form fields */}
-        {schema.fields.map(field => {
-          // Show guidelines before short code field
-          const showGuidelinesBeforeField = field.name === 'short_code' && showGuidelines;
-
-          return (
-            <div key={field.name} style={{ marginBottom: '15px' }}>
-              {showGuidelinesBeforeField && (
-                <ShortCodeGuidelines 
-                  masterType={masterType} 
+    <div className="form-container">
+      {/* Accessibility: Live region for form status */}
+      <div aria-live="polite" aria-atomic="true" className="visually-hidden">
+        {saving && 'Saving form...'}
+        {alert?.type === 'success' && alert.message}
+      </div>
+      
+      {/* Page Header */}
+      <div className="page-header">
+        <h1 className="page-title">
+          {isEditMode ? 'Edit' : 'Add New'} {masterDisplayNames[masterType]}
+        </h1>
+        <p className="page-subtitle">
+          {isEditMode 
+            ? `Editing ${editData?.[schema?.name_field] || 'record'}`
+            : `Create a new ${masterDisplayNames[masterType].toLowerCase()} record`}
+        </p>
+      </div>
+      
+      {/* Alert Messages */}
+      {alert && <InlineAlert {...alert} />}
+      
+      {/* Error Summary */}
+      {hasValidationErrors && (
+        <div className="error-summary">
+          <div className="error-summary-title">Please correct the following errors:</div>
+          <ul className="error-summary-list">
+            {Object.entries(errors).map(([fieldName, error]) => {
+              const field = schema.fields.find(f => f.name === fieldName);
+              return (
+                <li key={fieldName} className="error-summary-item">
+                  {field?.label || fieldName}: {error}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
+      )}
+      
+      {/* Form */}
+      <form ref={formRef} onSubmit={handleSubmit} noValidate>
+        <div className="form-grid">
+          {sections.map((section, idx) => (
+            <FormSection
+              key={idx}
+              title={section.title}
+              description={section.description}
+              className={section.fields.length > 3 ? 'full-width' : ''}
+            >
+              {/* Guidelines for this section */}
+              {section.guidelines?.map(guidelineType => (
+                <Guidelines
+                  key={guidelineType}
+                  type={guidelineType}
                   category={formData.category}
+                  expanded={expandedGuidelines[guidelineType]}
+                  onToggle={toggleGuideline}
                 />
-              )}
-              <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>
-                {field.label} {field.required && <span style={{ color: 'red' }}>*</span>}
-              </label>
-              <FieldInput
-                field={field}
-                value={formData[field.name]}
-                onChange={handleFieldChange}
-                error={errors[field.name]}
-                disabled={saving}
-                masterType={masterType}
-                formData={formData}
-                suppliers={suppliers}  // Pass suppliers array
-              />
-              {errors[field.name] && (
-                <small style={{ color: '#dc3545', display: 'block', marginTop: '5px' }}>
-                  {errors[field.name]}
-                </small>
-              )}
-              {/* Show real-time validation for short codes */}
-              {field.name === 'short_code' && formData[field.name] && !errors[field.name] && (
-                <small style={{ color: '#28a745', display: 'block', marginTop: '5px' }}>
-                  ✓ Valid format
-                </small>
-              )}
-            </div>
-          );
-        })}
-
-        {/* Form Actions */}
-        <div style={{ marginTop: '20px', display: 'flex', gap: '10px' }}>
-          <button
-            type="submit"
-            disabled={saving}
-            style={{
-              padding: '10px 20px',
-              backgroundColor: '#007bff',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: saving ? 'not-allowed' : 'pointer',
-              opacity: saving ? 0.6 : 1
-            }}
-          >
-            {saving ? 'Saving...' : (isEditMode ? 'Update' : 'Save')}
-          </button>
-          <button
-            type="button"
-            onClick={onCancel}
-            disabled={saving}
-            style={{
-              padding: '10px 20px',
-              backgroundColor: '#6c757d',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
-          >
-            Cancel
-          </button>
-          {showGuidelines && (
+              ))}
+              
+              {/* Fields */}
+              {section.fields.map(field => (
+                <React.Fragment key={field.name}>
+                  {renderField(field)}
+                  {field.name === 'short_code' && formData[field.name] && !errors[field.name] && touchedFields[field.name] && (
+                    <div className="form-success">Valid format</div>
+                  )}
+                </React.Fragment>
+              ))}
+            </FormSection>
+          ))}
+        </div>
+        
+        {/* Sticky Action Bar */}
+        <div className="actions-sticky">
+          <div className="actions">
+            {saving && (
+              <div className="actions-info">Saving changes...</div>
+            )}
             <button
               type="button"
-              onClick={() => setShowGuidelines(false)}
-              style={{
-                padding: '10px 20px',
-                backgroundColor: '#ffc107',
-                color: '#000',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                marginLeft: 'auto'
-              }}
+              className="btn btn-ghost"
+              onClick={onCancel}
+              disabled={saving}
             >
-              Hide Guidelines
+              Cancel
             </button>
-          )}
-          {!showGuidelines && (
             <button
-              type="button"
-              onClick={() => setShowGuidelines(true)}
-              style={{
-                padding: '10px 20px',
-                backgroundColor: '#17a2b8',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                marginLeft: 'auto'
-              }}
+              type="submit"
+              className="btn btn-primary"
+              disabled={saving}
             >
-              Show Guidelines
+              {saving ? (
+                <>
+                  <span className="btn-spinner"></span>
+                  Saving...
+                </>
+              ) : (
+                isEditMode ? 'Update' : 'Save'
+              )}
             </button>
-          )}
+          </div>
         </div>
       </form>
     </div>
