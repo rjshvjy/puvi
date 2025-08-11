@@ -15,6 +15,19 @@ const apiCall = async (url, options = {}) => {
         'Content-Type': 'application/json',
         ...options.headers
       },
+  
+  costManagement: {
+    getCostElementsMaster: () => api.get('/api/cost_elements_master'),
+    getCostElementsByCategory: (category) => api.get(`/api/cost_elements/${category}`),
+    getCostElementsByStage: (stage) => api.get('/api/cost_elements/by_stage', { stage }),
+    getCostElementsForBatch: () => api.get('/api/cost_elements_for_batch'), // For batch module
+    addCostElement: (data) => api.post('/api/cost_elements', data),
+    updateCostElement: (id, data) => api.put(`/api/cost_elements/${id}`, data),
+    deleteCostElement: (id) => api.delete(`/api/cost_elements/${id}`),
+    getCostAnalysis: (params) => api.get('/api/cost_analysis', params),
+    saveTimeTracking: (data) => api.post('/api/cost_management/time_tracking', data),
+    saveBatchCosts: (data) => api.post('/api/cost_management/batch_costs', data)
+  },
       ...options
     });
 
@@ -70,9 +83,12 @@ const api = {
   batch: {
     getSeedsForBatch: () => api.get('/api/seeds_for_batch'),
     getCostElements: () => api.get('/api/cost_elements_for_batch'),
+    getCostElementsForBatch: () => api.get('/api/cost_elements_for_batch'), // Alias for compatibility
     getExtendedCostElements: () => api.get('/api/extended_cost_elements'),
+    getOilCakeRates: () => api.get('/api/oil_cake_rates'),
+    addBatch: (data) => api.post('/api/batch_production', data),
     createBatch: (data) => api.post('/api/batch_production', data),
-    getBatchHistory: () => api.get('/api/batch_history')
+    getBatchHistory: (params) => api.get('/api/batch_history', params)
   },
   
   sku: {
@@ -111,10 +127,13 @@ const api = {
   costManagement: {
     getCostElementsMaster: () => api.get('/api/cost_elements_master'),
     getCostElementsByCategory: (category) => api.get(`/api/cost_elements/${category}`),
+    getCostElementsByStage: (stage) => api.get('/api/cost_elements/by_stage', { stage }),
     addCostElement: (data) => api.post('/api/cost_elements', data),
     updateCostElement: (id, data) => api.put(`/api/cost_elements/${id}`, data),
     deleteCostElement: (id) => api.delete(`/api/cost_elements/${id}`),
-    getCostAnalysis: (params) => api.get('/api/cost_analysis', params)
+    getCostAnalysis: (params) => api.get('/api/cost_analysis', params),
+    saveTimeTracking: (data) => api.post('/api/cost_management/time_tracking', data),
+    saveBatchCosts: (data) => api.post('/api/cost_management/batch_costs', data)
   },
   
   masters: {
