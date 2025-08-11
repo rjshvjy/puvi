@@ -1,7 +1,7 @@
 """
 Cost Management Module for PUVI Oil Manufacturing System
 Handles all cost elements, time tracking, and Phase 1 validation (warnings only)
-File Path: puvi-backend/modules/cost_management.py
+File Path: puvi-backend/puvi-backend-main/modules/cost_management.py
 """
 
 from flask import Blueprint, request, jsonify
@@ -64,7 +64,7 @@ def get_cost_elements_master():
                     applicable_to,
                     display_order
                 FROM cost_elements_master
-                WHERE active = true
+                WHERE is_active = true
                 ORDER BY display_order, category, element_name
             """
             cur.execute(query)
@@ -81,7 +81,7 @@ def get_cost_elements_master():
                     applicable_to,
                     display_order
                 FROM cost_elements_master
-                WHERE active = true 
+                WHERE is_active = true 
                     AND applicable_to IN (%s, 'all')
                 ORDER BY display_order, category, element_name
             """
@@ -141,7 +141,7 @@ def get_cost_elements_by_stage():
                 calculation_method,
                 is_optional
             FROM cost_elements_master
-            WHERE active = true 
+            WHERE is_active = true 
                 AND applicable_to IN (%s, 'all')
             ORDER BY display_order
         """, (stage,))
@@ -325,7 +325,7 @@ def calculate_batch_costs():
                 calculation_method,
                 is_optional
             FROM cost_elements_master
-            WHERE active = true 
+            WHERE is_active = true 
                 AND applicable_to IN ('batch', 'all')
             ORDER BY display_order
         """)
@@ -497,10 +497,9 @@ def save_batch_costs():
             else:
                 actual_rate = rate
             
-            # Calculate total cost
             total_cost = quantity * actual_rate
             
-            # Check if this cost already exists
+            # Check if cost already exists for this batch and element
             cur.execute("""
                 SELECT cost_id FROM batch_extended_costs
                 WHERE batch_id = %s AND element_id = %s
@@ -509,14 +508,15 @@ def save_batch_costs():
             existing = cur.fetchone()
             
             if existing:
-                # Update existing
+                # Update existing cost
                 cur.execute("""
                     UPDATE batch_extended_costs
                     SET quantity_or_hours = %s,
                         rate_used = %s,
                         total_cost = %s,
                         is_applied = %s,
-                        created_by = %s
+                        updated_at = CURRENT_TIMESTAMP,
+                        updated_by = %s
                     WHERE cost_id = %s
                 """, (
                     float(quantity),
@@ -526,8 +526,9 @@ def save_batch_costs():
                     created_by,
                     existing[0]
                 ))
+                action = 'updated'
             else:
-                # Insert new
+                # Insert new cost
                 cur.execute("""
                     INSERT INTO batch_extended_costs (
                         batch_id, element_id, element_name,
@@ -544,29 +545,93 @@ def save_batch_costs():
                     is_applied,
                     created_by
                 ))
+                action = 'created'
             
             if is_applied:
-                saved_costs.append({
-                    'element_name': element_name,
-                    'quantity': float(quantity),
-                    'rate': float(actual_rate),
-                    'total_cost': float(total_cost)
-                })
                 total_saved += total_cost
+            
+            saved_costs.append({
+                'element_name': element_name,
+                'quantity': float(quantity),
+                'rate': float(actual_rate),
+                'total_cost': float(total_cost),
+                'is_applied': is_applied,
+                'action': action
+            })
         
         # Commit transaction
         conn.commit()
         
         return jsonify({
             'success': True,
-            'batch_id': batch_id,
             'saved_costs': saved_costs,
-            'total_extended_costs': float(total_saved),
-            'message': f'{len(saved_costs)} cost elements saved successfully'
+            'total_saved_amount': float(total_saved),
+            'count': len(saved_costs),
+            'message': f'Successfully saved {len(saved_costs)} cost elements'
         })
         
     except Exception as e:
         conn.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+@cost_management_bp.route('/api/cost_elements/validation_report', methods=['GET'])
+def get_validation_report():
+    """Get validation report for all recent batches (Phase 1 - Warnings only)"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        # Get date range from parameters
+        days = request.args.get('days', 30, type=int)
+        
+        cur.execute("""
+            SELECT 
+                b.batch_id,
+                b.batch_code,
+                b.oil_type,
+                b.production_date,
+                COUNT(DISTINCT bec.element_id) as costs_captured,
+                COUNT(DISTINCT cem.element_id) as costs_expected
+            FROM batch b
+            CROSS JOIN cost_elements_master cem
+            LEFT JOIN batch_extended_costs bec 
+                ON b.batch_id = bec.batch_id 
+                AND bec.element_id = cem.element_id
+            WHERE cem.is_active = true 
+                AND cem.applicable_to IN ('batch', 'all')
+                AND cem.is_optional = false
+                AND b.production_date >= (
+                    SELECT MAX(production_date) - %s FROM batch
+                )
+            GROUP BY b.batch_id, b.batch_code, b.oil_type, b.production_date
+            HAVING COUNT(DISTINCT bec.element_id) < COUNT(DISTINCT cem.element_id)
+            ORDER BY b.production_date DESC
+        """, (days,))
+        
+        batches_with_warnings = []
+        for row in cur.fetchall():
+            batches_with_warnings.append({
+                'batch_id': row[0],
+                'batch_code': row[1],
+                'oil_type': row[2],
+                'production_date': integer_to_date(row[3]),
+                'costs_captured': row[4],
+                'costs_expected': row[5],
+                'missing_count': row[5] - row[4]
+            })
+        
+        return jsonify({
+            'success': True,
+            'report_period_days': days,
+            'batches_with_warnings': batches_with_warnings,
+            'total_batches_with_warnings': len(batches_with_warnings),
+            'message': 'Phase 1 Validation - Warnings only, operations not blocked'
+        })
+        
+    except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
     finally:
         close_connection(conn, cur)
@@ -661,7 +726,7 @@ def get_batch_cost_summary(batch_id):
         cur.execute("""
             SELECT element_name, default_rate, calculation_method, is_optional
             FROM cost_elements_master
-            WHERE active = true 
+            WHERE is_active = true 
                 AND applicable_to IN ('batch', 'all')
                 AND element_id NOT IN (
                     SELECT element_id FROM batch_extended_costs WHERE batch_id = %s
@@ -714,7 +779,7 @@ def calculate_time_based_costs(cur, hours):
         FROM cost_elements_master
         WHERE calculation_method = 'per_hour'
             AND applicable_to IN ('batch', 'all')
-            AND active = true
+            AND is_active = true
     """)
     
     costs = []
@@ -728,63 +793,3 @@ def calculate_time_based_costs(cur, hours):
         })
     
     return costs
-
-
-@cost_management_bp.route('/api/cost_elements/validation_report', methods=['GET'])
-def get_validation_report():
-    """Get validation report for all recent batches (Phase 1 - Warnings only)"""
-    conn = get_db_connection()
-    cur = conn.cursor()
-    
-    try:
-        # Get date range from parameters
-        days = request.args.get('days', 30, type=int)
-        
-        cur.execute("""
-            SELECT 
-                b.batch_id,
-                b.batch_code,
-                b.oil_type,
-                b.production_date,
-                COUNT(DISTINCT bec.element_id) as costs_captured,
-                COUNT(DISTINCT cem.element_id) as costs_expected
-            FROM batch b
-            CROSS JOIN cost_elements_master cem
-            LEFT JOIN batch_extended_costs bec 
-                ON b.batch_id = bec.batch_id 
-                AND bec.element_id = cem.element_id
-            WHERE cem.active = true 
-                AND cem.applicable_to IN ('batch', 'all')
-                AND cem.is_optional = false
-                AND b.production_date >= (
-                    SELECT MAX(production_date) - %s FROM batch
-                )
-            GROUP BY b.batch_id, b.batch_code, b.oil_type, b.production_date
-            HAVING COUNT(DISTINCT bec.element_id) < COUNT(DISTINCT cem.element_id)
-            ORDER BY b.production_date DESC
-        """, (days,))
-        
-        batches_with_warnings = []
-        for row in cur.fetchall():
-            batches_with_warnings.append({
-                'batch_id': row[0],
-                'batch_code': row[1],
-                'oil_type': row[2],
-                'production_date': integer_to_date(row[3]),
-                'costs_captured': row[4],
-                'costs_expected': row[5],
-                'missing_count': row[5] - row[4]
-            })
-        
-        return jsonify({
-            'success': True,
-            'report_period_days': days,
-            'batches_with_warnings': batches_with_warnings,
-            'total_batches_with_warnings': len(batches_with_warnings),
-            'message': 'Phase 1 Validation - Warnings only, operations not blocked'
-        })
-        
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)}), 500
-    finally:
-        close_connection(conn, cur)
