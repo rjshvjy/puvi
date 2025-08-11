@@ -1,5 +1,5 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/services/api/index.js
-// Main API Service Module
+// Main API Service Module - FIXED with complete cost management integration
 
 // Import utilities
 import { skuDateUtils, expiryUtils, formatUtils } from './skuUtilities';
@@ -15,19 +15,6 @@ const apiCall = async (url, options = {}) => {
         'Content-Type': 'application/json',
         ...options.headers
       },
-  
-  costManagement: {
-    getCostElementsMaster: () => api.get('/api/cost_elements_master'),
-    getCostElementsByCategory: (category) => api.get(`/api/cost_elements/${category}`),
-    getCostElementsByStage: (stage) => api.get('/api/cost_elements/by_stage', { stage }),
-    getCostElementsForBatch: () => api.get('/api/cost_elements_for_batch'), // For batch module
-    addCostElement: (data) => api.post('/api/cost_elements', data),
-    updateCostElement: (id, data) => api.put(`/api/cost_elements/${id}`, data),
-    deleteCostElement: (id) => api.delete(`/api/cost_elements/${id}`),
-    getCostAnalysis: (params) => api.get('/api/cost_analysis', params),
-    saveTimeTracking: (data) => api.post('/api/cost_management/time_tracking', data),
-    saveBatchCosts: (data) => api.post('/api/cost_management/batch_costs', data)
-  },
       ...options
     });
 
@@ -86,9 +73,12 @@ const api = {
     getCostElementsForBatch: () => api.get('/api/cost_elements_for_batch'), // Alias for compatibility
     getExtendedCostElements: () => api.get('/api/extended_cost_elements'),
     getOilCakeRates: () => api.get('/api/oil_cake_rates'),
-    addBatch: (data) => api.post('/api/batch_production', data),
-    createBatch: (data) => api.post('/api/batch_production', data),
-    getBatchHistory: (params) => api.get('/api/batch_history', params)
+    addBatch: (data) => api.post('/api/add_batch', data),
+    createBatch: (data) => api.post('/api/add_batch', data),
+    getBatchHistory: (params) => api.get('/api/batch_history', params),
+    // FIXED: Add missing batch cost endpoints
+    calculateBatchCosts: (batchId) => api.post('/api/cost_elements/calculate', { batch_id: batchId }),
+    getBatchCostSummary: (batchId) => api.get(`/api/cost_elements/batch_summary/${batchId}`)
   },
   
   sku: {
@@ -125,21 +115,27 @@ const api = {
   },
   
   costManagement: {
-    getCostElementsMaster: () => api.get('/api/cost_elements_master'),
+    // FIXED: Use correct endpoints from cost_management module
+    getCostElementsMaster: () => api.get('/api/cost_elements/master'),
     getCostElementsByCategory: (category) => api.get(`/api/cost_elements/${category}`),
     getCostElementsByStage: (stage) => api.get('/api/cost_elements/by_stage', { stage }),
+    getCostElementsForBatch: () => api.get('/api/cost_elements_for_batch'), // For batch module
     addCostElement: (data) => api.post('/api/cost_elements', data),
     updateCostElement: (id, data) => api.put(`/api/cost_elements/${id}`, data),
     deleteCostElement: (id) => api.delete(`/api/cost_elements/${id}`),
     getCostAnalysis: (params) => api.get('/api/cost_analysis', params),
-    saveTimeTracking: (data) => api.post('/api/cost_management/time_tracking', data),
-    saveBatchCosts: (data) => api.post('/api/cost_management/batch_costs', data)
+    // FIXED: Correct endpoints for time tracking and batch costs
+    saveTimeTracking: (data) => api.post('/api/cost_elements/time_tracking', data),
+    saveBatchCosts: (data) => api.post('/api/cost_elements/save_batch_costs', data),
+    // FIXED: Add missing validation and summary endpoints
+    getValidationReport: (days) => api.get('/api/cost_elements/validation_report', { days }),
+    getBatchSummary: (batchId) => api.get(`/api/cost_elements/batch_summary/${batchId}`)
   },
   
   masters: {
     getSuppliers: () => api.get('/api/suppliers'),
     getMaterials: () => api.get('/api/materials'),
-    getCostElements: () => api.get('/api/cost_elements')
+    getCostElements: () => api.get('/api/cost_elements/master') // FIXED: Use master endpoint
   },
   
   openingBalance: {
@@ -339,8 +335,8 @@ export const salesAPI = {
 
 // Cost Management API endpoints
 export const costAPI = {
-  // Get cost elements
-  getElements: () => api.get('/api/cost_elements'),
+  // FIXED: Use correct endpoints from cost_management module
+  getElements: () => api.get('/api/cost_elements/master'),
   
   // Create cost element
   createElement: (data) => api.post('/api/cost_elements', data),
@@ -353,6 +349,14 @@ export const costAPI = {
   
   // Get cost analysis
   getAnalysis: (params) => api.get('/api/cost_analysis', params),
+  
+  // FIXED: Add missing cost management endpoints
+  getCostElementsByStage: (stage) => api.get('/api/cost_elements/by_stage', { stage }),
+  saveTimeTracking: (data) => api.post('/api/cost_elements/time_tracking', data),
+  saveBatchCosts: (data) => api.post('/api/cost_elements/save_batch_costs', data),
+  calculateBatchCosts: (batchId) => api.post('/api/cost_elements/calculate', { batch_id: batchId }),
+  getBatchSummary: (batchId) => api.get(`/api/cost_elements/batch_summary/${batchId}`),
+  getValidationReport: (days) => api.get('/api/cost_elements/validation_report', { days })
 };
 
 // Export the API base URL for components that need it directly
