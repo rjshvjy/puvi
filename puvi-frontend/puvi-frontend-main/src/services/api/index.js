@@ -1,5 +1,5 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/services/api/index.js
-// Main API Service Module - FIXED with corrected writeoff endpoints
+// Main API Service Module - FIXED with corrected writeoff and sales endpoints
 
 // Import utilities
 import { skuDateUtils, expiryUtils, formatUtils } from './skuUtilities';
@@ -96,6 +96,13 @@ const api = {
   },
   
   sales: {
+    // FIXED: Added all Material Sales endpoints needed by the component
+    getByproductTypes: () => api.get('/api/byproduct_types'),
+    getMaterialSalesInventory: (params) => api.get('/api/material_sales_inventory', params),
+    addMaterialSale: (data) => api.post('/api/add_material_sale', data),
+    getMaterialSalesHistory: (params) => api.get('/api/material_sales_history', params),
+    getCostReconciliationReport: () => api.get('/api/cost_reconciliation_report'),
+    // Keep old functions for backward compatibility
     getByproductInventory: (type) => api.get(`/api/byproduct_inventory/${type}`),
     recordSale: (data) => api.post('/api/material_sales', data),
     getSalesHistory: () => api.get('/api/material_sales_history')
@@ -325,16 +332,26 @@ export const openingBalanceAPI = {
 
 // Material Sales API endpoints
 export const salesAPI = {
-  // Get oil cake inventory
+  // FIXED: Added all Material Sales endpoints needed by the component
+  // Get byproduct types
+  getByproductTypes: () => api.get('/api/byproduct_types'),
+  
+  // Get material sales inventory
+  getMaterialSalesInventory: (params) => api.get('/api/material_sales_inventory', params),
+  
+  // Add material sale
+  addMaterialSale: (data) => api.post('/api/add_material_sale', data),
+  
+  // Get material sales history
+  getMaterialSalesHistory: (params) => api.get('/api/material_sales_history', params),
+  
+  // Get cost reconciliation report
+  getCostReconciliationReport: () => api.get('/api/cost_reconciliation_report'),
+  
+  // Old functions for backward compatibility
   getInventory: () => api.get('/api/oil_cake_inventory'),
-  
-  // Create sale
   create: (data) => api.post('/api/oil_cake_sale', data),
-  
-  // Get sales history
   getHistory: () => api.get('/api/oil_cake_sales'),
-  
-  // Get sale by ID
   getById: (id) => api.get(`/api/oil_cake_sale/${id}`),
 };
 
