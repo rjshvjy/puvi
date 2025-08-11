@@ -1,21 +1,29 @@
 """
-Masters Common Module for PUVI Oil Manufacturing System
-Shared utilities and configurations for all master data management
-Provides base classes, validation, audit logging, and dependency checking
+Common utilities and configurations for Masters CRUD operations
 File Path: puvi-backend/puvi-backend-main/modules/masters_common.py
 """
 
-import json
 import re
+import json
 from decimal import Decimal
 from datetime import datetime
-from flask import jsonify
-from db_utils import get_db_connection, close_connection
-from utils.validation import safe_decimal, safe_float, safe_int
-from utils.date_utils import get_current_day_number
 
 # =====================================================
-# MASTER CONFIGURATIONS
+# JSON SERIALIZATION HANDLER - FIXES DECIMAL BUG
+# =====================================================
+
+def decimal_handler(obj):
+    """Custom JSON handler for Decimal and other non-serializable types"""
+    if isinstance(obj, Decimal):
+        return float(obj)
+    elif isinstance(obj, datetime):
+        return obj.isoformat()
+    elif isinstance(obj, bytes):
+        return obj.decode('utf-8', errors='ignore')
+    raise TypeError(f"Object of type {type(obj).__name__} is not JSON serializable")
+
+# =====================================================
+# MASTERS CONFIGURATION
 # =====================================================
 
 MASTERS_CONFIG = {
@@ -35,33 +43,42 @@ MASTERS_CONFIG = {
             'contact_person': {
                 'type': 'text',
                 'required': False,
-                'max_length': 255,
+                'max_length': 100,
                 'label': 'Contact Person'
             },
             'phone': {
                 'type': 'text',
-                'required': False,
-                'max_length': 50,
-                'pattern': r'^[0-9\-\+\(\)\s]*$',
+                'required': True,
+                'max_length': 20,
+                'pattern': r'^[0-9+\-\s()]+$',
                 'label': 'Phone Number'
             },
             'email': {
                 'type': 'email',
                 'required': False,
-                'max_length': 255,
+                'max_length': 100,
                 'label': 'Email Address'
             },
             'address': {
                 'type': 'textarea',
                 'required': False,
+                'max_length': 500,
                 'label': 'Address'
             },
             'gst_number': {
                 'type': 'text',
                 'required': False,
-                'max_length': 50,
-                'pattern': r'^[0-9A-Z]{15}$',
-                'label': 'GST Number'
+                'unique': True,
+                'max_length': 15,
+                'pattern': r'^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[0-9A-Z]{1}[Z]{1}[0-9A-Z]{1}$',
+                'label': 'GST Number',
+                'placeholder': '22AAAAA0000A1Z5'
+            },
+            'notes': {
+                'type': 'textarea',
+                'required': False,
+                'max_length': 500,
+                'label': 'Notes'
             },
             'short_code': {
                 'type': 'text',
@@ -151,7 +168,7 @@ MASTERS_CONFIG = {
                 'required': True,
                 'unique': True,
                 'max_length': 6,
-                'pattern': r'^[A-Z]{1,3}-[A-Z]{1,2}$',  # Fixed pattern for XXX-Y format
+                'pattern': r'^[A-Z]{1,3}-[A-Z]{1,2}$',
                 'label': 'Short Code (e.g., GNS-K)',
                 'transform': 'uppercase',
                 'placeholder': 'XXX-Y'
@@ -161,34 +178,28 @@ MASTERS_CONFIG = {
             SELECT 
                 m.*,
                 s.supplier_name,
-                i.closing_stock,
-                i.weighted_avg_cost
+                COUNT(DISTINCT p.purchase_id) as purchase_count
             FROM materials m
             LEFT JOIN suppliers s ON m.supplier_id = s.supplier_id
-            LEFT JOIN inventory i ON m.material_id = i.material_id
+            LEFT JOIN purchase_items p ON m.material_id = p.material_id
             WHERE m.is_active = true
+            GROUP BY m.material_id, s.supplier_name
         """,
         'dependencies': {
-            'inventory': {
-                'table': 'inventory',
-                'foreign_key': 'material_id',
-                'check_field': 'closing_stock',
-                'message': 'Material has inventory balance of {value}'
-            },
             'purchase_items': {
                 'table': 'purchase_items',
                 'foreign_key': 'material_id',
-                'message': 'Material has {count} purchase transactions'
+                'message': 'Material used in {count} purchase items'
+            },
+            'inventory': {
+                'table': 'inventory',
+                'foreign_key': 'material_id',
+                'message': 'Material has inventory records'
             },
             'material_writeoffs': {
                 'table': 'material_writeoffs',
                 'foreign_key': 'material_id',
                 'message': 'Material has {count} writeoff records'
-            },
-            'sku_bom_details': {
-                'table': 'sku_bom_details',
-                'foreign_key': 'material_id',
-                'message': 'Material used in {count} SKU BOMs'
             }
         }
     },
@@ -203,25 +214,34 @@ MASTERS_CONFIG = {
                 'type': 'text',
                 'required': True,
                 'unique': True,
-                'max_length': 100,
+                'max_length': 50,
                 'label': 'Tag Name'
             },
             'tag_category': {
-                'type': 'text',
-                'required': False,
-                'max_length': 50,
-                'label': 'Tag Category'
+                'type': 'select',
+                'required': True,
+                'options': ['General', 'Quality', 'Source', 'Special'],
+                'label': 'Category'
             },
             'description': {
                 'type': 'textarea',
                 'required': False,
+                'max_length': 200,
                 'label': 'Description'
+            },
+            'color_code': {
+                'type': 'text',
+                'required': False,
+                'max_length': 7,
+                'pattern': r'^#[0-9A-Fa-f]{6}$',
+                'label': 'Color Code',
+                'placeholder': '#FF5733'
             }
         },
         'list_query': """
             SELECT 
                 t.*,
-                COUNT(DISTINCT mt.material_id) as material_count
+                COUNT(DISTINCT mt.material_id) as tagged_materials
             FROM tags t
             LEFT JOIN material_tags mt ON t.tag_id = mt.tag_id
             WHERE t.is_active = true
@@ -231,7 +251,7 @@ MASTERS_CONFIG = {
             'material_tags': {
                 'table': 'material_tags',
                 'foreign_key': 'tag_id',
-                'message': 'Tag is assigned to {count} materials'
+                'message': 'Tag applied to {count} materials'
             }
         }
     },
@@ -248,20 +268,34 @@ MASTERS_CONFIG = {
                 'required': True,
                 'unique': True,
                 'max_length': 20,
+                'pattern': r'^[A-Z0-9_]+$',
                 'label': 'Reason Code',
                 'transform': 'uppercase'
             },
             'reason_description': {
                 'type': 'text',
                 'required': True,
-                'max_length': 255,
-                'label': 'Reason Description'
+                'max_length': 100,
+                'label': 'Description'
             },
             'category': {
                 'type': 'select',
-                'required': False,
-                'options': ['Damage', 'Expiry', 'Quality', 'Returns', 'Other'],
+                'required': True,
+                'options': ['Damage', 'Quality', 'Process Loss', 'Spillage', 'Expired', 'Other'],
                 'label': 'Category'
+            },
+            'requires_approval': {
+                'type': 'boolean',
+                'required': False,
+                'default': False,
+                'label': 'Requires Approval'
+            },
+            'max_quantity': {
+                'type': 'decimal',
+                'required': False,
+                'min': 0,
+                'decimal_places': 2,
+                'label': 'Max Quantity Allowed'
             }
         },
         'list_query': """
@@ -366,7 +400,7 @@ MASTERS_CONFIG = {
 }
 
 # =====================================================
-# AUDIT LOGGING
+# AUDIT LOGGING - FIXED WITH decimal_handler
 # =====================================================
 
 def log_audit(conn, cur, table_name, record_id, action, old_values=None, 
@@ -399,9 +433,9 @@ def log_audit(conn, cur, table_name, record_id, action, old_values=None,
                     if str(old_val) != str(new_val):
                         changed_fields.append(key)
         
-        # Convert dictionaries to JSON
-        old_json = json.dumps(old_values) if old_values else None
-        new_json = json.dumps(new_values) if new_values else None
+        # FIXED: Convert dictionaries to JSON with custom handler for Decimal types
+        old_json = json.dumps(old_values, default=decimal_handler) if old_values else None
+        new_json = json.dumps(new_values, default=decimal_handler) if new_values else None
         
         # Insert audit log
         cur.execute("""
@@ -438,6 +472,7 @@ def check_dependencies(conn, cur, master_type, record_id):
         dict: {
             'can_delete': bool,
             'can_soft_delete': bool,
+            'has_dependencies': bool,
             'dependencies': list of dependency details,
             'message': string message
         }
@@ -447,6 +482,7 @@ def check_dependencies(conn, cur, master_type, record_id):
         return {
             'can_delete': False,
             'can_soft_delete': False,
+            'has_dependencies': False,
             'message': f'Invalid master type: {master_type}'
         }
     
@@ -460,70 +496,48 @@ def check_dependencies(conn, cur, master_type, record_id):
         
         # Special handling for different primary key types
         if config.get('primary_key_type') == 'varchar':
-            query = f"SELECT COUNT(*) FROM {table} WHERE {foreign_key} = %s"
-            cur.execute(query, (record_id,))
+            cur.execute(f"""
+                SELECT COUNT(*) FROM {table} 
+                WHERE {foreign_key} = %s
+            """, (record_id,))
         else:
-            query = f"SELECT COUNT(*) FROM {table} WHERE {foreign_key} = %s"
-            cur.execute(query, (int(record_id),))
+            cur.execute(f"""
+                SELECT COUNT(*) FROM {table} 
+                WHERE {foreign_key} = %s
+            """, (int(record_id),))
         
         count = cur.fetchone()[0]
         
         if count > 0:
-            # Check if it's a special dependency with value (like inventory)
-            if 'check_field' in dep_config:
-                value_query = f"SELECT {dep_config['check_field']} FROM {table} WHERE {foreign_key} = %s"
-                if config.get('primary_key_type') == 'varchar':
-                    cur.execute(value_query, (record_id,))
-                else:
-                    cur.execute(value_query, (int(record_id),))
-                
-                value_row = cur.fetchone()
-                if value_row and value_row[0]:
-                    message = dep_config['message'].format(value=value_row[0])
-                else:
-                    message = dep_config['message'].format(count=count)
-            else:
-                message = dep_config['message'].format(count=count)
-            
             dependencies.append({
                 'table': table,
+                'field': foreign_key,
                 'count': count,
-                'message': message
+                'message': dep_config['message'].format(count=count)
             })
-            
             total_dependent_records += count
     
-    # Determine what actions are allowed
-    can_hard_delete = total_dependent_records == 0
-    can_soft_delete = True  # Always allow soft delete
+    has_dependencies = total_dependent_records > 0
     
     return {
-        'can_delete': can_hard_delete,
-        'can_soft_delete': can_soft_delete,
+        'can_delete': not has_dependencies,
+        'can_soft_delete': True,  # Always allow soft delete
+        'has_dependencies': has_dependencies,
         'dependencies': dependencies,
         'total_dependent_records': total_dependent_records,
-        'message': 'No dependencies' if can_hard_delete else f'Record has {total_dependent_records} dependencies'
+        'message': f'Record has {total_dependent_records} dependent records' if has_dependencies 
+                   else 'Record can be safely deleted'
     }
 
 
 # =====================================================
-# FIELD VALIDATION - FIXED VERSION
+# FIELD VALIDATION
 # =====================================================
 
-def validate_field(field_name, field_config, value, conn=None, cur=None, 
+def validate_field(field_name, value, field_config, conn=None, cur=None, 
                    table_name=None, record_id=None, primary_key=None):
     """
-    Validate a field value based on its configuration
-    
-    Args:
-        field_name: Name of the field being validated
-        field_config: Field configuration dict
-        value: Value to validate
-        conn: Database connection (optional, for unique checks)
-        cur: Database cursor (optional, for unique checks)
-        table_name: Table name (optional, for unique checks)
-        record_id: Record ID for updates (optional)
-        primary_key: Primary key field name (required for unique checks during updates)
+    Validate a single field value against its configuration
     
     Returns:
         tuple: (is_valid, error_message)
@@ -532,30 +546,25 @@ def validate_field(field_name, field_config, value, conn=None, cur=None,
     
     # Required field check
     if field_config.get('required', False):
-        if value is None or value == '' or (isinstance(value, str) and not value.strip()):
+        if value is None or value == '' or (isinstance(value, str) and value.strip() == ''):
             return False, f"{field_config.get('label', field_name)} is required"
     
-    # Skip validation if value is empty and not required
+    # If not required and empty, it's valid
     if value is None or value == '':
         return True, None
     
     # Type-specific validation
     if field_type == 'text':
-        if not isinstance(value, str):
-            value = str(value)
-        
         # Max length check
         max_length = field_config.get('max_length')
-        if max_length and len(value) > max_length:
+        if max_length and len(str(value)) > max_length:
             return False, f"{field_config.get('label', field_name)} must not exceed {max_length} characters"
         
         # Pattern check
         pattern = field_config.get('pattern')
-        if pattern and not re.match(pattern, value):
-            # Provide helpful error message for specific fields
-            if field_name == 'short_code' and 'placeholder' in field_config:
-                return False, f"{field_config.get('label', field_name)} must be in format {field_config['placeholder']}"
-            return False, f"{field_config.get('label', field_name)} format is invalid"
+        if pattern:
+            if not re.match(pattern, str(value)):
+                return False, f"{field_config.get('label', field_name)} format is invalid"
     
     elif field_type == 'email':
         email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
@@ -651,7 +660,7 @@ def transform_field_value(field_config, value):
 
 
 # =====================================================
-# MASTER DATA VALIDATION - FIXED VERSION
+# MASTER DATA VALIDATION
 # =====================================================
 
 def validate_master_data(master_type, data, record_id=None):
@@ -681,64 +690,50 @@ def validate_master_data(master_type, data, record_id=None):
         
         # Validate each field
         for field_name, field_config in config['fields'].items():
-            value = data.get(field_name)
-            
-            # Transform value if needed
-            value = transform_field_value(field_config, value)
-            data[field_name] = value  # Update data with transformed value
-            
-            # Validate with the correct primary key
-            is_valid, error_msg = validate_field(
-                field_name, field_config, value,
-                conn, cur, table_name, record_id, primary_key
-            )
-            
-            if not is_valid:
-                errors[field_name] = error_msg
+            if field_name in data:
+                is_valid, error_msg = validate_field(
+                    field_name, data[field_name], field_config,
+                    conn, cur, table_name, record_id, primary_key
+                )
+                if not is_valid:
+                    errors[field_name] = error_msg
         
         return len(errors) == 0, errors
         
-    except Exception as e:
-        return False, {'error': str(e)}
     finally:
         close_connection(conn, cur)
 
 
 # =====================================================
-# SOFT DELETE HANDLING
+# SOFT DELETE AND RESTORE
 # =====================================================
 
 def soft_delete_record(conn, cur, master_type, record_id, deleted_by=None):
     """
-    Soft delete a record by setting is_active = false
+    Soft delete a record by setting is_active to false
     
     Returns:
-        dict: Result with success status and message
+        bool: Success status
     """
     config = MASTERS_CONFIG.get(master_type)
     if not config:
-        return {'success': False, 'error': 'Invalid master type'}
+        return False
     
     table = config['table']
     primary_key = config['primary_key']
+    soft_delete_field = config.get('soft_delete_field', 'is_active')
     
     # Get current record for audit
-    if config.get('primary_key_type') == 'varchar':
-        cur.execute(f"SELECT * FROM {table} WHERE {primary_key} = %s", (record_id,))
-    else:
-        cur.execute(f"SELECT * FROM {table} WHERE {primary_key} = %s", (int(record_id),))
-    
+    cur.execute(f"SELECT * FROM {table} WHERE {primary_key} = %s", (record_id,))
     columns = [desc[0] for desc in cur.description]
     row = cur.fetchone()
     
     if not row:
-        return {'success': False, 'error': 'Record not found'}
+        return False
     
     old_values = dict(zip(columns, row))
     
-    # Perform soft delete
-    soft_delete_field = config.get('soft_delete_field', 'is_active')
-    
+    # Soft delete the record
     cur.execute(f"""
         UPDATE {table}
         SET {soft_delete_field} = false,
@@ -754,10 +749,7 @@ def soft_delete_record(conn, cur, master_type, record_id, deleted_by=None):
         reason='Soft delete via masters management'
     )
     
-    return {
-        'success': True,
-        'message': f'Record soft deleted successfully'
-    }
+    return True
 
 
 def restore_record(conn, cur, master_type, record_id, restored_by=None):
@@ -765,11 +757,11 @@ def restore_record(conn, cur, master_type, record_id, restored_by=None):
     Restore a soft-deleted record
     
     Returns:
-        dict: Result with success status and message
+        bool: Success status
     """
     config = MASTERS_CONFIG.get(master_type)
     if not config:
-        return {'success': False, 'error': 'Invalid master type'}
+        return False
     
     table = config['table']
     primary_key = config['primary_key']
@@ -784,7 +776,7 @@ def restore_record(conn, cur, master_type, record_id, restored_by=None):
     """, (record_id,))
     
     if cur.rowcount == 0:
-        return {'success': False, 'error': 'Record not found'}
+        return False
     
     # Log audit
     log_audit(
@@ -793,10 +785,7 @@ def restore_record(conn, cur, master_type, record_id, restored_by=None):
         reason='Record restored via masters management'
     )
     
-    return {
-        'success': True,
-        'message': 'Record restored successfully'
-    }
+    return True
 
 
 # =====================================================
@@ -863,8 +852,6 @@ def get_export_query(master_type, include_inactive=False):
     
     if not include_inactive:
         query += f" WHERE {soft_delete_field} = true"
-    
-    # Note: ORDER BY will be added by masters_crud.py dynamically
     
     return query
 
