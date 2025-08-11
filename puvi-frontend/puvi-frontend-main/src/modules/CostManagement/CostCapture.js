@@ -1,21 +1,20 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js
-// Cost Capture Component for PUVI Oil Manufacturing System
-// Purpose: Reusable component for capturing costs at different production stages
-// FIXED: Line 64 - API call now uses 'batch' when module is 'batch'
+// Cost Capture Component - FINAL FIX for checkbox error
+// Fixed: Removed circular dependency and added proper null checks
 
 import React, { useState, useEffect, useCallback } from 'react';
 import api from '../../services/api';
 
 const CostCapture = ({ 
-  module = 'batch',        // Module calling this component
-  stage = 'drying',        // Stage of production (drying, crushing, batch)
-  quantity = 0,            // Base quantity for calculations
-  oilYield = 0,            // Oil yield for common costs calculation
-  crushingHours = 0,       // Hours for time-based costs
-  batchId = null,          // Batch ID if editing existing batch
-  onCostsUpdate = null,    // Callback to parent with costs
-  showSummary = true,      // Show cost summary at bottom
-  allowOverride = true     // Allow rate overrides
+  module = 'batch',        
+  stage = 'drying',        
+  quantity = 0,            
+  oilYield = 0,            
+  crushingHours = 0,       
+  batchId = null,          
+  onCostsUpdate = null,    
+  showSummary = true,      
+  allowOverride = true     
 }) => {
   const [costElements, setCostElements] = useState([]);
   const [costInputs, setCostInputs] = useState({});
@@ -55,71 +54,29 @@ const CostCapture = ({
     fetchCostElements();
   }, [stage, module]);
 
-  // Recalculate when inputs change
-  useEffect(() => {
-    calculateAllCosts();
-  }, [quantity, oilYield, crushingHours, costInputs, costElements]);
-
-  const fetchCostElements = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      
-      // FIXED: Use 'batch' stage when module is 'batch' to get all cost elements
-      const response = await api.costManagement.getCostElementsByStage(module === 'batch' ? 'batch' : stage);
-      
-      if (response.success) {
-        // Filter elements based on stage
-        const filteredElements = getStageSpecificElements(response.cost_elements, stage);
-        
-        // Initialize cost inputs for each element
-        const initialInputs = {};
-        filteredElements.forEach(element => {
-          // Check if element should be applied by default
-          let shouldApply = false;
-          
-          if (!element.is_optional) {
-            // Required costs are checked by default
-            shouldApply = true;
-          } else if (stage === 'drying' && element.element_name.toLowerCase().includes('drying labour')) {
-            // Drying labour should be checked by default in drying stage
-            shouldApply = true;
-          }
-          
-          initialInputs[element.element_id] = {
-            isApplied: shouldApply,
-            overrideRate: null,
-            actualCost: null,
-            quantity: 0,
-            totalCost: 0
-          };
-        });
-        
-        setCostElements(filteredElements);
-        setCostInputs(initialInputs);
-        
-        // Auto-expand categories with costs
-        const categories = [...new Set(filteredElements.map(e => e.category))];
-        const expanded = {};
-        categories.forEach(cat => expanded[cat] = true);
-        setExpandedCategories(expanded);
-      }
-    } catch (error) {
-      console.error('Error fetching cost elements:', error);
-      setError('Failed to load cost elements');
-    } finally {
-      setLoading(false);
+  // Calculate costs - NOT a useCallback to avoid circular dependency
+  const calculateAllCosts = () => {
+    if (!costElements || costElements.length === 0) {
+      return;
     }
-  };
 
-  const calculateAllCosts = useCallback(() => {
     let total = 0;
     const updatedInputs = { ...costInputs };
     const costsArray = [];
 
     costElements.forEach(element => {
-      const input = updatedInputs[element.element_id];
-      if (!input) return;
+      // FIXED: Check if input exists, if not create it
+      let input = updatedInputs[element.element_id];
+      if (!input) {
+        input = {
+          isApplied: !element.is_optional,
+          overrideRate: null,
+          actualCost: null,
+          quantity: 0,
+          totalCost: 0
+        };
+        updatedInputs[element.element_id] = input;
+      }
 
       let elementQuantity = 0;
       let elementCost = 0;
@@ -131,10 +88,8 @@ const CostCapture = ({
       switch (element.calculation_method) {
         case 'per_kg':
           if (element.element_name.toLowerCase().includes('common costs')) {
-            // Common costs use oil yield
             elementQuantity = oilYield || 0;
           } else if (stage === 'drying' || element.element_name.toLowerCase().includes('drying')) {
-            // Drying costs use seed quantity before drying
             elementQuantity = quantity || 0;
           } else {
             elementQuantity = quantity || 0;
@@ -153,13 +108,12 @@ const CostCapture = ({
           break;
 
         case 'actual':
-          // For costs like outsourced transport where user enters actual amount
           elementQuantity = 1;
           elementCost = input.actualCost || 0;
           break;
 
         case 'per_bag':
-          elementQuantity = Math.ceil((quantity || 0) / 50); // Convert kg to bags (50kg per bag)
+          elementQuantity = Math.ceil((quantity || 0) / 50);
           elementCost = elementQuantity * rate;
           break;
 
@@ -203,14 +157,70 @@ const CostCapture = ({
     if (onCostsUpdate && typeof onCostsUpdate === 'function') {
       onCostsUpdate(costsArray);
     }
-  }, [costElements, costInputs, quantity, oilYield, crushingHours, onCostsUpdate, stage]);
+  };
+
+  // Recalculate when relevant props change
+  useEffect(() => {
+    if (costElements.length > 0 && Object.keys(costInputs).length > 0) {
+      calculateAllCosts();
+    }
+  }, [quantity, oilYield, crushingHours, costInputs, costElements]);
+
+  const fetchCostElements = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      // Use 'batch' stage when module is 'batch' to get all cost elements
+      const response = await api.costManagement.getCostElementsByStage(module === 'batch' ? 'batch' : stage);
+      
+      if (response.success && response.cost_elements) {
+        // Filter elements based on stage
+        const filteredElements = getStageSpecificElements(response.cost_elements, stage);
+        
+        // Initialize cost inputs for each element
+        const initialInputs = {};
+        filteredElements.forEach(element => {
+          let shouldApply = false;
+          
+          if (!element.is_optional) {
+            shouldApply = true;
+          } else if (stage === 'drying' && element.element_name.toLowerCase().includes('drying labour')) {
+            shouldApply = true;
+          }
+          
+          initialInputs[element.element_id] = {
+            isApplied: shouldApply,
+            overrideRate: null,
+            actualCost: null,
+            quantity: 0,
+            totalCost: 0
+          };
+        });
+        
+        setCostElements(filteredElements);
+        setCostInputs(initialInputs);
+        
+        // Auto-expand categories with costs
+        const categories = [...new Set(filteredElements.map(e => e.category))];
+        const expanded = {};
+        categories.forEach(cat => expanded[cat] = true);
+        setExpandedCategories(expanded);
+      }
+    } catch (error) {
+      console.error('Error fetching cost elements:', error);
+      setError('Failed to load cost elements');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleCheckboxChange = (elementId) => {
     setCostInputs(prev => ({
       ...prev,
       [elementId]: {
-        ...prev[elementId],
-        isApplied: !prev[elementId].isApplied
+        ...(prev[elementId] || {}),
+        isApplied: !(prev[elementId]?.isApplied || false)
       }
     }));
   };
@@ -220,7 +230,7 @@ const CostCapture = ({
     setCostInputs(prev => ({
       ...prev,
       [elementId]: {
-        ...prev[elementId],
+        ...(prev[elementId] || {}),
         overrideRate: parsedValue
       }
     }));
@@ -231,7 +241,7 @@ const CostCapture = ({
     setCostInputs(prev => ({
       ...prev,
       [elementId]: {
-        ...prev[elementId],
+        ...(prev[elementId] || {}),
         actualCost: parsedValue
       }
     }));
@@ -261,7 +271,8 @@ const CostCapture = ({
       'Consumables': '#fff3cd',
       'Transport': '#f8d7da',
       'Quality': '#e2e3e5',
-      'Maintenance': '#d1ecf1'
+      'Maintenance': '#d1ecf1',
+      'Overhead': '#e7e3f4'
     };
     return colors[category] || '#f8f9fa';
   };
@@ -529,7 +540,7 @@ const CostCapture = ({
                               backgroundColor: input.isApplied ? 'white' : '#f8f9fa',
                               fontWeight: input.overrideRate ? 'bold' : 'normal'
                             }}
-                            placeholder={element.default_rate.toString()}
+                            placeholder={element.default_rate?.toString() || '0'}
                             value={input.overrideRate || ''}
                             onChange={(e) => handleOverrideChange(element.element_id, e.target.value)}
                             disabled={!input.isApplied}
@@ -537,12 +548,12 @@ const CostCapture = ({
                           />
                         ) : (
                           <div style={styles.calculated}>
-                            ₹{element.default_rate}
+                            ₹{element.default_rate || 0}
                           </div>
                         )}
 
                         <div style={styles.calculated}>
-                          {input.quantity ? input.quantity.toFixed(2) : '0.00'}
+                          {(input.quantity || 0).toFixed(2)}
                           {element.calculation_method === 'per_hour' && ' hrs'}
                           {element.calculation_method === 'per_kg' && ' kg'}
                           {element.calculation_method === 'per_bag' && ' bags'}
