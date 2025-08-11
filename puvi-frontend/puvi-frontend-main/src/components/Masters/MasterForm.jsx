@@ -133,18 +133,10 @@ const formatMaterialShortCode = (input) => {
   // Remove any existing hyphens first
   clean = clean.replace(/-/g, '');
   
-  // Smart hyphen insertion based on length
-  if (clean.length >= 2) {
-    if (clean.length === 2) {
-      // G-K format
-      clean = clean[0] + '-' + clean[1];
-    } else if (clean.length <= 4) {
-      // GNS-K format (hyphen before last char)
-      clean = clean.slice(0, -1) + '-' + clean.slice(-1);
-    } else {
-      // GNS-KU format (hyphen after 3 chars)
-      clean = clean.slice(0, 3) + '-' + clean.slice(3, 5);
-    }
+  // Only add hyphen after 3 characters
+  if (clean.length > 3) {
+    // Insert hyphen after position 3
+    clean = clean.slice(0, 3) + '-' + clean.slice(3, 5);
   }
   
   // Validate format
@@ -159,7 +151,7 @@ const formatMaterialShortCode = (input) => {
 };
 
 // Field Input Component - Renders different input types
-const FieldInput = ({ field, value, onChange, error, disabled, masterType, formData }) => {
+const FieldInput = ({ field, value, onChange, error, disabled, masterType, formData, suppliers = [] }) => {
   const handleChange = (e) => {
     let newValue = e.target.value;
     
@@ -195,6 +187,29 @@ const FieldInput = ({ field, value, onChange, error, disabled, masterType, formD
     }
     return field.placeholder || '';
   };
+
+  // Handle reference fields (supplier dropdown)
+  if (field.type === 'reference' && field.reference_table === 'suppliers') {
+    return (
+      <select
+        value={value || ''}
+        onChange={handleChange}
+        disabled={disabled}
+        required={field.required}
+        className={`w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+          error ? 'border-red-500' : 'border-gray-300'
+        }`}
+        style={{ width: '100%', padding: '8px', borderRadius: '4px', border: error ? '1px solid #dc3545' : '1px solid #ced4da' }}
+      >
+        <option value="">Select Supplier</option>
+        {suppliers.map(supplier => (
+          <option key={supplier.supplier_id} value={supplier.supplier_id}>
+            {supplier.supplier_name} ({supplier.short_code})
+          </option>
+        ))}
+      </select>
+    );
+  }
 
   // Render based on field type
   switch (field.type) {
@@ -234,7 +249,7 @@ const FieldInput = ({ field, value, onChange, error, disabled, masterType, formD
       );
 
     case 'reference':
-      // This would be handled specially in the main component
+      // Already handled above for suppliers
       return null;
 
     default: // text, email, decimal, integer
@@ -483,38 +498,6 @@ const MasterForm = ({
 
         {/* Render form fields */}
         {schema.fields.map(field => {
-          // Special handling for reference fields
-          if (field.type === 'reference' && field.reference_table === 'suppliers') {
-            return (
-              <div key={field.name} style={{ marginBottom: '15px' }}>
-                <label style={{ display: 'block', marginBottom: '5px', fontWeight: '500' }}>
-                  {field.label} {field.required && <span style={{ color: 'red' }}>*</span>}
-                </label>
-                <select
-                  value={formData[field.name] || ''}
-                  onChange={(e) => handleFieldChange(field.name, e.target.value)}
-                  required={field.required}
-                  style={{ 
-                    width: '100%', 
-                    padding: '8px', 
-                    borderRadius: '4px', 
-                    border: errors[field.name] ? '1px solid #dc3545' : '1px solid #ced4da' 
-                  }}
-                >
-                  <option value="">Select Supplier</option>
-                  {suppliers.map(supplier => (
-                    <option key={supplier.supplier_id} value={supplier.supplier_id}>
-                      {supplier.supplier_name} ({supplier.short_code})
-                    </option>
-                  ))}
-                </select>
-                {errors[field.name] && (
-                  <small style={{ color: '#dc3545' }}>{errors[field.name]}</small>
-                )}
-              </div>
-            );
-          }
-
           // Show guidelines before short code field
           const showGuidelinesBeforeField = field.name === 'short_code' && showGuidelines;
 
@@ -537,6 +520,7 @@ const MasterForm = ({
                 disabled={saving}
                 masterType={masterType}
                 formData={formData}
+                suppliers={suppliers}  // Pass suppliers array
               />
               {errors[field.name] && (
                 <small style={{ color: '#dc3545', display: 'block', marginTop: '5px' }}>
