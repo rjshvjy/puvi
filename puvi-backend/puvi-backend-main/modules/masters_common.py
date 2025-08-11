@@ -140,7 +140,7 @@ MASTERS_CONFIG = {
             },
             'supplier_id': {
                 'type': 'reference',
-                'required': False,
+                'required': True,
                 'reference_table': 'suppliers',
                 'reference_field': 'supplier_id',
                 'display_field': 'supplier_name',
