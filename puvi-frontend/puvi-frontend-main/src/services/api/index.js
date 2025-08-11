@@ -1,409 +1,356 @@
-// API Service for PUVI Oil Manufacturing System
-// File Path: puvi-frontend/src/services/api/index.js
+// API Configuration for PUVI Oil Manufacturing System
+// File Path: puvi-frontend/puvi-frontend-main/src/services/api/index.js
+// This file handles all API communications with the backend
 
-import axios from 'axios';
-import qs from 'qs';
+// API Base URL Configuration
+// Uses environment variable if available, otherwise uses production URL
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://puvi-backend.onrender.com';
 
-// Base configuration
-const API_BASE_URL = 'https://puvi-backend.onrender.com';
+// Debug logging (remove in production if not needed)
+console.log('API Base URL:', API_BASE_URL);
+console.log('Environment:', process.env.NODE_ENV);
 
-// Create axios instance with default config
-const apiClient = axios.create({
-  baseURL: API_BASE_URL,
-  timeout: 30000, // 30 seconds timeout
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  // Use qs to serialize query parameters to fix material filtering issue
-  paramsSerializer: params => qs.stringify(params, { arrayFormat: 'repeat' })
-});
-
-// Response interceptor to handle the standardized response format
-apiClient.interceptors.response.use(
-  (response) => {
-    // Backend returns: { success: true/false, ...otherData }
-    // We'll return the full response data, letting components handle it
-    return response.data;
-  },
-  (error) => {
-    // Handle network errors or other axios errors
-    if (error.response && error.response.data) {
-      // If backend sent an error response
-      if (error.response.data.error) {
-        return Promise.reject(new Error(error.response.data.error));
-      }
-      return Promise.reject(error);
+// Helper function to handle API responses
+const handleResponse = async (response) => {
+  // Check if response is ok (status in the range 200-299)
+  if (!response.ok) {
+    // Try to get error message from response
+    let errorMessage = `HTTP error! status: ${response.status}`;
+    try {
+      const errorData = await response.json();
+      errorMessage = errorData.error || errorData.message || errorMessage;
+    } catch (e) {
+      // Response wasn't JSON
+      console.error('Error parsing error response:', e);
     }
-    return Promise.reject(error);
+    throw new Error(errorMessage);
   }
-);
-
-// API service methods organized by module
-const api = {
-  // Purchase Module
-  purchase: {
-    getMaterials: (params) => apiClient.get('/api/materials', { params }),
-    addPurchase: (data) => apiClient.post('/api/add_purchase', data),
-    getPurchaseHistory: (params) => apiClient.get('/api/purchase_history', { params }),
-    getSuppliers: () => apiClient.get('/api/suppliers'),
-  },
-
-  // Material Writeoff Module
-  writeoff: {
-    getWriteoffReasons: () => apiClient.get('/api/writeoff_reasons'),
-    getInventoryForWriteoff: (params) => apiClient.get('/api/inventory_for_writeoff', { params }),
-    addWriteoff: (data) => apiClient.post('/api/add_writeoff', data),
-    getWriteoffHistory: (params) => apiClient.get('/api/writeoff_history', { params }),
-  },
-
-  // Batch Production Module
-  batch: {
-    getSeedsForBatch: () => apiClient.get('/api/seeds_for_batch'),
-    getCostElementsForBatch: () => apiClient.get('/api/cost_elements_for_batch'),
-    getOilCakeRates: () => apiClient.get('/api/oil_cake_rates'),
-    addBatch: (data) => apiClient.post('/api/add_batch', data),
-    getBatchHistory: (params) => apiClient.get('/api/batch_history', { params }),
-  },
-
-  // Blending Module
-  blending: {
-    getOilTypes: () => apiClient.get('/api/oil_types_for_blending'),
-    getBatchesForOilType: (oilType) => apiClient.get('/api/batches_for_oil_type', { params: { oil_type: oilType } }),
-    createBlend: (data) => apiClient.post('/api/create_blend', data),
-    getBlendHistory: (params) => apiClient.get('/api/blend_history', { params }),
-  },
-
-  // Material Sales Module
-  sales: {
-    getByproductTypes: () => apiClient.get('/api/byproduct_types'),
-    getMaterialSalesInventory: (params) => apiClient.get('/api/material_sales_inventory', { params }),
-    addMaterialSale: (data) => apiClient.post('/api/add_material_sale', data),
-    getMaterialSalesHistory: (params) => apiClient.get('/api/material_sales_history', { params }),
-    getCostReconciliationReport: () => apiClient.get('/api/cost_reconciliation_report'),
-  },
-
-  // Cost Management Module
-  costManagement: {
-    // Get all cost elements or by stage
-    getCostElementsMaster: (params) => apiClient.get('/api/cost_elements/master', { params }),
-    getCostElementsByStage: (stage) => apiClient.get('/api/cost_elements/by_stage', { params: { stage } }),
-    
-    // Time tracking with datetime inputs
-    saveTimeTracking: (data) => apiClient.post('/api/cost_elements/time_tracking', data),
-    
-    // Cost calculations and validation
-    calculateBatchCosts: (data) => apiClient.post('/api/cost_elements/calculate', data),
-    saveBatchCosts: (data) => apiClient.post('/api/cost_elements/save_batch_costs', data),
-    
-    // Get batch cost summary with validation warnings
-    getBatchCostSummary: (batchId) => apiClient.get(`/api/cost_elements/batch_summary/${batchId}`),
-    
-    // Validation report for management
-    getValidationReport: (params) => apiClient.get('/api/cost_elements/validation_report', { params }),
-    
-    // Utility function for cost validation summary
-    getCostValidationSummary: () => apiClient.get('/api/cost_validation_summary'),
-  },
-
-  // SKU Management Module - NEW SECTION WITH MRP & EXPIRY
-  sku: {
-    // ============================================
-    // SKU MASTER MANAGEMENT WITH MRP & SHELF LIFE
-    // ============================================
-    
-    // Get all SKUs with MRP and shelf life
-    getMasterList: (params) => apiClient.get('/api/sku/master', { params }),
-    
-    // Get specific SKU details with MRP and shelf life
-    getSKUDetails: (skuId) => apiClient.get(`/api/sku/master/${skuId}`),
-    
-    // Create new SKU with MRP and shelf life
-    createSKU: (data) => apiClient.post('/api/sku/master', data),
-    
-    // Update SKU including MRP changes
-    updateSKU: (skuId, data) => apiClient.put(`/api/sku/master/${skuId}`, data),
-    
-    // ============================================
-    // MRP HISTORY MANAGEMENT
-    // ============================================
-    
-    // Get MRP change history for a SKU
-    getMRPHistory: (skuId) => apiClient.get(`/api/sku/mrp-history/${skuId}`),
-    
-    // Get current applicable MRP for a SKU
-    getCurrentMRP: (skuId) => apiClient.get(`/api/sku/current-mrp/${skuId}`),
-    
-    // ============================================
-    // PRODUCTION WITH MRP & EXPIRY
-    // ============================================
-    
-    // Create SKU production with MRP capture and expiry calculation
-    createProduction: (data) => apiClient.post('/api/sku/production', data),
-    
-    // Get production plan with availability check
-    getProductionPlan: (data) => apiClient.post('/api/sku/production/plan', data),
-    
-    // Calculate oil allocation for production
-    calculateOilAllocation: (data) => apiClient.post('/api/sku/production/allocate-oil', data),
-    
-    // ============================================
-    // PRODUCTION HISTORY WITH EXPIRY
-    // ============================================
-    
-    // Get production history with MRP and expiry details
-    getProductionHistory: (params) => apiClient.get('/api/sku/production/history', { params }),
-    
-    // Get specific production details
-    getProductionDetails: (productionId) => apiClient.get(`/api/sku/production/${productionId}`),
-    
-    // ============================================
-    // EXPIRY MANAGEMENT
-    // ============================================
-    
-    // Get items nearing expiry with configurable threshold
-    getExpiryAlerts: (params) => apiClient.get('/api/sku/expiry-alerts', { params }),
-    
-    // Get summary of items by expiry status
-    getExpirySummary: () => apiClient.get('/api/sku/expiry-summary'),
-    
-    // Get FEFO allocation for SKU sales
-    getFEFOAllocation: (skuId, data) => apiClient.post(`/api/sku/fefo-allocation/${skuId}`, data),
-    
-    // ============================================
-    // PRODUCTION SUMMARY REPORT
-    // ============================================
-    
-    // Get printable production summary for regulatory filing
-    getProductionSummaryReport: (productionId) => apiClient.get(`/api/sku/production-summary/${productionId}`),
-    
-    // ============================================
-    // BOM CONFIGURATION (Existing endpoints from sku_management.py)
-    // ============================================
-    
-    // Get current BOM for a SKU
-    getBOM: (skuId) => apiClient.get(`/api/sku/bom/${skuId}`),
-    
-    // Create or update BOM
-    createOrUpdateBOM: (data) => apiClient.post('/api/sku/bom', data),
-    
-    // Get BOM version history
-    getBOMHistory: (skuId) => apiClient.get(`/api/sku/bom-history/${skuId}`),
-    
-    // ============================================
-    // MATERIAL MANAGEMENT FOR SKU
-    // ============================================
-    
-    // Get materials for BOM configuration
-    getMaterialsForBOM: (params) => apiClient.get('/api/sku/materials', { params }),
-    
-    // ============================================
-    // COST MANAGEMENT FOR SKU
-    // ============================================
-    
-    // Get cost preview for production
-    getCostPreview: (data) => apiClient.post('/api/sku/cost-preview', data),
-    
-    // ============================================
-    // LEGACY ENDPOINTS (from existing sku_management.py)
-    // ============================================
-    
-    // These endpoints exist in sku_management.py but may need updating
-    saveSKUProduction: (data) => apiClient.post('/api/sku/production/save', data), // Legacy endpoint
-  },
-
-  // System endpoints
-  system: {
-    health: () => apiClient.get('/api/health'),
-    systemInfo: () => apiClient.get('/api/system_info'),
-  },
-};
-
-// ============================================
-// UTILITY FUNCTIONS FOR SKU MODULE
-// ============================================
-
-// Date utilities for SKU module
-export const skuDateUtils = {
-  // Format date for API (convert to backend format)
-  formatDateForAPI: (dateString) => {
-    if (!dateString) return null;
-    const date = new Date(dateString);
-    return date.toISOString().split('T')[0];
-  },
-
-  // Parse date from API (integer to display format)
-  parseDateFromAPI: (dateInt) => {
-    if (!dateInt) return null;
-    
-    // Handle integer days since epoch
-    if (typeof dateInt === 'number') {
-      const epochDate = new Date('1970-01-01');
-      epochDate.setDate(epochDate.getDate() + dateInt);
-      return epochDate.toISOString().split('T')[0];
-    }
-    
-    return dateInt;
-  },
-
-  // Format date for display (DD-MM-YYYY)
-  formatDateForDisplay: (dateValue) => {
-    if (!dateValue) return 'N/A';
-    
-    let date;
-    
-    // Handle integer days since epoch
-    if (typeof dateValue === 'number') {
-      const epochDate = new Date('1970-01-01');
-      epochDate.setDate(epochDate.getDate() + dateValue);
-      date = epochDate;
-    } else {
-      date = new Date(dateValue);
-    }
-    
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const year = date.getFullYear();
-    
-    return `${day}-${month}-${year}`;
-  },
-
-  // Calculate expiry date from production date and shelf life
-  calculateExpiryDate: (productionDate, shelfLifeMonths) => {
-    if (!productionDate || !shelfLifeMonths) return null;
-    
-    const prodDate = new Date(productionDate);
-    const expiryDate = new Date(prodDate);
-    expiryDate.setMonth(expiryDate.getMonth() + parseInt(shelfLifeMonths));
-    
-    return expiryDate.toISOString().split('T')[0];
-  },
-
-  // Calculate days to expiry
-  calculateDaysToExpiry: (expiryDate) => {
-    if (!expiryDate) return null;
-    
-    let expiry;
-    
-    // Handle integer days since epoch
-    if (typeof expiryDate === 'number') {
-      const epochDate = new Date('1970-01-01');
-      epochDate.setDate(epochDate.getDate() + expiryDate);
-      expiry = epochDate;
-    } else {
-      expiry = new Date(expiryDate);
-    }
-    
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    expiry.setHours(0, 0, 0, 0);
-    
-    const diffTime = expiry - today;
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    return diffDays;
+  
+  // Try to parse JSON response
+  try {
+    const data = await response.json();
+    return data;
+  } catch (e) {
+    // Response wasn't JSON, return null
+    console.warn('Response was not JSON:', e);
+    return null;
   }
 };
 
-// Expiry status utilities
-export const expiryUtils = {
-  // Get expiry status based on days remaining
-  getStatus: (daysToExpiry) => {
-    if (daysToExpiry === null || daysToExpiry === undefined) return 'unknown';
-    
-    if (daysToExpiry <= 0) return 'expired';
-    if (daysToExpiry <= 30) return 'critical';
-    if (daysToExpiry <= 60) return 'warning';
-    if (daysToExpiry <= 90) return 'caution';
-    
-    return 'normal';
-  },
-
-  // Get expiry status color
-  getStatusColor: (status) => {
-    const colors = {
-      expired: '#FF0000',     // Red
-      critical: '#FFA500',    // Orange
-      warning: '#FFFF00',     // Yellow
-      caution: '#FFFFE0',     // Light Yellow
-      normal: '#00FF00',      // Green
-      unknown: '#808080'      // Gray
-    };
-    
-    return colors[status] || colors.unknown;
-  },
-
-  // Get status badge class
-  getStatusBadgeClass: (status) => {
-    return `expiry-status-${status}`;
+// Main API call function
+export const apiCall = async (endpoint, options = {}) => {
+  // Ensure endpoint starts with /
+  const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+  
+  // Construct full URL
+  const url = `${API_BASE_URL}${cleanEndpoint}`;
+  
+  // Debug logging
+  console.log('API Call:', options.method || 'GET', url);
+  
+  // Default options
+  const defaultOptions = {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'omit', // Don't send cookies for CORS
+  };
+  
+  // Merge options
+  const finalOptions = {
+    ...defaultOptions,
+    ...options,
+    headers: {
+      ...defaultOptions.headers,
+      ...options.headers,
+    },
+  };
+  
+  // If body is an object, stringify it
+  if (finalOptions.body && typeof finalOptions.body === 'object') {
+    finalOptions.body = JSON.stringify(finalOptions.body);
+  }
+  
+  try {
+    const response = await fetch(url, finalOptions);
+    return await handleResponse(response);
+  } catch (error) {
+    console.error('API call failed:', error);
+    throw error;
   }
 };
 
-// Validation utilities
-export const skuValidation = {
-  // Validate shelf life
-  validateShelfLife: (months) => {
-    if (!months) return { isValid: false, error: 'Shelf life is required' };
-    
-    const monthsNum = parseInt(months);
-    
-    if (isNaN(monthsNum)) {
-      return { isValid: false, error: 'Shelf life must be a number' };
-    }
-    
-    if (monthsNum < 1) {
-      return { isValid: false, error: 'Shelf life must be at least 1 month' };
-    }
-    
-    if (monthsNum > 60) {
-      return { isValid: false, error: 'Shelf life cannot exceed 60 months' };
-    }
-    
-    return { isValid: true, error: null };
+// Convenience methods for different HTTP methods
+export const api = {
+  // GET request
+  get: (endpoint, params = {}) => {
+    // Build query string if params provided
+    const queryString = Object.keys(params).length 
+      ? '?' + new URLSearchParams(params).toString()
+      : '';
+    return apiCall(`${endpoint}${queryString}`, {
+      method: 'GET',
+    });
   },
-
-  // Validate MRP
-  validateMRP: (amount, maxAmount = 10000) => {
-    if (!amount && amount !== 0) {
-      return { isValid: false, error: 'MRP is required' };
-    }
-    
-    const mrp = parseFloat(amount);
-    
-    if (isNaN(mrp)) {
-      return { isValid: false, error: 'MRP must be a number' };
-    }
-    
-    if (mrp <= 0) {
-      return { isValid: false, error: 'MRP must be greater than 0' };
-    }
-    
-    if (mrp > maxAmount) {
-      return { isValid: false, error: `MRP cannot exceed ₹${maxAmount}` };
-    }
-    
-    return { isValid: true, error: null };
-  }
+  
+  // POST request
+  post: (endpoint, data = {}) => {
+    return apiCall(endpoint, {
+      method: 'POST',
+      body: data,
+    });
+  },
+  
+  // PUT request
+  put: (endpoint, data = {}) => {
+    return apiCall(endpoint, {
+      method: 'PUT',
+      body: data,
+    });
+  },
+  
+  // DELETE request
+  delete: (endpoint) => {
+    return apiCall(endpoint, {
+      method: 'DELETE',
+    });
+  },
+  
+  // PATCH request
+  patch: (endpoint, data = {}) => {
+    return apiCall(endpoint, {
+      method: 'PATCH',
+      body: data,
+    });
+  },
 };
 
-// Format utilities
-export const formatUtils = {
-  // Format currency
-  currency: (amount) => {
-    if (amount === null || amount === undefined) return '₹0.00';
-    return `₹${parseFloat(amount).toFixed(2)}`;
+// Masters API endpoints
+export const mastersAPI = {
+  // Get list of items for a master type
+  getList: (masterType, params = {}) => {
+    return api.get(`/api/masters/${masterType}`, params);
   },
-
-  // Format percentage
-  percentage: (value, decimals = 1) => {
-    if (value === null || value === undefined) return '0%';
-    return `${parseFloat(value).toFixed(decimals)}%`;
+  
+  // Get schema for a master type
+  getSchema: (masterType) => {
+    return api.get(`/api/masters/${masterType}/schema`);
   },
-
-  // Format quantity
-  quantity: (value, unit = 'kg', decimals = 2) => {
-    if (value === null || value === undefined) return `0 ${unit}`;
-    return `${parseFloat(value).toFixed(decimals)} ${unit}`;
-  }
+  
+  // Get single item
+  getItem: (masterType, id) => {
+    return api.get(`/api/masters/${masterType}/${id}`);
+  },
+  
+  // Create new item
+  create: (masterType, data) => {
+    return api.post(`/api/masters/${masterType}`, data);
+  },
+  
+  // Update item
+  update: (masterType, id, data) => {
+    return api.put(`/api/masters/${masterType}/${id}`, data);
+  },
+  
+  // Delete item
+  delete: (masterType, id) => {
+    return api.delete(`/api/masters/${masterType}/${id}`);
+  },
+  
+  // Check dependencies
+  checkDependencies: (masterType, id) => {
+    return api.get(`/api/masters/${masterType}/${id}/dependencies`);
+  },
+  
+  // Export data
+  export: (masterType) => {
+    return api.get(`/api/masters/${masterType}/export`);
+  },
+  
+  // Import data
+  import: (masterType, data) => {
+    return api.post(`/api/masters/${masterType}/import`, data);
+  },
 };
 
-export default api;
+// Purchase API endpoints
+export const purchaseAPI = {
+  // Get all purchases
+  getAll: (params = {}) => api.get('/api/purchases', params),
+  
+  // Get single purchase
+  getById: (id) => api.get(`/api/purchases/${id}`),
+  
+  // Create purchase
+  create: (data) => api.post('/api/add_purchase', data),
+  
+  // Update purchase
+  update: (id, data) => api.put(`/api/purchases/${id}`, data),
+  
+  // Delete purchase
+  delete: (id) => api.delete(`/api/purchases/${id}`),
+  
+  // Get materials
+  getMaterials: () => api.get('/api/materials'),
+  
+  // Get suppliers
+  getSuppliers: () => api.get('/api/suppliers'),
+};
+
+// Batch Production API endpoints
+export const batchAPI = {
+  // Get all batches
+  getAll: () => api.get('/api/batch_production'),
+  
+  // Create batch
+  create: (data) => api.post('/api/batch_production', data),
+  
+  // Get batch by ID
+  getById: (id) => api.get(`/api/batch_production/${id}`),
+  
+  // Update batch
+  update: (id, data) => api.put(`/api/batch_production/${id}`, data),
+  
+  // Get seed materials
+  getSeedMaterials: () => api.get('/api/seed_materials_for_batch'),
+  
+  // Get oil types
+  getOilTypes: () => api.get('/api/oil_types'),
+};
+
+// SKU Management API endpoints
+export const skuAPI = {
+  // SKU Master
+  getSKUs: () => api.get('/api/sku/master'),
+  createSKU: (data) => api.post('/api/sku/master', data),
+  updateSKU: (id, data) => api.put(`/api/sku/master/${id}`, data),
+  deleteSKU: (id) => api.delete(`/api/sku/master/${id}`),
+  
+  // BOM
+  getBOM: (skuId) => api.get(`/api/sku/bom/${skuId}`),
+  createBOM: (data) => api.post('/api/sku/bom', data),
+  updateBOM: (id, data) => api.put(`/api/sku/bom/${id}`, data),
+  
+  // Production
+  getProduction: () => api.get('/api/sku/production'),
+  createProduction: (data) => api.post('/api/sku/production', data),
+  getProductionById: (id) => api.get(`/api/sku/production/${id}`),
+  
+  // MRP
+  getMRPHistory: (skuId) => api.get(`/api/sku/mrp/history/${skuId}`),
+  updateMRP: (skuId, data) => api.post(`/api/sku/mrp/update/${skuId}`, data),
+  
+  // Expiry
+  getExpiryAlerts: () => api.get('/api/sku/expiry/alerts'),
+  getExpiryStatus: () => api.get('/api/sku/expiry/status'),
+};
+
+// Material Writeoff API endpoints
+export const writeoffAPI = {
+  // Get inventory for writeoff
+  getInventory: () => api.get('/api/inventory_for_writeoff'),
+  
+  // Get writeoff reasons
+  getReasons: () => api.get('/api/writeoff_reasons'),
+  
+  // Create writeoff
+  create: (data) => api.post('/api/material_writeoff', data),
+  
+  // Get writeoff history
+  getHistory: () => api.get('/api/writeoff_history'),
+};
+
+// Blending API endpoints
+export const blendingAPI = {
+  // Get available oils
+  getAvailableOils: () => api.get('/api/available_oils_for_blending'),
+  
+  // Create blend
+  create: (data) => api.post('/api/create_blend', data),
+  
+  // Get blend history
+  getHistory: () => api.get('/api/blend_history'),
+  
+  // Get blend by ID
+  getById: (id) => api.get(`/api/blend/${id}`),
+};
+
+// Opening Balance API endpoints
+export const openingBalanceAPI = {
+  // Check initialization status
+  checkStatus: () => api.get('/api/system/initialization_status'),
+  
+  // Initialize system
+  initialize: (data) => api.post('/api/system/initialize', data),
+  
+  // Get opening balances
+  getBalances: () => api.get('/api/opening_balance'),
+  
+  // Save opening balance
+  saveBalance: (data) => api.post('/api/opening_balance', data),
+  
+  // Update opening balance
+  updateBalance: (id, data) => api.put(`/api/opening_balance/${id}`, data),
+  
+  // Delete opening balance
+  deleteBalance: (id) => api.delete(`/api/opening_balance/${id}`),
+  
+  // Import CSV
+  importCSV: (data) => api.post('/api/opening_balance/import', data),
+  
+  // Export CSV
+  exportCSV: () => api.get('/api/opening_balance/export'),
+};
+
+// Material Sales API endpoints
+export const salesAPI = {
+  // Get oil cake inventory
+  getInventory: () => api.get('/api/oil_cake_inventory'),
+  
+  // Create sale
+  create: (data) => api.post('/api/oil_cake_sale', data),
+  
+  // Get sales history
+  getHistory: () => api.get('/api/oil_cake_sales'),
+  
+  // Get sale by ID
+  getById: (id) => api.get(`/api/oil_cake_sale/${id}`),
+};
+
+// Cost Management API endpoints
+export const costAPI = {
+  // Get cost elements
+  getElements: () => api.get('/api/cost_elements'),
+  
+  // Create cost element
+  createElement: (data) => api.post('/api/cost_elements', data),
+  
+  // Update cost element
+  updateElement: (id, data) => api.put(`/api/cost_elements/${id}`, data),
+  
+  // Delete cost element
+  deleteElement: (id) => api.delete(`/api/cost_elements/${id}`),
+  
+  // Get cost analysis
+  getAnalysis: (params) => api.get('/api/cost_analysis', params),
+};
+
+// Export the API base URL for components that need it directly
+export const API_URL = API_BASE_URL;
+
+// Default export
+export default {
+  apiCall,
+  api,
+  mastersAPI,
+  purchaseAPI,
+  batchAPI,
+  skuAPI,
+  writeoffAPI,
+  blendingAPI,
+  openingBalanceAPI,
+  salesAPI,
+  costAPI,
+  API_URL,
+};
