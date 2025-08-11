@@ -1,6 +1,7 @@
+// File Path: puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js
 // Cost Capture Component for PUVI Oil Manufacturing System
-// File Path: puvi-frontend/src/modules/CostManagement/CostCapture.js
 // Purpose: Reusable component for capturing costs at different production stages
+// FIXED: Line 64 - API call now uses 'batch' when module is 'batch'
 
 import React, { useState, useEffect, useCallback } from 'react';
 import api from '../../services/api';
@@ -64,7 +65,8 @@ const CostCapture = ({
       setLoading(true);
       setError(null);
       
-      const response = await api.costManagement.getCostElementsByStage(stage === 'crushing' ? 'batch' : stage);
+      // FIXED: Use 'batch' stage when module is 'batch' to get all cost elements
+      const response = await api.costManagement.getCostElementsByStage(module === 'batch' ? 'batch' : stage);
       
       if (response.success) {
         // Filter elements based on stage
@@ -186,7 +188,10 @@ const CostCapture = ({
           total_cost: elementCost,
           is_applied: true,
           is_optional: element.is_optional,
-          calculation_method: element.calculation_method
+          calculation_method: element.calculation_method,
+          overrideRate: input.overrideRate,
+          default_rate: element.default_rate,
+          totalCost: elementCost
         });
       }
     });
