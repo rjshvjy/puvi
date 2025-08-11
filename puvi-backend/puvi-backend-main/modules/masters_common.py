@@ -151,9 +151,10 @@ MASTERS_CONFIG = {
                 'required': True,
                 'unique': True,
                 'max_length': 6,
-                'pattern': r'^[A-Z0-9]{1,6}$',
-                'label': 'Short Code (6 chars)',
-                'transform': 'uppercase'
+                'pattern': r'^[A-Z]{1,3}-[A-Z]{1,2}$',  # Fixed pattern for XXX-Y format
+                'label': 'Short Code (e.g., GNS-K)',
+                'transform': 'uppercase',
+                'placeholder': 'XXX-Y'
             }
         },
         'list_query': """
@@ -506,13 +507,23 @@ def check_dependencies(conn, cur, master_type, record_id):
 
 
 # =====================================================
-# FIELD VALIDATION
+# FIELD VALIDATION - FIXED VERSION
 # =====================================================
 
 def validate_field(field_name, field_config, value, conn=None, cur=None, 
-                   table_name=None, record_id=None):
+                   table_name=None, record_id=None, primary_key=None):
     """
     Validate a field value based on its configuration
+    
+    Args:
+        field_name: Name of the field being validated
+        field_config: Field configuration dict
+        value: Value to validate
+        conn: Database connection (optional, for unique checks)
+        cur: Database cursor (optional, for unique checks)
+        table_name: Table name (optional, for unique checks)
+        record_id: Record ID for updates (optional)
+        primary_key: Primary key field name (required for unique checks during updates)
     
     Returns:
         tuple: (is_valid, error_message)
@@ -541,6 +552,9 @@ def validate_field(field_name, field_config, value, conn=None, cur=None,
         # Pattern check
         pattern = field_config.get('pattern')
         if pattern and not re.match(pattern, value):
+            # Provide helpful error message for specific fields
+            if field_name == 'short_code' and 'placeholder' in field_config:
+                return False, f"{field_config.get('label', field_name)} must be in format {field_config['placeholder']}"
             return False, f"{field_config.get('label', field_name)} format is invalid"
     
     elif field_type == 'email':
@@ -587,11 +601,11 @@ def validate_field(field_name, field_config, value, conn=None, cur=None,
     
     # Check unique constraint if needed
     if field_config.get('unique') and conn and cur and table_name:
-        if record_id:
-            # Update - exclude current record
+        if record_id and primary_key:
+            # Update - exclude current record using the correct primary key
             cur.execute(f"""
                 SELECT COUNT(*) FROM {table_name} 
-                WHERE {field_name} = %s AND id != %s
+                WHERE {field_name} = %s AND {primary_key} != %s
             """, (value, record_id))
         else:
             # Insert - check all records
@@ -637,7 +651,7 @@ def transform_field_value(field_config, value):
 
 
 # =====================================================
-# MASTER DATA VALIDATION
+# MASTER DATA VALIDATION - FIXED VERSION
 # =====================================================
 
 def validate_master_data(master_type, data, record_id=None):
@@ -661,6 +675,10 @@ def validate_master_data(master_type, data, record_id=None):
     cur = conn.cursor()
     
     try:
+        # Get the primary key field name for this master type
+        primary_key = config.get('primary_key')
+        table_name = config.get('table')
+        
         # Validate each field
         for field_name, field_config in config['fields'].items():
             value = data.get(field_name)
@@ -669,10 +687,10 @@ def validate_master_data(master_type, data, record_id=None):
             value = transform_field_value(field_config, value)
             data[field_name] = value  # Update data with transformed value
             
-            # Validate
+            # Validate with the correct primary key
             is_valid, error_msg = validate_field(
                 field_name, field_config, value,
-                conn, cur, config['table'], record_id
+                conn, cur, table_name, record_id, primary_key
             )
             
             if not is_valid:
@@ -721,10 +739,6 @@ def soft_delete_record(conn, cur, master_type, record_id, deleted_by=None):
     # Perform soft delete
     soft_delete_field = config.get('soft_delete_field', 'is_active')
     
-    # Special handling for cost_elements_master (uses 'is_active' instead of 'is_active')
-    if master_type == 'cost_elements' and soft_delete_field == 'is_active':
-        soft_delete_field = 'is_active'  # We renamed it in DB setup
-    
     cur.execute(f"""
         UPDATE {table}
         SET {soft_delete_field} = false,
@@ -760,10 +774,6 @@ def restore_record(conn, cur, master_type, record_id, restored_by=None):
     table = config['table']
     primary_key = config['primary_key']
     soft_delete_field = config.get('soft_delete_field', 'is_active')
-    
-    # Special handling for cost_elements_master
-    if master_type == 'cost_elements' and soft_delete_field == 'is_active':
-        soft_delete_field = 'is_active'
     
     # Restore the record
     cur.execute(f"""
@@ -848,9 +858,6 @@ def get_export_query(master_type, include_inactive=False):
     # Build default query
     table = config['table']
     soft_delete_field = config.get('soft_delete_field', 'is_active')
-    
-    if master_type == 'cost_elements':
-        soft_delete_field = 'is_active'
     
     query = f"SELECT * FROM {table}"
     
