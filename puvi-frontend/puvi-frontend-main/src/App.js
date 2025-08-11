@@ -1,9 +1,10 @@
-// Main App Component for PUVI Oil Manufacturing System
 // File Path: puvi-frontend/puvi-frontend-main/src/App.js
-// COMPLETE REPLACEMENT FILE - Includes Masters and Opening Balance Integration
+// Modern Professional App Component for PUVI Oil Manufacturing System
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
+
+// Import all modules
 import Purchase from './modules/Purchase';
 import MaterialWriteoff from './modules/MaterialWriteoff';
 import BatchProduction from './modules/BatchProduction';
@@ -15,312 +16,438 @@ import MastersManagement from './modules/MastersManagement';
 import OpeningBalanceModule from './modules/OpeningBalanceModule';
 
 function App() {
-  const [activeModule, setActiveModule] = useState('info');
+  // State Management
+  const [activeModule, setActiveModule] = useState('dashboard');
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [systemStats, setSystemStats] = useState({
+    totalMaterials: 0,
+    activeSuppliers: 0,
+    pendingOrders: 0,
+    lowStock: 0,
+    production: 0,
+    revenue: 0
+  });
+  
+  // User info (can be fetched from API)
+  const [userInfo] = useState({
+    name: 'Admin User',
+    role: 'System Administrator',
+    initials: 'AU'
+  });
+
+  // Navigation structure
+  const navigation = [
+    {
+      section: 'MAIN',
+      items: [
+        { id: 'dashboard', label: 'Dashboard', icon: '📊', badge: null },
+        { id: 'openingBalance', label: 'Opening Balance', icon: '💼', badge: '!' }
+      ]
+    },
+    {
+      section: 'OPERATIONS',
+      items: [
+        { id: 'purchase', label: 'Purchase', icon: '🛒', badge: null },
+        { id: 'batch', label: 'Batch Production', icon: '🏭', badge: null },
+        { id: 'blending', label: 'Oil Blending', icon: '🧪', badge: null },
+        { id: 'sku', label: 'SKU Management', icon: '📦', badge: null },
+        { id: 'sales', label: 'Material Sales', icon: '💰', badge: null }
+      ]
+    },
+    {
+      section: 'INVENTORY',
+      items: [
+        { id: 'writeoff', label: 'Material Writeoff', icon: '📝', badge: null },
+        { id: 'cost', label: 'Cost Management', icon: '💵', badge: null }
+      ]
+    },
+    {
+      section: 'CONFIGURATION',
+      items: [
+        { id: 'masters', label: 'Masters', icon: '⚙️', badge: null }
+      ]
+    }
+  ];
+
+  // Close mobile menu when module changes
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [activeModule]);
+
+  // Fetch system stats (mock data for now)
+  useEffect(() => {
+    // In real app, fetch from API
+    setSystemStats({
+      totalMaterials: 156,
+      activeSuppliers: 24,
+      pendingOrders: 8,
+      lowStock: 12,
+      production: 4520,
+      revenue: 145600
+    });
+  }, []);
+
+  // Toggle sidebar
+  const toggleSidebar = () => {
+    setSidebarCollapsed(!sidebarCollapsed);
+  };
+
+  // Toggle mobile menu
+  const toggleMobileMenu = () => {
+    setMobileMenuOpen(!mobileMenuOpen);
+  };
+
+  // Get current module title
+  const getModuleTitle = () => {
+    const titles = {
+      dashboard: 'Dashboard',
+      openingBalance: 'Opening Balance Management',
+      purchase: 'Purchase Management',
+      batch: 'Batch Production',
+      blending: 'Oil Blending',
+      sku: 'SKU Management',
+      sales: 'Material Sales',
+      writeoff: 'Material Writeoff',
+      cost: 'Cost Management',
+      masters: 'Master Data Management'
+    };
+    return titles[activeModule] || 'Dashboard';
+  };
+
+  // Get current module subtitle
+  const getModuleSubtitle = () => {
+    const subtitles = {
+      dashboard: 'System overview and quick actions',
+      openingBalance: 'Initialize and manage opening balances',
+      purchase: 'Manage material purchases and suppliers',
+      batch: 'Oil extraction and production tracking',
+      blending: 'Create custom oil blends',
+      sku: 'Stock keeping unit management with MRP',
+      sales: 'Track material and by-product sales',
+      writeoff: 'Record material losses and writeoffs',
+      cost: 'Analyze and manage production costs',
+      masters: 'Configure suppliers, materials, and system settings'
+    };
+    return subtitles[activeModule] || '';
+  };
+
+  // Render module content
+  const renderModuleContent = () => {
+    switch (activeModule) {
+      case 'purchase':
+        return <Purchase />;
+      case 'writeoff':
+        return <MaterialWriteoff />;
+      case 'batch':
+        return <BatchProduction />;
+      case 'blending':
+        return <Blending />;
+      case 'sales':
+        return <MaterialSales />;
+      case 'cost':
+        return <CostManagement />;
+      case 'sku':
+        return <SKUManagement />;
+      case 'masters':
+        return <MastersManagement />;
+      case 'openingBalance':
+        return <OpeningBalanceModule />;
+      case 'dashboard':
+      default:
+        return <DashboardContent stats={systemStats} onNavigate={setActiveModule} />;
+    }
+  };
 
   return (
     <div className="app">
-      <header>
-        <h1>PUVI Oil Manufacturing System</h1>
-        <p>Cost Management & Inventory Tracking with MRP & Expiry Management</p>
-      </header>
-
-      <nav style={{ 
-        display: 'flex', 
-        gap: '10px', 
-        marginBottom: '20px',
-        flexWrap: 'wrap',
-        justifyContent: 'center'
-      }}>
-        <button 
-          onClick={() => setActiveModule('info')}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: activeModule === 'info' ? '#2c3e50' : '#ecf0f1',
-            color: activeModule === 'info' ? 'white' : '#2c3e50',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-            fontWeight: activeModule === 'info' ? 'bold' : 'normal',
-            transition: 'all 0.2s ease'
-          }}
-        >
-          System Info
-        </button>
-
-        <button 
-          onClick={() => setActiveModule('openingBalance')}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: activeModule === 'openingBalance' ? '#1abc9c' : '#ecf0f1',
-            color: activeModule === 'openingBalance' ? 'white' : '#2c3e50',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-            fontWeight: activeModule === 'openingBalance' ? 'bold' : 'normal',
-            transition: 'all 0.2s ease',
-            position: 'relative'
-          }}
-        >
-          Opening Balance
-          <span style={{
-            position: 'absolute',
-            top: '-5px',
-            right: '-5px',
-            background: '#ff0000',
-            color: 'white',
-            borderRadius: '50%',
-            fontSize: '9px',
-            padding: '2px 5px',
-            fontWeight: 'bold'
-          }}>!</span>
-        </button>
-
-        <button 
-          onClick={() => setActiveModule('masters')}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: activeModule === 'masters' ? '#8e44ad' : '#ecf0f1',
-            color: activeModule === 'masters' ? 'white' : '#2c3e50',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-            fontWeight: activeModule === 'masters' ? 'bold' : 'normal',
-            transition: 'all 0.2s ease'
-          }}
-        >
-          Masters
-        </button>
-        
-        <button 
-          onClick={() => setActiveModule('purchase')}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: activeModule === 'purchase' ? '#3498db' : '#ecf0f1',
-            color: activeModule === 'purchase' ? 'white' : '#2c3e50',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-            fontWeight: activeModule === 'purchase' ? 'bold' : 'normal',
-            transition: 'all 0.2s ease'
-          }}
-        >
-          Purchase
-        </button>
-        
-        <button 
-          onClick={() => setActiveModule('writeoff')}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: activeModule === 'writeoff' ? '#e74c3c' : '#ecf0f1',
-            color: activeModule === 'writeoff' ? 'white' : '#2c3e50',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-            fontWeight: activeModule === 'writeoff' ? 'bold' : 'normal',
-            transition: 'all 0.2s ease'
-          }}
-        >
-          Material Writeoff
-        </button>
-        
-        <button 
-          onClick={() => setActiveModule('batch')}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: activeModule === 'batch' ? '#27ae60' : '#ecf0f1',
-            color: activeModule === 'batch' ? 'white' : '#2c3e50',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-            fontWeight: activeModule === 'batch' ? 'bold' : 'normal',
-            transition: 'all 0.2s ease'
-          }}
-        >
-          Batch Production
-        </button>
-        
-        <button 
-          onClick={() => setActiveModule('blending')}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: activeModule === 'blending' ? '#9b59b6' : '#ecf0f1',
-            color: activeModule === 'blending' ? 'white' : '#2c3e50',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-            fontWeight: activeModule === 'blending' ? 'bold' : 'normal',
-            transition: 'all 0.2s ease'
-          }}
-        >
-          Blending
-        </button>
-        
-        <button 
-          onClick={() => setActiveModule('sku')}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: activeModule === 'sku' ? '#f39c12' : '#ecf0f1',
-            color: activeModule === 'sku' ? 'white' : '#2c3e50',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-            fontWeight: activeModule === 'sku' ? 'bold' : 'normal',
-            transition: 'all 0.2s ease',
-            position: 'relative'
-          }}
-        >
-          SKU Management
-          <span style={{
-            position: 'absolute',
-            top: '-5px',
-            right: '-5px',
-            background: '#4CAF50',
-            color: 'white',
-            borderRadius: '50%',
-            fontSize: '10px',
-            padding: '2px 6px',
-            fontWeight: 'bold'
-          }}>v2</span>
-        </button>
-        
-        <button 
-          onClick={() => setActiveModule('sales')}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: activeModule === 'sales' ? '#e67e22' : '#ecf0f1',
-            color: activeModule === 'sales' ? 'white' : '#2c3e50',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-            fontWeight: activeModule === 'sales' ? 'bold' : 'normal',
-            transition: 'all 0.2s ease'
-          }}
-        >
-          Material Sales
-        </button>
-        
-        <button 
-          onClick={() => setActiveModule('costManagement')}
-          style={{
-            padding: '10px 20px',
-            backgroundColor: activeModule === 'costManagement' ? '#16a085' : '#ecf0f1',
-            color: activeModule === 'costManagement' ? 'white' : '#2c3e50',
-            border: 'none',
-            borderRadius: '5px',
-            cursor: 'pointer',
-            fontWeight: activeModule === 'costManagement' ? 'bold' : 'normal',
-            transition: 'all 0.2s ease'
-          }}
-        >
-          Cost Management
-        </button>
-      </nav>
-
-      {activeModule === 'info' && (
-        <div className="info-section">
-          <h3>System Status</h3>
-          <ul>
-            <li>✅ <strong style={{color: '#1abc9c'}}>Opening Balance Module - COMPLETE</strong></li>
-            <li>✅ <strong style={{color: '#8e44ad'}}>Masters Management - COMPLETE</strong></li>
-            <li>✅ Purchase Module - With Traceability</li>
-            <li>✅ Material Writeoff - Functional</li>
-            <li>✅ Batch Production - With Traceability</li>
-            <li>✅ Blending Module - Functional</li>
-            <li>✅ Material Sales - With FIFO & Cost Reconciliation</li>
-            <li>✅ Cost Management - Frontend Complete, Integration Pending</li>
-            <li>✅ <strong style={{color: '#4CAF50'}}>SKU Management v2.0 - COMPLETE with MRP & Expiry</strong></li>
-            <li>🔄 Traceability System - Partially Implemented</li>
-            <li>📋 Reports & Analytics - To be implemented</li>
-          </ul>
-          
-          <h3 style={{ marginTop: '30px', color: '#1abc9c' }}>🚀 Opening Balance Module - NEW!</h3>
-          <ul>
-            <li>✅ <strong>System Initialization:</strong> One-time setup wizard with permanent lock</li>
-            <li>✅ <strong>Opening Balance Entry:</strong> Material-wise balance entry with CSV import/export</li>
-            <li>✅ <strong>Status Dashboard:</strong> Real-time system status and statistics</li>
-            <li>✅ <strong>Financial Year:</strong> April to March with year-end closing process</li>
-            <li>⚠️ <strong>CRITICAL:</strong> System initialization is PERMANENT and cannot be undone!</li>
-            <li>📌 <strong>Setup Order:</strong> 1) Enter Masters Data → 2) Set Opening Balances → 3) Initialize System</li>
-          </ul>
-
-          <h3 style={{ marginTop: '30px', color: '#8e44ad' }}>📋 Masters Management - NEW!</h3>
-          <ul>
-            <li>✅ <strong>5 Master Types:</strong> Suppliers, Materials, Tags, Writeoff Reasons, Cost Elements</li>
-            <li>✅ <strong>Dynamic Forms:</strong> Auto-generated from backend schema</li>
-            <li>✅ <strong>Dependency Management:</strong> Soft delete with dependency checking</li>
-            <li>✅ <strong>CSV Import/Export:</strong> Bulk data management</li>
-            <li>✅ <strong>Field Validation:</strong> Pattern matching, unique constraints, required fields</li>
-            <li>📌 <strong>Note:</strong> Setup master data before entering transactions</li>
-          </ul>
-          
-          <h3 style={{ marginTop: '30px', color: '#4CAF50' }}>🎉 SKU Management Module v2.0 - COMPLETE</h3>
-          <ul>
-            <li>✅ <strong>Backend:</strong> sku_production.py v2.0 with 14 new MRP/Expiry endpoints</li>
-            <li>✅ <strong>Database:</strong> All tables updated (mrp_current, shelf_life_months, expiry_date)</li>
-            <li>✅ <strong>SKU Master:</strong> Complete CRUD with MRP tracking & shelf life configuration</li>
-            <li>✅ <strong>MRP History:</strong> Timeline view with change tracking & audit trail</li>
-            <li>✅ <strong>BOM Configuration:</strong> Material versioning with MRP display</li>
-            <li>✅ <strong>Production Entry:</strong> Auto-captures MRP at production & calculates expiry</li>
-            <li>✅ <strong>Production History:</strong> Enhanced with MRP/Expiry columns & status colors</li>
-            <li>✅ <strong>Expiry Alerts:</strong> Real-time notifications for near-expiry products</li>
-            <li>✅ <strong>FEFO Integration:</strong> First-Expired-First-Out allocation for sales</li>
-            <li>✅ <strong>Printable Reports:</strong> Production summaries for regulatory compliance</li>
-            <li>✅ <strong>Dashboard:</strong> Visual analytics with expiry status tracking</li>
-          </ul>
-          
-          <h3 style={{ marginTop: '30px' }}>Next Steps</h3>
-          <ul>
-            <li>📌 <strong style={{color: '#ff0000'}}>URGENT:</strong> Initialize system with opening balances before operations</li>
-            <li>📌 Set up all master data (suppliers, materials, etc.) first</li>
-            <li>📌 Enter opening balances for all materials</li>
-            <li>📌 Review and initialize system (ONE-TIME ONLY)</li>
-            <li>📌 Test all modules with sample transactions</li>
-            <li>📌 Setup test data: Create sample SKUs with different MRP & shelf life values</li>
-            <li>📌 Verify expiry alerts: Test with various production dates</li>
-            <li>📌 Test FEFO allocation: Ensure oldest expiry products are allocated first</li>
-            <li>📌 Print production reports: Verify regulatory compliance format</li>
-            <li>📌 Integrate TimeTracker component into BatchProduction Step 3</li>
-            <li>📌 Add extended costs display to BatchProduction Step 4</li>
-            <li>📌 Phase 2: Implement blocking validation for Cost Management</li>
-            <li>📌 Future: Add predictive analytics for expiry management</li>
-          </ul>
-          
-          <h3 style={{ marginTop: '30px', color: '#ff0000' }}>⚠️ Critical Setup Sequence</h3>
-          <ol>
-            <li><strong>Masters Setup:</strong> Configure all suppliers, materials, tags, cost elements</li>
-            <li><strong>Opening Balance:</strong> Enter opening stock quantities and values</li>
-            <li><strong>System Initialization:</strong> One-time lock (PERMANENT - cannot undo!)</li>
-            <li><strong>Begin Operations:</strong> Start with purchases, production, sales</li>
-          </ol>
-          
-          <h3 style={{ marginTop: '30px' }}>Production Deployment Checklist</h3>
-          <ul>
-            <li>☑️ Verify all API endpoints are accessible</li>
-            <li>☑️ Complete master data setup</li>
-            <li>☑️ Enter and verify opening balances</li>
-            <li>☑️ Backup database before initialization</li>
-            <li>☑️ Test MRP change workflow with approvals</li>
-            <li>☑️ Validate expiry calculations across time zones</li>
-            <li>☑️ Test auto-refresh performance with large datasets</li>
-            <li>☑️ Verify print format on different browsers</li>
-            <li>☑️ Train users on MRP management & expiry monitoring</li>
-            <li>☑️ Set up alerts for critical expiry items</li>
-            <li>☑️ Document FEFO allocation procedures</li>
-          </ul>
+      {/* Sidebar Navigation */}
+      <aside className={`sidebar ${sidebarCollapsed ? 'collapsed' : ''} ${mobileMenuOpen ? 'mobile-open' : ''}`}>
+        {/* Sidebar Header */}
+        <div className="sidebar-header">
+          <div className="sidebar-logo">
+            <div className="sidebar-logo-icon">P</div>
+            <div className="sidebar-logo-text">
+              <div className="sidebar-logo-title">PUVI</div>
+              <div className="sidebar-logo-subtitle">Oil Manufacturing</div>
+            </div>
+          </div>
+          <button className="sidebar-toggle" onClick={toggleSidebar}>
+            {sidebarCollapsed ? '→' : '←'}
+          </button>
         </div>
-      )}
 
-      {activeModule === 'openingBalance' && <OpeningBalanceModule />}
-      {activeModule === 'masters' && <MastersManagement />}
-      {activeModule === 'purchase' && <Purchase />}
-      {activeModule === 'writeoff' && <MaterialWriteoff />}
-      {activeModule === 'batch' && <BatchProduction />}
-      {activeModule === 'blending' && <Blending />}
-      {activeModule === 'sku' && <SKUManagement />}
-      {activeModule === 'sales' && <MaterialSales />}
-      {activeModule === 'costManagement' && <CostManagement />}
+        {/* Sidebar Navigation */}
+        <nav className="sidebar-nav">
+          {navigation.map((section, idx) => (
+            <div key={idx} className="nav-section">
+              <div className="nav-section-title">{section.section}</div>
+              {section.items.map(item => (
+                <button
+                  key={item.id}
+                  className={`nav-item ${activeModule === item.id ? 'active' : ''}`}
+                  onClick={() => setActiveModule(item.id)}
+                >
+                  <span className="nav-item-icon">{item.icon}</span>
+                  <span className="nav-item-text">{item.label}</span>
+                  {item.badge && (
+                    <span className="nav-item-badge">{item.badge}</span>
+                  )}
+                </button>
+              ))}
+            </div>
+          ))}
+        </nav>
+
+        {/* Sidebar Footer */}
+        <div className="sidebar-footer">
+          <div className="user-avatar">{userInfo.initials}</div>
+          <div className="user-info">
+            <div className="user-name">{userInfo.name}</div>
+            <div className="user-role">{userInfo.role}</div>
+          </div>
+        </div>
+      </aside>
+
+      {/* Main Content Area */}
+      <main className="main-content">
+        {/* Top Header */}
+        <header className="top-header">
+          <div className="header-content">
+            <div>
+              <h1 className="header-title">{getModuleTitle()}</h1>
+              <p className="header-subtitle">{getModuleSubtitle()}</p>
+            </div>
+            <div className="header-actions">
+              {/* Mobile menu toggle */}
+              <button 
+                className="header-button mobile-menu-toggle"
+                onClick={toggleMobileMenu}
+                style={{ display: window.innerWidth <= 768 ? 'flex' : 'none' }}
+              >
+                ☰
+              </button>
+              
+              {/* Quick Actions */}
+              {activeModule === 'dashboard' && (
+                <>
+                  <button className="header-button">
+                    <span>📥</span>
+                    <span>Import Data</span>
+                  </button>
+                  <button className="header-button">
+                    <span>📊</span>
+                    <span>Generate Report</span>
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        </header>
+
+        {/* Content Container */}
+        <div className="content-container">
+          <div className="module-wrapper">
+            {renderModuleContent()}
+          </div>
+        </div>
+      </main>
     </div>
   );
 }
+
+// Dashboard Component
+const DashboardContent = ({ stats, onNavigate }) => {
+  const quickActions = [
+    { id: 'purchase', icon: '🛒', title: 'New Purchase', color: '#3b82f6' },
+    { id: 'batch', icon: '🏭', title: 'Start Production', color: '#10b981' },
+    { id: 'sku', icon: '📦', title: 'Create SKU', color: '#8b5cf6' },
+    { id: 'sales', icon: '💰', title: 'Record Sale', color: '#f59e0b' },
+    { id: 'masters', icon: '⚙️', title: 'Add Supplier', color: '#6b7280' },
+    { id: 'cost', icon: '💵', title: 'View Costs', color: '#06b6d4' }
+  ];
+
+  const statCards = [
+    { 
+      title: 'Total Materials', 
+      value: stats.totalMaterials, 
+      change: '+12%', 
+      positive: true,
+      color: '#3b82f6',
+      icon: '📦'
+    },
+    { 
+      title: 'Active Suppliers', 
+      value: stats.activeSuppliers, 
+      change: '+5%', 
+      positive: true,
+      color: '#10b981',
+      icon: '🏢'
+    },
+    { 
+      title: 'Pending Orders', 
+      value: stats.pendingOrders, 
+      change: '-2', 
+      positive: false,
+      color: '#f59e0b',
+      icon: '📋'
+    },
+    { 
+      title: 'Low Stock Items', 
+      value: stats.lowStock, 
+      change: '3 critical', 
+      positive: false,
+      color: '#ef4444',
+      icon: '⚠️'
+    },
+    { 
+      title: 'Production (kg)', 
+      value: stats.production.toLocaleString(), 
+      change: '+18%', 
+      positive: true,
+      color: '#8b5cf6',
+      icon: '🏭'
+    },
+    { 
+      title: 'Revenue (₹)', 
+      value: stats.revenue.toLocaleString(), 
+      change: '+22%', 
+      positive: true,
+      color: '#06b6d4',
+      icon: '💰'
+    }
+  ];
+
+  return (
+    <div className="welcome-dashboard">
+      {/* Hero Section */}
+      <div className="welcome-hero">
+        <h1>Welcome to PUVI Oil Manufacturing System</h1>
+        <p>
+          Comprehensive solution for oil manufacturing operations, inventory management, 
+          and cost tracking with advanced MRP and expiry management features.
+        </p>
+        
+        {/* System Status */}
+        <div style={{ 
+          display: 'flex', 
+          gap: '1rem', 
+          flexWrap: 'wrap',
+          padding: '1rem',
+          background: 'rgba(255,255,255,0.1)',
+          borderRadius: '0.75rem'
+        }}>
+          <div style={{ flex: '1', minWidth: '200px' }}>
+            <div style={{ fontSize: '0.875rem', opacity: 0.8 }}>System Status</div>
+            <div style={{ fontSize: '1.25rem', fontWeight: 600, color: '#10b981' }}>
+              ✓ Operational
+            </div>
+          </div>
+          <div style={{ flex: '1', minWidth: '200px' }}>
+            <div style={{ fontSize: '0.875rem', opacity: 0.8 }}>Last Backup</div>
+            <div style={{ fontSize: '1.25rem', fontWeight: 600 }}>
+              Today, 2:00 AM
+            </div>
+          </div>
+          <div style={{ flex: '1', minWidth: '200px' }}>
+            <div style={{ fontSize: '0.875rem', opacity: 0.8 }}>Active Users</div>
+            <div style={{ fontSize: '1.25rem', fontWeight: 600 }}>
+              5 Online
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="stats-grid">
+        {statCards.map((stat, idx) => (
+          <div key={idx} className="stat-card">
+            <div className="stat-card-header">
+              <div 
+                className="stat-card-icon" 
+                style={{ 
+                  background: `${stat.color}20`,
+                  color: stat.color
+                }}
+              >
+                {stat.icon}
+              </div>
+            </div>
+            <div className="stat-card-title">{stat.title}</div>
+            <div className="stat-card-value">{stat.value}</div>
+            <div className={`stat-card-change ${stat.positive ? 'positive' : 'negative'}`}>
+              <span>{stat.positive ? '↑' : '↓'}</span>
+              <span>{stat.change}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Quick Actions */}
+      <div className="quick-actions">
+        <h2>Quick Actions</h2>
+        <div className="actions-grid">
+          {quickActions.map(action => (
+            <div
+              key={action.id}
+              className="action-card"
+              onClick={() => onNavigate(action.id)}
+              style={{ cursor: 'pointer' }}
+            >
+              <div 
+                className="action-card-icon"
+                style={{ color: action.color }}
+              >
+                {action.icon}
+              </div>
+              <div className="action-card-title">{action.title}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Recent Activity */}
+      <div style={{ marginTop: '2rem' }}>
+        <h2 style={{ fontSize: '1.25rem', marginBottom: '1rem' }}>Recent Activity</h2>
+        <div style={{ 
+          background: 'white', 
+          borderRadius: '0.75rem', 
+          padding: '1.5rem',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+        }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+            {[
+              { time: '2 hours ago', action: 'Purchase Order #PO-2024-156 created', user: 'John Doe' },
+              { time: '4 hours ago', action: 'Batch Production #BP-2024-089 completed', user: 'Jane Smith' },
+              { time: '6 hours ago', action: 'SKU #SKU-001 stock updated', user: 'Admin' },
+              { time: '1 day ago', action: 'Material writeoff recorded for expired items', user: 'System' }
+            ].map((activity, idx) => (
+              <div 
+                key={idx} 
+                style={{ 
+                  display: 'flex', 
+                  justifyContent: 'space-between',
+                  padding: '0.75rem',
+                  background: '#f9fafb',
+                  borderRadius: '0.5rem'
+                }}
+              >
+                <div>
+                  <div style={{ fontWeight: 500 }}>{activity.action}</div>
+                  <div style={{ fontSize: '0.875rem', color: '#6b7280', marginTop: '0.25rem' }}>
+                    by {activity.user}
+                  </div>
+                </div>
+                <div style={{ fontSize: '0.875rem', color: '#9ca3af' }}>
+                  {activity.time}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 export default App;
