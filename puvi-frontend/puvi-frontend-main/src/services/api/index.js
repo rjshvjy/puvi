@@ -34,7 +34,8 @@ const apiCall = async (url, options = {}) => {
 // API wrapper with common methods
 const api = {
   get: (url, params) => {
-    const queryString = params ? `?${new URLSearchParams(params)}` : '';
+    const queryString = params ? 
+      `?${new URLSearchParams(params).toString()}` : '';
     return apiCall(`${url}${queryString}`);
   },
   
@@ -105,6 +106,29 @@ const api = {
     getAvailableOils: () => api.get('/api/available_oils_for_blend'),
     createBlend: (data) => api.post('/api/oil_blending', data),
     getHistory: () => api.get('/api/blending_history')
+  },
+  
+  costManagement: {
+    getCostElementsMaster: () => api.get('/api/cost_elements_master'),
+    getCostElementsByCategory: (category) => api.get(`/api/cost_elements/${category}`),
+    addCostElement: (data) => api.post('/api/cost_elements', data),
+    updateCostElement: (id, data) => api.put(`/api/cost_elements/${id}`, data),
+    deleteCostElement: (id) => api.delete(`/api/cost_elements/${id}`),
+    getCostAnalysis: (params) => api.get('/api/cost_analysis', params)
+  },
+  
+  masters: {
+    getSuppliers: () => api.get('/api/suppliers'),
+    getMaterials: () => api.get('/api/materials'),
+    getCostElements: () => api.get('/api/cost_elements')
+  },
+  
+  openingBalance: {
+    getMaterials: () => api.get('/api/materials'),
+    getOpeningBalances: () => api.get('/api/opening_balances'),
+    setOpeningBalance: (data) => api.post('/api/opening_balance', data),
+    updateOpeningBalance: (id, data) => api.put(`/api/opening_balance/${id}`, data),
+    deleteOpeningBalance: (id) => api.delete(`/api/opening_balance/${id}`)
   }
 };
 
@@ -318,22 +342,8 @@ export const API_URL = API_BASE_URL;
 // Export the SKU utilities
 export { skuDateUtils, expiryUtils, formatUtils };
 
-// Default export
-export default {
-  apiCall,
-  api,
-  mastersAPI,
-  purchaseAPI,
-  batchAPI,
-  skuAPI,
-  writeoffAPI,
-  blendingAPI,
-  openingBalanceAPI,
-  salesAPI,
-  costAPI,
-  API_URL,
-  // Include utilities in default export as well
-  skuDateUtils,
-  expiryUtils,
-  formatUtils
-};
+// Default export - THIS IS CRITICAL FOR THE PURCHASE MODULE TO WORK
+export default api;
+
+// Also export the apiCall function for direct use
+export { apiCall, API_BASE_URL };
