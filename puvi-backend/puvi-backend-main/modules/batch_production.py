@@ -1,6 +1,7 @@
 """
 Batch Production Module for PUVI Oil Manufacturing System
 Handles oil extraction from seeds, cost allocation, by-product tracking, and traceability
+File Path: puvi-backend/puvi-backend-main/modules/batch_production.py
 """
 
 from flask import Blueprint, request, jsonify
@@ -74,12 +75,16 @@ def get_seeds_for_batch():
 
 @batch_bp.route('/api/cost_elements_for_batch', methods=['GET'])
 def get_cost_elements_for_batch():
-    """Get applicable cost elements for batch production"""
+    """
+    Get applicable cost elements for batch production from cost_elements_master
+    FIXED: Now uses cost_elements_master table with full features
+    """
     conn = get_db_connection()
     cur = conn.cursor()
     
     try:
-        # Get cost elements relevant for batch production
+        # FIXED: Query from cost_elements_master instead of cost_elements
+        # Get all cost elements applicable to batch production
         cur.execute("""
             SELECT 
                 element_id,
@@ -87,25 +92,14 @@ def get_cost_elements_for_batch():
                 category,
                 unit_type,
                 default_rate,
-                calculation_method
-            FROM cost_elements
-            WHERE category IN ('Labor', 'Utilities', 'Maintenance')
-                AND element_name IN (
-                    'Drying Labour',
-                    'Seed Unloading',
-                    'Loading After Drying',
-                    'Crushing Labour',
-                    'Filtering Labour',
-                    'Electricity - Crushing',
-                    'Machine Maintenance'
-                )
-            ORDER BY 
-                CASE category 
-                    WHEN 'Labor' THEN 1 
-                    WHEN 'Utilities' THEN 2 
-                    WHEN 'Maintenance' THEN 3 
-                END,
-                element_name
+                calculation_method,
+                is_optional,
+                applicable_to,
+                display_order
+            FROM cost_elements_master
+            WHERE is_active = true 
+                AND applicable_to IN ('batch', 'all')
+            ORDER BY display_order, category, element_name
         """)
         
         cost_elements = []
@@ -118,7 +112,10 @@ def get_cost_elements_for_batch():
                 'category': row[2],
                 'unit_type': row[3],
                 'default_rate': float(row[4]),
-                'calculation_method': row[5]
+                'calculation_method': row[5],
+                'is_optional': row[6],
+                'applicable_to': row[7],
+                'display_order': row[8]
             }
             cost_elements.append(element)
             
