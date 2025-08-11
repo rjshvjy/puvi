@@ -240,6 +240,26 @@ const TextareaField = ({ id, label, value, onChange, error, required, disabled, 
 const ReferenceField = ({ id, label, value, onChange, options, error, required, disabled, help }) => {
   const [filter, setFilter] = useState('');
   
+  // Check if suppliers are loaded
+  if (!options || options.length === 0) {
+    return (
+      <div className="field reference-field">
+        <label htmlFor={id} className="label">
+          {label}
+          {required && <span className="required">*</span>}
+        </label>
+        <div className="inline-alert warning">
+          <div className="inline-alert-icon"></div>
+          <div className="inline-alert-content">
+            <div className="inline-alert-message">
+              No suppliers found. Please add suppliers first in the Suppliers master.
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
   const filteredOptions = options.filter(opt => 
     opt.supplier_name.toLowerCase().includes(filter.toLowerCase()) ||
     opt.short_code.toLowerCase().includes(filter.toLowerCase())
@@ -271,6 +291,7 @@ const ReferenceField = ({ id, label, value, onChange, options, error, required, 
         value={value || ''}
         onChange={(e) => onChange(e.target.value)}
         disabled={disabled}
+        required={required}
         aria-invalid={!!error}
         aria-describedby={error ? `${id}-error` : help ? `${id}-help` : undefined}
       >
@@ -470,13 +491,23 @@ const MasterForm = ({
   const loadReferences = async () => {
     try {
       if (masterType === 'materials') {
-        const response = await apiCall('/api/masters/suppliers?per_page=100');
+        console.log('Loading suppliers for materials form...');
+        const response = await apiCall('/api/masters/suppliers?per_page=100&is_active=true');
+        console.log('Suppliers response:', response);
         if (response.success) {
           setSuppliers(response.records || []);
+          console.log('Loaded suppliers:', response.records);
+        } else {
+          console.error('Failed to load suppliers:', response);
+          setSuppliers([]);
         }
       }
     } catch (error) {
       console.error('Error loading references:', error);
+      setAlert({
+        type: 'warning',
+        message: 'Could not load suppliers. Please ensure suppliers are configured in the system.'
+      });
     }
   };
   
@@ -637,13 +668,25 @@ const MasterForm = ({
       onBlur: () => handleFieldBlur(field)
     };
     
-    // Reference field (supplier dropdown) - FIXED BUG HERE
-    if (field.type === 'reference' && field.reference_table === 'suppliers') {
+    // Debug logging for supplier field
+    if (field.name === 'supplier_id') {
+      console.log('Rendering supplier field:', field);
+      console.log('Field type:', field.type);
+      console.log('Reference table:', field.reference_table);
+      console.log('Available suppliers:', suppliers);
+    }
+    
+    // Reference field (supplier dropdown) - Multiple checks to ensure it catches supplier field
+    if (field.type === 'reference' || 
+        field.reference_table === 'suppliers' || 
+        field.name === 'supplier_id' ||
+        (field.label && field.label.toLowerCase().includes('supplier'))) {
+      console.log('Rendering as ReferenceField');
       return (
         <ReferenceField
           {...commonProps}
           options={suppliers}
-          help={field.help}
+          help={field.help || 'Select from existing suppliers'}
         />
       );
     }
@@ -684,7 +727,8 @@ const MasterForm = ({
       );
     }
     
-    // Text/Email fields
+    // Text/Email fields (DEFAULT - only if not caught above)
+    console.log('Rendering as TextField (default):', field.name);
     return (
       <TextField
         {...commonProps}
@@ -867,7 +911,6 @@ const MasterForm = ({
               key={idx}
               title={section.title}
               description={section.description}
-              className={section.fields.length > 3 ? 'full-width' : ''}
             >
               {/* Guidelines for this section */}
               {section.guidelines?.map(guidelineType => (
