@@ -1,136 +1,123 @@
-// API Configuration for PUVI Oil Manufacturing System
 // File Path: puvi-frontend/puvi-frontend-main/src/services/api/index.js
-// This file handles all API communications with the backend
+// Main API Service Module
 
-// API Base URL Configuration
-// Uses environment variable if available, otherwise uses production URL
+// Import utilities
+import { skuDateUtils, expiryUtils, formatUtils } from './skuUtilities';
+
+// API configuration
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://puvi-backend.onrender.com';
 
-// Debug logging (remove in production if not needed)
-console.log('API Base URL:', API_BASE_URL);
-console.log('Environment:', process.env.NODE_ENV);
-
-// Helper function to handle API responses
-const handleResponse = async (response) => {
-  // Check if response is ok (status in the range 200-299)
-  if (!response.ok) {
-    // Try to get error message from response
-    let errorMessage = `HTTP error! status: ${response.status}`;
-    try {
-      const errorData = await response.json();
-      errorMessage = errorData.error || errorData.message || errorMessage;
-    } catch (e) {
-      // Response wasn't JSON
-      console.error('Error parsing error response:', e);
-    }
-    throw new Error(errorMessage);
-  }
-  
-  // Try to parse JSON response
+// Base API helper
+const apiCall = async (url, options = {}) => {
   try {
+    const response = await fetch(`${API_BASE_URL}${url}`, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...options.headers
+      },
+      ...options
+    });
+
     const data = await response.json();
-    return data;
-  } catch (e) {
-    // Response wasn't JSON, return null
-    console.warn('Response was not JSON:', e);
-    return null;
-  }
-};
 
-// Main API call function
-export const apiCall = async (endpoint, options = {}) => {
-  // Ensure endpoint starts with /
-  const cleanEndpoint = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
-  
-  // Construct full URL
-  const url = `${API_BASE_URL}${cleanEndpoint}`;
-  
-  // Debug logging
-  console.log('API Call:', options.method || 'GET', url);
-  
-  // Default options
-  const defaultOptions = {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    credentials: 'omit', // Don't send cookies for CORS
-  };
-  
-  // Merge options
-  const finalOptions = {
-    ...defaultOptions,
-    ...options,
-    headers: {
-      ...defaultOptions.headers,
-      ...options.headers,
-    },
-  };
-  
-  // If body is an object, stringify it
-  if (finalOptions.body && typeof finalOptions.body === 'object') {
-    finalOptions.body = JSON.stringify(finalOptions.body);
-  }
-  
-  try {
-    const response = await fetch(url, finalOptions);
-    return await handleResponse(response);
+    if (!response.ok) {
+      throw new Error(data.error || `API call failed: ${response.status}`);
+    }
+
+    return data;
   } catch (error) {
-    console.error('API call failed:', error);
+    console.error('API Error:', error);
     throw error;
   }
 };
 
-// Convenience methods for different HTTP methods
-export const api = {
-  // GET request
-  get: (endpoint, params = {}) => {
-    // Build query string if params provided
-    const queryString = Object.keys(params).length 
-      ? '?' + new URLSearchParams(params).toString()
-      : '';
-    return apiCall(`${endpoint}${queryString}`, {
-      method: 'GET',
-    });
+// API wrapper with common methods
+const api = {
+  get: (url, params) => {
+    const queryString = params ? `?${new URLSearchParams(params)}` : '';
+    return apiCall(`${url}${queryString}`);
   },
   
-  // POST request
-  post: (endpoint, data = {}) => {
-    return apiCall(endpoint, {
+  post: (url, data) => {
+    return apiCall(url, {
       method: 'POST',
-      body: data,
+      body: JSON.stringify(data)
     });
   },
   
-  // PUT request
-  put: (endpoint, data = {}) => {
-    return apiCall(endpoint, {
+  put: (url, data) => {
+    return apiCall(url, {
       method: 'PUT',
-      body: data,
+      body: JSON.stringify(data)
     });
   },
   
-  // DELETE request
-  delete: (endpoint) => {
-    return apiCall(endpoint, {
-      method: 'DELETE',
+  delete: (url) => {
+    return apiCall(url, {
+      method: 'DELETE'
     });
   },
   
-  // PATCH request
-  patch: (endpoint, data = {}) => {
-    return apiCall(endpoint, {
-      method: 'PATCH',
-      body: data,
-    });
+  // Specific module endpoints
+  purchase: {
+    getMaterials: (params) => api.get('/api/materials', params),
+    getSuppliers: () => api.get('/api/suppliers'),
+    getPurchaseHistory: (params) => api.get('/api/purchase_history', params),
+    addPurchase: (data) => api.post('/api/add_purchase', data)
   },
+  
+  batch: {
+    getSeedsForBatch: () => api.get('/api/seeds_for_batch'),
+    getCostElements: () => api.get('/api/cost_elements_for_batch'),
+    getExtendedCostElements: () => api.get('/api/extended_cost_elements'),
+    createBatch: (data) => api.post('/api/batch_production', data),
+    getBatchHistory: () => api.get('/api/batch_history')
+  },
+  
+  sku: {
+    getMasterList: (filters) => api.get('/api/sku/master', filters),
+    createSKU: (data) => api.post('/api/sku/master', data),
+    updateSKU: (id, data) => api.put(`/api/sku/master/${id}`, data),
+    deleteSKU: (id) => api.delete(`/api/sku/master/${id}`),
+    getBOM: (skuId) => api.get(`/api/sku/bom/${skuId}`),
+    saveBOM: (data) => api.post('/api/sku/bom', data),
+    getAllocateOil: (data) => api.post('/api/sku/allocate_oil', data),
+    getMaterials: () => api.get('/api/sku/materials_for_sku'),
+    createProduction: (data) => api.post('/api/sku/production', data),
+    getProductionHistory: (params) => api.get('/api/sku/production_history', params),
+    getProductionSummary: (id) => api.get(`/api/sku/production_summary/${id}`)
+  },
+  
+  sales: {
+    getByproductInventory: (type) => api.get(`/api/byproduct_inventory/${type}`),
+    recordSale: (data) => api.post('/api/material_sales', data),
+    getSalesHistory: () => api.get('/api/material_sales_history')
+  },
+  
+  writeoff: {
+    getMaterials: () => api.get('/api/materials_for_writeoff'),
+    getReasons: () => api.get('/api/writeoff_reasons'),
+    recordWriteoff: (data) => api.post('/api/material_writeoff', data),
+    getHistory: () => api.get('/api/writeoff_history')
+  },
+  
+  blending: {
+    getAvailableOils: () => api.get('/api/available_oils_for_blend'),
+    createBlend: (data) => api.post('/api/oil_blending', data),
+    getHistory: () => api.get('/api/blending_history')
+  }
 };
 
 // Masters API endpoints
 export const mastersAPI = {
-  // Get list of items for a master type
-  getList: (masterType, params = {}) => {
+  // Get all records for a master type
+  getAll: (masterType, params = {}) => {
     return api.get(`/api/masters/${masterType}`, params);
+  },
+  
+  // Get single record
+  getById: (masterType, id) => {
+    return api.get(`/api/masters/${masterType}/${id}`);
   },
   
   // Get schema for a master type
@@ -138,24 +125,24 @@ export const mastersAPI = {
     return api.get(`/api/masters/${masterType}/schema`);
   },
   
-  // Get single item
-  getItem: (masterType, id) => {
-    return api.get(`/api/masters/${masterType}/${id}`);
-  },
-  
-  // Create new item
+  // Create record
   create: (masterType, data) => {
     return api.post(`/api/masters/${masterType}`, data);
   },
   
-  // Update item
+  // Update record
   update: (masterType, id, data) => {
     return api.put(`/api/masters/${masterType}/${id}`, data);
   },
   
-  // Delete item
+  // Delete record
   delete: (masterType, id) => {
     return api.delete(`/api/masters/${masterType}/${id}`);
+  },
+  
+  // Restore deleted record
+  restore: (masterType, id) => {
+    return api.post(`/api/masters/${masterType}/${id}/restore`);
   },
   
   // Check dependencies
@@ -164,8 +151,8 @@ export const mastersAPI = {
   },
   
   // Export data
-  export: (masterType) => {
-    return api.get(`/api/masters/${masterType}/export`);
+  export: (masterType, params = {}) => {
+    return api.get(`/api/masters/${masterType}/export`, params);
   },
   
   // Import data
@@ -233,23 +220,21 @@ export const skuAPI = {
   updateBOM: (id, data) => api.put(`/api/sku/bom/${id}`, data),
   
   // Production
-  getProduction: () => api.get('/api/sku/production'),
   createProduction: (data) => api.post('/api/sku/production', data),
-  getProductionById: (id) => api.get(`/api/sku/production/${id}`),
+  getProductionHistory: () => api.get('/api/sku/production_history'),
+  getProductionDetails: (id) => api.get(`/api/sku/production/${id}`),
   
-  // MRP
-  getMRPHistory: (skuId) => api.get(`/api/sku/mrp/history/${skuId}`),
-  updateMRP: (skuId, data) => api.post(`/api/sku/mrp/update/${skuId}`, data),
+  // Oil allocation
+  allocateOil: (data) => api.post('/api/sku/allocate_oil', data),
   
-  // Expiry
-  getExpiryAlerts: () => api.get('/api/sku/expiry/alerts'),
-  getExpiryStatus: () => api.get('/api/sku/expiry/status'),
+  // Materials
+  getMaterialsForSKU: () => api.get('/api/sku/materials_for_sku'),
 };
 
 // Material Writeoff API endpoints
 export const writeoffAPI = {
-  // Get inventory for writeoff
-  getInventory: () => api.get('/api/inventory_for_writeoff'),
+  // Get materials for writeoff
+  getMaterials: () => api.get('/api/materials_for_writeoff'),
   
   // Get writeoff reasons
   getReasons: () => api.get('/api/writeoff_reasons'),
@@ -261,30 +246,21 @@ export const writeoffAPI = {
   getHistory: () => api.get('/api/writeoff_history'),
 };
 
-// Blending API endpoints
+// Oil Blending API endpoints
 export const blendingAPI = {
   // Get available oils
-  getAvailableOils: () => api.get('/api/available_oils_for_blending'),
+  getOils: () => api.get('/api/available_oils_for_blend'),
   
   // Create blend
-  create: (data) => api.post('/api/create_blend', data),
+  create: (data) => api.post('/api/oil_blending', data),
   
-  // Get blend history
-  getHistory: () => api.get('/api/blend_history'),
-  
-  // Get blend by ID
-  getById: (id) => api.get(`/api/blend/${id}`),
+  // Get blending history
+  getHistory: () => api.get('/api/blending_history'),
 };
 
 // Opening Balance API endpoints
 export const openingBalanceAPI = {
-  // Check initialization status
-  checkStatus: () => api.get('/api/system/initialization_status'),
-  
-  // Initialize system
-  initialize: (data) => api.post('/api/system/initialize', data),
-  
-  // Get opening balances
+  // Get all balances
   getBalances: () => api.get('/api/opening_balance'),
   
   // Save opening balance
@@ -339,6 +315,9 @@ export const costAPI = {
 // Export the API base URL for components that need it directly
 export const API_URL = API_BASE_URL;
 
+// Export the SKU utilities
+export { skuDateUtils, expiryUtils, formatUtils };
+
 // Default export
 export default {
   apiCall,
@@ -353,4 +332,8 @@ export default {
   salesAPI,
   costAPI,
   API_URL,
+  // Include utilities in default export as well
+  skuDateUtils,
+  expiryUtils,
+  formatUtils
 };
