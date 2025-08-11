@@ -81,7 +81,6 @@ MASTERS_CONFIG = {
             LEFT JOIN materials m ON s.supplier_id = m.supplier_id
             WHERE s.is_active = true
             GROUP BY s.supplier_id
-            ORDER BY s.supplier_name
         """,
         'dependencies': {
             'materials': {
@@ -167,7 +166,6 @@ MASTERS_CONFIG = {
             LEFT JOIN suppliers s ON m.supplier_id = s.supplier_id
             LEFT JOIN inventory i ON m.material_id = i.material_id
             WHERE m.is_active = true
-            ORDER BY m.category, m.material_name
         """,
         'dependencies': {
             'inventory': {
@@ -232,7 +230,6 @@ MASTERS_CONFIG = {
             LEFT JOIN material_tags mt ON t.tag_id = mt.tag_id
             WHERE t.is_active = true
             GROUP BY t.tag_id
-            ORDER BY t.tag_name
         """,
         'dependencies': {
             'material_tags': {
@@ -279,7 +276,6 @@ MASTERS_CONFIG = {
             LEFT JOIN material_writeoffs mw ON wr.reason_code = mw.reason_code
             WHERE wr.is_active = true
             GROUP BY wr.reason_code
-            ORDER BY wr.reason_description
         """,
         'dependencies': {
             'material_writeoffs': {
@@ -357,7 +353,6 @@ MASTERS_CONFIG = {
             LEFT JOIN batch_extended_costs bec ON c.element_id = bec.element_id
             WHERE c.is_active = true
             GROUP BY c.element_id
-            ORDER BY c.display_order, c.category, c.element_name
         """,
         'dependencies': {
             'batch_extended_costs': {
@@ -682,7 +677,7 @@ def validate_master_data(master_type, data, record_id=None):
             # Validate
             is_valid, error_msg = validate_field(
                 field_name, field_config, value,
-                conn, cur, master_type, record_id
+                conn, cur, config['table'], record_id
             )
             
             if not is_valid:
@@ -867,7 +862,7 @@ def get_export_query(master_type, include_inactive=False):
     if not include_inactive:
         query += f" WHERE {soft_delete_field} = true"
     
-    query += f" ORDER BY {config.get('name_field', config['primary_key'])}"
+    # Note: ORDER BY will be added by masters_crud.py dynamically
     
     return query
 
