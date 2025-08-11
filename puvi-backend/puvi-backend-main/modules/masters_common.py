@@ -179,11 +179,6 @@ MASTERS_CONFIG = {
                 'foreign_key': 'material_id',
                 'message': 'Material has {count} purchase transactions'
             },
-            'batch': {
-                'table': 'batch',
-                'foreign_key': 'material_id',
-                'message': 'Material used in {count} batch productions'
-            },
             'material_writeoffs': {
                 'table': 'material_writeoffs',
                 'foreign_key': 'material_id',
