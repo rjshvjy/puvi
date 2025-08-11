@@ -26,7 +26,7 @@
 
 /* ==================== Layout & Typography ==================== */
 .form-container {
-  max-width: 1120px;
+  max-width: 900px;
   margin: 0 auto;
   padding: 24px;
   min-height: 100vh;
@@ -35,6 +35,12 @@
 
 .page-header {
   margin-bottom: 24px;
+  text-align: center;
+  padding: 20px;
+  background: var(--card);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
 }
 
 .page-title {
@@ -56,16 +62,8 @@
   grid-template-columns: 1fr;
   gap: 20px;
   padding-bottom: 80px; /* Space for sticky action bar */
-}
-
-@media (min-width: 1024px) {
-  .form-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-  
-  .form-grid .full-width {
-    grid-column: 1 / -1;
-  }
+  max-width: 800px; /* Limit width for better readability */
+  margin: 0 auto; /* Center the form */
 }
 
 /* ==================== Form Sections (Cards) ==================== */
@@ -75,6 +73,7 @@
   border-radius: 12px;
   box-shadow: var(--shadow);
   overflow: hidden;
+  width: 100%;
 }
 
 .form-section-header {
@@ -100,6 +99,7 @@
   padding: 20px;
   display: grid;
   gap: 16px;
+  grid-template-columns: 1fr; /* Single column for all fields */
 }
 
 /* ==================== Guidelines Panel ==================== */
@@ -581,6 +581,7 @@
   
   .form-grid {
     gap: 16px;
+    max-width: 100%;
   }
   
   .form-section-body {
