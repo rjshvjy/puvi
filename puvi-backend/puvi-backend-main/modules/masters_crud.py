@@ -83,23 +83,38 @@ def get_master_schema(master_type):
         # Format fields for frontend
         fields = []
         for field_name, field_config in config['fields'].items():
+            # Build field info with only non-None values
             field_info = {
                 'name': field_name,
                 'type': field_config['type'],
                 'label': field_config.get('label', field_name.replace('_', ' ').title()),
                 'required': field_config.get('required', False),
-                'unique': field_config.get('unique', False),
+            }
+            
+            # Only add optional fields if they have non-None values
+            optional_fields = {
+                'unique': field_config.get('unique'),
                 'max_length': field_config.get('max_length'),
                 'pattern': field_config.get('pattern'),
                 'options': field_config.get('options'),
                 'min': field_config.get('min'),
                 'max': field_config.get('max'),
-                'decimal_places': field_config.get('decimal_places', 2),
+                'decimal_places': field_config.get('decimal_places'),
                 'default': field_config.get('default'),
                 'transform': field_config.get('transform'),
                 'placeholder': field_config.get('placeholder'),
                 'help_text': field_config.get('help_text')
             }
+            
+            # Add only non-None optional fields
+            for key, value in optional_fields.items():
+                if value is not None:
+                    field_info[key] = value
+            
+            # Special handling for decimal_places - always include for decimal type
+            if field_config['type'] == 'decimal' and 'decimal_places' not in field_info:
+                field_info['decimal_places'] = 2
+            
             fields.append(field_info)
         
         return jsonify({
@@ -202,19 +217,21 @@ def list_master_records(master_type):
         offset = (page - 1) * per_page
         total_pages = (total_count + per_page - 1) // per_page
         
-        # Add sorting and pagination
+        # Add sorting and pagination to query
         paginated_query = f"{base_query} ORDER BY {sort_by} {sort_order} LIMIT %s OFFSET %s"
         
         # Execute paginated query
         if search:
             cur.execute(paginated_query, search_params + [per_page, offset])
         else:
-            cur.execute(paginated_query, (per_page, offset))
+            cur.execute(paginated_query, [per_page, offset])
+        
+        columns = [desc[0] for desc in cur.description]
+        rows = cur.fetchall()
         
         # Format results
-        columns = [desc[0] for desc in cur.description]
         records = []
-        for row in cur.fetchall():
+        for row in rows:
             record = dict(zip(columns, row))
             records.append(format_response_data(record))
         
@@ -224,13 +241,9 @@ def list_master_records(master_type):
             'pagination': {
                 'page': page,
                 'per_page': per_page,
-                'total_count': total_count,
-                'total_pages': total_pages,
-                'has_next': page < total_pages,
-                'has_prev': page > 1
-            },
-            'master_type': master_type,
-            'display_name': config.get('display_name', master_type.title())
+                'total': total_count,
+                'pages': total_pages
+            }
         })
         
     except Exception as e:
@@ -262,11 +275,9 @@ def get_single_record(master_type, record_id):
         
         # Handle different primary key types
         if config.get('primary_key_type') == 'varchar':
-            query = f"SELECT * FROM {table} WHERE {primary_key} = %s"
-            cur.execute(query, (record_id,))
+            cur.execute(f"SELECT * FROM {table} WHERE {primary_key} = %s", (record_id,))
         else:
-            query = f"SELECT * FROM {table} WHERE {primary_key} = %s"
-            cur.execute(query, (int(record_id),))
+            cur.execute(f"SELECT * FROM {table} WHERE {primary_key} = %s", (int(record_id),))
         
         columns = [desc[0] for desc in cur.description]
         row = cur.fetchone()
@@ -524,70 +535,46 @@ def delete_record(master_type, record_id):
         # Check dependencies
         dep_result = check_dependencies(conn, cur, master_type, record_id)
         
-        # Force soft delete if requested or has dependencies
-        force_soft = request.args.get('force_soft', 'false').lower() == 'true'
-        
-        if not dep_result['can_delete'] or force_soft:
-            # Perform soft delete
-            result = soft_delete_record(
-                conn, cur, master_type, record_id,
-                deleted_by=request.json.get('deleted_by') if request.json else 'System'
-            )
-            
-            if result['success']:
+        if dep_result['has_dependencies']:
+            # Soft delete only
+            success = soft_delete_record(conn, cur, master_type, record_id)
+            if success:
                 conn.commit()
                 return jsonify({
                     'success': True,
                     'message': f'{config.get("display_name", master_type)} deactivated successfully',
-                    'action': 'soft_delete',
-                    'dependencies': dep_result['dependencies']
+                    'soft_delete': True,
+                    'dependencies': dep_result
                 })
             else:
-                return jsonify(result), 400
+                return jsonify({
+                    'success': False,
+                    'error': 'Failed to deactivate record'
+                }), 500
         else:
-            # Perform hard delete
+            # Hard delete
             table = config['table']
             primary_key = config['primary_key']
             
-            # Get record for audit before deletion
-            if config.get('primary_key_type') == 'varchar':
-                cur.execute(f"SELECT * FROM {table} WHERE {primary_key} = %s", (record_id,))
-            else:
-                cur.execute(f"SELECT * FROM {table} WHERE {primary_key} = %s", (int(record_id),))
-            
-            columns = [desc[0] for desc in cur.description]
-            row = cur.fetchone()
-            
-            if not row:
-                return jsonify({
-                    'success': False,
-                    'error': 'Record not found'
-                }), 404
-            
-            old_values = dict(zip(columns, row))
-            
-            # Delete the record
             if config.get('primary_key_type') == 'varchar':
                 cur.execute(f"DELETE FROM {table} WHERE {primary_key} = %s", (record_id,))
             else:
                 cur.execute(f"DELETE FROM {table} WHERE {primary_key} = %s", (int(record_id),))
             
-            # Log audit
-            log_audit(
-                conn, cur, table, record_id, 'DELETE',
-                old_values=old_values,
-                changed_by=request.json.get('deleted_by') if request.json else 'System',
-                reason=f'Hard delete {master_type} record'
-            )
+            if cur.rowcount == 0:
+                return jsonify({
+                    'success': False,
+                    'error': 'Record not found'
+                }), 404
             
             conn.commit()
             
             return jsonify({
                 'success': True,
-                'message': f'{config.get("display_name", master_type)} deleted permanently',
-                'action': 'hard_delete'
+                'message': f'{config.get("display_name", master_type)} deleted successfully',
+                'soft_delete': False
             })
-        
+            
     except Exception as e:
         conn.rollback()
         return jsonify({'success': False, 'error': str(e)}), 500
@@ -596,11 +583,11 @@ def delete_record(master_type, record_id):
 
 
 # =====================================================
-# RESTORE SOFT-DELETED RECORD
+# RESTORE RECORD
 # =====================================================
 
 @masters_crud_bp.route('/api/masters/<master_type>/<record_id>/restore', methods=['POST'])
-def restore_deleted_record(master_type, record_id):
+def restore_record_endpoint(master_type, record_id):
     """Restore a soft-deleted record"""
     conn = get_db_connection()
     cur = conn.cursor()
@@ -613,20 +600,20 @@ def restore_deleted_record(master_type, record_id):
                 'error': f'Invalid master type: {master_type}'
             }), 400
         
-        result = restore_record(
-            conn, cur, master_type, record_id,
-            restored_by=request.json.get('restored_by') if request.json else 'System'
-        )
+        success = restore_record(conn, cur, master_type, record_id)
         
-        if result['success']:
+        if success:
             conn.commit()
             return jsonify({
                 'success': True,
                 'message': f'{config.get("display_name", master_type)} restored successfully'
             })
         else:
-            return jsonify(result), 400
-        
+            return jsonify({
+                'success': False,
+                'error': 'Failed to restore record'
+            }), 404
+            
     except Exception as e:
         conn.rollback()
         return jsonify({'success': False, 'error': str(e)}), 500
@@ -640,7 +627,7 @@ def restore_deleted_record(master_type, record_id):
 
 @masters_crud_bp.route('/api/masters/<master_type>/<record_id>/dependencies', methods=['GET'])
 def check_record_dependencies(master_type, record_id):
-    """Check dependencies for a record"""
+    """Check if a record has dependencies"""
     conn = get_db_connection()
     cur = conn.cursor()
     
@@ -656,13 +643,7 @@ def check_record_dependencies(master_type, record_id):
         
         return jsonify({
             'success': True,
-            'master_type': master_type,
-            'record_id': record_id,
-            'can_delete': dep_result['can_delete'],
-            'can_soft_delete': dep_result['can_soft_delete'],
-            'dependencies': dep_result['dependencies'],
-            'total_dependent_records': dep_result['total_dependent_records'],
-            'message': dep_result['message']
+            'dependencies': dep_result
         })
         
     except Exception as e:
@@ -676,7 +657,7 @@ def check_record_dependencies(master_type, record_id):
 # =====================================================
 
 @masters_crud_bp.route('/api/masters/<master_type>/export', methods=['GET'])
-def export_master_data(master_type):
+def export_to_csv(master_type):
     """Export master data to CSV"""
     conn = get_db_connection()
     cur = conn.cursor()
@@ -689,22 +670,25 @@ def export_master_data(master_type):
                 'error': f'Invalid master type: {master_type}'
             }), 400
         
-        # Get export query
         include_inactive = request.args.get('include_inactive', 'false').lower() == 'true'
-        query = get_export_query(master_type, include_inactive)
         
+        # Get export query
+        query = get_export_query(master_type, include_inactive)
         if not query:
             return jsonify({
                 'success': False,
                 'error': 'Export not supported for this master type'
             }), 400
         
+        # Add ORDER BY
+        name_field = config.get('name_field', config['primary_key'])
+        query += f" ORDER BY {name_field}"
+        
         cur.execute(query)
-        
-        # Get column names
         columns = [desc[0] for desc in cur.description]
+        rows = cur.fetchall()
         
-        # Create CSV in memory
+        # Create CSV
         output = io.StringIO()
         writer = csv.writer(output)
         
@@ -712,29 +696,29 @@ def export_master_data(master_type):
         writer.writerow(columns)
         
         # Write data
-        for row in cur.fetchall():
+        for row in rows:
             formatted_row = []
-            for i, value in enumerate(row):
+            for value in row:
                 if isinstance(value, Decimal):
                     formatted_row.append(float(value))
                 elif isinstance(value, datetime):
                     formatted_row.append(value.strftime('%Y-%m-%d %H:%M:%S'))
-                elif isinstance(value, bool):
-                    formatted_row.append('Yes' if value else 'No')
                 elif value is None:
                     formatted_row.append('')
                 else:
                     formatted_row.append(str(value))
             writer.writerow(formatted_row)
         
-        # Prepare response
+        # Create response
         output.seek(0)
+        timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
+        filename = f'{master_type}_{timestamp}.csv'
         
         return send_file(
-            io.BytesIO(output.getvalue().encode('utf-8')),
+            io.BytesIO(output.getvalue().encode()),
             mimetype='text/csv',
             as_attachment=True,
-            download_name=f'{master_type}_{datetime.now().strftime("%Y%m%d_%H%M%S")}.csv'
+            download_name=filename
         )
         
     except Exception as e:
@@ -748,7 +732,7 @@ def export_master_data(master_type):
 # =====================================================
 
 @masters_crud_bp.route('/api/masters/<master_type>/import', methods=['POST'])
-def import_master_data(master_type):
+def import_from_csv(master_type):
     """Import master data from CSV"""
     conn = get_db_connection()
     cur = conn.cursor()
@@ -761,7 +745,7 @@ def import_master_data(master_type):
                 'error': f'Invalid master type: {master_type}'
             }), 400
         
-        # Check if file is present
+        # Get CSV file from request
         if 'file' not in request.files:
             return jsonify({
                 'success': False,
@@ -769,96 +753,82 @@ def import_master_data(master_type):
             }), 400
         
         file = request.files['file']
+        if not file.filename.endswith('.csv'):
+            return jsonify({
+                'success': False,
+                'error': 'File must be a CSV'
+            }), 400
         
-        # Read CSV file
-        stream = io.StringIO(file.stream.read().decode("UTF8"), newline=None)
-        csv_reader = csv.DictReader(stream)
+        # Read CSV
+        content = file.read().decode('utf-8')
+        csv_reader = csv.DictReader(io.StringIO(content))
         
-        cur.execute("BEGIN")
+        success_count = 0
+        error_count = 0
+        errors = []
         
-        imported_count = 0
-        updated_count = 0
-        error_rows = []
-        
-        for row_num, row in enumerate(csv_reader, start=2):
+        for row_num, row in enumerate(csv_reader, start=2):  # Start at 2 (header is row 1)
             try:
-                # Transform field values
+                # Transform and validate data
+                data = {}
                 for field_name, field_config in config['fields'].items():
                     if field_name in row:
-                        row[field_name] = transform_field_value(field_config, row[field_name])
+                        value = row[field_name]
+                        
+                        # Convert empty strings to None for optional fields
+                        if value == '' and not field_config.get('required', False):
+                            value = None
+                        elif field_config['type'] == 'decimal' and value:
+                            value = safe_decimal(value)
+                        elif field_config['type'] == 'integer' and value:
+                            value = safe_int(value)
+                        elif field_config['type'] == 'boolean':
+                            value = value.lower() in ['true', '1', 'yes']
+                        
+                        if value is not None:
+                            data[field_name] = transform_field_value(field_config, value)
                 
-                # Validate row data
-                is_valid, errors = validate_master_data(master_type, row)
+                # Validate
+                is_valid, validation_errors = validate_master_data(master_type, data)
                 if not is_valid:
-                    error_rows.append({
-                        'row': row_num,
-                        'errors': errors
-                    })
+                    errors.append(f"Row {row_num}: {validation_errors}")
+                    error_count += 1
                     continue
                 
-                # Check if record exists (for update vs insert)
-                primary_key = config['primary_key']
-                if primary_key in row and row[primary_key]:
-                    # Update existing record
-                    set_clauses = []
-                    values = []
-                    
-                    for field_name in row:
-                        if field_name in config['fields'] and field_name != primary_key:
-                            set_clauses.append(f"{field_name} = %s")
-                            values.append(row[field_name])
-                    
-                    if set_clauses:
-                        values.append(row[primary_key])
-                        query = f"""
-                            UPDATE {config['table']}
-                            SET {', '.join(set_clauses)}, updated_at = CURRENT_TIMESTAMP
-                            WHERE {primary_key} = %s
-                        """
-                        cur.execute(query, values)
-                        if cur.rowcount > 0:
-                            updated_count += 1
-                else:
-                    # Insert new record
-                    fields = []
-                    values = []
-                    placeholders = []
-                    
-                    for field_name in row:
-                        if field_name in config['fields']:
-                            fields.append(field_name)
-                            values.append(row[field_name])
-                            placeholders.append('%s')
-                    
-                    if fields:
-                        query = f"""
-                            INSERT INTO {config['table']} ({', '.join(fields)})
-                            VALUES ({', '.join(placeholders)})
-                        """
-                        cur.execute(query, values)
-                        imported_count += 1
+                # Insert record
+                table = config['table']
+                fields = list(data.keys())
+                values = list(data.values())
+                placeholders = ['%s'] * len(fields)
                 
-            except Exception as row_error:
-                error_rows.append({
-                    'row': row_num,
-                    'error': str(row_error)
-                })
+                # Add is_active
+                soft_delete_field = config.get('soft_delete_field', 'is_active')
+                if soft_delete_field not in fields:
+                    fields.append(soft_delete_field)
+                    values.append(True)
+                    placeholders.append('%s')
+                
+                query = f"""
+                    INSERT INTO {table} ({', '.join(fields)})
+                    VALUES ({', '.join(placeholders)})
+                    ON CONFLICT ({config['primary_key']}) DO NOTHING
+                """
+                
+                cur.execute(query, values)
+                success_count += 1
+                
+            except Exception as e:
+                errors.append(f"Row {row_num}: {str(e)}")
+                error_count += 1
         
-        # Commit if any successful imports/updates
-        if imported_count > 0 or updated_count > 0:
-            conn.commit()
-        else:
-            conn.rollback()
+        conn.commit()
         
         return jsonify({
             'success': True,
-            'summary': {
-                'imported': imported_count,
-                'updated': updated_count,
-                'errors': len(error_rows),
-                'total_processed': imported_count + updated_count + len(error_rows)
-            },
-            'error_rows': error_rows[:10] if error_rows else []  # Limit error details
+            'message': f'Import completed. Success: {success_count}, Errors: {error_count}',
+            'success_count': success_count,
+            'error_count': error_count,
+            'errors': errors[:10] if errors else []  # Return first 10 errors
         })
         
     except Exception as e:
