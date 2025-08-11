@@ -1,7 +1,7 @@
+// File Path: puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js
 /**
- * MaterialWriteoff Component v2.0.0
- * Last Modified: August 8, 2025
- * Features: Category filtering, search functionality, fixed API response handling
+ * MaterialWriteoff Component v2.0.1
+ * Features: Category filtering, search functionality, fixed API function calls
  */
 
 import React, { useState, useEffect } from 'react';
@@ -63,14 +63,27 @@ const MaterialWriteoff = () => {
 
   const fetchInventoryItems = async (category = null) => {
     try {
-      const params = category ? { category } : {};
-      const response = await api.writeoff.getInventoryForWriteoff(params);
+      // Changed from getInventoryForWriteoff to getMaterials
+      const response = await api.writeoff.getMaterials();
       if (response.success) {
-        setInventoryItems(response.inventory_items || []);
-        setFilteredItems(response.inventory_items || []);
-        // Extract categories from category_summary if not already loaded
-        if (!categories.length && response.category_summary) {
-          setCategories(response.category_summary);
+        let items = response.inventory_items || response.materials || [];
+        
+        // Apply category filter if needed
+        if (category) {
+          items = items.filter(item => item.category === category);
+        }
+        
+        setInventoryItems(items);
+        setFilteredItems(items);
+        
+        // Extract categories from items if not already loaded
+        if (!categories.length) {
+          const uniqueCategories = [...new Set(items.map(item => item.category))];
+          const categoryData = uniqueCategories.map(cat => ({
+            category: cat,
+            material_count: items.filter(item => item.category === cat).length
+          }));
+          setCategories(categoryData);
         }
       }
     } catch (error) {
@@ -81,7 +94,8 @@ const MaterialWriteoff = () => {
 
   const fetchWriteoffReasons = async () => {
     try {
-      const response = await api.writeoff.getWriteoffReasons();
+      // Changed from getWriteoffReasons to getReasons
+      const response = await api.writeoff.getReasons();
       // FIX: Extract the reasons array from the response object
       if (response.success) {
         setWriteoffReasons(response.reasons || []);
@@ -96,7 +110,8 @@ const MaterialWriteoff = () => {
 
   const fetchWriteoffHistory = async () => {
     try {
-      const response = await api.writeoff.getWriteoffHistory();
+      // Changed from getWriteoffHistory to getHistory
+      const response = await api.writeoff.getHistory();
       if (response.success) {
         setWriteoffHistory(response.writeoffs || []);
         setSummary(response.summary || null);
@@ -169,7 +184,8 @@ const MaterialWriteoff = () => {
     setMessage('');
 
     try {
-      const response = await api.writeoff.addWriteoff({
+      // Changed from addWriteoff to recordWriteoff
+      const response = await api.writeoff.recordWriteoff({
         ...writeoffData,
         material_id: selectedMaterial.material_id
       });
@@ -533,5 +549,3 @@ const MaterialWriteoff = () => {
 };
 
 export default MaterialWriteoff;
-
-/* End of MaterialWriteoff Component v2.0.0 - August 8, 2025 */
