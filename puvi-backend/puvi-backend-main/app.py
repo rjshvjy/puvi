@@ -1,8 +1,8 @@
-# File Path: puvi-backend/app.py
+# File Path: puvi-backend/puvi-backend-main/app.py
 """
 Main Flask Application for PUVI Oil Manufacturing System
-Integrates all modules including Cost Management and SKU modules
-Version: 8.0.1 - Fixed CORS preflight handling
+Integrates all modules including Cost Management, SKU, Masters, and Opening Balance
+Version: 9.0.0 - Complete with Masters and Opening Balance Integration
 """
 
 import re
@@ -20,6 +20,8 @@ from modules.material_sales import material_sales_bp
 from modules.cost_management import cost_management_bp
 from modules.sku_management import sku_management_bp
 from modules.sku_production import sku_production_bp
+from modules.masters_crud import masters_crud_bp
+from modules.opening_balance import opening_balance_bp
 
 # Create Flask app
 app = Flask(__name__)
@@ -66,6 +68,8 @@ app.register_blueprint(material_sales_bp)
 app.register_blueprint(cost_management_bp)
 app.register_blueprint(sku_management_bp)
 app.register_blueprint(sku_production_bp)
+app.register_blueprint(masters_crud_bp)
+app.register_blueprint(opening_balance_bp)
 
 # Configuration
 app.config['JSON_SORT_KEYS'] = False
@@ -77,148 +81,130 @@ def home():
     """Root endpoint to verify API is running"""
     return jsonify({
         'status': 'PUVI Backend API is running!',
-        'version': '8.0.1',
-        'modules': [
-            'Purchase Management',
-            'Material Writeoff',
-            'Batch Production',
-            'Blending',
-            'Material Sales',
-            'Cost Management',
-            'SKU Management',
-            'SKU Production'
-        ],
-        'timestamp': datetime.now().isoformat()
+        'version': '9.0.0',
+        'modules': {
+            'core': ['Masters', 'Opening Balance'],
+            'transactions': ['Purchase', 'Writeoff', 'Batch', 'Blending', 'Sales'],
+            'advanced': ['Cost Management', 'SKU Management v2.0'],
+            'total_modules': 10
+        },
+        'endpoints': {
+            'masters': '/api/masters/*',
+            'opening_balance': '/api/opening_balance/*',
+            'purchase': '/api/add_purchase, /api/purchase_history',
+            'writeoff': '/api/add_writeoff, /api/writeoff_history',
+            'batch': '/api/add_batch, /api/batch_history',
+            'blending': '/api/add_blending, /api/blending_history',
+            'sales': '/api/add_material_sale, /api/sales_history',
+            'cost': '/api/cost_management/*',
+            'sku': '/api/sku/*'
+        },
+        'timestamp': datetime.now().isoformat(),
+        'database': 'PostgreSQL',
+        'status_check': '/api/health'
     })
 
 # Health check endpoint
 @app.route('/api/health', methods=['GET'])
 def health_check():
-    """Health check endpoint with database connection test and module stats"""
-    conn = get_db_connection()
+    """Health check endpoint for monitoring"""
+    conn = None
+    try:
+        # Test database connection
+        conn = get_db_connection()
+        cur = conn.cursor()
+        cur.execute("SELECT 1")
+        db_status = "healthy"
+        close_connection(conn, cur)
+    except Exception as e:
+        db_status = f"unhealthy: {str(e)}"
+        if conn:
+            close_connection(conn, None)
     
-    if not conn:
-        return jsonify({
-            'status': 'unhealthy',
-            'database': 'disconnected',
-            'error': 'Could not connect to database'
-        }), 503
+    return jsonify({
+        'status': 'running',
+        'database': db_status,
+        'timestamp': datetime.now().isoformat(),
+        'modules_loaded': 10,
+        'version': '9.0.0'
+    })
+
+# System info endpoint
+@app.route('/api/system_info', methods=['GET'])
+def system_info():
+    """Get system configuration and module status"""
+    conn = get_db_connection()
+    cur = conn.cursor()
     
     try:
-        cur = conn.cursor()
-        
-        # Test database connection
-        cur.execute("SELECT 1")
-        
-        # Get record counts
-        queries = {
-            'purchases': "SELECT COUNT(*) FROM purchases",
-            'batches': "SELECT COUNT(*) FROM batch",
-            'writeoffs': "SELECT COUNT(*) FROM material_writeoffs",
-            'blends': "SELECT COUNT(*) FROM blend_batches",
-            'material_sales': "SELECT COUNT(*) FROM oil_cake_sales",
-            'cost_elements': "SELECT COUNT(*) FROM cost_elements_master",
-            'time_tracking': "SELECT COUNT(*) FROM batch_time_tracking",
-            'sku_master': "SELECT COUNT(*) FROM sku_master",
-            'sku_productions': "SELECT COUNT(*) FROM sku_production",
-            'sku_boms': "SELECT COUNT(*) FROM sku_bom_master",
-            'inventory_items': "SELECT COUNT(*) FROM inventory WHERE closing_stock > 0"
-        }
-        
-        counts = {}
-        for key, query in queries.items():
-            try:
-                cur.execute(query)
-                counts[key] = cur.fetchone()[0]
-            except:
-                counts[key] = 0
-        
-        # Check database size
+        # Check if system is initialized
         cur.execute("""
-            SELECT pg_database_size(current_database())
+            SELECT config_value 
+            FROM system_configuration 
+            WHERE config_key = 'is_initialized'
         """)
-        db_size = cur.fetchone()[0]
+        result = cur.fetchone()
+        is_initialized = result[0] == 'true' if result else False
         
-        # Check for cost elements validation
+        # Get module statistics
         cur.execute("""
-            SELECT COUNT(*)
-            FROM cost_elements_master
-            WHERE active = true
-            AND default_rate <= 0
+            SELECT 
+                (SELECT COUNT(*) FROM suppliers WHERE is_active = true) as active_suppliers,
+                (SELECT COUNT(*) FROM materials WHERE is_active = true) as active_materials,
+                (SELECT COUNT(*) FROM purchases) as total_purchases,
+                (SELECT COUNT(*) FROM batch) as total_batches,
+                (SELECT COUNT(*) FROM sku_master WHERE is_active = true) as active_skus
         """)
-        invalid_cost_elements = cur.fetchone()[0]
-        
-        validation_warnings = []
-        if invalid_cost_elements > 0:
-            validation_warnings.append(f"{invalid_cost_elements} cost elements have invalid rates")
-        
-        # Check for SKUs without BOM
-        cur.execute("""
-            SELECT COUNT(DISTINCT s.sku_id)
-            FROM sku_master s
-            LEFT JOIN sku_bom_master b ON s.sku_id = b.sku_id AND b.is_current = true
-            WHERE s.is_active = true
-            AND b.bom_id IS NULL
-        """)
-        skus_without_bom = cur.fetchone()[0]
-        
-        # Get active modules
-        active_modules = []
-        for rule in app.url_map.iter_rules():
-            if '/api/' in rule.rule:
-                module = rule.rule.split('/')[2] if len(rule.rule.split('/')) > 2 else 'core'
-                if module not in active_modules and module != 'health':
-                    active_modules.append(module)
-        
-        close_connection(conn, cur)
+        stats = cur.fetchone()
         
         return jsonify({
-            'status': 'healthy',
-            'database': 'connected',
-            'version': '8.0.1',
-            'counts': counts,
-            'database_size_mb': round(db_size / 1024 / 1024, 2),
-            'active_modules': sorted(active_modules),
-            'cost_validation_warnings': validation_warnings,
-            'skus_without_bom': skus_without_bom,
+            'success': True,
+            'system': {
+                'initialized': is_initialized,
+                'version': '9.0.0',
+                'modules': {
+                    'masters': 'active',
+                    'opening_balance': 'active',
+                    'purchase': 'active',
+                    'production': 'active',
+                    'sales': 'active',
+                    'sku': 'active'
+                }
+            },
+            'statistics': {
+                'suppliers': stats[0] if stats else 0,
+                'materials': stats[1] if stats else 0,
+                'purchases': stats[2] if stats else 0,
+                'batches': stats[3] if stats else 0,
+                'skus': stats[4] if stats else 0
+            },
             'timestamp': datetime.now().isoformat()
         })
         
     except Exception as e:
         return jsonify({
-            'status': 'unhealthy',
-            'database': 'error',
+            'success': False,
             'error': str(e)
-        }), 503
+        }), 500
+    finally:
+        close_connection(conn, cur)
 
 # Error handlers
 @app.errorhandler(404)
 def not_found(error):
     return jsonify({
-        'success': False,
         'error': 'Endpoint not found',
+        'status': 404,
         'message': 'The requested endpoint does not exist'
     }), 404
 
 @app.errorhandler(500)
 def internal_error(error):
     return jsonify({
-        'success': False,
         'error': 'Internal server error',
+        'status': 500,
         'message': 'An unexpected error occurred'
     }), 500
 
-@app.errorhandler(405)
-def method_not_allowed(error):
-    return jsonify({
-        'success': False,
-        'error': 'Method not allowed',
-        'message': 'The HTTP method is not allowed for this endpoint'
-    }), 405
-
-# Main execution
 if __name__ == '__main__':
-    # For local development
-    app.run(debug=True, host='0.0.0.0', port=5000)
-    
-# For production (Render), the app object is used directly
+    app.run(debug=True, port=5000)
