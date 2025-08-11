@@ -1,5 +1,5 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/services/api/index.js
-// Main API Service Module - FIXED with complete cost management integration
+// Main API Service Module - FIXED with corrected writeoff endpoints
 
 // Import utilities
 import { skuDateUtils, expiryUtils, formatUtils } from './skuUtilities';
@@ -102,9 +102,10 @@ const api = {
   },
   
   writeoff: {
-    getMaterials: () => api.get('/api/materials_for_writeoff'),
+    // FIXED: Corrected endpoint URLs to match backend
+    getMaterials: () => api.get('/api/inventory_for_writeoff'),  // Fixed from /api/materials_for_writeoff
     getReasons: () => api.get('/api/writeoff_reasons'),
-    recordWriteoff: (data) => api.post('/api/material_writeoff', data),
+    recordWriteoff: (data) => api.post('/api/add_writeoff', data),  // Fixed from /api/material_writeoff
     getHistory: () => api.get('/api/writeoff_history')
   },
   
@@ -272,17 +273,21 @@ export const skuAPI = {
 
 // Material Writeoff API endpoints
 export const writeoffAPI = {
+  // FIXED: Corrected endpoint URLs to match backend
   // Get materials for writeoff
-  getMaterials: () => api.get('/api/materials_for_writeoff'),
+  getMaterials: () => api.get('/api/inventory_for_writeoff'),  // Fixed from /api/materials_for_writeoff
   
   // Get writeoff reasons
   getReasons: () => api.get('/api/writeoff_reasons'),
   
   // Create writeoff
-  create: (data) => api.post('/api/material_writeoff', data),
+  create: (data) => api.post('/api/add_writeoff', data),  // Fixed from /api/material_writeoff
   
   // Get writeoff history
   getHistory: () => api.get('/api/writeoff_history'),
+  
+  // Additional alias for backward compatibility
+  recordWriteoff: (data) => api.post('/api/add_writeoff', data)  // Added alias
 };
 
 // Oil Blending API endpoints
