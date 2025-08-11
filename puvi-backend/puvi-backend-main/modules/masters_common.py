@@ -139,20 +139,11 @@ MASTERS_CONFIG = {
                 'default': 5.00,
                 'label': 'GST Rate (%)'
             },
-            'density': {
-                'type': 'decimal',
-                'required': False,
-                'min': 0,
-                'max': 10,
-                'decimal_places': 2,
-                'default': 0.91,
-                'label': 'Density'
-            },
             'supplier_id': {
                 'type': 'reference',
                 'required': False,
-                'ref_table': 'suppliers',
-                'ref_field': 'supplier_id',
+                'reference_table': 'suppliers',
+                'reference_field': 'supplier_id',
                 'display_field': 'supplier_name',
                 'label': 'Supplier'
             },
@@ -161,14 +152,9 @@ MASTERS_CONFIG = {
                 'required': True,
                 'unique': True,
                 'max_length': 6,
-                'pattern': r'^[A-Z0-9]{3,6}$',
-                'label': 'Short Code (3-6 chars)',
+                'pattern': r'^[A-Z0-9]{1,6}$',
+                'label': 'Short Code (6 chars)',
                 'transform': 'uppercase'
-            },
-            'notes': {
-                'type': 'textarea',
-                'required': False,
-                'label': 'Notes'
             }
         },
         'list_query': """
@@ -246,13 +232,13 @@ MASTERS_CONFIG = {
             LEFT JOIN material_tags mt ON t.tag_id = mt.tag_id
             WHERE t.is_active = true
             GROUP BY t.tag_id
-            ORDER BY t.tag_category, t.tag_name
+            ORDER BY t.tag_name
         """,
         'dependencies': {
             'material_tags': {
                 'table': 'material_tags',
                 'foreign_key': 'tag_id',
-                'message': 'Tag assigned to {count} materials'
+                'message': 'Tag is assigned to {count} materials'
             }
         }
     },
@@ -260,16 +246,15 @@ MASTERS_CONFIG = {
     'writeoff_reasons': {
         'table': 'writeoff_reasons',
         'primary_key': 'reason_code',
+        'primary_key_type': 'varchar',
         'display_name': 'Writeoff Reasons',
         'name_field': 'reason_description',
-        'primary_key_type': 'varchar',
         'fields': {
             'reason_code': {
                 'type': 'text',
                 'required': True,
                 'unique': True,
-                'max_length': 50,
-                'pattern': r'^[A-Z0-9_]+$',
+                'max_length': 20,
                 'label': 'Reason Code',
                 'transform': 'uppercase'
             },
@@ -277,24 +262,24 @@ MASTERS_CONFIG = {
                 'type': 'text',
                 'required': True,
                 'max_length': 255,
-                'label': 'Description'
+                'label': 'Reason Description'
             },
             'category': {
                 'type': 'select',
                 'required': False,
-                'options': ['Damage', 'Expiry', 'Quality', 'Process Loss', 'Other'],
+                'options': ['Damage', 'Expiry', 'Quality', 'Returns', 'Other'],
                 'label': 'Category'
             }
         },
         'list_query': """
             SELECT 
-                w.*,
+                wr.*,
                 COUNT(DISTINCT mw.writeoff_id) as usage_count
-            FROM writeoff_reasons w
-            LEFT JOIN material_writeoffs mw ON w.reason_code = mw.reason_code
-            WHERE w.is_active = true
-            GROUP BY w.reason_code
-            ORDER BY w.category, w.reason_description
+            FROM writeoff_reasons wr
+            LEFT JOIN material_writeoffs mw ON wr.reason_code = mw.reason_code
+            WHERE wr.is_active = true
+            GROUP BY wr.reason_code
+            ORDER BY wr.reason_description
         """,
         'dependencies': {
             'material_writeoffs': {
@@ -310,38 +295,37 @@ MASTERS_CONFIG = {
         'primary_key': 'element_id',
         'display_name': 'Cost Elements',
         'name_field': 'element_name',
-        'soft_delete_field': 'is_active',  # Note: column is 'active' in DB, we'll handle in code
+        'soft_delete_field': 'is_active',
         'fields': {
             'element_name': {
                 'type': 'text',
                 'required': True,
-                'unique': True,
-                'max_length': 100,
+                'max_length': 255,
                 'label': 'Element Name'
             },
             'category': {
                 'type': 'select',
                 'required': True,
-                'options': ['Labor', 'Utility', 'Overhead', 'Material', 'Other'],
+                'options': ['Fixed', 'Variable', 'Semi-Variable'],
                 'label': 'Category'
             },
             'unit_type': {
                 'type': 'select',
                 'required': True,
-                'options': ['Per Hour', 'Per Unit', 'Per Batch', 'Fixed', 'Percentage'],
+                'options': ['Per Unit', 'Percentage', 'Fixed Amount'],
                 'label': 'Unit Type'
             },
             'default_rate': {
                 'type': 'decimal',
-                'required': True,
+                'required': False,
                 'min': 0,
                 'decimal_places': 2,
                 'label': 'Default Rate'
             },
             'calculation_method': {
                 'type': 'select',
-                'required': False,
-                'options': ['Fixed', 'Variable', 'Step', 'Formula'],
+                'required': True,
+                'options': ['Direct', 'Formula-based', 'Allocation'],
                 'label': 'Calculation Method'
             },
             'is_optional': {
@@ -352,22 +336,17 @@ MASTERS_CONFIG = {
             },
             'applicable_to': {
                 'type': 'select',
-                'required': False,
-                'options': ['batch', 'blend', 'sku', 'all'],
-                'default': 'all',
+                'required': True,
+                'options': ['Purchase', 'Production', 'Both'],
                 'label': 'Applicable To'
             },
             'display_order': {
                 'type': 'integer',
                 'required': False,
                 'min': 0,
+                'max': 999,
                 'default': 0,
                 'label': 'Display Order'
-            },
-            'notes': {
-                'type': 'textarea',
-                'required': False,
-                'label': 'Notes'
             }
         },
         'list_query': """
@@ -488,51 +467,28 @@ def check_dependencies(conn, cur, master_type, record_id):
         table = dep_config['table']
         foreign_key = dep_config['foreign_key']
         
-        # Build query based on primary key type
+        # Special handling for different primary key types
         if config.get('primary_key_type') == 'varchar':
-            query = f"""
-                SELECT COUNT(*) 
-                FROM {table} 
-                WHERE {foreign_key} = %s
-            """
-            params = (record_id,)
+            query = f"SELECT COUNT(*) FROM {table} WHERE {foreign_key} = %s"
+            cur.execute(query, (record_id,))
         else:
-            query = f"""
-                SELECT COUNT(*) 
-                FROM {table} 
-                WHERE {foreign_key} = %s
-            """
-            params = (record_id,)
+            query = f"SELECT COUNT(*) FROM {table} WHERE {foreign_key} = %s"
+            cur.execute(query, (int(record_id),))
         
-        # Add active check if the dependent table has is_active
-        if dep_name != 'inventory':  # Inventory doesn't have is_active
-            cur.execute(f"""
-                SELECT column_name 
-                FROM information_schema.columns 
-                WHERE table_name = %s AND column_name = 'is_active'
-            """, (table,))
-            
-            if cur.fetchone():
-                query = f"""
-                    SELECT COUNT(*) 
-                    FROM {table} 
-                    WHERE {foreign_key} = %s AND is_active = true
-                """
-        
-        cur.execute(query, params)
         count = cur.fetchone()[0]
         
         if count > 0:
-            # Special handling for inventory
-            if dep_config.get('check_field'):
-                cur.execute(f"""
-                    SELECT {dep_config['check_field']} 
-                    FROM {table} 
-                    WHERE {foreign_key} = %s
-                """, (record_id,))
-                value = cur.fetchone()
-                if value and value[0]:
-                    message = dep_config['message'].format(value=value[0])
+            # Check if it's a special dependency with value (like inventory)
+            if 'check_field' in dep_config:
+                value_query = f"SELECT {dep_config['check_field']} FROM {table} WHERE {foreign_key} = %s"
+                if config.get('primary_key_type') == 'varchar':
+                    cur.execute(value_query, (record_id,))
+                else:
+                    cur.execute(value_query, (int(record_id),))
+                
+                value_row = cur.fetchone()
+                if value_row and value_row[0]:
+                    message = dep_config['message'].format(value=value_row[0])
                 else:
                     message = dep_config['message'].format(count=count)
             else:
@@ -543,6 +499,7 @@ def check_dependencies(conn, cur, master_type, record_id):
                 'count': count,
                 'message': message
             })
+            
             total_dependent_records += count
     
     # Determine what actions are allowed
@@ -599,37 +556,33 @@ def validate_field(field_name, field_config, value, conn=None, cur=None,
     elif field_type == 'email':
         email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         if not re.match(email_pattern, value):
-            return False, f"{field_config.get('label', field_name)} must be a valid email address"
+            return False, "Invalid email address"
     
     elif field_type == 'decimal':
         try:
-            decimal_value = safe_decimal(value)
-            
-            # Min/max checks
+            decimal_value = Decimal(str(value))
             min_val = field_config.get('min')
+            max_val = field_config.get('max')
+            
             if min_val is not None and decimal_value < Decimal(str(min_val)):
                 return False, f"{field_config.get('label', field_name)} must be at least {min_val}"
             
-            max_val = field_config.get('max')
             if max_val is not None and decimal_value > Decimal(str(max_val)):
                 return False, f"{field_config.get('label', field_name)} must not exceed {max_val}"
-            
         except:
             return False, f"{field_config.get('label', field_name)} must be a valid number"
     
     elif field_type == 'integer':
         try:
-            int_value = safe_int(value)
-            
-            # Min/max checks
+            int_value = int(value)
             min_val = field_config.get('min')
+            max_val = field_config.get('max')
+            
             if min_val is not None and int_value < min_val:
                 return False, f"{field_config.get('label', field_name)} must be at least {min_val}"
             
-            max_val = field_config.get('max')
             if max_val is not None and int_value > max_val:
                 return False, f"{field_config.get('label', field_name)} must not exceed {max_val}"
-            
         except:
             return False, f"{field_config.get('label', field_name)} must be a valid integer"
     
@@ -640,45 +593,25 @@ def validate_field(field_name, field_config, value, conn=None, cur=None,
     
     elif field_type == 'boolean':
         if not isinstance(value, bool):
-            if value not in ['true', 'false', True, False, 0, 1, '0', '1']:
-                return False, f"{field_config.get('label', field_name)} must be true or false"
+            return False, f"{field_config.get('label', field_name)} must be true or false"
     
-    elif field_type == 'reference':
-        # Check if referenced record exists
-        if conn and cur:
-            ref_table = field_config.get('ref_table')
-            ref_field = field_config.get('ref_field')
-            
-            cur.execute(f"""
-                SELECT {ref_field} 
-                FROM {ref_table} 
-                WHERE {ref_field} = %s AND is_active = true
-            """, (value,))
-            
-            if not cur.fetchone():
-                return False, f"Referenced {field_config.get('label', field_name)} does not exist"
-    
-    # Unique constraint check
-    if field_config.get('unique', False) and conn and cur and table_name:
-        # Check if value already exists (excluding current record)
+    # Check unique constraint if needed
+    if field_config.get('unique') and conn and cur and table_name:
         if record_id:
-            # Update case - exclude current record
-            primary_key = MASTERS_CONFIG[table_name]['primary_key']
+            # Update - exclude current record
             cur.execute(f"""
-                SELECT {primary_key} 
-                FROM {MASTERS_CONFIG[table_name]['table']}
-                WHERE {field_name} = %s AND {primary_key} != %s AND is_active = true
+                SELECT COUNT(*) FROM {table_name} 
+                WHERE {field_name} = %s AND id != %s
             """, (value, record_id))
         else:
-            # Insert case
+            # Insert - check all records
             cur.execute(f"""
-                SELECT {field_name} 
-                FROM {MASTERS_CONFIG[table_name]['table']}
-                WHERE {field_name} = %s AND is_active = true
+                SELECT COUNT(*) FROM {table_name} 
+                WHERE {field_name} = %s
             """, (value,))
         
-        if cur.fetchone():
-            return False, f"{field_config.get('label', field_name)} '{value}' already exists"
+        if cur.fetchone()[0] > 0:
+            return False, f"{field_config.get('label', field_name)} already exists"
     
     return True, None
 
@@ -692,8 +625,8 @@ def transform_field_value(field_config, value):
     Transform field value based on configuration
     
     Args:
-        field_config: Field configuration dictionary
-        value: Raw value to transform
+        field_config: Field configuration dict
+        value: Field value to transform
     
     Returns:
         Transformed value
@@ -714,62 +647,17 @@ def transform_field_value(field_config, value):
 
 
 # =====================================================
-# GENERIC CRUD OPERATIONS
+# MASTER DATA VALIDATION
 # =====================================================
-
-def get_record_by_id(master_type, record_id):
-    """Get a single record by ID"""
-    config = MASTERS_CONFIG.get(master_type)
-    if not config:
-        return None
-    
-    conn = get_db_connection()
-    cur = conn.cursor()
-    
-    try:
-        table = config['table']
-        primary_key = config['primary_key']
-        
-        # Handle different primary key types
-        if config.get('primary_key_type') == 'varchar':
-            query = f"""
-                SELECT * FROM {table}
-                WHERE {primary_key} = %s AND is_active = true
-            """
-        else:
-            query = f"""
-                SELECT * FROM {table}
-                WHERE {primary_key} = %s AND is_active = true
-            """
-        
-        cur.execute(query, (record_id,))
-        
-        # Convert to dictionary
-        columns = [desc[0] for desc in cur.description]
-        row = cur.fetchone()
-        
-        if row:
-            record = dict(zip(columns, row))
-            # Convert Decimal and datetime to JSON serializable
-            for key, value in record.items():
-                if isinstance(value, Decimal):
-                    record[key] = float(value)
-                elif isinstance(value, datetime):
-                    record[key] = value.isoformat()
-            return record
-        
-        return None
-        
-    except Exception as e:
-        print(f"Error getting record: {str(e)}")
-        return None
-    finally:
-        close_connection(conn, cur)
-
 
 def validate_master_data(master_type, data, record_id=None):
     """
-    Validate all fields for a master record
+    Validate all fields in master data
+    
+    Args:
+        master_type: Type of master
+        data: Dictionary of field values
+        record_id: ID if updating existing record
     
     Returns:
         tuple: (is_valid, errors)
@@ -830,7 +718,7 @@ def soft_delete_record(conn, cur, master_type, record_id, deleted_by=None):
     if config.get('primary_key_type') == 'varchar':
         cur.execute(f"SELECT * FROM {table} WHERE {primary_key} = %s", (record_id,))
     else:
-        cur.execute(f"SELECT * FROM {table} WHERE {primary_key} = %s", (record_id,))
+        cur.execute(f"SELECT * FROM {table} WHERE {primary_key} = %s", (int(record_id),))
     
     columns = [desc[0] for desc in cur.description]
     row = cur.fetchone()
@@ -843,7 +731,7 @@ def soft_delete_record(conn, cur, master_type, record_id, deleted_by=None):
     # Perform soft delete
     soft_delete_field = config.get('soft_delete_field', 'is_active')
     
-    # Special handling for cost_elements_master (uses 'active' instead of 'is_active')
+    # Special handling for cost_elements_master (uses 'is_active' instead of 'is_active')
     if master_type == 'cost_elements' and soft_delete_field == 'is_active':
         soft_delete_field = 'is_active'  # We renamed it in DB setup
     
@@ -909,6 +797,39 @@ def restore_record(conn, cur, master_type, record_id, restored_by=None):
         'success': True,
         'message': 'Record restored successfully'
     }
+
+
+# =====================================================
+# RECORD RETRIEVAL
+# =====================================================
+
+def get_record_by_id(conn, cur, master_type, record_id):
+    """
+    Get a single record by ID
+    
+    Returns:
+        dict: Record data or None if not found
+    """
+    config = MASTERS_CONFIG.get(master_type)
+    if not config:
+        return None
+    
+    table = config['table']
+    primary_key = config['primary_key']
+    
+    # Handle different primary key types
+    if config.get('primary_key_type') == 'varchar':
+        cur.execute(f"SELECT * FROM {table} WHERE {primary_key} = %s", (record_id,))
+    else:
+        cur.execute(f"SELECT * FROM {table} WHERE {primary_key} = %s", (int(record_id),))
+    
+    columns = [desc[0] for desc in cur.description]
+    row = cur.fetchone()
+    
+    if row:
+        return dict(zip(columns, row))
+    
+    return None
 
 
 # =====================================================
