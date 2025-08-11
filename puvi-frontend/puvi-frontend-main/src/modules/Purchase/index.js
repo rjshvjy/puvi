@@ -1,4 +1,4 @@
-// File Path: puvi-frontend/src/modules/Purchase/index.js
+// File Path: puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js
 // Purchase Module with Cost Management Integration - Fixed UI Version
 // Session 3: UI issues resolved with CostElementRow component
 
@@ -42,10 +42,8 @@ const Purchase = () => {
     fetchSuppliers();
   }, []);
 
-  useEffect(() => {
-    // Recalculate transport/handling allocation when items or percentages change
-    allocateCharges();
-  }, [items, invoiceData.transport_cost, invoiceData.handling_charges, uomGroups]);
+  // REMOVED THE PROBLEMATIC useEffect that was causing infinite loop
+  // Will call allocateCharges() manually when needed instead
 
   const fetchSuppliers = async () => {
     try {
@@ -100,6 +98,11 @@ const Purchase = () => {
   const handleInvoiceChange = (e) => {
     const { name, value } = e.target;
     setInvoiceData({ ...invoiceData, [name]: value });
+    
+    // Trigger allocation when transport or handling charges change
+    if (name === 'transport_cost' || name === 'handling_charges') {
+      setTimeout(() => allocateCharges(), 100);
+    }
   };
 
   const handleItemChange = (index, field, value) => {
@@ -116,6 +119,11 @@ const Purchase = () => {
     }
     
     setItems(newItems);
+    
+    // Trigger allocation when quantity or material changes
+    if (field === 'material_id' || field === 'quantity') {
+      setTimeout(() => allocateCharges(), 100);
+    }
   };
 
   const addItem = () => {
@@ -133,6 +141,8 @@ const Purchase = () => {
     if (items.length > 1) {
       const newItems = items.filter((_, i) => i !== index);
       setItems(newItems);
+      // Recalculate after removing
+      setTimeout(() => allocateCharges(), 100);
     }
   };
 
@@ -189,6 +199,8 @@ const Purchase = () => {
     
     if (total <= 100) {
       setUomGroups(newGroups);
+      // Recalculate allocation when percentage changes
+      setTimeout(() => allocateCharges(), 100);
     }
   };
 
@@ -491,9 +503,10 @@ Items: ${response.items_count}`);
                           <input
                             type="number"
                             value={item.gst_rate}
-                            readOnly
-                            className="form-control readonly text-center"
-                            tabIndex="-1"
+                            onChange={(e) => handleItemChange(index, 'gst_rate', e.target.value)}
+                            step="0.1"
+                            className="form-control text-center"
+                            placeholder="0"
                           />
                         </td>
                         <td className="amount-cell">₹{gstAmount.toFixed(2)}</td>
@@ -525,9 +538,8 @@ Items: ${response.items_count}`);
                               onClick={() => removeItem(index)}
                               className="btn-remove"
                               aria-label="Remove item"
-                              title="Remove item"
                             >
-                              ×
+                              ✕
                             </button>
                           )}
                         </td>
@@ -539,7 +551,7 @@ Items: ${response.items_count}`);
             </div>
           </div>
 
-          {/* Transport & Handling Charges */}
+          {/* Transport & Handling Charges Section */}
           <div className="form-card">
             <h3 className="section-title">Transport & Handling Charges</h3>
             <div className="form-grid-2col">
@@ -627,11 +639,12 @@ Items: ${response.items_count}`);
                         onChange={(e) => handleGroupPercentageChange('kg', e.target.value)}
                         min="0"
                         max="100"
-                        className="form-control"
+                        step="1"
                       />
                       <span className="input-addon">%</span>
                     </div>
                   </div>
+                  
                   <div className="uom-group">
                     <label className="uom-label">Volume (L)</label>
                     <div className="input-group">
@@ -641,11 +654,12 @@ Items: ${response.items_count}`);
                         onChange={(e) => handleGroupPercentageChange('L', e.target.value)}
                         min="0"
                         max="100"
-                        className="form-control"
+                        step="1"
                       />
                       <span className="input-addon">%</span>
                     </div>
                   </div>
+                  
                   <div className="uom-group">
                     <label className="uom-label">Count (Nos)</label>
                     <div className="input-group">
@@ -655,17 +669,30 @@ Items: ${response.items_count}`);
                         onChange={(e) => handleGroupPercentageChange('Nos', e.target.value)}
                         min="0"
                         max="100"
-                        className="form-control"
+                        step="1"
                       />
                       <span className="input-addon">%</span>
                     </div>
                   </div>
-                  <div className={`total-percentage ${totalPercentage !== 100 ? 'error' : 'success'}`}>
+                  
+                  <div className={`total-percentage ${totalPercentage === 100 ? 'success' : 'error'}`}>
                     Total: {totalPercentage}%
                   </div>
+                  
+                  <button
+                    type="button"
+                    onClick={allocateCharges}
+                    className="btn-secondary"
+                    style={{ marginLeft: 'auto' }}
+                  >
+                    Recalculate Allocation
+                  </button>
                 </div>
+                
                 {totalPercentage !== 100 && (
-                  <div className="error-text">Total allocation must equal 100%</div>
+                  <div className="error-text">
+                    ⚠️ Total allocation must equal 100%. Currently: {totalPercentage}%
+                  </div>
                 )}
               </div>
             )}
@@ -673,33 +700,38 @@ Items: ${response.items_count}`);
 
           {/* Summary Section */}
           <div className="form-card summary-card">
-            <h3 className="section-title">Invoice Summary</h3>
+            <h3 className="section-title">Summary</h3>
             <div className="summary-grid">
               <div className="summary-row">
-                <span className="summary-label">Subtotal:</span>
-                <span className="summary-value">₹{totals.subtotal}</span>
+                <span>Subtotal:</span>
+                <span>₹{totals.subtotal}</span>
               </div>
               <div className="summary-row">
-                <span className="summary-label">Total GST:</span>
-                <span className="summary-value">₹{totals.totalGst}</span>
+                <span>Total GST:</span>
+                <span>₹{totals.totalGst}</span>
               </div>
               <div className="summary-row">
-                <span className="summary-label">Transport Charges:</span>
-                <span className="summary-value">₹{totals.transportCost}</span>
+                <span>Transport Cost:</span>
+                <span>₹{totals.transportCost}</span>
               </div>
               <div className="summary-row">
-                <span className="summary-label">Handling Charges:</span>
-                <span className="summary-value">₹{totals.handlingCharges}</span>
+                <span>Handling Charges:</span>
+                <span>₹{totals.handlingCharges}</span>
               </div>
-              <div className="summary-row total">
-                <span className="summary-label">Grand Total:</span>
-                <span className="summary-value">₹{totals.grandTotal}</span>
+              <div className="summary-row grand-total">
+                <span>Grand Total:</span>
+                <span>₹{totals.grandTotal}</span>
               </div>
             </div>
           </div>
 
+          {/* Form Actions */}
           <div className="form-actions">
-            <button type="submit" disabled={loading || totalPercentage !== 100} className="btn-submit">
+            <button 
+              type="submit" 
+              className="btn-submit"
+              disabled={loading}
+            >
               {loading ? 'Saving Purchase...' : 'Save Purchase'}
             </button>
           </div>
