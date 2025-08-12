@@ -152,7 +152,7 @@ const CostManagement = () => {
   const loadBatchCostDetails = async (batchId) => {
     try {
       setLoading(true);
-      const response = await api.costManagement.getBatchCostSummary(batchId);
+      const response = await api.costManagement.getBatchSummary(batchId);
       if (response.success) {
         setBatchCostDetails(response.summary);
         setSelectedBatch(batchId);
