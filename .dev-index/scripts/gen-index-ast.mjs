@@ -31,7 +31,7 @@ const isProbablyBinary = (buf) => {
     if (c === 9 || c === 10 || c === 13) continue; // \t \n \r
     if (c < 32 || c > 126) nonText++;
   }
-  return nonText / len > 0.3;
+  return len > 0 && nonText / len > 0.3;
 };
 
 const readTextFile = (file) => {
@@ -172,6 +172,11 @@ index.imports = [...importMap.entries()].map(([from, usedInSet]) => ({
 }));
 
 // ---- Write output ----
-const outPath = path.join('.dev-index', 'project_index.json');
+const outDir = '.dev-index';
+const outPath = path.join(outDir, 'project_index.json');
+
+// Ensure .dev-index folder exists on runner
+fs.mkdirSync(outDir, { recursive: true });
+
 fs.writeFileSync(outPath, JSON.stringify(index, null, 2));
 console.log(`Wrote ${outPath}`);
