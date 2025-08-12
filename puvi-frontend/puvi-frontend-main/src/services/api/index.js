@@ -1,5 +1,5 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/services/api/index.js
-// Main API Service Module - FIXED with corrected writeoff and sales endpoints
+// Main API Service Module - FIXED with getCostElementsByActivity method added
 
 // Import utilities
 import { skuDateUtils, expiryUtils, formatUtils } from './skuUtilities';
@@ -127,6 +127,8 @@ const api = {
     getCostElementsMaster: () => api.get('/api/cost_elements/master'),
     getCostElementsByCategory: (category) => api.get(`/api/cost_elements/${category}`),
     getCostElementsByStage: (stage) => api.get('/api/cost_elements/by_stage', { stage }),
+    // BUG FIX: Added missing getCostElementsByActivity method
+    getCostElementsByActivity: (activity, module) => api.get('/api/cost_elements/by_activity', { activity, module }),
     getCostElementsForBatch: () => api.get('/api/cost_elements_for_batch'), // For batch module
     addCostElement: (data) => api.post('/api/cost_elements', data),
     updateCostElement: (id, data) => api.put(`/api/cost_elements/${id}`, data),
