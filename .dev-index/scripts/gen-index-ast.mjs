@@ -21,9 +21,10 @@ console.log('Script directory:', __dirname);
 
 // ---- Configure what to scan (relative to REPO ROOT) ----
 const GLOBS = [
-  'puvi-frontend/src/**/*.{js,jsx}',
-  'puvi-backend/modules/**/*.py',
-  'puvi-backend/utils/**/*.py',
+  'puvi-frontend/puvi-frontend-main/src/**/*.{js,jsx}',
+  'puvi-backend/puvi-backend-main/modules/**/*.py',
+  'puvi-backend/puvi-backend-main/utils/**/*.py',
+  'puvi-backend/puvi-backend-main/*.py',  // Main Python files in root
   '!**/node_modules/**',
   '!**/build/**',
   '!**/dist/**',
@@ -104,9 +105,9 @@ console.log(`Found ${files.length} files to process`);
 
 if (files.length === 0) {
   console.error('ERROR: No files found! Check if the paths exist:');
-  console.error('- puvi-frontend/src/');
-  console.error('- puvi-backend/modules/');
-  console.error('- puvi-backend/utils/');
+  console.error('- puvi-frontend/puvi-frontend-main/src/');
+  console.error('- puvi-backend/puvi-backend-main/modules/');
+  console.error('- puvi-backend/puvi-backend-main/utils/');
   process.exit(1);
 }
 
