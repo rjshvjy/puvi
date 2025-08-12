@@ -1,7 +1,1155 @@
 {
-  "generatedAt": "2025-08-12T19:36:54.890Z",
+  "generatedAt": "2025-08-12T19:46:54.431Z",
   "filesScanned": 52,
+  "jsFilesScanned": 31,
+  "pyFilesScanned": 21,
   "routes": [
+    {
+      "method": "GET",
+      "path": "/api/masters/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/masters/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/masters/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/masters/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/masters/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/masters/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/masters/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/masters/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/masters/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/purchases",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/purchases/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/add_purchase",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/purchases/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/purchases/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/materials",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/suppliers",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/batch_production",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/batch_production",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/batch_production/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/batch_production/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/seed_materials_for_batch",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/oil_types",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sku/master",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/sku/master",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/sku/master/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/sku/master/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sku/bom/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/sku/bom",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/sku/bom/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sku/production",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/sku/production",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sku/production/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sku/mrp/history/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/sku/mrp/update/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sku/expiry/alerts",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sku/expiry/status",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/inventory_for_writeoff",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/writeoff_reasons",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/material_writeoff",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/writeoff_history",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/available_oils_for_blending",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/create_blend",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/blend_history",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/blend/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/system/initialization_status",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/system/initialize",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/opening_balance",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/opening_balance",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/opening_balance/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/opening_balance/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/opening_balance/import",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/opening_balance/export",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/oil_cake_inventory",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/oil_cake_sale",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/oil_cake_sales",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/oil_cake_sale/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/cost_elements",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/cost_elements",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/cost_elements/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/cost_elements/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/cost_analysis",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/materials",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/suppliers",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/purchase_history",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/add_purchase",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/seeds_for_batch",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/cost_elements_for_batch",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/cost_elements_for_batch",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/extended_cost_elements",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/oil_cake_rates",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/add_batch",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/add_batch",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/batch_history",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/cost_elements/calculate",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/cost_elements/batch_summary/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sku/master",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/sku/master",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/sku/master/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/sku/master/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sku/bom/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/sku/bom",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/sku/allocate_oil",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sku/materials_for_sku",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/sku/production",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sku/production_history",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sku/production_summary/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/byproduct_types",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/material_sales_inventory",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/add_material_sale",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/material_sales_history",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/cost_reconciliation_report",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/byproduct_inventory/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/material_sales",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/material_sales_history",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/inventory_for_writeoff",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/writeoff_reasons",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/add_writeoff",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/writeoff_history",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/available_oils_for_blend",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/oil_blending",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/blending_history",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/cost_elements/master",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/cost_elements/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/cost_elements/by_stage",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/cost_elements/by_activity",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/cost_elements_for_batch",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/cost_elements",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/cost_elements/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/cost_elements/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/cost_analysis",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/cost_elements/time_tracking",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/cost_elements/save_batch_costs",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/cost_elements/validation_report",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/cost_elements/batch_summary/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/suppliers",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/materials",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/cost_elements/master",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/materials",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/opening_balances",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/opening_balance",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/opening_balance/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/opening_balance/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/masters/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/masters/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/masters/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/masters/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/masters/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/masters/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/masters/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/masters/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/masters/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/masters/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/purchases",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/purchases/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/add_purchase",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/purchases/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/purchases/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/materials",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/suppliers",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/batch_production",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/batch_production",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/batch_production/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/batch_production/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/seed_materials_for_batch",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/oil_types",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sku/master",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/sku/master",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/sku/master/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/sku/master/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sku/bom/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/sku/bom",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/sku/bom/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/sku/production",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sku/production_history",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sku/production/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/sku/allocate_oil",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sku/materials_for_sku",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/inventory_for_writeoff",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/writeoff_reasons",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/add_writeoff",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/writeoff_history",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/add_writeoff",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/available_oils_for_blend",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/oil_blending",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/blending_history",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/opening_balance",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/opening_balance",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/opening_balance/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/opening_balance/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/opening_balance/import",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/opening_balance/export",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/byproduct_types",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/material_sales_inventory",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/add_material_sale",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/material_sales_history",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/cost_reconciliation_report",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/oil_cake_inventory",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/oil_cake_sale",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/oil_cake_sales",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/oil_cake_sale/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/cost_elements/master",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/cost_elements",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/cost_elements/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/cost_elements/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/cost_analysis",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/cost_elements/by_stage",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/cost_elements/time_tracking",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/cost_elements/save_batch_costs",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/cost_elements/calculate",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/cost_elements/batch_summary/...",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/cost_elements/validation_report",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "source": "frontend"
+    },
     {
       "method": "GET",
       "path": "/api/seeds_for_batch",
@@ -378,8 +1526,416 @@
       "file": "puvi-backend/puvi-backend-main/app.py"
     }
   ],
-  "imports": [],
+  "imports": [
+    {
+      "from": "react",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/App.js",
+        "puvi-frontend/puvi-frontend-main/src/index.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostElementsManager.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/index.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/MaterialSales/index.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/OpeningBalanceModule/index.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/index.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/BOMConfig.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ExpiryAlert.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
+        "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
+        "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+        "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+        "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+        "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx"
+      ]
+    },
+    {
+      "from": "./App.css",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/App.js",
+        "puvi-frontend/puvi-frontend-main/src/index.js"
+      ]
+    },
+    {
+      "from": "./modules/Purchase",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/App.js"
+      ]
+    },
+    {
+      "from": "./modules/MaterialWriteoff",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/App.js"
+      ]
+    },
+    {
+      "from": "./modules/BatchProduction",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/App.js"
+      ]
+    },
+    {
+      "from": "./modules/Blending",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/App.js"
+      ]
+    },
+    {
+      "from": "./modules/MaterialSales",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/App.js"
+      ]
+    },
+    {
+      "from": "./modules/CostManagement",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/App.js"
+      ]
+    },
+    {
+      "from": "./modules/SKUManagement",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/App.js"
+      ]
+    },
+    {
+      "from": "./modules/MastersManagement",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/App.js"
+      ]
+    },
+    {
+      "from": "./modules/OpeningBalanceModule",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/App.js"
+      ]
+    },
+    {
+      "from": "react-dom/client",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/index.js"
+      ]
+    },
+    {
+      "from": "./App",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/index.js"
+      ]
+    },
+    {
+      "from": "../../services/api",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/MaterialSales/index.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js"
+      ]
+    },
+    {
+      "from": "../CostManagement/TimeTracker",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js"
+      ]
+    },
+    {
+      "from": "../CostManagement/CostCapture",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js"
+      ]
+    },
+    {
+      "from": "./BatchProduction.css",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js"
+      ]
+    },
+    {
+      "from": "./CostElementsManager",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js"
+      ]
+    },
+    {
+      "from": "./CostManagement.css",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js"
+      ]
+    },
+    {
+      "from": "../../components/Masters/MastersList",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/index.js"
+      ]
+    },
+    {
+      "from": "../../components/Masters/MasterForm",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/index.js"
+      ]
+    },
+    {
+      "from": "../../components/CostManagement/CostElementRow",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/modules/MaterialSales/index.js"
+      ]
+    },
+    {
+      "from": "./MaterialSales.css",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/modules/MaterialSales/index.js"
+      ]
+    },
+    {
+      "from": "./MaterialWriteoff.css",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js"
+      ]
+    },
+    {
+      "from": "../../components/OpeningBalance/SystemInitializationWizard",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/modules/OpeningBalanceModule/index.js"
+      ]
+    },
+    {
+      "from": "../../components/OpeningBalance/OpeningBalanceEntry",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/modules/OpeningBalanceModule/index.js"
+      ]
+    },
+    {
+      "from": "../../components/OpeningBalance/SystemStatusDashboard",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/modules/OpeningBalanceModule/index.js"
+      ]
+    },
+    {
+      "from": "./Purchase.css",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js"
+      ]
+    },
+    {
+      "from": "./components/SKUMaster",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/index.js"
+      ]
+    },
+    {
+      "from": "./components/BOMConfig",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/index.js"
+      ]
+    },
+    {
+      "from": "./components/ProductionEntry",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/index.js"
+      ]
+    },
+    {
+      "from": "./components/ProductionHistory",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/index.js"
+      ]
+    },
+    {
+      "from": "./components/MRPHistory",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/index.js"
+      ]
+    },
+    {
+      "from": "./components/ProductionSummaryReport",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/index.js"
+      ]
+    },
+    {
+      "from": "./components/ExpiryAlert",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/index.js"
+      ]
+    },
+    {
+      "from": "./SKUManagement.css",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/index.js"
+      ]
+    },
+    {
+      "from": "../../../services/api",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ExpiryAlert.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js"
+      ]
+    },
+    {
+      "from": "./SKUMaster.css",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js"
+      ]
+    },
+    {
+      "from": "./CostElementRow.css",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js"
+      ]
+    },
+    {
+      "from": "./MasterForm.css",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx"
+      ]
+    },
+    {
+      "from": "./skuUtilities",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/services/api/index.js"
+      ]
+    },
+    {
+      "from": "../api",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/services/costManagement/costManagementService.js"
+      ]
+    }
+  ],
   "exports": [
+    {
+      "name": "apiCall",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js"
+    },
+    {
+      "name": "api",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js"
+    },
+    {
+      "name": "mastersAPI",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js"
+    },
+    {
+      "name": "purchaseAPI",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js"
+    },
+    {
+      "name": "batchAPI",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js"
+    },
+    {
+      "name": "skuAPI",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js"
+    },
+    {
+      "name": "writeoffAPI",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js"
+    },
+    {
+      "name": "blendingAPI",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js"
+    },
+    {
+      "name": "openingBalanceAPI",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js"
+    },
+    {
+      "name": "salesAPI",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js"
+    },
+    {
+      "name": "costAPI",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js"
+    },
+    {
+      "name": "API_URL",
+      "file": "puvi-frontend/puvi-frontend-main/src/index.js"
+    },
+    {
+      "name": "mastersAPI",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js"
+    },
+    {
+      "name": "purchaseAPI",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js"
+    },
+    {
+      "name": "batchAPI",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js"
+    },
+    {
+      "name": "skuAPI",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js"
+    },
+    {
+      "name": "writeoffAPI",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js"
+    },
+    {
+      "name": "blendingAPI",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js"
+    },
+    {
+      "name": "openingBalanceAPI",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js"
+    },
+    {
+      "name": "salesAPI",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js"
+    },
+    {
+      "name": "costAPI",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js"
+    },
+    {
+      "name": "API_URL",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js"
+    },
+    {
+      "name": "skuDateUtils",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js"
+    },
+    {
+      "name": "expiryUtils",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js"
+    },
+    {
+      "name": "formatUtils",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js"
+    },
+    {
+      "name": "apiCall",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js"
+    },
+    {
+      "name": "API_BASE_URL",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js"
+    },
+    {
+      "name": "skuDateUtils",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/skuUtilities.js"
+    },
+    {
+      "name": "expiryUtils",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/skuUtilities.js"
+    },
+    {
+      "name": "formatUtils",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/skuUtilities.js"
+    },
     {
       "name": "get_seeds_for_batch",
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py"
@@ -905,6 +2461,147 @@
       "file": "puvi-backend/puvi-backend-main/inventory_utils.py"
     }
   ],
-  "components": [],
+  "components": [
+    {
+      "name": "App",
+      "file": "puvi-frontend/puvi-frontend-main/src/App.js"
+    },
+    {
+      "name": "DashboardContent",
+      "file": "puvi-frontend/puvi-frontend-main/src/App.js"
+    },
+    {
+      "name": "BatchProduction",
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js"
+    },
+    {
+      "name": "Blending",
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js"
+    },
+    {
+      "name": "CostCapture",
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js"
+    },
+    {
+      "name": "CostElementsManager",
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostElementsManager.js"
+    },
+    {
+      "name": "TimeTracker",
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js"
+    },
+    {
+      "name": "CostManagement",
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js"
+    },
+    {
+      "name": "MastersManagement",
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/index.js"
+    },
+    {
+      "name": "MaterialSales",
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialSales/index.js"
+    },
+    {
+      "name": "MaterialWriteoff",
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js"
+    },
+    {
+      "name": "OpeningBalanceModule",
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/OpeningBalanceModule/index.js"
+    },
+    {
+      "name": "Purchase",
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js"
+    },
+    {
+      "name": "SKUManagement",
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/index.js"
+    },
+    {
+      "name": "BOMConfig",
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/BOMConfig.js"
+    },
+    {
+      "name": "ExpiryAlert",
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ExpiryAlert.js"
+    },
+    {
+      "name": "MRPHistory",
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js"
+    },
+    {
+      "name": "ProductionEntry",
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js"
+    },
+    {
+      "name": "ProductionHistory",
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js"
+    },
+    {
+      "name": "ProductionSummaryReport",
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js"
+    },
+    {
+      "name": "SKUMaster",
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js"
+    },
+    {
+      "name": "CostElementRow",
+      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js"
+    },
+    {
+      "name": "FormSection",
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx"
+    },
+    {
+      "name": "Guidelines",
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx"
+    },
+    {
+      "name": "TextField",
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx"
+    },
+    {
+      "name": "NumberField",
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx"
+    },
+    {
+      "name": "SelectField",
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx"
+    },
+    {
+      "name": "TextareaField",
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx"
+    },
+    {
+      "name": "ReferenceField",
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx"
+    },
+    {
+      "name": "InlineAlert",
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx"
+    },
+    {
+      "name": "FieldSkeleton",
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx"
+    },
+    {
+      "name": "MasterForm",
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx"
+    },
+    {
+      "name": "MastersList",
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx"
+    },
+    {
+      "name": "OpeningBalanceEntry",
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx"
+    },
+    {
+      "name": "SystemStatusDashboard",
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx"
+    }
+  ],
   "tags": []
 }
