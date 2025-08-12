@@ -1,6 +1,7 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js
 // Complete Batch Production Module with Full Cost Management Integration
 // FIXED: Override rate type conversion and persistence issues
+// FIXED: toFixed() errors with proper safeParseFloat usage
 
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
@@ -149,8 +150,10 @@ const BatchProduction = () => {
           quantity: safeParseFloat(cost.quantity, 0),
           rate: safeParseFloat(cost.rate || cost.default_rate, 0),
           // FIXED: Ensure override_rate is converted to number or null
-          override_rate: cost.overrideRate ? safeParseFloat(cost.overrideRate, null) : null,
-          total_cost: safeParseFloat(cost.totalCost, 0),
+          override_rate: cost.overrideRate !== null && cost.overrideRate !== undefined && cost.overrideRate !== '' 
+            ? safeParseFloat(cost.overrideRate, null) 
+            : null,
+          total_cost: safeParseFloat(cost.totalCost || cost.total_cost, 0),
           is_optional: cost.is_optional || false,
           calculation_method: cost.calculation_method,
           stage: 'drying'
@@ -169,8 +172,10 @@ const BatchProduction = () => {
           quantity: safeParseFloat(cost.quantity, 0),
           rate: safeParseFloat(cost.rate || cost.default_rate, 0),
           // FIXED: Ensure override_rate is converted to number or null
-          override_rate: cost.overrideRate ? safeParseFloat(cost.overrideRate, null) : null,
-          total_cost: safeParseFloat(cost.totalCost, 0),
+          override_rate: cost.overrideRate !== null && cost.overrideRate !== undefined && cost.overrideRate !== '' 
+            ? safeParseFloat(cost.overrideRate, null) 
+            : null,
+          total_cost: safeParseFloat(cost.totalCost || cost.total_cost, 0),
           is_optional: cost.is_optional || false,
           calculation_method: cost.calculation_method,
           stage: 'crushing'
@@ -192,8 +197,10 @@ const BatchProduction = () => {
             quantity: safeParseFloat(cost.quantity, 0),
             rate: safeParseFloat(cost.rate || cost.default_rate, 0),
             // FIXED: Ensure override_rate is converted to number or null
-            override_rate: cost.overrideRate ? safeParseFloat(cost.overrideRate, null) : null,
-            total_cost: safeParseFloat(cost.totalCost, 0),
+            override_rate: cost.overrideRate !== null && cost.overrideRate !== undefined && cost.overrideRate !== '' 
+              ? safeParseFloat(cost.overrideRate, null) 
+              : null,
+            total_cost: safeParseFloat(cost.totalCost || cost.total_cost, 0),
             is_optional: cost.is_optional || false,
             calculation_method: cost.calculation_method,
             stage: 'additional'
@@ -828,32 +835,32 @@ ${timeTrackingData ? `\n⏱️ Time Tracked: ${timeTrackingData.rounded_hours} h
                   <tr>
                     <td>{selectedSeed?.material_name}</td>
                     <td className="text-center">kg</td>
-                    <td className="text-center">₹{selectedSeed?.weighted_avg_cost.toFixed(2)}</td>
+                    <td className="text-center">₹{safeParseFloat(selectedSeed?.weighted_avg_cost).toFixed(2)}</td>
                     <td className="text-center">-</td>
                     <td className="text-center">{batchData.seed_quantity_before_drying}</td>
-                    <td className="text-right">₹{costs.seedCost.toFixed(2)}</td>
+                    <td className="text-right">₹{safeParseFloat(costs.seedCost).toFixed(2)}</td>
                   </tr>
                   
                   {costs.basicCostDetails.map((detail, idx) => (
                     <tr key={idx}>
                       <td>{detail.element_name}</td>
                       <td className="text-center">-</td>
-                      <td className="text-center">₹{detail.master_rate.toFixed(2)}</td>
+                      <td className="text-center">₹{safeParseFloat(detail.master_rate).toFixed(2)}</td>
                       <td className="text-center">
-                        {detail.override_rate ? (
+                        {detail.override_rate !== null && detail.override_rate !== undefined ? (
                           <span className="override-warning">
-                            ₹{detail.override_rate.toFixed(2)}
+                            ₹{safeParseFloat(detail.override_rate).toFixed(2)}
                           </span>
                         ) : '-'}
                       </td>
-                      <td className="text-center">{detail.quantity.toFixed(2)}</td>
-                      <td className="text-right">₹{detail.total_cost.toFixed(2)}</td>
+                      <td className="text-center">{safeParseFloat(detail.quantity).toFixed(2)}</td>
+                      <td className="text-right">₹{safeParseFloat(detail.total_cost).toFixed(2)}</td>
                     </tr>
                   ))}
                   
                   <tr className="subtotal-row">
                     <td colSpan="5">Subtotal Basic Costs</td>
-                    <td className="text-right">₹{costs.totalBasicCost.toFixed(2)}</td>
+                    <td className="text-right">₹{safeParseFloat(costs.totalBasicCost).toFixed(2)}</td>
                   </tr>
                 </tbody>
               </table>
@@ -877,14 +884,16 @@ ${timeTrackingData ? `\n⏱️ Time Tracked: ${timeTrackingData.rounded_hours} h
                     </thead>
                     <tbody>
                       {costs.extendedCosts.map((cost, idx) => {
-                        // FIXED: Use actual rate (override if present, else default)
-                        const displayRate = cost.override_rate !== null ? cost.override_rate : cost.rate;
+                        // FIXED: Use actual rate (override if present, else default) with safe parsing
+                        const displayRate = cost.override_rate !== null && cost.override_rate !== undefined 
+                          ? safeParseFloat(cost.override_rate) 
+                          : safeParseFloat(cost.rate);
                         
                         return (
                           <tr key={idx} className={
                             cost.stage === 'drying' ? 'cost-row-drying' : 
                             cost.stage === 'crushing' ? 'cost-row-crushing' :
-                            cost.override_rate !== null ? 'cost-row-override' : 
+                            cost.override_rate !== null && cost.override_rate !== undefined ? 'cost-row-override' : 
                             ''
                           }>
                             <td>
@@ -907,25 +916,25 @@ ${timeTrackingData ? `\n⏱️ Time Tracked: ${timeTrackingData.rounded_hours} h
                               </span>
                             </td>
                             <td className="text-center">
-                              {cost.quantity.toFixed(2)}
+                              {safeParseFloat(cost.quantity).toFixed(2)}
                               {cost.calculation_method === 'per_hour' && ' hrs'}
                               {cost.calculation_method === 'per_kg' && ' kg'}
                             </td>
-                            <td className="text-center">₹{cost.rate.toFixed(2)}</td>
+                            <td className="text-center">₹{safeParseFloat(cost.rate).toFixed(2)}</td>
                             <td className="text-center">
-                              {cost.override_rate !== null ? (
+                              {cost.override_rate !== null && cost.override_rate !== undefined ? (
                                 <span className="override-warning">
-                                  ₹{cost.override_rate.toFixed(2)}
+                                  ₹{safeParseFloat(cost.override_rate).toFixed(2)}
                                 </span>
                               ) : '-'}
                             </td>
-                            <td className="text-right">₹{cost.total_cost.toFixed(2)}</td>
+                            <td className="text-right">₹{safeParseFloat(cost.total_cost).toFixed(2)}</td>
                           </tr>
                         );
                       })}
                       <tr className="subtotal-row">
                         <td colSpan="7">Subtotal Extended Costs</td>
-                        <td className="text-right">₹{costs.extendedCostTotal.toFixed(2)}</td>
+                        <td className="text-right">₹{safeParseFloat(costs.extendedCostTotal).toFixed(2)}</td>
                       </tr>
                     </tbody>
                   </table>
@@ -938,7 +947,7 @@ ${timeTrackingData ? `\n⏱️ Time Tracked: ${timeTrackingData.rounded_hours} h
                   <tr className="total-row">
                     <td colSpan="4">Total Production Cost</td>
                     <td className="text-right">
-                      ₹{costs.totalProductionCost.toFixed(2)}
+                      ₹{safeParseFloat(costs.totalProductionCost).toFixed(2)}
                     </td>
                   </tr>
                   
@@ -948,7 +957,7 @@ ${timeTrackingData ? `\n⏱️ Time Tracked: ${timeTrackingData.rounded_hours} h
                       {batchData.cake_yield} kg × ₹{batchData.cake_estimated_rate}
                     </td>
                     <td className="text-center">-</td>
-                    <td className="text-right">₹{costs.cakeRevenue.toFixed(2)}</td>
+                    <td className="text-right">₹{safeParseFloat(costs.cakeRevenue).toFixed(2)}</td>
                   </tr>
                   
                   {batchData.sludge_yield && (
@@ -958,13 +967,13 @@ ${timeTrackingData ? `\n⏱️ Time Tracked: ${timeTrackingData.rounded_hours} h
                         {batchData.sludge_yield} kg × ₹{batchData.sludge_estimated_rate}
                       </td>
                       <td className="text-center">-</td>
-                      <td className="text-right">₹{costs.sludgeRevenue.toFixed(2)}</td>
+                      <td className="text-right">₹{safeParseFloat(costs.sludgeRevenue).toFixed(2)}</td>
                     </tr>
                   )}
                   
                   <tr className="net-oil-row">
                     <td colSpan="4">Net Oil Cost</td>
-                    <td className="text-right">₹{costs.netOilCost.toFixed(2)}</td>
+                    <td className="text-right">₹{safeParseFloat(costs.netOilCost).toFixed(2)}</td>
                   </tr>
                   
                   <tr className="per-kg-row">
@@ -972,20 +981,20 @@ ${timeTrackingData ? `\n⏱️ Time Tracked: ${timeTrackingData.rounded_hours} h
                       Cost per kg Oil ({batchData.oil_yield} kg)
                     </td>
                     <td className="text-right">
-                      <span className="amount">₹{costs.perKgOilCost.toFixed(2)}/kg</span>
+                      <span className="amount">₹{safeParseFloat(costs.perKgOilCost).toFixed(2)}/kg</span>
                     </td>
                   </tr>
                 </tbody>
               </table>
 
               {/* Override Warning - FIXED: Check for override_rate not null */}
-              {costs.extendedCosts.filter(c => c.override_rate !== null).length > 0 && (
+              {costs.extendedCosts.filter(c => c.override_rate !== null && c.override_rate !== undefined).length > 0 && (
                 <div className="override-info">
                   <strong>⚠️ Cost Overrides Applied:</strong>
                   <ul>
-                    {costs.extendedCosts.filter(c => c.override_rate !== null).map((cost, idx) => (
+                    {costs.extendedCosts.filter(c => c.override_rate !== null && c.override_rate !== undefined).map((cost, idx) => (
                       <li key={idx}>
-                        {cost.element_name}: ₹{cost.rate.toFixed(2)} → ₹{cost.override_rate.toFixed(2)}
+                        {cost.element_name}: ₹{safeParseFloat(cost.rate).toFixed(2)} → ₹{safeParseFloat(cost.override_rate).toFixed(2)}
                       </li>
                     ))}
                   </ul>
