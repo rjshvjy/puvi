@@ -2,6 +2,7 @@
 Batch Production Module for PUVI Oil Manufacturing System
 Handles oil extraction from seeds, cost allocation, by-product tracking, and traceability
 File Path: puvi-backend/puvi-backend-main/modules/batch_production.py
+UPDATED: Includes activity field in cost elements response
 """
 
 from flask import Blueprint, request, jsonify
@@ -77,15 +78,17 @@ def get_seeds_for_batch():
 def get_cost_elements_for_batch():
     """
     Get applicable cost elements for batch production from cost_elements_master
-    FIXED: Now uses cost_elements_master table with full features
+    ENHANCED: Now includes activity field for proper frontend filtering
     """
     conn = get_db_connection()
     cur = conn.cursor()
     
     try:
-        # FIXED: Query from cost_elements_master instead of cost_elements
-        # Get all cost elements applicable to batch production
-        cur.execute("""
+        # Get stage parameter for activity-based filtering
+        stage = request.args.get('stage', None)
+        
+        # Build query with activity field included
+        base_query = """
             SELECT 
                 element_id,
                 element_name,
@@ -95,15 +98,42 @@ def get_cost_elements_for_batch():
                 calculation_method,
                 is_optional,
                 applicable_to,
-                display_order
+                display_order,
+                activity,
+                module_specific
             FROM cost_elements_master
             WHERE is_active = true 
                 AND applicable_to IN ('batch', 'all')
-            ORDER BY display_order, category, element_name
-        """)
+        """
+        
+        # Add activity filtering if stage is provided
+        if stage:
+            # Map frontend stage to database activity
+            activity_map = {
+                'drying': 'Drying',
+                'crushing': 'Crushing',
+                'filtering': 'Filtering',
+                'batch': None  # Get all for complete batch view
+            }
+            
+            activity = activity_map.get(stage)
+            
+            if activity:
+                # Filter by specific activity plus Common costs
+                cur.execute(
+                    base_query + " AND (activity = %s OR activity = 'Common') ORDER BY display_order, category, element_name",
+                    (activity,)
+                )
+            else:
+                # Get all elements for batch stage
+                cur.execute(base_query + " ORDER BY display_order, category, element_name")
+        else:
+            # No stage specified - get all batch elements
+            cur.execute(base_query + " ORDER BY display_order, category, element_name")
         
         cost_elements = []
         categories = {}
+        activities = {}
         
         for row in cur.fetchall():
             element = {
@@ -115,7 +145,9 @@ def get_cost_elements_for_batch():
                 'calculation_method': row[5],
                 'is_optional': row[6],
                 'applicable_to': row[7],
-                'display_order': row[8]
+                'display_order': row[8],
+                'activity': row[9] if row[9] else 'General',  # Default to 'General' if NULL
+                'module_specific': row[10]
             }
             cost_elements.append(element)
             
@@ -123,12 +155,20 @@ def get_cost_elements_for_batch():
             if row[2] not in categories:
                 categories[row[2]] = []
             categories[row[2]].append(element)
+            
+            # Group by activity for frontend reference
+            element_activity = row[9] if row[9] else 'General'
+            if element_activity not in activities:
+                activities[element_activity] = []
+            activities[element_activity].append(element)
         
         return jsonify({
             'success': True,
             'cost_elements': cost_elements,
             'cost_elements_by_category': categories,
-            'count': len(cost_elements)
+            'cost_elements_by_activity': activities,  # New grouping for frontend
+            'count': len(cost_elements),
+            'stage': stage if stage else 'all'  # Include stage in response
         })
         
     except Exception as e:
@@ -339,7 +379,7 @@ def add_batch():
         
         batch_id = cur.fetchone()[0]
         
-        # Process cost details
+        # Process cost details with activity information
         total_production_cost = safe_decimal(data.get('seed_cost_total', 0))
         
         # Insert all cost elements with validation
