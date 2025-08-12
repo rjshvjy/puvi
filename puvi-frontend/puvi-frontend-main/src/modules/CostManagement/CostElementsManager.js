@@ -1,4 +1,4 @@
-// File Path: puvi-frontend/src/modules/CostManagement/CostElementsManager.js
+// File Path: puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostElementsManager.js
 // Purpose: Comprehensive cost elements management with CRUD, bulk operations, and analytics
 // This file consolidates patterns from all modules to minimize dependencies in next session
 
