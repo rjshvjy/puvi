@@ -68,18 +68,43 @@ def get_next_batch_serial(seed_purchase_code, production_date, cur):
     # Get financial year from production date
     fy = get_financial_year(production_date)
     
-    # Use special material_id = -1 and supplier_id = -1 for batch tracking
-    # Store the seed_purchase_code in the notes field for reference
-    cur.execute("""
-        INSERT INTO serial_number_tracking
-        (material_id, supplier_id, financial_year, current_serial)
-        VALUES (-1, -1, %s, 1)
-        ON CONFLICT (material_id, supplier_id, financial_year)
-        DO UPDATE SET 
-            current_serial = serial_number_tracking.current_serial + 1,
-            last_updated = CURRENT_TIMESTAMP
-        RETURNING current_serial
-    """, (f"BATCH-{seed_purchase_code[:20]}",))  # Use first 20 chars as unique key
+    # Extract key parts from seed purchase code to create a unique identifier
+    # Example: GNS-K-1-05082025-SKM -> extract parts
+    parts = seed_purchase_code.split('-')
+    if len(parts) >= 5:
+        # Use a hash of the seed purchase code to create a unique supplier_id
+        # We'll use the purchase date part as a unique identifier
+        purchase_date_str = parts[3]  # 05082025
+        # Convert to a number that fits in integer range
+        # Use last 6 digits of the date as a pseudo supplier_id
+        pseudo_supplier_id = int(purchase_date_str[-6:])
+        
+        # Use -1 as material_id to indicate batch tracking
+        cur.execute("""
+            INSERT INTO serial_number_tracking
+            (material_id, supplier_id, financial_year, current_serial)
+            VALUES (-1, %s, %s, 1)
+            ON CONFLICT (material_id, supplier_id, financial_year)
+            DO UPDATE SET 
+                current_serial = serial_number_tracking.current_serial + 1,
+                last_updated = CURRENT_TIMESTAMP
+            RETURNING current_serial
+        """, (pseudo_supplier_id, fy))
+    else:
+        # Fallback for unexpected format
+        # Use a hash of the entire code
+        import hashlib
+        hash_val = int(hashlib.md5(seed_purchase_code.encode()).hexdigest()[:8], 16) % 1000000
+        cur.execute("""
+            INSERT INTO serial_number_tracking
+            (material_id, supplier_id, financial_year, current_serial)
+            VALUES (-1, %s, %s, 1)
+            ON CONFLICT (material_id, supplier_id, financial_year)
+            DO UPDATE SET 
+                current_serial = serial_number_tracking.current_serial + 1,
+                last_updated = CURRENT_TIMESTAMP
+            RETURNING current_serial
+        """, (hash_val, fy))
     
     return cur.fetchone()[0]
 
