@@ -1,10 +1,910 @@
 {
-  "generatedAt": "2025-08-12T19:06:52.111Z",
-  "filesScanned": 0,
-  "routes": [],
-  "nextApi": [],
+  "generatedAt": "2025-08-12T19:36:54.890Z",
+  "filesScanned": 52,
+  "routes": [
+    {
+      "method": "GET",
+      "path": "/api/seeds_for_batch",
+      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/cost_elements_for_batch",
+      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/oil_cake_rates",
+      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py"
+    },
+    {
+      "method": "POST",
+      "path": "/api/add_batch",
+      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/batch_history",
+      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/oil_types_for_blending",
+      "file": "puvi-backend/puvi-backend-main/modules/blending.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/batches_for_oil_type",
+      "file": "puvi-backend/puvi-backend-main/modules/blending.py"
+    },
+    {
+      "method": "POST",
+      "path": "/api/create_blend",
+      "file": "puvi-backend/puvi-backend-main/modules/blending.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/blend_history",
+      "file": "puvi-backend/puvi-backend-main/modules/blending.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/cost_elements/master",
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/cost_elements/by_stage",
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/cost_elements/by_activity",
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py"
+    },
+    {
+      "method": "POST",
+      "path": "/api/cost_elements/populate_activities",
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py"
+    },
+    {
+      "method": "POST",
+      "path": "/api/cost_elements/time_tracking",
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py"
+    },
+    {
+      "method": "POST",
+      "path": "/api/cost_elements/calculate",
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py"
+    },
+    {
+      "method": "POST",
+      "path": "/api/cost_elements/save_batch_costs",
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/cost_elements/validation_report",
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/cost_elements/batch_summary/<int:batch_id>",
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/masters/types",
+      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/masters/<master_type>/schema",
+      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/masters/<master_type>",
+      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/masters/<master_type>/<record_id>",
+      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+    },
+    {
+      "method": "POST",
+      "path": "/api/masters/<master_type>",
+      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/masters/<master_type>/<record_id>",
+      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/masters/<master_type>/<record_id>",
+      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+    },
+    {
+      "method": "POST",
+      "path": "/api/masters/<master_type>/<record_id>/restore",
+      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/masters/<master_type>/<record_id>/dependencies",
+      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/masters/<master_type>/export",
+      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+    },
+    {
+      "method": "POST",
+      "path": "/api/masters/<master_type>/import",
+      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/byproduct_types",
+      "file": "puvi-backend/puvi-backend-main/modules/material_sales.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/material_sales_inventory",
+      "file": "puvi-backend/puvi-backend-main/modules/material_sales.py"
+    },
+    {
+      "method": "POST",
+      "path": "/api/add_material_sale",
+      "file": "puvi-backend/puvi-backend-main/modules/material_sales.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/material_sales_history",
+      "file": "puvi-backend/puvi-backend-main/modules/material_sales.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/cost_reconciliation_report",
+      "file": "puvi-backend/puvi-backend-main/modules/material_sales.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/writeoff_reasons",
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/inventory_for_writeoff",
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py"
+    },
+    {
+      "method": "POST",
+      "path": "/api/add_writeoff",
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/writeoff_history",
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/opening_balance/status",
+      "file": "puvi-backend/puvi-backend-main/modules/opening_balance.py"
+    },
+    {
+      "method": "POST",
+      "path": "/api/opening_balance/configure",
+      "file": "puvi-backend/puvi-backend-main/modules/opening_balance.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/opening_balance/materials",
+      "file": "puvi-backend/puvi-backend-main/modules/opening_balance.py"
+    },
+    {
+      "method": "POST",
+      "path": "/api/opening_balance/save",
+      "file": "puvi-backend/puvi-backend-main/modules/opening_balance.py"
+    },
+    {
+      "method": "POST",
+      "path": "/api/opening_balance/initialize",
+      "file": "puvi-backend/puvi-backend-main/modules/opening_balance.py"
+    },
+    {
+      "method": "POST",
+      "path": "/api/opening_balance/year_end_close",
+      "file": "puvi-backend/puvi-backend-main/modules/opening_balance.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/opening_balance/template",
+      "file": "puvi-backend/puvi-backend-main/modules/opening_balance.py"
+    },
+    {
+      "method": "POST",
+      "path": "/api/opening_balance/import",
+      "file": "puvi-backend/puvi-backend-main/modules/opening_balance.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/materials",
+      "file": "puvi-backend/puvi-backend-main/modules/purchase.py"
+    },
+    {
+      "method": "POST",
+      "path": "/api/add_purchase",
+      "file": "puvi-backend/puvi-backend-main/modules/purchase.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/purchase_history",
+      "file": "puvi-backend/puvi-backend-main/modules/purchase.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/suppliers",
+      "file": "puvi-backend/puvi-backend-main/modules/purchase.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/tags",
+      "file": "puvi-backend/puvi-backend-main/modules/purchase.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sku/master",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py"
+    },
+    {
+      "method": "POST",
+      "path": "/api/sku/master",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sku/bom/<int:sku_id>",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py"
+    },
+    {
+      "method": "POST",
+      "path": "/api/sku/bom",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sku/materials",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py"
+    },
+    {
+      "method": "POST",
+      "path": "/api/sku/cost-preview",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sku/bom-history/<int:sku_id>",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sku/master",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_production.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sku/master/<int:sku_id>",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_production.py"
+    },
+    {
+      "method": "POST",
+      "path": "/api/sku/master",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_production.py"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/sku/master/<int:sku_id>",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_production.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sku/mrp-history/<int:sku_id>",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_production.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sku/current-mrp/<int:sku_id>",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_production.py"
+    },
+    {
+      "method": "POST",
+      "path": "/api/sku/production",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_production.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sku/production/history",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_production.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sku/expiry-alerts",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_production.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sku/expiry-summary",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_production.py"
+    },
+    {
+      "method": "POST",
+      "path": "/api/sku/fefo-allocation/<int:sku_id>",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_production.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sku/production-summary/<int:production_id>",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_production.py"
+    },
+    {
+      "method": "POST",
+      "path": "/api/sku/production/plan",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_production.py"
+    },
+    {
+      "method": "POST",
+      "path": "/api/sku/production/allocate-oil",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_production.py"
+    },
+    {
+      "method": "GET",
+      "path": "/",
+      "file": "puvi-backend/puvi-backend-main/app.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/health",
+      "file": "puvi-backend/puvi-backend-main/app.py"
+    },
+    {
+      "method": "GET",
+      "path": "/api/system_info",
+      "file": "puvi-backend/puvi-backend-main/app.py"
+    }
+  ],
   "imports": [],
-  "exports": [],
+  "exports": [
+    {
+      "name": "get_seeds_for_batch",
+      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py"
+    },
+    {
+      "name": "get_cost_elements_for_batch",
+      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py"
+    },
+    {
+      "name": "get_oil_cake_rates",
+      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py"
+    },
+    {
+      "name": "add_batch",
+      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py"
+    },
+    {
+      "name": "get_batch_history",
+      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py"
+    },
+    {
+      "name": "get_oil_types_for_blending",
+      "file": "puvi-backend/puvi-backend-main/modules/blending.py"
+    },
+    {
+      "name": "get_batches_for_oil_type",
+      "file": "puvi-backend/puvi-backend-main/modules/blending.py"
+    },
+    {
+      "name": "create_blend",
+      "file": "puvi-backend/puvi-backend-main/modules/blending.py"
+    },
+    {
+      "name": "get_blend_history",
+      "file": "puvi-backend/puvi-backend-main/modules/blending.py"
+    },
+    {
+      "name": "get_cost_elements_master",
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py"
+    },
+    {
+      "name": "get_cost_elements_by_stage",
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py"
+    },
+    {
+      "name": "get_cost_elements_by_activity",
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py"
+    },
+    {
+      "name": "populate_activities",
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py"
+    },
+    {
+      "name": "save_time_tracking",
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py"
+    },
+    {
+      "name": "calculate_batch_costs",
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py"
+    },
+    {
+      "name": "save_batch_costs",
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py"
+    },
+    {
+      "name": "get_validation_report",
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py"
+    },
+    {
+      "name": "get_batch_cost_summary",
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py"
+    },
+    {
+      "name": "calculate_time_based_costs",
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py"
+    },
+    {
+      "name": "decimal_handler",
+      "file": "puvi-backend/puvi-backend-main/modules/masters_common.py"
+    },
+    {
+      "name": "log_audit",
+      "file": "puvi-backend/puvi-backend-main/modules/masters_common.py"
+    },
+    {
+      "name": "check_dependencies",
+      "file": "puvi-backend/puvi-backend-main/modules/masters_common.py"
+    },
+    {
+      "name": "validate_field",
+      "file": "puvi-backend/puvi-backend-main/modules/masters_common.py"
+    },
+    {
+      "name": "transform_field_value",
+      "file": "puvi-backend/puvi-backend-main/modules/masters_common.py"
+    },
+    {
+      "name": "validate_master_data",
+      "file": "puvi-backend/puvi-backend-main/modules/masters_common.py"
+    },
+    {
+      "name": "soft_delete_record",
+      "file": "puvi-backend/puvi-backend-main/modules/masters_common.py"
+    },
+    {
+      "name": "restore_record",
+      "file": "puvi-backend/puvi-backend-main/modules/masters_common.py"
+    },
+    {
+      "name": "get_record_by_id",
+      "file": "puvi-backend/puvi-backend-main/modules/masters_common.py"
+    },
+    {
+      "name": "get_export_query",
+      "file": "puvi-backend/puvi-backend-main/modules/masters_common.py"
+    },
+    {
+      "name": "get_master_types",
+      "file": "puvi-backend/puvi-backend-main/modules/masters_common.py"
+    },
+    {
+      "name": "get_master_config",
+      "file": "puvi-backend/puvi-backend-main/modules/masters_common.py"
+    },
+    {
+      "name": "format_response_data",
+      "file": "puvi-backend/puvi-backend-main/modules/masters_common.py"
+    },
+    {
+      "name": "list_master_types",
+      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+    },
+    {
+      "name": "get_master_schema",
+      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+    },
+    {
+      "name": "list_master_records",
+      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+    },
+    {
+      "name": "get_single_record",
+      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+    },
+    {
+      "name": "create_record",
+      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+    },
+    {
+      "name": "update_record",
+      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+    },
+    {
+      "name": "delete_record",
+      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+    },
+    {
+      "name": "restore_record_endpoint",
+      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+    },
+    {
+      "name": "check_record_dependencies",
+      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+    },
+    {
+      "name": "export_to_csv",
+      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+    },
+    {
+      "name": "import_from_csv",
+      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+    },
+    {
+      "name": "get_byproduct_types",
+      "file": "puvi-backend/puvi-backend-main/modules/material_sales.py"
+    },
+    {
+      "name": "get_material_sales_inventory",
+      "file": "puvi-backend/puvi-backend-main/modules/material_sales.py"
+    },
+    {
+      "name": "add_material_sale",
+      "file": "puvi-backend/puvi-backend-main/modules/material_sales.py"
+    },
+    {
+      "name": "get_material_sales_history",
+      "file": "puvi-backend/puvi-backend-main/modules/material_sales.py"
+    },
+    {
+      "name": "get_cost_reconciliation_report",
+      "file": "puvi-backend/puvi-backend-main/modules/material_sales.py"
+    },
+    {
+      "name": "get_writeoff_reasons",
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py"
+    },
+    {
+      "name": "get_inventory_for_writeoff",
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py"
+    },
+    {
+      "name": "add_writeoff",
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py"
+    },
+    {
+      "name": "get_writeoff_history",
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py"
+    },
+    {
+      "name": "decimal_handler",
+      "file": "puvi-backend/puvi-backend-main/modules/opening_balance.py"
+    },
+    {
+      "name": "get_system_status",
+      "file": "puvi-backend/puvi-backend-main/modules/opening_balance.py"
+    },
+    {
+      "name": "configure_system",
+      "file": "puvi-backend/puvi-backend-main/modules/opening_balance.py"
+    },
+    {
+      "name": "get_materials_for_opening",
+      "file": "puvi-backend/puvi-backend-main/modules/opening_balance.py"
+    },
+    {
+      "name": "save_opening_balances",
+      "file": "puvi-backend/puvi-backend-main/modules/opening_balance.py"
+    },
+    {
+      "name": "initialize_system",
+      "file": "puvi-backend/puvi-backend-main/modules/opening_balance.py"
+    },
+    {
+      "name": "close_financial_year",
+      "file": "puvi-backend/puvi-backend-main/modules/opening_balance.py"
+    },
+    {
+      "name": "download_template",
+      "file": "puvi-backend/puvi-backend-main/modules/opening_balance.py"
+    },
+    {
+      "name": "import_opening_balances",
+      "file": "puvi-backend/puvi-backend-main/modules/opening_balance.py"
+    },
+    {
+      "name": "get_materials",
+      "file": "puvi-backend/puvi-backend-main/modules/purchase.py"
+    },
+    {
+      "name": "add_purchase",
+      "file": "puvi-backend/puvi-backend-main/modules/purchase.py"
+    },
+    {
+      "name": "get_purchase_history",
+      "file": "puvi-backend/puvi-backend-main/modules/purchase.py"
+    },
+    {
+      "name": "get_suppliers",
+      "file": "puvi-backend/puvi-backend-main/modules/purchase.py"
+    },
+    {
+      "name": "get_tags",
+      "file": "puvi-backend/puvi-backend-main/modules/purchase.py"
+    },
+    {
+      "name": "get_sku_master_list",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py"
+    },
+    {
+      "name": "create_sku",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py"
+    },
+    {
+      "name": "get_sku_bom",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py"
+    },
+    {
+      "name": "create_or_update_bom",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py"
+    },
+    {
+      "name": "get_materials_for_bom",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py"
+    },
+    {
+      "name": "get_cost_preview",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py"
+    },
+    {
+      "name": "get_bom_history",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py"
+    },
+    {
+      "name": "get_sku_master_list",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_production.py"
+    },
+    {
+      "name": "get_sku_master_details",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_production.py"
+    },
+    {
+      "name": "create_sku_master",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_production.py"
+    },
+    {
+      "name": "update_sku_master",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_production.py"
+    },
+    {
+      "name": "get_mrp_history",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_production.py"
+    },
+    {
+      "name": "get_current_mrp",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_production.py"
+    },
+    {
+      "name": "create_sku_production",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_production.py"
+    },
+    {
+      "name": "get_production_history",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_production.py"
+    },
+    {
+      "name": "get_expiry_alerts",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_production.py"
+    },
+    {
+      "name": "get_expiry_summary",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_production.py"
+    },
+    {
+      "name": "get_fefo_allocation_for_sku",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_production.py"
+    },
+    {
+      "name": "get_production_summary_report",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_production.py"
+    },
+    {
+      "name": "create_production_plan",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_production.py"
+    },
+    {
+      "name": "allocate_oil_for_production",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_production.py"
+    },
+    {
+      "name": "date_to_day_number",
+      "file": "puvi-backend/puvi-backend-main/utils/date_utils.py"
+    },
+    {
+      "name": "parse_date",
+      "file": "puvi-backend/puvi-backend-main/utils/date_utils.py"
+    },
+    {
+      "name": "integer_to_date",
+      "file": "puvi-backend/puvi-backend-main/utils/date_utils.py"
+    },
+    {
+      "name": "get_current_day_number",
+      "file": "puvi-backend/puvi-backend-main/utils/date_utils.py"
+    },
+    {
+      "name": "format_date_for_display",
+      "file": "puvi-backend/puvi-backend-main/utils/date_utils.py"
+    },
+    {
+      "name": "format_date_indian",
+      "file": "puvi-backend/puvi-backend-main/utils/date_utils.py"
+    },
+    {
+      "name": "validate_date_range",
+      "file": "puvi-backend/puvi-backend-main/utils/date_utils.py"
+    },
+    {
+      "name": "get_financial_year",
+      "file": "puvi-backend/puvi-backend-main/utils/date_utils.py"
+    },
+    {
+      "name": "get_month_year",
+      "file": "puvi-backend/puvi-backend-main/utils/date_utils.py"
+    },
+    {
+      "name": "calculate_expiry_date",
+      "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py"
+    },
+    {
+      "name": "get_days_to_expiry",
+      "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py"
+    },
+    {
+      "name": "get_expiry_status",
+      "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py"
+    },
+    {
+      "name": "validate_shelf_life",
+      "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py"
+    },
+    {
+      "name": "check_near_expiry_items",
+      "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py"
+    },
+    {
+      "name": "update_expiry_tracking",
+      "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py"
+    },
+    {
+      "name": "get_fefo_allocation",
+      "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py"
+    },
+    {
+      "name": "format_expiry_date_display",
+      "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py"
+    },
+    {
+      "name": "get_expiry_alert_summary",
+      "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py"
+    },
+    {
+      "name": "get_financial_year",
+      "file": "puvi-backend/puvi-backend-main/utils/traceability.py"
+    },
+    {
+      "name": "get_next_serial",
+      "file": "puvi-backend/puvi-backend-main/utils/traceability.py"
+    },
+    {
+      "name": "get_next_batch_serial",
+      "file": "puvi-backend/puvi-backend-main/utils/traceability.py"
+    },
+    {
+      "name": "generate_purchase_traceable_code",
+      "file": "puvi-backend/puvi-backend-main/utils/traceability.py"
+    },
+    {
+      "name": "generate_batch_traceable_code",
+      "file": "puvi-backend/puvi-backend-main/utils/traceability.py"
+    },
+    {
+      "name": "generate_batch_traceable_code_alternative",
+      "file": "puvi-backend/puvi-backend-main/utils/traceability.py"
+    },
+    {
+      "name": "generate_blend_traceable_code",
+      "file": "puvi-backend/puvi-backend-main/utils/traceability.py"
+    },
+    {
+      "name": "extract_oil_type_from_code",
+      "file": "puvi-backend/puvi-backend-main/utils/traceability.py"
+    },
+    {
+      "name": "validate_material_short_code",
+      "file": "puvi-backend/puvi-backend-main/utils/traceability.py"
+    },
+    {
+      "name": "validate_supplier_short_code",
+      "file": "puvi-backend/puvi-backend-main/utils/traceability.py"
+    },
+    {
+      "name": "validate_production_unit_code",
+      "file": "puvi-backend/puvi-backend-main/utils/traceability.py"
+    },
+    {
+      "name": "safe_decimal",
+      "file": "puvi-backend/puvi-backend-main/utils/validation.py"
+    },
+    {
+      "name": "safe_float",
+      "file": "puvi-backend/puvi-backend-main/utils/validation.py"
+    },
+    {
+      "name": "safe_int",
+      "file": "puvi-backend/puvi-backend-main/utils/validation.py"
+    },
+    {
+      "name": "validate_positive_number",
+      "file": "puvi-backend/puvi-backend-main/utils/validation.py"
+    },
+    {
+      "name": "validate_percentage",
+      "file": "puvi-backend/puvi-backend-main/utils/validation.py"
+    },
+    {
+      "name": "validate_required_fields",
+      "file": "puvi-backend/puvi-backend-main/utils/validation.py"
+    },
+    {
+      "name": "handle_preflight",
+      "file": "puvi-backend/puvi-backend-main/app.py"
+    },
+    {
+      "name": "home",
+      "file": "puvi-backend/puvi-backend-main/app.py"
+    },
+    {
+      "name": "health_check",
+      "file": "puvi-backend/puvi-backend-main/app.py"
+    },
+    {
+      "name": "system_info",
+      "file": "puvi-backend/puvi-backend-main/app.py"
+    },
+    {
+      "name": "not_found",
+      "file": "puvi-backend/puvi-backend-main/app.py"
+    },
+    {
+      "name": "internal_error",
+      "file": "puvi-backend/puvi-backend-main/app.py"
+    },
+    {
+      "name": "get_db_connection",
+      "file": "puvi-backend/puvi-backend-main/db_utils.py"
+    },
+    {
+      "name": "close_connection",
+      "file": "puvi-backend/puvi-backend-main/db_utils.py"
+    },
+    {
+      "name": "update_inventory",
+      "file": "puvi-backend/puvi-backend-main/inventory_utils.py"
+    }
+  ],
   "components": [],
   "tags": []
 }
