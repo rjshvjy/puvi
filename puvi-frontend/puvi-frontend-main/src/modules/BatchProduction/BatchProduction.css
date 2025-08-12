@@ -105,6 +105,12 @@
   color: #495057;
 }
 
+.step-content h4 {
+  font-size: 16px;
+  margin-bottom: 10px;
+  color: #495057;
+}
+
 .form-group {
   margin-bottom: 20px;
 }
@@ -137,7 +143,7 @@
   margin-top: 5px;
 }
 
-/* Seed Selection Area - Fixed */
+/* Seed Selection Area */
 .seed-selection-label {
   display: block;
   margin-bottom: 10px;
@@ -206,8 +212,8 @@
 }
 
 .selected-seed-info {
-  margin-bottom: 20px;
-  padding: 15px;
+  margin-bottom: 15px;
+  padding: 10px;
   background-color: #e9ecef;
   border-radius: 5px;
 }
@@ -235,6 +241,9 @@
 
 .yield-input-group input {
   flex: 1;
+  padding: 10px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
 }
 
 .yield-percentage {
@@ -323,7 +332,7 @@
   opacity: 0.65;
 }
 
-/* Cost Review Table */
+/* Cost Review Tables */
 .cost-table {
   width: 100%;
   border-collapse: collapse;
@@ -336,14 +345,14 @@
 }
 
 .cost-table th {
-  padding: 12px;
+  padding: 10px;
   text-align: left;
   font-weight: 600;
   border-bottom: 2px solid #dee2e6;
 }
 
 .cost-table td {
-  padding: 12px;
+  padding: 10px;
   border-bottom: 1px solid #e9ecef;
 }
 
@@ -367,10 +376,20 @@
 .cost-table .total-row {
   background-color: #343a40;
   color: white;
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .cost-table .total-row td {
+  padding: 12px;
+}
+
+.cost-table .net-oil-row {
+  background-color: #343a40;
+  color: white;
+  font-size: 18px;
+}
+
+.cost-table .net-oil-row td {
   padding: 15px;
 }
 
@@ -379,6 +398,147 @@
   color: white;
 }
 
+.cost-table .per-kg-row td {
+  padding: 10px;
+}
+
+.cost-table .per-kg-row .amount {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* Extended Cost Table Styles */
+.extended-cost-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: white;
+  margin-bottom: 20px;
+}
+
+.extended-cost-table thead {
+  background-color: #e9ecef;
+}
+
+.extended-cost-table th {
+  padding: 10px;
+  text-align: left;
+}
+
+.extended-cost-table td {
+  padding: 10px;
+}
+
+.cost-row-drying {
+  background-color: #f0f8ff;
+}
+
+.cost-row-crushing {
+  background-color: #f0fff0;
+}
+
+.cost-row-override {
+  background-color: #fff3cd;
+}
+
+/* Badges */
+.stage-badge {
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 12px;
+  color: white;
+  display: inline-block;
+}
+
+.stage-badge.drying {
+  background-color: #007bff;
+}
+
+.stage-badge.crushing {
+  background-color: #28a745;
+}
+
+.stage-badge.additional,
+.stage-badge.batch {
+  background-color: #6c757d;
+}
+
+.activity-badge {
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 12px;
+  display: inline-block;
+  font-weight: 500;
+}
+
+.activity-badge.drying {
+  background-color: #cce5ff;
+  color: #004085;
+}
+
+.activity-badge.crushing {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.activity-badge.filtering {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.activity-badge.common {
+  background-color: #e2e3e5;
+  color: #383d41;
+}
+
+.activity-badge.quality {
+  background-color: #d1ecf1;
+  color: #0c5460;
+}
+
+.activity-badge.transport {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+.activity-badge.maintenance {
+  background-color: #e7e8ea;
+  color: #495057;
+}
+
+.activity-badge.general {
+  background-color: #f8f9fa;
+  color: #6c757d;
+}
+
+.category-badge {
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-size: 12px;
+  color: #495057;
+  display: inline-block;
+}
+
+.category-badge.labor {
+  background-color: #d4edda;
+}
+
+.category-badge.utilities {
+  background-color: #cce5ff;
+}
+
+.category-badge.consumables {
+  background-color: #fff3cd;
+}
+
+.category-badge.transport {
+  background-color: #f8d7da;
+}
+
+.category-badge.general {
+  background-color: #e9ecef;
+}
+
+/* Override Styles */
 .override-input {
   width: 80px;
   padding: 5px;
@@ -387,12 +547,43 @@
   text-align: center;
 }
 
+.override-warning {
+  color: #dc3545;
+  font-weight: bold;
+}
+
+.override-info {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #fff3cd;
+  border-radius: 5px;
+}
+
+.override-info ul {
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+
+/* Time Tracking Info */
+.time-tracking-info {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #cce5ff;
+  border-radius: 5px;
+}
+
+/* Optional Element */
+.optional-indicator {
+  color: #6c757d;
+  font-size: 12px;
+  margin-left: 5px;
+}
+
 /* History Table */
 .history-container {
   background-color: #f8f9fa;
-  padding: 25px;
+  padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .history-container h3 {
@@ -403,14 +594,12 @@
 
 .history-table-wrapper {
   overflow-x: auto;
-  background-color: white;
-  border-radius: 4px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
 .history-table {
   width: 100%;
   border-collapse: collapse;
+  background-color: white;
 }
 
 .history-table thead {
@@ -420,7 +609,6 @@
 .history-table th {
   padding: 12px;
   text-align: left;
-  font-weight: 600;
   border-bottom: 2px solid #dee2e6;
   white-space: nowrap;
 }
@@ -430,27 +618,16 @@
   border-bottom: 1px solid #e9ecef;
 }
 
-.history-table .text-center {
-  text-align: center;
-}
-
-.history-table .text-right {
-  text-align: right;
-}
-
-.traceable-code-cell {
+.traceable-code {
   font-family: monospace;
   font-size: 13px;
   background-color: #f8f9fa;
-  padding: 4px 8px;
-  border-radius: 3px;
 }
 
 .yield-badge {
   padding: 4px 8px;
   border-radius: 4px;
-  font-size: 13px;
-  font-weight: 600;
+  display: inline-block;
 }
 
 .yield-badge.high {
@@ -463,7 +640,7 @@
   color: #856404;
 }
 
-.view-btn {
+.view-costs-btn {
   padding: 6px 12px;
   background-color: #17a2b8;
   color: white;
@@ -471,10 +648,9 @@
   border-radius: 4px;
   font-size: 13px;
   cursor: pointer;
-  transition: background-color 0.2s;
 }
 
-.view-btn:hover {
+.view-costs-btn:hover {
   background-color: #138496;
 }
 
@@ -515,6 +691,15 @@
   
   .cost-table th,
   .cost-table td {
+    padding: 8px;
+  }
+  
+  .extended-cost-table {
+    font-size: 14px;
+  }
+  
+  .extended-cost-table th,
+  .extended-cost-table td {
     padding: 8px;
   }
 }
