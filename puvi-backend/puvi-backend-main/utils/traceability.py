@@ -1,6 +1,7 @@
 """
 Traceability utilities for PUVI Oil Manufacturing System
 Handles generation of traceable codes throughout the production cycle
+File Path: puvi-backend/puvi-backend-main/utils/traceability.py
 """
 
 from datetime import date, timedelta
@@ -51,6 +52,38 @@ def get_next_serial(material_id, supplier_id, financial_year, cur):
     return cur.fetchone()[0]
 
 
+def get_next_batch_serial(seed_purchase_code, production_date, cur):
+    """
+    Get next serial number for batches from same seed purchase
+    Uses a special tracking entry for batch production
+    
+    Args:
+        seed_purchase_code: The traceable code from seed purchase
+        production_date: Production date as integer (days since epoch)
+        cur: Database cursor
+    
+    Returns:
+        int: Next serial number for this seed purchase
+    """
+    # Get financial year from production date
+    fy = get_financial_year(production_date)
+    
+    # Use special material_id = -1 and supplier_id = -1 for batch tracking
+    # Store the seed_purchase_code in the notes field for reference
+    cur.execute("""
+        INSERT INTO serial_number_tracking
+        (material_id, supplier_id, financial_year, current_serial)
+        VALUES (-1, -1, %s, 1)
+        ON CONFLICT (material_id, supplier_id, financial_year)
+        DO UPDATE SET 
+            current_serial = serial_number_tracking.current_serial + 1,
+            last_updated = CURRENT_TIMESTAMP
+        RETURNING current_serial
+    """, (f"BATCH-{seed_purchase_code[:20]}",))  # Use first 20 chars as unique key
+    
+    return cur.fetchone()[0]
+
+
 def generate_purchase_traceable_code(material_id, supplier_id, purchase_date, cur):
     """
     Generate traceable code for purchase
@@ -95,13 +128,14 @@ def generate_purchase_traceable_code(material_id, supplier_id, purchase_date, cu
 def generate_batch_traceable_code(seed_material_id, seed_purchase_code, production_date, cur):
     """
     Generate traceable code for batch production
-    Format: [OilType]-[SupplierTrace]-[SeedPurchaseDate]-[ProductionUnit]
-    Example: GNO-K-05082025-PUV
+    Format: [OilType]-[SupplierTrace]-[BatchSerial]-[SeedPurchaseDate]-[ProductionUnit]
+    Example: GNO-K-1-05082025-PUV (first batch from this seed purchase)
+    Example: GNO-K-2-05082025-PUV (second batch from same seed purchase)
     
     Args:
         seed_material_id: ID of the seed material used
         seed_purchase_code: Traceable code from seed purchase
-        production_date: Production date as integer (not used in code, kept for consistency)
+        production_date: Production date as integer
         cur: Database cursor
     
     Returns:
@@ -149,8 +183,80 @@ def generate_batch_traceable_code(seed_material_id, seed_purchase_code, producti
     
     unit_code = result[0]  # PUV
     
-    # Generate code: GNO-K-05082025-PUV
-    return f"{oil_code}-{purchase_date}-{unit_code}"
+    # Get batch serial number for this seed purchase
+    batch_serial = get_next_batch_serial(seed_purchase_code, production_date, cur)
+    
+    # Generate code with batch serial: GNO-K-1-05082025-PUV
+    return f"{oil_code}-{supplier_trace}-{batch_serial}-{purchase_date}-{unit_code}"
+
+
+def generate_batch_traceable_code_alternative(seed_material_id, seed_purchase_code, production_date, batch_description, cur):
+    """
+    Alternative approach: Include production date and batch description
+    Format: [OilType]-[SupplierTrace]-[ProductionDate]-[BatchDesc]-[ProductionUnit]
+    Example: GNO-K-12082025-MORNING-PUV
+    
+    This ensures uniqueness even without serial numbers
+    
+    Args:
+        seed_material_id: ID of the seed material used
+        seed_purchase_code: Traceable code from seed purchase
+        production_date: Production date as integer
+        batch_description: Batch description (e.g., 'Morning', 'Evening')
+        cur: Database cursor
+    
+    Returns:
+        str: Generated traceable code
+    """
+    # Extract info from seed purchase code
+    parts = seed_purchase_code.split('-')
+    if len(parts) < 5:
+        raise ValueError(f"Invalid seed purchase code format: {seed_purchase_code}")
+    
+    supplier_trace = parts[1]  # K
+    
+    # Get oil material code (convert seed code to oil code)
+    cur.execute("""
+        SELECT short_code FROM materials
+        WHERE material_id = %s
+    """, (seed_material_id,))
+    
+    result = cur.fetchone()
+    if not result or not result[0]:
+        raise ValueError(f"Material short code not set for material ID: {seed_material_id}")
+    
+    seed_code = result[0]
+    
+    # Convert seed code to oil code
+    if 'S-' in seed_code:
+        oil_code = seed_code.replace('S-', 'O-')
+    else:
+        oil_code = seed_code
+    
+    # Get production unit code
+    cur.execute("""
+        SELECT short_code FROM production_units
+        WHERE is_own_unit = true
+        ORDER BY unit_id
+        LIMIT 1
+    """)
+    
+    result = cur.fetchone()
+    if not result:
+        raise ValueError("No production unit configured")
+    
+    unit_code = result[0]
+    
+    # Format production date as DDMMYYYY
+    dt = date(1970, 1, 1) + timedelta(days=production_date)
+    prod_date_str = dt.strftime('%d%m%Y')
+    
+    # Clean batch description (remove spaces, special chars, limit length)
+    import re
+    clean_desc = re.sub(r'[^A-Z0-9]', '', batch_description.upper())[:6]
+    
+    # Generate code: GNO-K-12082025-MORN-PUV
+    return f"{oil_code}-{supplier_trace}-{prod_date_str}-{clean_desc}-{unit_code}"
 
 
 def generate_blend_traceable_code(blend_components, blend_date, cur):
@@ -178,11 +284,15 @@ def generate_blend_traceable_code(blend_components, blend_date, cur):
     
     for comp in sorted_components:
         # Parse traceable code
-        # Could be: GNO-K-05082025-PUV (from extraction)
+        # Could be: GNO-K-1-05082025-PUV (from extraction with new format)
+        # Or: GNO-K-05082025-PUV (from extraction with old format)
         # Or: GNOKU-07082025-PUV (from previous blend)
         parts = comp['traceable_code'].split('-')
         
-        if len(parts) == 4:  # From extraction
+        if len(parts) == 5:  # New format with serial
+            oil_type = parts[0]  # GNO
+            supplier_codes.append(parts[1])  # K
+        elif len(parts) == 4:  # Old format without serial
             oil_type = parts[0]  # GNO
             supplier_codes.append(parts[1])  # K
         elif len(parts) == 3:  # From blend
