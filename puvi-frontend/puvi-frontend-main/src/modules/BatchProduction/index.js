@@ -1,5 +1,6 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js
 // Complete Batch Production Module with Full Cost Management Integration
+// FIXED: Override rate type conversion and persistence issues
 
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
@@ -133,7 +134,7 @@ const BatchProduction = () => {
     }));
   };
 
-  // Calculate all extended costs including overrides
+  // FIXED: Calculate all extended costs including overrides with proper type conversion
   const calculateExtendedCosts = () => {
     const allCosts = [];
     
@@ -145,10 +146,11 @@ const BatchProduction = () => {
           element_name: cost.element_name,
           category: cost.category || 'Drying',
           activity: cost.activity || 'Drying',
-          quantity: cost.quantity || 0,
-          rate: cost.rate || cost.default_rate,
-          override_rate: cost.overrideRate || null,
-          total_cost: cost.totalCost || 0,
+          quantity: safeParseFloat(cost.quantity, 0),
+          rate: safeParseFloat(cost.rate || cost.default_rate, 0),
+          // FIXED: Ensure override_rate is converted to number or null
+          override_rate: cost.overrideRate ? safeParseFloat(cost.overrideRate, null) : null,
+          total_cost: safeParseFloat(cost.totalCost, 0),
           is_optional: cost.is_optional || false,
           calculation_method: cost.calculation_method,
           stage: 'drying'
@@ -164,10 +166,11 @@ const BatchProduction = () => {
           element_name: cost.element_name,
           category: cost.category || 'Crushing',
           activity: cost.activity || 'Crushing',
-          quantity: cost.quantity || 0,
-          rate: cost.rate || cost.default_rate,
-          override_rate: cost.overrideRate || null,
-          total_cost: cost.totalCost || 0,
+          quantity: safeParseFloat(cost.quantity, 0),
+          rate: safeParseFloat(cost.rate || cost.default_rate, 0),
+          // FIXED: Ensure override_rate is converted to number or null
+          override_rate: cost.overrideRate ? safeParseFloat(cost.overrideRate, null) : null,
+          total_cost: safeParseFloat(cost.totalCost, 0),
           is_optional: cost.is_optional || false,
           calculation_method: cost.calculation_method,
           stage: 'crushing'
@@ -186,10 +189,11 @@ const BatchProduction = () => {
             element_name: cost.element_name,
             category: cost.category || 'Additional',
             activity: cost.activity || 'General',
-            quantity: cost.quantity || 0,
-            rate: cost.rate || cost.default_rate,
-            override_rate: cost.overrideRate || null,
-            total_cost: cost.totalCost || 0,
+            quantity: safeParseFloat(cost.quantity, 0),
+            rate: safeParseFloat(cost.rate || cost.default_rate, 0),
+            // FIXED: Ensure override_rate is converted to number or null
+            override_rate: cost.overrideRate ? safeParseFloat(cost.overrideRate, null) : null,
+            total_cost: safeParseFloat(cost.totalCost, 0),
             is_optional: cost.is_optional || false,
             calculation_method: cost.calculation_method,
             stage: 'additional'
@@ -802,7 +806,7 @@ ${timeTrackingData ? `\n⏱️ Time Tracked: ${timeTrackingData.rounded_hours} h
             </div>
           )}
 
-          {/* Step 4: Complete Cost Review */}
+          {/* Step 4: Complete Cost Review - FIXED: Properly handle override display */}
           {currentStep === 4 && costs && (
             <div className="step-content">
               <h3>Complete Cost Review & Summary</h3>
@@ -854,7 +858,7 @@ ${timeTrackingData ? `\n⏱️ Time Tracked: ${timeTrackingData.rounded_hours} h
                 </tbody>
               </table>
 
-              {/* Extended Costs Table */}
+              {/* Extended Costs Table - FIXED: Properly display override rates */}
               {costs.extendedCosts.length > 0 && (
                 <>
                   <h4>Extended Cost Elements (All Stages)</h4>
@@ -872,48 +876,53 @@ ${timeTrackingData ? `\n⏱️ Time Tracked: ${timeTrackingData.rounded_hours} h
                       </tr>
                     </thead>
                     <tbody>
-                      {costs.extendedCosts.map((cost, idx) => (
-                        <tr key={idx} className={
-                          cost.stage === 'drying' ? 'cost-row-drying' : 
-                          cost.stage === 'crushing' ? 'cost-row-crushing' :
-                          cost.override_rate ? 'cost-row-override' : 
-                          ''
-                        }>
-                          <td>
-                            {cost.element_name}
-                            {cost.is_optional && <span className="optional-indicator">(Optional)</span>}
-                          </td>
-                          <td className="text-center">
-                            <span className={`stage-badge ${cost.stage}`}>
-                              {cost.stage}
-                            </span>
-                          </td>
-                          <td className="text-center">
-                            <span className={`activity-badge ${cost.activity?.toLowerCase()}`}>
-                              {cost.activity || 'General'}
-                            </span>
-                          </td>
-                          <td className="text-center">
-                            <span className={`category-badge ${cost.category?.toLowerCase()}`}>
-                              {cost.category}
-                            </span>
-                          </td>
-                          <td className="text-center">
-                            {cost.quantity.toFixed(2)}
-                            {cost.calculation_method === 'per_hour' && ' hrs'}
-                            {cost.calculation_method === 'per_kg' && ' kg'}
-                          </td>
-                          <td className="text-center">₹{cost.rate.toFixed(2)}</td>
-                          <td className="text-center">
-                            {cost.override_rate ? (
-                              <span className="override-warning">
-                                ₹{cost.override_rate.toFixed(2)}
+                      {costs.extendedCosts.map((cost, idx) => {
+                        // FIXED: Use actual rate (override if present, else default)
+                        const displayRate = cost.override_rate !== null ? cost.override_rate : cost.rate;
+                        
+                        return (
+                          <tr key={idx} className={
+                            cost.stage === 'drying' ? 'cost-row-drying' : 
+                            cost.stage === 'crushing' ? 'cost-row-crushing' :
+                            cost.override_rate !== null ? 'cost-row-override' : 
+                            ''
+                          }>
+                            <td>
+                              {cost.element_name}
+                              {cost.is_optional && <span className="optional-indicator">(Optional)</span>}
+                            </td>
+                            <td className="text-center">
+                              <span className={`stage-badge ${cost.stage}`}>
+                                {cost.stage}
                               </span>
-                            ) : '-'}
-                          </td>
-                          <td className="text-right">₹{cost.total_cost.toFixed(2)}</td>
-                        </tr>
-                      ))}
+                            </td>
+                            <td className="text-center">
+                              <span className={`activity-badge ${cost.activity?.toLowerCase()}`}>
+                                {cost.activity || 'General'}
+                              </span>
+                            </td>
+                            <td className="text-center">
+                              <span className={`category-badge ${cost.category?.toLowerCase()}`}>
+                                {cost.category}
+                              </span>
+                            </td>
+                            <td className="text-center">
+                              {cost.quantity.toFixed(2)}
+                              {cost.calculation_method === 'per_hour' && ' hrs'}
+                              {cost.calculation_method === 'per_kg' && ' kg'}
+                            </td>
+                            <td className="text-center">₹{cost.rate.toFixed(2)}</td>
+                            <td className="text-center">
+                              {cost.override_rate !== null ? (
+                                <span className="override-warning">
+                                  ₹{cost.override_rate.toFixed(2)}
+                                </span>
+                              ) : '-'}
+                            </td>
+                            <td className="text-right">₹{cost.total_cost.toFixed(2)}</td>
+                          </tr>
+                        );
+                      })}
                       <tr className="subtotal-row">
                         <td colSpan="7">Subtotal Extended Costs</td>
                         <td className="text-right">₹{costs.extendedCostTotal.toFixed(2)}</td>
@@ -969,12 +978,12 @@ ${timeTrackingData ? `\n⏱️ Time Tracked: ${timeTrackingData.rounded_hours} h
                 </tbody>
               </table>
 
-              {/* Override Warning */}
-              {costs.extendedCosts.filter(c => c.override_rate).length > 0 && (
+              {/* Override Warning - FIXED: Check for override_rate not null */}
+              {costs.extendedCosts.filter(c => c.override_rate !== null).length > 0 && (
                 <div className="override-info">
                   <strong>⚠️ Cost Overrides Applied:</strong>
                   <ul>
-                    {costs.extendedCosts.filter(c => c.override_rate).map((cost, idx) => (
+                    {costs.extendedCosts.filter(c => c.override_rate !== null).map((cost, idx) => (
                       <li key={idx}>
                         {cost.element_name}: ₹{cost.rate.toFixed(2)} → ₹{cost.override_rate.toFixed(2)}
                       </li>
