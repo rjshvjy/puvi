@@ -1,5 +1,5 @@
 // .dev-index/scripts/gen-index-ast.mjs
-// FIXED VERSION - Handles working directory correctly
+// COMPREHENSIVE VERSION - Handles all React patterns in your codebase
 
 import { parse } from '@babel/parser';
 import traverse from '@babel/traverse';
@@ -12,32 +12,48 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// CRITICAL FIX: Get repo root (go up 2 levels from scripts folder)
+// Get repo root
 const REPO_ROOT = path.resolve(__dirname, '..', '..');
-process.chdir(REPO_ROOT); // Change to repo root for glob patterns
+process.chdir(REPO_ROOT);
 
 console.log('Working directory:', process.cwd());
-console.log('Script directory:', __dirname);
 
-// ---- Configure what to scan (relative to REPO ROOT) ----
+// Include all possible React file locations and patterns
 const GLOBS = [
+  // Main React app files
+  'puvi-frontend/puvi-frontend-main/src/*.{js,jsx}',
   'puvi-frontend/puvi-frontend-main/src/**/*.{js,jsx}',
+  
+  // Module components (your main components)
+  'puvi-frontend/puvi-frontend-main/src/modules/**/*.{js,jsx}',
+  'puvi-frontend/puvi-frontend-main/src/modules/**/index.{js,jsx}',
+  
+  // Reusable components
+  'puvi-frontend/puvi-frontend-main/src/components/**/*.{js,jsx}',
+  
+  // Services (contain API exports but not components)
+  'puvi-frontend/puvi-frontend-main/src/services/**/*.{js,jsx}',
+  
+  // Python backend files
   'puvi-backend/puvi-backend-main/modules/**/*.py',
   'puvi-backend/puvi-backend-main/utils/**/*.py',
-  'puvi-backend/puvi-backend-main/*.py',  // Main Python files in root
+  'puvi-backend/puvi-backend-main/*.py',
+  
+  // Exclusions
   '!**/node_modules/**',
   '!**/build/**',
   '!**/dist/**',
   '!**/.git/**',
   '!**/venv/**',
-  '!**/__pycache__/**'
+  '!**/__pycache__/**',
+  '!**/*.test.js',
+  '!**/*.spec.js'
 ];
 
-// Safety limits
 const MAX_FILE_SIZE_KB = 500;
 const MAX_FILES = 1000;
 
-// -------- Helpers --------
+// Helpers
 const isProbablyBinary = (buf) => {
   let nonText = 0;
   const len = Math.min(buf.length, 1024);
@@ -73,7 +89,7 @@ const readTextFile = (file) => {
 const parseAst = (code) =>
   parse(code, {
     sourceType: 'module',
-    plugins: ['jsx', 'classProperties', 'decorators-legacy'],
+    plugins: ['jsx', 'classProperties', 'decorators-legacy', 'typescript', 'dynamicImport'],
     errorRecovery: true
   });
 
@@ -87,13 +103,35 @@ const collectTags = (code, file) => {
   return out;
 };
 
-// -------- Build index --------
+// Check if a name is likely a React component
+const isLikelyComponent = (name) => {
+  return name && /^[A-Z]/.test(name) && !name.includes('_');
+};
+
+// Extract component name from file path for index.js files
+const getComponentFromPath = (filePath) => {
+  const parts = filePath.split('/');
+  // For module index files like modules/Purchase/index.js
+  if (filePath.includes('/modules/') && filePath.endsWith('/index.js')) {
+    const moduleIndex = parts.indexOf('modules');
+    if (moduleIndex !== -1 && parts[moduleIndex + 1]) {
+      return parts[moduleIndex + 1];
+    }
+  }
+  // For component files
+  const fileName = path.basename(filePath, path.extname(filePath));
+  if (fileName !== 'index' && isLikelyComponent(fileName)) {
+    return fileName;
+  }
+  return null;
+};
+
+// Build index
 console.log('Starting index generation...');
 console.log('Searching for files with patterns:', GLOBS);
 
 const startTime = Date.now();
 
-// Search for files from repo root
 const files = await globby(GLOBS, { 
   cwd: REPO_ROOT,
   gitignore: true,
@@ -103,11 +141,24 @@ const files = await globby(GLOBS, {
 
 console.log(`Found ${files.length} files to process`);
 
+// Debug: Show file type breakdown
+const jsFiles = files.filter(f => f.endsWith('.js') || f.endsWith('.jsx'));
+const pyFiles = files.filter(f => f.endsWith('.py'));
+const moduleFiles = jsFiles.filter(f => f.includes('/modules/'));
+const componentFiles = jsFiles.filter(f => f.includes('/components/'));
+
+console.log(`- JavaScript/React files: ${jsFiles.length}`);
+console.log(`  - Module files: ${moduleFiles.length}`);
+console.log(`  - Component files: ${componentFiles.length}`);
+console.log(`- Python files: ${pyFiles.length}`);
+
+if (jsFiles.length === 0) {
+  console.warn('WARNING: No JavaScript/React files found!');
+  console.warn('Check if path exists: puvi-frontend/puvi-frontend-main/src/');
+}
+
 if (files.length === 0) {
-  console.error('ERROR: No files found! Check if the paths exist:');
-  console.error('- puvi-frontend/puvi-frontend-main/src/');
-  console.error('- puvi-backend/puvi-backend-main/modules/');
-  console.error('- puvi-backend/puvi-backend-main/utils/');
+  console.error('ERROR: No files found!');
   process.exit(1);
 }
 
@@ -119,6 +170,8 @@ if (files.length > MAX_FILES) {
 const index = {
   generatedAt: new Date().toISOString(),
   filesScanned: 0,
+  jsFilesScanned: 0,
+  pyFilesScanned: 0,
   routes: [],
   imports: [],
   exports: [],
@@ -127,10 +180,10 @@ const index = {
 };
 
 const importMap = new Map();
+const componentSet = new Set(); // Track unique components
 let filesProcessed = 0;
 
 for (const file of files) {
-  // Progress indicator
   if (filesProcessed % 50 === 0 && filesProcessed > 0) {
     const elapsed = Math.round((Date.now() - startTime) / 1000);
     console.log(`Progress: ${filesProcessed}/${files.length} files (${elapsed}s)`);
@@ -149,8 +202,9 @@ for (const file of files) {
     console.log(`  Tag error in ${file}: ${err.message}`);
   }
 
-  // Python files - simple pattern matching
+  // Python files
   if (file.endsWith('.py')) {
+    index.pyFilesScanned++;
     const lines = code.split('\n');
     for (let i = 0; i < lines.length; i++) {
       const line = lines[i];
@@ -166,7 +220,7 @@ for (const file of files) {
           });
         }
       }
-      // Python exports (def statements at module level)
+      // Python exports
       if (line.match(/^def\s+(\w+)/)) {
         const funcMatch = line.match(/^def\s+(\w+)/);
         if (funcMatch) {
@@ -177,75 +231,189 @@ for (const file of files) {
     continue;
   }
 
-  // JavaScript/JSX files - AST parsing
-  if (!file.endsWith('.js') && !file.endsWith('.jsx')) {
-    continue;
-  }
+  // JavaScript/JSX files
+  if (file.endsWith('.js') || file.endsWith('.jsx')) {
+    index.jsFilesScanned++;
+    
+    // For your specific patterns:
+    // 1. Module index files like modules/Purchase/index.js -> Component: Purchase
+    // 2. Component files like components/Masters/MastersList.jsx -> Component: MastersList
+    // 3. Main App.js -> Component: App
+    
+    let ast;
+    try {
+      ast = parseAst(code);
+    } catch (err) {
+      console.log(`  Parse error in ${file}: ${err.message}`);
+      continue;
+    }
 
-  let ast;
-  try {
-    ast = parseAst(code);
-  } catch (err) {
-    console.log(`  Parse error in ${file}: ${err.message}`);
-    continue;
-  }
-
-  try {
-    traverse(ast, {
-      ImportDeclaration(p) {
-        const from = p.node.source?.value;
-        if (!from) return;
-        if (!importMap.has(from)) importMap.set(from, new Set());
-        importMap.get(from).add(file);
-      },
-
-      ExportNamedDeclaration(p) {
-        const d = p.node.declaration;
-        if (d?.id?.name) {
-          index.exports.push({ name: d.id.name, file });
-        } else if (d?.declarations) {
-          d.declarations.forEach((decl) => {
-            const name = decl.id?.name;
-            if (name) index.exports.push({ name, file });
-          });
-        }
-      },
-
-      ExportDefaultDeclaration(p) {
-        const d = p.node.declaration;
-        if (d?.type === 'FunctionDeclaration' && d.id?.name) {
-          if (/^[A-Z]/.test(d.id.name)) {
-            index.components.push({ name: d.id.name, file });
+    try {
+      let foundInFile = [];
+      
+      traverse.default(ast, {
+        // Import tracking
+        ImportDeclaration(p) {
+          const from = p.node.source?.value;
+          if (!from) return;
+          
+          // Track imports
+          if (!importMap.has(from)) importMap.set(from, new Set());
+          importMap.get(from).add(file);
+          
+          // Check for React import (indicates this is likely a component file)
+          if (from === 'react' || from === 'React') {
+            // This file likely contains React components
           }
-        } else if (d?.type === 'Identifier' && d.name) {
-          if (/^[A-Z]/.test(d.name)) {
-            index.components.push({ name: d.name, file });
-          }
-        }
-      },
+        },
 
-      // API route patterns
-      CallExpression(p) {
-        const c = p.node.callee;
-        if (
-          c?.type === 'MemberExpression' &&
-          c.property?.type === 'Identifier' &&
-          ['get', 'post', 'put', 'patch', 'delete'].includes(c.property.name)
-        ) {
-          const args = p.node.arguments || [];
-          const first = args[0];
-          if (first?.type === 'StringLiteral') {
-            index.routes.push({
-              method: c.property.name.toUpperCase(),
-              path: first.value,
-              file
+        // Export default statements (most common in your codebase)
+        ExportDefaultDeclaration(p) {
+          const d = p.node.declaration;
+          
+          // export default ComponentName
+          if (d?.type === 'Identifier' && isLikelyComponent(d.name)) {
+            foundInFile.push({ name: d.name, file, type: 'default' });
+          }
+          // export default function ComponentName() {}
+          else if (d?.type === 'FunctionDeclaration' && d.id?.name && isLikelyComponent(d.id.name)) {
+            foundInFile.push({ name: d.id.name, file, type: 'default' });
+          }
+          // export default () => {} or export default function() {}
+          else if (d?.type === 'ArrowFunctionExpression' || (d?.type === 'FunctionExpression' && !d.id)) {
+            // Use filename or module name
+            const componentName = getComponentFromPath(file);
+            if (componentName) {
+              foundInFile.push({ name: componentName, file, type: 'default' });
+            }
+          }
+        },
+
+        // Named exports
+        ExportNamedDeclaration(p) {
+          const d = p.node.declaration;
+          if (d?.id?.name) {
+            index.exports.push({ name: d.id.name, file });
+            if (isLikelyComponent(d.id.name)) {
+              foundInFile.push({ name: d.id.name, file, type: 'named' });
+            }
+          } else if (d?.declarations) {
+            d.declarations.forEach((decl) => {
+              const name = decl.id?.name;
+              if (name) {
+                index.exports.push({ name, file });
+                if (isLikelyComponent(name)) {
+                  foundInFile.push({ name, file, type: 'named' });
+                }
+              }
+            });
+          } else if (p.node.specifiers?.length) {
+            p.node.specifiers.forEach((s) => {
+              const name = s.exported?.name || s.local?.name;
+              if (name) {
+                index.exports.push({ name, file });
+                if (isLikelyComponent(name)) {
+                  foundInFile.push({ name, file, type: 'named' });
+                }
+              }
             });
           }
+        },
+
+        // Component patterns in your codebase
+        // const ComponentName = () => { return <jsx> }
+        VariableDeclarator(p) {
+          const name = p.node.id?.name;
+          if (name && isLikelyComponent(name)) {
+            const init = p.node.init;
+            
+            // Arrow function or regular function
+            if (init?.type === 'ArrowFunctionExpression' || init?.type === 'FunctionExpression') {
+              // Check if it's in the main scope (not nested)
+              const parent = p.parent;
+              if (parent?.type === 'VariableDeclaration' && 
+                  (parent.kind === 'const' || parent.kind === 'let')) {
+                foundInFile.push({ name, file, type: 'const' });
+              }
+            }
+            // React.memo, React.forwardRef, etc.
+            else if (init?.type === 'CallExpression') {
+              const callee = init.callee;
+              if (callee?.type === 'MemberExpression' && 
+                  callee.object?.name === 'React' &&
+                  ['memo', 'forwardRef', 'lazy'].includes(callee.property?.name)) {
+                foundInFile.push({ name, file, type: 'wrapped' });
+              } else if (callee?.name && ['memo', 'forwardRef', 'lazy'].includes(callee.name)) {
+                foundInFile.push({ name, file, type: 'wrapped' });
+              }
+            }
+          }
+        },
+
+        // function ComponentName() { return <jsx> }
+        FunctionDeclaration(p) {
+          const name = p.node.id?.name;
+          if (name && isLikelyComponent(name)) {
+            // Check if it returns something (likely JSX)
+            const hasReturn = p.node.body?.body?.some(stmt => 
+              stmt.type === 'ReturnStatement' && stmt.argument
+            );
+            if (hasReturn || code.includes(`function ${name}`)) {
+              foundInFile.push({ name, file, type: 'function' });
+            }
+          }
+        },
+
+        // API calls (for route detection in frontend)
+        CallExpression(p) {
+          const c = p.node.callee;
+          
+          // api.get(), api.post(), etc.
+          if (c?.type === 'MemberExpression' && 
+              c.property?.type === 'Identifier' &&
+              ['get', 'post', 'put', 'patch', 'delete'].includes(c.property.name)) {
+            const args = p.node.arguments || [];
+            const first = args[0];
+            
+            // String literal paths
+            if (first?.type === 'StringLiteral' && first.value.startsWith('/')) {
+              index.routes.push({
+                method: c.property.name.toUpperCase(),
+                path: first.value,
+                file,
+                source: 'frontend'
+              });
+            }
+            // Template literals (for dynamic paths)
+            else if (first?.type === 'TemplateLiteral' && first.quasis[0]?.value?.raw?.startsWith('/')) {
+              const pathBase = first.quasis[0].value.raw;
+              index.routes.push({
+                method: c.property.name.toUpperCase(),
+                path: pathBase + '...',
+                file,
+                source: 'frontend'
+              });
+            }
+          }
         }
+      });
+
+      // Add unique components to index
+      if (foundInFile.length > 0) {
+        console.log(`  Found components in ${file}: ${foundInFile.map(c => c.name).join(', ')}`);
+        
+        foundInFile.forEach(comp => {
+          const key = `${comp.name}:${comp.file}`;
+          if (!componentSet.has(key)) {
+            componentSet.add(key);
+            index.components.push({ name: comp.name, file: comp.file });
+          }
+        });
       }
-    });
-  } catch (err) {
-    console.log(`  Traverse error in ${file}: ${err.message}`);
+
+    } catch (err) {
+      console.log(`  Traverse error in ${file}: ${err.message}`);
+    }
   }
 }
 
@@ -255,16 +423,24 @@ index.imports = [...importMap.entries()].map(([from, usedInSet]) => ({
   usedIn: [...usedInSet]
 }));
 
-// ---- Write output ----
-// Write to .dev-index folder at repo root
+// Write output
 const outPath = path.resolve(REPO_ROOT, '.dev-index', 'project_index.json');
 
 console.log('\n=== Summary ===');
 console.log(`Files processed: ${filesProcessed}`);
+console.log(`JavaScript files: ${index.jsFilesScanned}`);
+console.log(`Python files: ${index.pyFilesScanned}`);
 console.log(`Routes found: ${index.routes.length}`);
 console.log(`Components found: ${index.components.length}`);
 console.log(`Exports found: ${index.exports.length}`);
+console.log(`Imports tracked: ${index.imports.length}`);
 console.log(`Time taken: ${Math.round((Date.now() - startTime) / 1000)}s`);
+
+// List all components found
+if (index.components.length > 0) {
+  console.log('\nComponents detected:');
+  index.components.forEach(c => console.log(`  - ${c.name} (${c.file})`));
+}
 
 fs.writeFileSync(outPath, JSON.stringify(index, null, 2));
 console.log(`\nWrote ${outPath}`);
