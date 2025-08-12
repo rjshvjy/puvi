@@ -1,6 +1,6 @@
 """
 Cost Management Module for PUVI Oil Manufacturing System
-Handles all cost elements, time tracking, and Phase 1 validation (warnings only)
+Handles all cost elements, time tracking, activity-based filtering, and Phase 1 validation
 File Path: puvi-backend/puvi-backend-main/modules/cost_management.py
 """
 
@@ -43,7 +43,7 @@ class CostValidationWarning:
 
 @cost_management_bp.route('/api/cost_elements/master', methods=['GET'])
 def get_cost_elements_master():
-    """Get all active cost elements with their default rates"""
+    """Get all active cost elements with their default rates and activity field"""
     conn = get_db_connection()
     cur = conn.cursor()
     
@@ -62,7 +62,9 @@ def get_cost_elements_master():
                     calculation_method,
                     is_optional,
                     applicable_to,
-                    display_order
+                    display_order,
+                    activity,
+                    module_specific
                 FROM cost_elements_master
                 WHERE is_active = true
                 ORDER BY display_order, category, element_name
@@ -79,7 +81,9 @@ def get_cost_elements_master():
                     calculation_method,
                     is_optional,
                     applicable_to,
-                    display_order
+                    display_order,
+                    activity,
+                    module_specific
                 FROM cost_elements_master
                 WHERE is_active = true 
                     AND applicable_to IN (%s, 'all')
@@ -98,7 +102,9 @@ def get_cost_elements_master():
                 'calculation_method': row[5],
                 'is_optional': row[6],
                 'applicable_to': row[7],
-                'display_order': row[8]
+                'display_order': row[8],
+                'activity': row[9] if row[9] else 'General',
+                'module_specific': row[10]
             })
         
         # Group by category for easier UI rendering
@@ -124,13 +130,14 @@ def get_cost_elements_master():
 
 @cost_management_bp.route('/api/cost_elements/by_stage', methods=['GET'])
 def get_cost_elements_by_stage():
-    """Get cost elements applicable to a specific production stage"""
+    """Get cost elements applicable to a specific production stage with activity filtering"""
     conn = get_db_connection()
     cur = conn.cursor()
     
     try:
-        stage = request.args.get('stage', 'batch')  # batch, purchase, sales
+        stage = request.args.get('stage', 'batch')  # drying, crushing, batch, sales
         
+        # Include activity field in response
         cur.execute("""
             SELECT 
                 element_id,
@@ -139,11 +146,13 @@ def get_cost_elements_by_stage():
                 unit_type,
                 default_rate,
                 calculation_method,
-                is_optional
+                is_optional,
+                activity,
+                display_order
             FROM cost_elements_master
             WHERE is_active = true 
                 AND applicable_to IN (%s, 'all')
-            ORDER BY display_order
+            ORDER BY display_order, category, element_name
         """, (stage,))
         
         cost_elements = []
@@ -155,7 +164,9 @@ def get_cost_elements_by_stage():
                 'unit_type': row[3],
                 'default_rate': float(row[4]),
                 'calculation_method': row[5],
-                'is_optional': row[6]
+                'is_optional': row[6],
+                'activity': row[7] if row[7] else 'General',
+                'display_order': row[8]
             })
         
         return jsonify({
@@ -166,6 +177,172 @@ def get_cost_elements_by_stage():
         })
         
     except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+@cost_management_bp.route('/api/cost_elements/by_activity', methods=['GET'])
+def get_cost_elements_by_activity():
+    """
+    NEW ENDPOINT: Get cost elements filtered by activity
+    This replaces name-based filtering with proper activity-based filtering
+    """
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        activity = request.args.get('activity', 'General')  # Drying, Crushing, Filtering, Common, General
+        module = request.args.get('module', 'batch')  # batch, sku, sales, blending
+        include_common = request.args.get('include_common', 'true').lower() == 'true'
+        
+        # Build query based on parameters
+        if include_common:
+            query = """
+                SELECT 
+                    element_id,
+                    element_name,
+                    category,
+                    unit_type,
+                    default_rate,
+                    calculation_method,
+                    is_optional,
+                    applicable_to,
+                    display_order,
+                    activity,
+                    module_specific
+                FROM cost_elements_master
+                WHERE is_active = true 
+                    AND (activity = %s OR activity = 'Common')
+                    AND applicable_to IN (%s, 'all')
+                ORDER BY display_order, category, element_name
+            """
+            cur.execute(query, (activity, module))
+        else:
+            query = """
+                SELECT 
+                    element_id,
+                    element_name,
+                    category,
+                    unit_type,
+                    default_rate,
+                    calculation_method,
+                    is_optional,
+                    applicable_to,
+                    display_order,
+                    activity,
+                    module_specific
+                FROM cost_elements_master
+                WHERE is_active = true 
+                    AND activity = %s
+                    AND applicable_to IN (%s, 'all')
+                ORDER BY display_order, category, element_name
+            """
+            cur.execute(query, (activity, module))
+        
+        cost_elements = []
+        for row in cur.fetchall():
+            cost_elements.append({
+                'element_id': row[0],
+                'element_name': row[1],
+                'category': row[2],
+                'unit_type': row[3],
+                'default_rate': float(row[4]),
+                'calculation_method': row[5],
+                'is_optional': row[6],
+                'applicable_to': row[7],
+                'display_order': row[8],
+                'activity': row[9] if row[9] else 'General',
+                'module_specific': row[10]
+            })
+        
+        # Group by category for UI
+        by_category = {}
+        for element in cost_elements:
+            category = element['category']
+            if category not in by_category:
+                by_category[category] = []
+            by_category[category].append(element)
+        
+        return jsonify({
+            'success': True,
+            'activity': activity,
+            'module': module,
+            'cost_elements': cost_elements,
+            'by_category': by_category,
+            'count': len(cost_elements)
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+@cost_management_bp.route('/api/cost_elements/populate_activities', methods=['POST'])
+def populate_activities():
+    """
+    One-time endpoint to populate activity field based on element names
+    This should be run once to set up the activity field
+    """
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        # Begin transaction
+        cur.execute("BEGIN")
+        
+        # Update activities based on element names
+        updates = [
+            ("UPDATE cost_elements_master SET activity = 'Drying' WHERE LOWER(element_name) LIKE '%drying%' AND activity IS NULL", "Drying"),
+            ("UPDATE cost_elements_master SET activity = 'Drying' WHERE LOWER(element_name) LIKE '%loading after drying%' AND activity IS NULL", "Drying"),
+            ("UPDATE cost_elements_master SET activity = 'Crushing' WHERE LOWER(element_name) LIKE '%crushing%' AND activity IS NULL", "Crushing"),
+            ("UPDATE cost_elements_master SET activity = 'Crushing' WHERE LOWER(element_name) LIKE '%electricity%' AND activity IS NULL", "Crushing"),
+            ("UPDATE cost_elements_master SET activity = 'Filtering' WHERE LOWER(element_name) LIKE '%filter%' AND activity IS NULL", "Filtering"),
+            ("UPDATE cost_elements_master SET activity = 'Common' WHERE LOWER(element_name) LIKE '%common%' AND activity IS NULL", "Common"),
+            ("UPDATE cost_elements_master SET activity = 'Quality' WHERE LOWER(element_name) LIKE '%quality%' AND activity IS NULL", "Quality"),
+            ("UPDATE cost_elements_master SET activity = 'Quality' WHERE LOWER(element_name) LIKE '%testing%' AND activity IS NULL", "Quality"),
+            ("UPDATE cost_elements_master SET activity = 'Transport' WHERE LOWER(element_name) LIKE '%transport%' AND activity IS NULL", "Transport"),
+            ("UPDATE cost_elements_master SET activity = 'Maintenance' WHERE LOWER(element_name) LIKE '%maintenance%' AND activity IS NULL", "Maintenance"),
+            ("UPDATE cost_elements_master SET activity = 'General' WHERE activity IS NULL", "General")
+        ]
+        
+        total_updated = 0
+        update_details = []
+        
+        for query, activity_name in updates:
+            cur.execute(query)
+            count = cur.rowcount
+            total_updated += count
+            if count > 0:
+                update_details.append(f"{activity_name}: {count} elements")
+        
+        # Commit transaction
+        conn.commit()
+        
+        # Get summary of activities
+        cur.execute("""
+            SELECT activity, COUNT(*) as count
+            FROM cost_elements_master
+            WHERE is_active = true
+            GROUP BY activity
+            ORDER BY activity
+        """)
+        
+        activity_summary = {}
+        for row in cur.fetchall():
+            activity_summary[row[0] if row[0] else 'NULL'] = row[1]
+        
+        return jsonify({
+            'success': True,
+            'total_updated': total_updated,
+            'updates': update_details,
+            'activity_summary': activity_summary,
+            'message': f'Successfully populated activities for {total_updated} cost elements'
+        })
+        
+    except Exception as e:
+        conn.rollback()
         return jsonify({'success': False, 'error': str(e)}), 500
     finally:
         close_connection(conn, cur)
@@ -314,7 +491,7 @@ def calculate_batch_costs():
             'base_production_cost': float(batch[7])
         }
         
-        # Get all applicable cost elements
+        # Get all applicable cost elements with activity
         cur.execute("""
             SELECT 
                 element_id,
@@ -323,7 +500,8 @@ def calculate_batch_costs():
                 unit_type,
                 default_rate,
                 calculation_method,
-                is_optional
+                is_optional,
+                activity
             FROM cost_elements_master
             WHERE is_active = true 
                 AND applicable_to IN ('batch', 'all')
@@ -346,7 +524,7 @@ def calculate_batch_costs():
         
         # Process each cost element
         for element in cost_elements:
-            element_id, element_name, category, unit_type, default_rate, calc_method, is_optional = element
+            element_id, element_name, category, unit_type, default_rate, calc_method, is_optional, activity = element
             
             # Check if this cost has been captured
             cur.execute("""
@@ -390,6 +568,7 @@ def calculate_batch_costs():
                 cost_breakdown.append({
                     'element_name': element_name,
                     'category': category,
+                    'activity': activity if activity else 'General',
                     'quantity': float(existing_cost[0]),
                     'rate': float(existing_cost[1]),
                     'total_cost': float(existing_cost[2])
@@ -447,7 +626,7 @@ def calculate_batch_costs():
 
 @cost_management_bp.route('/api/cost_elements/save_batch_costs', methods=['POST'])
 def save_batch_costs():
-    """Save extended costs for a batch with override capability"""
+    """Save extended costs for a batch with override capability and activity tracking"""
     conn = get_db_connection()
     cur = conn.cursor()
     
@@ -473,9 +652,10 @@ def save_batch_costs():
             rate = safe_decimal(cost_item.get('rate', 0))
             override_rate = cost_item.get('override_rate')
             is_applied = cost_item.get('is_applied', True)
+            activity = cost_item.get('activity', 'General')
             
             # Use override rate if provided
-            if override_rate is not None:
+            if override_rate is not None and override_rate != '':
                 actual_rate = safe_decimal(override_rate)
                 
                 # Log the override
@@ -515,8 +695,7 @@ def save_batch_costs():
                         rate_used = %s,
                         total_cost = %s,
                         is_applied = %s,
-                        updated_at = CURRENT_TIMESTAMP,
-                        updated_by = %s
+                        created_by = %s
                     WHERE cost_id = %s
                 """, (
                     float(quantity),
@@ -552,6 +731,7 @@ def save_batch_costs():
             
             saved_costs.append({
                 'element_name': element_name,
+                'activity': activity,
                 'quantity': float(quantity),
                 'rate': float(actual_rate),
                 'total_cost': float(total_cost),
@@ -639,7 +819,7 @@ def get_validation_report():
 
 @cost_management_bp.route('/api/cost_elements/batch_summary/<int:batch_id>', methods=['GET'])
 def get_batch_cost_summary(batch_id):
-    """Get complete cost summary for a batch with validation warnings"""
+    """Get complete cost summary for a batch with validation warnings and activity info"""
     conn = get_db_connection()
     cur = conn.cursor()
     
@@ -666,11 +846,12 @@ def get_batch_cost_summary(batch_id):
         if not batch:
             return jsonify({'success': False, 'error': 'Batch not found'}), 404
         
-        # Get extended costs
+        # Get extended costs with activity
         cur.execute("""
             SELECT 
                 bec.element_name,
                 cem.category,
+                cem.activity,
                 bec.quantity_or_hours,
                 bec.rate_used,
                 bec.total_cost,
@@ -688,13 +869,14 @@ def get_batch_cost_summary(batch_id):
             extended_costs.append({
                 'element_name': row[0],
                 'category': row[1],
-                'quantity': float(row[2]),
-                'rate': float(row[3]),
-                'total_cost': float(row[4]),
-                'is_applied': row[5]
+                'activity': row[2] if row[2] else 'General',
+                'quantity': float(row[3]),
+                'rate': float(row[4]),
+                'total_cost': float(row[5]),
+                'is_applied': row[6]
             })
-            if row[5]:  # If applied
-                total_extended += Decimal(str(row[4]))
+            if row[6]:  # If applied
+                total_extended += Decimal(str(row[5]))
         
         # Get time tracking
         cur.execute("""
@@ -722,9 +904,9 @@ def get_batch_cost_summary(batch_id):
         # Run validation check
         validator = CostValidationWarning()
         
-        # Check for missing costs
+        # Check for missing costs by activity
         cur.execute("""
-            SELECT element_name, default_rate, calculation_method, is_optional
+            SELECT element_name, default_rate, calculation_method, is_optional, activity
             FROM cost_elements_master
             WHERE is_active = true 
                 AND applicable_to IN ('batch', 'all')
@@ -735,7 +917,8 @@ def get_batch_cost_summary(batch_id):
         
         for missing in cur.fetchall():
             if not missing[3]:  # If not optional
-                validator.add_warning(f"{missing[0]}: Not captured (Default: ₹{missing[1]})")
+                activity_info = f" [{missing[4]}]" if missing[4] else ""
+                validator.add_warning(f"{missing[0]}{activity_info}: Not captured (Default: ₹{missing[1]})")
         
         # Prepare summary
         summary = {
