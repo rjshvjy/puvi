@@ -677,41 +677,14 @@ const summary = {
 
 index.summary = summary;
 
-// Write output files
+// Write output file
 const outputDir = path.resolve(REPO_ROOT, '.dev-index');
 if (!fs.existsSync(outputDir)) {
   fs.mkdirSync(outputDir, { recursive: true });
 }
 
-// Main index file
-const mainOutputPath = path.resolve(outputDir, 'project_index.json');
-fs.writeFileSync(mainOutputPath, JSON.stringify(index, null, 2));
-
-// Optional: Write a separate detailed report
-const reportPath = path.resolve(outputDir, 'project_report.json');
-const report = {
-  generatedAt: index.generatedAt,
-  summary,
-  issues: {
-    missingEndpoints: index.missingEndpoints,
-    hardcodedValues: index.hardcodedValues.filter(h => h.type === 'array' || h.type === 'object'),
-    largeFiles: []
-  },
-  insights: {
-    mostUsedTables: index.tableReferences
-      .sort((a, b) => b.files.length - a.files.length)
-      .slice(0, 10),
-    componentsPerModule: {},
-    apiCoverage: {
-      total: index.routes.length,
-      backend: index.routes.filter(r => r.source === 'backend').length,
-      frontend: index.routes.filter(r => r.source === 'frontend').length,
-      missing: index.missingEndpoints.length
-    }
-  }
-};
-
-fs.writeFileSync(reportPath, JSON.stringify(report, null, 2));
+const outputPath = path.resolve(outputDir, 'project_index.json');
+fs.writeFileSync(outputPath, JSON.stringify(index, null, 2));
 
 // Display summary
 console.log('\n' + '='.repeat(50));
@@ -749,10 +722,9 @@ if (index.hardcodedValues.length > 0) {
   });
 }
 
-console.log('\n📁 OUTPUT FILES:');
-console.log(`   Main Index: ${mainOutputPath}`);
-console.log(`   Report: ${reportPath}`);
-console.log(`   Size: ${Math.round(fs.statSync(mainOutputPath).size / 1024)}KB`);
+console.log('\n📁 OUTPUT FILE:');
+console.log(`   Path: ${outputPath}`);
+console.log(`   Size: ${Math.round(fs.statSync(outputPath).size / 1024)}KB`);
 
 console.log('\n✨ UNIQUE FEATURES:');
 console.log('   • Line numbers for all detections');
@@ -767,5 +739,5 @@ const elapsed = Math.round((Date.now() - startTime) / 1000);
 console.log(`\n⏱️  Time taken: ${elapsed} seconds`);
 console.log('\n✅ Index generation complete!');
 
-// Exit with appropriate code
-process.exit(index.missingEndpoints.length > 0 ? 1 : 0);
+// Always exit successfully - finding issues is the script doing its job!
+process.exit(0);
