@@ -7,6 +7,11 @@ import traverse from '@babel/traverse';
 import fs from 'fs';
 import path from 'path';
 import { globby } from 'globby';
+import { fileURLToPath } from 'url';
+
+// Get the directory of this script
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // ---- Configure what to scan (adjust if your layout changes) ----
 const GLOBS = [
@@ -172,11 +177,16 @@ index.imports = [...importMap.entries()].map(([from, usedInSet]) => ({
 }));
 
 // ---- Write output ----
-const outDir = '.dev-index';
-const outPath = path.join(outDir, 'project_index.json');
+// CRITICAL FIX: Write to the correct location relative to repo root
+// The script is in .dev-index/scripts/, so we go up one level to .dev-index/
+const outPath = path.resolve(__dirname, '..', 'project_index.json');
 
-// Ensure .dev-index folder exists on runner
-fs.mkdirSync(outDir, { recursive: true });
+// Log for debugging
+console.log('Script directory:', __dirname);
+console.log('Output path:', outPath);
 
+// Write the file
 fs.writeFileSync(outPath, JSON.stringify(index, null, 2));
 console.log(`Wrote ${outPath}`);
+console.log(`File exists: ${fs.existsSync(outPath)}`);
+console.log(`File size: ${fs.statSync(outPath).size} bytes`);
