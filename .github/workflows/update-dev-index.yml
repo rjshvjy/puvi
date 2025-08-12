@@ -1,0 +1,39 @@
+name: Update Dev Index
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - "src/**"
+      - "server/**"
+      - "backend/**"
+      - "apps/**"
+      - "puvi-frontend/**"
+      - "puvi-backend/**"
+      - ".dev-index/**"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install dev-index deps
+        run: npm ci || npm i
+        working-directory: .dev-index
+      - name: Generate index
+        run: npm run gen:index
+        working-directory: .dev-index
+      - name: Commit dev/project_index.json
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore: update dev/project_index.json"
+          file_pattern: dev/project_index.json
