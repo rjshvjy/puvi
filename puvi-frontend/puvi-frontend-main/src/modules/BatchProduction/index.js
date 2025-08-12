@@ -786,7 +786,7 @@ ${timeTrackingData ? `\n⏱️ Time Tracked: ${timeTrackingData.rounded_hours} h
                 <h4>Additional Cost Elements</h4>
                 <CostCapture
                   module="batch"
-                  stage="batch"
+                  stage="filtering"
                   quantity={safeParseFloat(batchData.seed_quantity_after_drying)}
                   oilYield={safeParseFloat(batchData.oil_yield)}
                   onCostsUpdate={(costs) => setAdditionalCosts(costs)}
