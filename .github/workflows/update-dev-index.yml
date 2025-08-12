@@ -11,6 +11,7 @@ on:
       - "puvi-frontend/**"
       - "puvi-backend/**"
       - ".dev-index/**"
+      - ".github/workflows/update-dev-index.yml"
   workflow_dispatch: {}
 
 permissions:
@@ -19,21 +20,28 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
+
       - name: Install dev-index deps
         run: npm ci || npm i
         working-directory: .dev-index
+
       - name: Generate index
         run: npm run gen:index
         working-directory: .dev-index
-      - name: Commit dev/project_index.json
+
+      - name: Commit .dev-index/project_index.json
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "chore: update dev/project_index.json"
-          file_pattern: dev/project_index.json
+          commit_message: "chore: update .dev-index/project_index.json"
+          file_pattern: .dev-index/project_index.json
