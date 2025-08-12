@@ -1,6 +1,6 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js
-// Cost Capture Component - FINAL FIX for checkbox error
-// Fixed: Removed circular dependency and added proper null checks
+// Cost Capture Component - ACTIVITY-BASED FILTERING VERSION
+// Fixed: Removed name-based filtering, now uses activity field from backend
 
 import React, { useState, useEffect, useCallback } from 'react';
 import api from '../../services/api';
@@ -23,29 +23,44 @@ const CostCapture = ({
   const [expandedCategories, setExpandedCategories] = useState({});
   const [error, setError] = useState(null);
 
-  // Stage-specific element filtering
-  const getStageSpecificElements = (elements, currentStage) => {
+  // Map stage to activity
+  const getActivityFromStage = (currentStage) => {
+    const stageActivityMap = {
+      'drying': 'Drying',
+      'crushing': 'Crushing',
+      'filtering': 'Filtering',
+      'batch': 'all',  // Get all activities for complete batch
+      'sales': 'General',
+      'blending': 'Blending'
+    };
+    return stageActivityMap[currentStage] || 'General';
+  };
+
+  // Filter elements based on activity (backend already provides activity)
+  const filterElementsByActivity = (elements, currentStage) => {
+    if (currentStage === 'batch') {
+      // Show all elements for complete batch view
+      return elements;
+    }
+    
+    const targetActivity = getActivityFromStage(currentStage);
+    
     return elements.filter(element => {
-      const name = element.element_name.toLowerCase();
+      // Use activity field from backend instead of name matching
+      const elementActivity = element.activity || 'General';
       
-      if (currentStage === 'drying') {
-        // Only drying-related costs
-        return name.includes('drying') || 
-               name.includes('loading after drying') || 
-               name.includes('transport - outsourced');
-      } else if (currentStage === 'crushing') {
-        // Time-based and fixed costs (excluding drying)
-        return !name.includes('drying') && 
-               !name.includes('loading after drying') &&
-               (element.calculation_method === 'per_hour' || 
-                element.calculation_method === 'fixed' ||
-                name.includes('common costs'));
-      } else if (currentStage === 'batch') {
-        // All costs for complete batch view
+      // Include Common costs in all stages
+      if (elementActivity === 'Common') {
         return true;
       }
       
-      return false;
+      // For crushing stage, include time-based costs regardless of activity
+      if (currentStage === 'crushing' && element.calculation_method === 'per_hour') {
+        return true;
+      }
+      
+      // Match activity for the stage
+      return elementActivity === targetActivity;
     });
   };
 
@@ -54,7 +69,7 @@ const CostCapture = ({
     fetchCostElements();
   }, [stage, module]);
 
-  // Calculate costs - NOT a useCallback to avoid circular dependency
+  // Calculate costs
   const calculateAllCosts = () => {
     if (!costElements || costElements.length === 0) {
       return;
@@ -65,7 +80,7 @@ const CostCapture = ({
     const costsArray = [];
 
     costElements.forEach(element => {
-      // FIXED: Check if input exists, if not create it
+      // Check if input exists, if not create it
       let input = updatedInputs[element.element_id];
       if (!input) {
         input = {
@@ -87,9 +102,10 @@ const CostCapture = ({
       // Calculate based on calculation method
       switch (element.calculation_method) {
         case 'per_kg':
-          if (element.element_name.toLowerCase().includes('common costs')) {
+          // Use activity to determine which quantity to use
+          if (element.activity === 'Common' || element.element_name.toLowerCase().includes('common')) {
             elementQuantity = oilYield || 0;
-          } else if (stage === 'drying' || element.element_name.toLowerCase().includes('drying')) {
+          } else if (element.activity === 'Drying') {
             elementQuantity = quantity || 0;
           } else {
             elementQuantity = quantity || 0;
@@ -137,6 +153,7 @@ const CostCapture = ({
           element_id: element.element_id,
           element_name: element.element_name,
           category: element.category,
+          activity: element.activity || 'General',
           quantity: elementQuantity,
           rate: rate,
           total_cost: elementCost,
@@ -171,12 +188,28 @@ const CostCapture = ({
       setLoading(true);
       setError(null);
       
-      // Use 'batch' stage when module is 'batch' to get all cost elements
-      const response = await api.costManagement.getCostElementsByStage(module === 'batch' ? 'batch' : stage);
+      // Determine which endpoint to use based on whether activity field is available
+      let response;
+      
+      // Try activity-based endpoint first (new approach)
+      try {
+        const activity = getActivityFromStage(stage);
+        if (activity === 'all') {
+          // For batch stage, get all elements
+          response = await api.costManagement.getCostElementsMaster({ applicable_to: module });
+        } else {
+          // Use new activity-based endpoint
+          response = await api.costManagement.getCostElementsByActivity(activity, module);
+        }
+      } catch (activityError) {
+        console.log('Activity endpoint not available, falling back to stage endpoint');
+        // Fallback to stage-based endpoint if activity endpoint doesn't exist yet
+        response = await api.costManagement.getCostElementsByStage(stage === 'batch' ? 'batch' : stage);
+      }
       
       if (response.success && response.cost_elements) {
-        // Filter elements based on stage
-        const filteredElements = getStageSpecificElements(response.cost_elements, stage);
+        // Filter elements based on activity
+        const filteredElements = filterElementsByActivity(response.cost_elements, stage);
         
         // Initialize cost inputs for each element
         const initialInputs = {};
@@ -185,7 +218,8 @@ const CostCapture = ({
           
           if (!element.is_optional) {
             shouldApply = true;
-          } else if (stage === 'drying' && element.element_name.toLowerCase().includes('drying labour')) {
+          } else if (stage === 'drying' && element.activity === 'Drying') {
+            // Auto-apply drying elements in drying stage
             shouldApply = true;
           }
           
@@ -277,6 +311,20 @@ const CostCapture = ({
     return colors[category] || '#f8f9fa';
   };
 
+  // Get activity badge color
+  const getActivityColor = (activity) => {
+    const colors = {
+      'Drying': '#ffc107',
+      'Crushing': '#17a2b8',
+      'Filtering': '#6c757d',
+      'Common': '#28a745',
+      'Quality': '#6610f2',
+      'Transport': '#dc3545',
+      'General': '#6c757d'
+    };
+    return colors[activity] || '#6c757d';
+  };
+
   // Get stage display name
   const getStageDisplayName = () => {
     switch (stage) {
@@ -316,6 +364,14 @@ const CostCapture = ({
       fontSize: '12px',
       fontWeight: 'normal'
     },
+    activityBadge: {
+      padding: '2px 6px',
+      color: 'white',
+      borderRadius: '3px',
+      fontSize: '10px',
+      fontWeight: '600',
+      marginLeft: '8px'
+    },
     categorySection: {
       marginBottom: '15px',
       border: '1px solid #dee2e6',
@@ -350,7 +406,9 @@ const CostCapture = ({
     },
     elementName: {
       fontSize: '14px',
-      color: '#495057'
+      color: '#495057',
+      display: 'flex',
+      alignItems: 'center'
     },
     input: {
       padding: '6px 10px',
@@ -422,6 +480,14 @@ const CostCapture = ({
       padding: '5px',
       backgroundColor: '#f8f9fa',
       borderRadius: '3px'
+    },
+    infoBox: {
+      padding: '10px',
+      backgroundColor: '#e9ecef',
+      borderRadius: '4px',
+      marginBottom: '15px',
+      fontSize: '13px',
+      color: '#495057'
     }
   };
 
@@ -451,6 +517,11 @@ const CostCapture = ({
         💰 Additional Cost Elements
         <span style={styles.stageBadge}>{getStageDisplayName()}</span>
       </h4>
+
+      {/* Activity-based filtering info */}
+      <div style={styles.infoBox}>
+        ✅ Using activity-based filtering: Showing {costElements.length} elements for {getActivityFromStage(stage)} activity
+      </div>
 
       {/* Display current quantities for reference */}
       {(quantity > 0 || oilYield > 0 || crushingHours > 0) && (
@@ -505,11 +576,21 @@ const CostCapture = ({
                         />
                         
                         <div style={styles.elementName}>
-                          {element.element_name}
-                          {element.is_optional ? (
-                            <span style={styles.optional}>(Optional)</span>
-                          ) : (
-                            <span style={styles.required}>(Required)</span>
+                          <span>
+                            {element.element_name}
+                            {element.is_optional ? (
+                              <span style={styles.optional}>(Optional)</span>
+                            ) : (
+                              <span style={styles.required}>(Required)</span>
+                            )}
+                          </span>
+                          {element.activity && (
+                            <span style={{
+                              ...styles.activityBadge,
+                              backgroundColor: getActivityColor(element.activity)
+                            }}>
+                              {element.activity}
+                            </span>
                           )}
                           <div style={styles.unitInfo}>
                             {isActualCost ? (
@@ -538,7 +619,8 @@ const CostCapture = ({
                             style={{
                               ...styles.input,
                               backgroundColor: input.isApplied ? 'white' : '#f8f9fa',
-                              fontWeight: input.overrideRate ? 'bold' : 'normal'
+                              fontWeight: input.overrideRate ? 'bold' : 'normal',
+                              borderColor: input.overrideRate ? '#ffc107' : '#ced4da'
                             }}
                             placeholder={element.default_rate?.toString() || '0'}
                             value={input.overrideRate || ''}
