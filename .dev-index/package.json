@@ -1,0 +1,11 @@
+{
+  "name": "dev-index",
+  "private": true,
+  "type": "module",
+  "scripts": { "gen:index": "node scripts/gen-index-ast.mjs" },
+  "devDependencies": {
+    "@babel/parser": "^7.25.0",
+    "@babel/traverse": "^7.25.0",
+    "globby": "^14.0.0"
+  }
+}
