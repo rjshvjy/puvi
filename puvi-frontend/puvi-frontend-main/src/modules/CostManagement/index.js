@@ -1,9 +1,10 @@
 // Cost Management Module - Reporting Dashboard
-// File Path: puvi-frontend/src/modules/CostManagement/index.js
+// File Path: puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js
 // Purpose: Cost reporting, validation, and master rate management (Phase 1 - Warnings Only)
 
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
+import CostElementsManager from './CostElementsManager'; // Added for CRUD integration
 import './CostManagement.css';
 
 const CostManagement = () => {
@@ -60,6 +61,9 @@ const CostManagement = () => {
         break;
       case 'trends':
         loadCostTrends();
+        break;
+      case 'elements':
+        // CostElementsManager handles its own data loading
         break;
       default:
         break;
@@ -485,11 +489,20 @@ const CostManagement = () => {
         >
           📊 Trends
         </button>
+        <button
+          style={{
+            ...styles.tabButton,
+            ...(activeTab === 'elements' ? styles.activeTab : {})
+          }}
+          onClick={() => setActiveTab('elements')}
+        >
+          ⚙️ Cost Elements
+        </button>
       </div>
 
       {/* Tab Content */}
       <div style={styles.content}>
-        {loading && (
+        {loading && activeTab !== 'elements' && (
           <div style={{ textAlign: 'center', padding: '40px' }}>
             <div>Loading...</div>
           </div>
@@ -1043,6 +1056,11 @@ const CostManagement = () => {
               </ul>
             </div>
           </div>
+        )}
+
+        {/* Cost Elements Tab - NEW ADDITION */}
+        {activeTab === 'elements' && (
+          <CostElementsManager embedded={false} />
         )}
       </div>
     </div>
