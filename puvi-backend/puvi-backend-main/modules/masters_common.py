@@ -332,13 +332,20 @@ MASTERS_CONFIG = {
             'category': {
                 'type': 'select',
                 'required': True,
-                'options': ['Fixed', 'Variable', 'Semi-Variable'],
+                'options': ['Fixed', 'Variable', 'Semi-Variable', 'Labor', 'Utilities', 'Consumables', 'Transport', 'Quality', 'Maintenance', 'Overhead'],
                 'label': 'Category'
+            },
+            'activity': {
+                'type': 'select',
+                'required': False,
+                'options': ['Drying', 'Crushing', 'Filtering', 'Common', 'Quality', 'Transport', 'Maintenance', 'General'],
+                'label': 'Activity',
+                'default': 'General'
             },
             'unit_type': {
                 'type': 'select',
                 'required': True,
-                'options': ['Per Unit', 'Percentage', 'Fixed Amount'],
+                'options': ['Per Unit', 'Percentage', 'Fixed Amount', 'per_kg', 'per_hour', 'per_bag', 'per_unit', 'fixed', 'percentage', 'actual'],
                 'label': 'Unit Type'
             },
             'default_rate': {
@@ -351,7 +358,7 @@ MASTERS_CONFIG = {
             'calculation_method': {
                 'type': 'select',
                 'required': True,
-                'options': ['Direct', 'Formula-based', 'Allocation'],
+                'options': ['Direct', 'Formula-based', 'Allocation', 'per_kg', 'per_hour', 'per_bag', 'fixed', 'actual', 'formula'],
                 'label': 'Calculation Method'
             },
             'is_optional': {
@@ -363,8 +370,15 @@ MASTERS_CONFIG = {
             'applicable_to': {
                 'type': 'select',
                 'required': True,
-                'options': ['Purchase', 'Production', 'Both'],
+                'options': ['Purchase', 'Production', 'Both', 'all', 'batch', 'sku', 'blend', 'sales'],
                 'label': 'Applicable To'
+            },
+            'module_specific': {
+                'type': 'text',
+                'required': False,
+                'max_length': 100,
+                'label': 'Module Specific',
+                'placeholder': 'batch, sku, blend, etc.'
             },
             'display_order': {
                 'type': 'integer',
@@ -373,6 +387,12 @@ MASTERS_CONFIG = {
                 'max': 999,
                 'default': 0,
                 'label': 'Display Order'
+            },
+            'notes': {
+                'type': 'textarea',
+                'required': False,
+                'max_length': 500,
+                'label': 'Notes'
             }
         },
         'list_query': """
