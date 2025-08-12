@@ -40,8 +40,30 @@ jobs:
         run: npm run gen:index
         working-directory: .dev-index
 
+      - name: Debug - Check file location
+        run: |
+          echo "Checking for project_index.json files:"
+          find . -name "project_index.json" -type f 2>/dev/null || echo "No project_index.json found"
+          echo ""
+          echo "Contents of .dev-index directory:"
+          ls -la .dev-index/
+          echo ""
+          if [ -f ".dev-index/project_index.json" ]; then
+            echo "File found at .dev-index/project_index.json"
+            echo "File size: $(stat -c%s .dev-index/project_index.json) bytes"
+            echo "First 500 chars:"
+            head -c 500 .dev-index/project_index.json
+          else
+            echo "File NOT found at .dev-index/project_index.json"
+          fi
+
       - name: Commit .dev-index/project_index.json
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
           commit_message: "chore: update .dev-index/project_index.json"
           file_pattern: .dev-index/project_index.json
+          skip_dirty_check: false
+          skip_fetch: false
+          skip_checkout: false
+          disable_globbing: true
+          add_options: '-A'
