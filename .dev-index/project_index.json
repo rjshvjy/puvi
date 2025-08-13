@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-13T07:06:35.048Z",
+  "generatedAt": "2025-08-13T07:07:15.294Z",
   "filesScanned": 53,
   "jsFilesScanned": 32,
   "pyFilesScanned": 21,
@@ -961,15 +961,15 @@
       ]
     },
     {
-      "from": "./skuUtilities",
-      "usedIn": [
-        "puvi-frontend/puvi-frontend-main/src/services/api/index.js"
-      ]
-    },
-    {
       "from": "../api",
       "usedIn": [
         "puvi-frontend/puvi-frontend-main/src/services/costManagement/costManagementService.js"
+      ]
+    },
+    {
+      "from": "./skuUtilities",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/services/api/index.js"
       ]
     }
   ],
@@ -13608,18 +13608,6 @@
       "code": "} catch (error) {"
     },
     {
-      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 12,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 28,
-      "type": "catch",
-      "code": "} catch (error) {"
-    },
-    {
       "file": "puvi-frontend/puvi-frontend-main/src/services/costManagement/costManagementService.js",
       "line": 33,
       "type": "try-catch",
@@ -13640,6 +13628,18 @@
     {
       "file": "puvi-frontend/puvi-frontend-main/src/services/costManagement/costManagementService.js",
       "line": 70,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "line": 12,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "line": 28,
       "type": "catch",
       "code": "} catch (error) {"
     },
