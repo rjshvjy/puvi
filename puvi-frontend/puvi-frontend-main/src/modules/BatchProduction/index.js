@@ -372,7 +372,12 @@ const BatchProduction = () => {
           
           extended_costs: summary.extended_costs || [],
           time_tracking: summary.time_tracking || timeTrackingData,
-          validation: summary.validation || { has_warnings: false, warning_count: 0, warnings: [] },
+          validation: {
+            has_warnings: summary.validation?.has_warnings || false,
+            warning_count: summary.validation?.warning_count || 0,
+            warnings: summary.validation?.warnings || [],
+            missing_total: summary.validation?.missing_total || 0
+          },
           
           // Add rates for by-product calculations
           cake_rate: summary.cake_estimated_rate || batchData.cake_estimated_rate || 30,
@@ -544,6 +549,9 @@ const BatchProduction = () => {
       // Get all cost details with proper format
       const allCostDetails = generateCostDetailsForSubmission();
       
+      // Log what we're sending
+      console.log('Submitting batch with cost details:', allCostDetails);
+      
       // Prepare submission data
       const submitData = {
         ...batchData,
@@ -556,32 +564,57 @@ const BatchProduction = () => {
       
       const response = await api.batch.createBatch(submitData);
       
-      if (response.success) {
-        setMessage(`✅ Batch created successfully! 
-          Batch Code: ${response.batch_code}
-          Traceable Code: ${response.traceable_code}
-          Oil Cost: ₹${response.oil_cost_per_kg?.toFixed(2)}/kg`);
-        
-        // Save time tracking if available
-        if (timeTrackingData && response.batch_id) {
-          await api.costManagement.saveTimeTracking({
-            ...timeTrackingData,
-            batch_id: response.batch_id,
-            process_type: 'crushing'
-          });
+      // Log the actual response to debug
+      console.log('API Response:', response);
+      
+      // Handle different response structures
+      if (response && typeof response === 'object') {
+        // Check if it's an error response
+        if (response.type === 'error' || response.error) {
+          setMessage(`Error: ${response.message || response.error || 'Failed to create batch'}`);
+          return;
         }
         
-        // Reset form
-        resetForm();
-        
-        // Show report with traceable code
-        generateBatchReport(response.batch_id, response.batch_code, response.traceable_code);
+        // Check for success response
+        if (response.success || response.batch_id) {
+          const successMessage = `✅ Batch created successfully! 
+            Batch Code: ${response.batch_code || 'N/A'}
+            Traceable Code: ${response.traceable_code || 'N/A'}
+            Oil Cost: ₹${response.oil_cost_per_kg ? response.oil_cost_per_kg.toFixed(2) : 'N/A'}/kg`;
+          
+          setMessage(successMessage);
+          
+          // Save time tracking if available
+          if (timeTrackingData && response.batch_id) {
+            try {
+              await api.costManagement.saveTimeTracking({
+                ...timeTrackingData,
+                batch_id: response.batch_id,
+                process_type: 'crushing'
+              });
+            } catch (timeError) {
+              console.error('Time tracking save error:', timeError);
+            }
+          }
+          
+          // Reset form
+          resetForm();
+          
+          // Show report with traceable code
+          if (response.batch_id && response.batch_code) {
+            generateBatchReport(response.batch_id, response.batch_code, response.traceable_code);
+          }
+        } else {
+          // Unknown response structure
+          console.error('Unexpected response structure:', response);
+          setMessage('Batch may have been created but response was unexpected. Check batch history.');
+        }
       } else {
-        setMessage(`Error: ${response.error || 'Failed to create batch'}`);
+        setMessage('Invalid response from server');
       }
     } catch (error) {
       console.error('Error submitting batch:', error);
-      setMessage('Failed to create batch. Please try again.');
+      setMessage(`Failed to create batch: ${error.message || 'Please try again.'}`);
     } finally {
       setLoading(false);
     }
@@ -1678,7 +1711,10 @@ const BatchProduction = () => {
                     <div className="section-title">Cost Validation Notes</div>
                     <ul>
                       {reportData.validation.warnings.map((warning, index) => (
-                        <li key={index}>{warning}</li>
+                        <li key={index}>
+                          {typeof warning === 'string' ? warning : warning.message || JSON.stringify(warning)}
+                          {warning.amount && ` (₹${warning.amount})`}
+                        </li>
                       ))}
                     </ul>
                   </div>
