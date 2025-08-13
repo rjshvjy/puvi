@@ -67,6 +67,7 @@ const CostCapture = ({
 
   // Fetch applicable cost elements on mount or when stage changes
   useEffect(() => {
+    console.log(`🔄 CostCapture [${stage}] mounting/updating - fetching cost elements`);
     fetchCostElements();
   }, [stage, module]);
 
@@ -182,6 +183,9 @@ const CostCapture = ({
       setCostInputs(updatedInputs);
     }
 
+    // Debug logging to track cost emission
+    console.log(`💰 CostCapture [${stage}] emitting ${costsArray.length} costs, Total: ₹${total.toFixed(2)}`);
+
     // Always send updated costs to parent - THIS ENSURES DEFAULTS ARE CAPTURED
     if (onCostsUpdate && typeof onCostsUpdate === 'function') {
       onCostsUpdate(costsArray);
@@ -191,6 +195,7 @@ const CostCapture = ({
   // Recalculate when relevant props change
   useEffect(() => {
     if (costElements.length > 0 && Object.keys(costInputs).length > 0) {
+      console.log(`⚙️ CostCapture [${stage}] recalculating - qty:${quantity}, oil:${oilYield}, hours:${crushingHours}`);
       calculateAllCosts();
     }
   }, [quantity, oilYield, crushingHours, costInputs, costElements]);
@@ -247,6 +252,9 @@ const CostCapture = ({
         setCostElements(filteredElements);
         setCostInputs(initialInputs);
         
+        // Debug logging
+        console.log(`📋 CostCapture [${stage}] loaded ${filteredElements.length} cost elements`);
+        
         // Auto-expand categories with costs
         const categories = [...new Set(filteredElements.map(e => e.category))];
         const expanded = {};
@@ -262,17 +270,24 @@ const CostCapture = ({
   };
 
   const handleCheckboxChange = (elementId) => {
+    const element = costElements.find(e => e.element_id === elementId);
+    const newState = !(costInputs[elementId]?.isApplied || false);
+    console.log(`✅ CostCapture [${stage}] checkbox: ${element?.element_name} = ${newState}`);
+    
     setCostInputs(prev => ({
       ...prev,
       [elementId]: {
         ...(prev[elementId] || {}),
-        isApplied: !(prev[elementId]?.isApplied || false)
+        isApplied: newState
       }
     }));
   };
 
   const handleOverrideChange = (elementId, value) => {
+    const element = costElements.find(e => e.element_id === elementId);
     const parsedValue = value === '' ? null : value;
+    console.log(`💲 CostCapture [${stage}] override rate: ${element?.element_name} = ${parsedValue || 'default'}`);
+    
     setCostInputs(prev => ({
       ...prev,
       [elementId]: {
