@@ -617,6 +617,156 @@
   border-radius: 3px;
 }
 
+/* Cost Summary Enhancements */
+.summary-item-divider {
+  grid-column: span 2;
+  height: 1px;
+  background: var(--gray-300);
+  margin: 10px 0;
+}
+
+.summary-item.info {
+  background: #e3f2fd;
+  border-color: #90caf9;
+}
+
+.summary-item.large strong {
+  font-size: 20px;
+  color: var(--primary-dark);
+}
+
+/* Detailed Cost Breakdown */
+.cost-breakdown-details {
+  margin-top: 20px;
+  background: var(--white);
+  border: 1px solid var(--gray-300);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.cost-breakdown-summary {
+  padding: 12px 16px;
+  background: var(--gray-100);
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--text-color);
+  transition: var(--transition);
+  list-style: none;
+}
+
+.cost-breakdown-summary:hover {
+  background: var(--gray-200);
+}
+
+.cost-breakdown-summary::before {
+  content: '▶';
+  display: inline-block;
+  margin-right: 8px;
+  transition: transform 0.2s;
+}
+
+.cost-breakdown-details[open] .cost-breakdown-summary::before {
+  transform: rotate(90deg);
+}
+
+.detailed-costs-table {
+  padding: 16px;
+  background: var(--white);
+}
+
+.cost-details-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.cost-details-table thead {
+  background: var(--gray-100);
+}
+
+.cost-details-table th {
+  padding: 10px;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-color);
+  border: 1px solid var(--gray-300);
+}
+
+.cost-details-table td {
+  padding: 8px 10px;
+  border: 1px solid var(--gray-200);
+  color: var(--gray-700);
+}
+
+.cost-details-table tbody tr:hover {
+  background: var(--gray-50);
+}
+
+.cost-details-table .stage-row {
+  background: #f8f9fa;
+  font-weight: 500;
+}
+
+.cost-details-table .original-rate {
+  text-decoration: line-through;
+  color: var(--gray-500);
+  margin-right: 8px;
+}
+
+.cost-details-table .override-rate {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.cost-details-table tfoot .total-row {
+  background: var(--primary-light);
+  font-weight: bold;
+}
+
+.cost-details-table tfoot .total-row td {
+  padding: 12px 10px;
+  font-size: 16px;
+  color: var(--primary-dark);
+  border: 2px solid var(--primary);
+}
+
+/* Review Confirmation Box */
+.review-confirmation {
+  margin-top: 20px;
+  padding: 16px;
+  background: #fffbf0;
+  border: 2px solid var(--warning);
+  border-radius: var(--border-radius);
+}
+
+.review-confirmation h4 {
+  margin: 0 0 12px 0;
+  color: #856404;
+  font-size: 16px;
+}
+
+.review-checklist {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.review-checklist li {
+  padding: 6px 0;
+  padding-left: 24px;
+  position: relative;
+  color: var(--gray-700);
+  font-size: 14px;
+}
+
+.review-checklist li::before {
+  content: '✓';
+  position: absolute;
+  left: 0;
+  color: var(--success);
+  font-weight: bold;
+}
+
 /* Form Actions */
 .form-actions {
   display: flex;
@@ -647,6 +797,19 @@
   background: var(--gray-400);
   cursor: not-allowed;
   opacity: 0.7;
+}
+
+.btn-save-batch {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  font-size: 17px;
+  padding: 14px 36px;
+  box-shadow: 0 4px 12px rgba(47, 133, 90, 0.3);
+}
+
+.btn-save-batch:hover:not(:disabled) {
+  background: linear-gradient(135deg, var(--primary-dark) 0%, #1f5a3e 100%);
+  box-shadow: 0 6px 16px rgba(47, 133, 90, 0.4);
+  transform: translateY(-3px);
 }
 
 .btn-secondary {
