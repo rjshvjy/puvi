@@ -2,6 +2,7 @@
 Traceability utilities for PUVI Oil Manufacturing System
 Handles generation of traceable codes throughout the production cycle
 File Path: puvi-backend/puvi-backend-main/utils/traceability.py
+FIXED: Proper batch serial tracking from database
 """
 
 from datetime import date, timedelta
@@ -55,7 +56,7 @@ def get_next_serial(material_id, supplier_id, financial_year, cur):
 def get_next_batch_serial(seed_material_id, seed_purchase_code, production_date, cur):
     """
     Get next serial number for batches from same seed purchase
-    Uses the actual material and supplier IDs with a special financial year for batch tracking
+    by checking actual batch records in database
     
     Args:
         seed_material_id: The material ID of the seed
@@ -66,63 +67,91 @@ def get_next_batch_serial(seed_material_id, seed_purchase_code, production_date,
     Returns:
         int: Next serial number for this seed purchase
     """
-    # Parse the purchase code to extract supplier code
-    # Format: GNS-K-1-05082025-SKM where SKM is supplier code
+    # Parse the seed purchase code to extract the purchase date
+    # Format: GNS-K-1-05082025-SKM or GNS-K-05082025-SKM
     parts = seed_purchase_code.split('-')
-    if len(parts) < 5:
-        # Handle older format or malformed codes
-        # Use material's default supplier
-        cur.execute("""
-            SELECT supplier_id FROM materials WHERE material_id = %s
-        """, (seed_material_id,))
-        result = cur.fetchone()
-        if result:
-            supplier_id = result[0]
-        else:
-            raise ValueError(f"Material not found: {seed_material_id}")
+    
+    if len(parts) >= 5:
+        # New format: GNS-K-1-05082025-SKM
+        purchase_date_str = parts[3]  # 05082025
+        seed_material_code = f"{parts[0]}-{parts[1]}"  # GNS-K
+    elif len(parts) == 4:
+        # Older format: GNS-K-05082025-SKM
+        purchase_date_str = parts[2]  # 05082025
+        seed_material_code = f"{parts[0]}-{parts[1]}"  # GNS-K
     else:
-        # Extract supplier code from the last part
-        supplier_code = parts[-1]  # SKM
-        
-        # Get supplier_id from supplier code
-        cur.execute("""
-            SELECT supplier_id FROM suppliers WHERE short_code = %s
-        """, (supplier_code,))
-        
-        result = cur.fetchone()
-        if not result:
-            # Fallback to material's supplier if code not found
-            cur.execute("""
-                SELECT supplier_id FROM materials WHERE material_id = %s
-            """, (seed_material_id,))
-            result = cur.fetchone()
-            if result:
-                supplier_id = result[0]
-            else:
-                raise ValueError(f"Neither supplier with code {supplier_code} nor material {seed_material_id} found")
-        else:
-            supplier_id = result[0]
+        raise ValueError(f"Invalid seed purchase code format: {seed_purchase_code}")
     
-    # Create a special financial year for batch tracking
-    # Use "B" prefix to differentiate from regular purchase tracking
-    fy = get_financial_year(production_date)  # Returns "2025-26"
-    # Create batch financial year: "B25-26" (exactly 7 chars)
-    year_parts = fy.split('-')
-    batch_fy = f"B{year_parts[0][2:]}-{year_parts[1]}"
+    # Convert seed code to oil code for searching
+    oil_material_code = seed_material_code.replace('S-', 'O-') if 'S-' in seed_material_code else seed_material_code
     
-    # Use the actual material_id and supplier_id with special financial year
+    # Query all batch traceable codes that were created from this seed purchase
+    # Pattern: GNO-K-[SERIAL]-05082025-PUV
+    # We look for batches with the same material code and purchase date
+    search_pattern = f"{oil_material_code}-%%-{purchase_date_str}-%%"
+    
     cur.execute("""
-        INSERT INTO serial_number_tracking
-        (material_id, supplier_id, financial_year, current_serial)
-        VALUES (%s, %s, %s, 1)
-        ON CONFLICT (material_id, supplier_id, financial_year)
-        DO UPDATE SET 
-            current_serial = serial_number_tracking.current_serial + 1,
-            last_updated = CURRENT_TIMESTAMP
-        RETURNING current_serial
-    """, (seed_material_id, supplier_id, batch_fy))
+        SELECT traceable_code 
+        FROM batch 
+        WHERE traceable_code LIKE %s
+        ORDER BY batch_id DESC
+    """, (search_pattern,))
     
-    return cur.fetchone()[0]
+    existing_codes = cur.fetchall()
+    max_serial = 0
+    
+    # Extract serial numbers from existing codes
+    for (code,) in existing_codes:
+        if code:
+            code_parts = code.split('-')
+            # Find the serial number (between material code and date)
+            # Format: GNO-K-[SERIAL]-05082025-PUV
+            if len(code_parts) >= 5:
+                # Check if this code has our purchase date
+                for i, part in enumerate(code_parts):
+                    if part == purchase_date_str and i >= 2:
+                        # The part before the date should be the serial
+                        try:
+                            serial_str = code_parts[i-1]
+                            serial = int(serial_str)
+                            max_serial = max(max_serial, serial)
+                        except (ValueError, IndexError):
+                            # Not a valid serial, skip
+                            continue
+                        break
+    
+    # Also check if there's a stored seed purchase record
+    # This ensures we track across database sessions
+    cur.execute("""
+        INSERT INTO seed_batch_tracking
+        (seed_purchase_code, last_batch_serial, material_id)
+        VALUES (%s, %s, %s)
+        ON CONFLICT (seed_purchase_code)
+        DO UPDATE SET 
+            last_batch_serial = GREATEST(
+                seed_batch_tracking.last_batch_serial,
+                %s
+            ),
+            last_updated = CURRENT_TIMESTAMP
+        RETURNING last_batch_serial
+    """, (seed_purchase_code, max_serial, seed_material_id, max_serial))
+    
+    result = cur.fetchone()
+    if result:
+        stored_serial = result[0]
+        max_serial = max(max_serial, stored_serial)
+    
+    # Return next serial
+    next_serial = max_serial + 1
+    
+    # Update the tracking table with the new serial
+    cur.execute("""
+        UPDATE seed_batch_tracking 
+        SET last_batch_serial = %s, last_updated = CURRENT_TIMESTAMP
+        WHERE seed_purchase_code = %s
+    """, (next_serial, seed_purchase_code))
+    
+    return next_serial
 
 
 def generate_purchase_traceable_code(material_id, supplier_id, purchase_date, cur):
@@ -188,7 +217,6 @@ def generate_batch_traceable_code(seed_material_id, seed_purchase_code, producti
     # Handle different formats
     if len(parts) >= 5:
         # New format with serial: GNS-K-1-05082025-SKM
-        # The material code is first two parts: GNS-K
         seed_material_code = f"{parts[0]}-{parts[1]}"  # GNS-K
         purchase_date_str = parts[3]  # 05082025
     elif len(parts) == 4:
@@ -235,7 +263,15 @@ def generate_batch_traceable_code(seed_material_id, seed_purchase_code, producti
     batch_serial = get_next_batch_serial(seed_material_id, seed_purchase_code, production_date, cur)
     
     # Generate code: GNO-K-1-05082025-PUV
-    return f"{oil_material_code}-{batch_serial}-{purchase_date_str}-{unit_code}"
+    traceable_code = f"{oil_material_code}-{batch_serial}-{purchase_date_str}-{unit_code}"
+    
+    # Verify uniqueness (defensive check)
+    cur.execute("SELECT 1 FROM batch WHERE traceable_code = %s", (traceable_code,))
+    if cur.fetchone():
+        # This should not happen with proper serial tracking, but if it does, log it
+        raise ValueError(f"Generated traceable code {traceable_code} already exists. Database integrity issue.")
+    
+    return traceable_code
 
 
 def generate_batch_traceable_code_alternative(seed_material_id, seed_purchase_code, production_date, batch_description, cur):
@@ -328,11 +364,8 @@ def generate_blend_traceable_code(blend_components, blend_date, cur):
         
         if len(parts) >= 5:
             # Batch format: GNO-K-1-05082025-PUV
-            # Material code is first two parts
             material_code = f"{parts[0]}-{parts[1]}"  # GNO-K
-            # Extract oil type (first 3 letters)
             oil_type = parts[0][:3] if len(parts[0]) >= 3 else parts[0]
-            # Extract supplier identifier from material code
             if len(parts[1]) > 0:
                 supplier_codes.append(parts[1][0])  # First letter of supplier part
         elif len(parts) == 4:
@@ -344,9 +377,7 @@ def generate_blend_traceable_code(blend_components, blend_date, cur):
         elif len(parts) == 3:
             # Blend format: GNOKU-07082025-PUV
             first_part = parts[0]  # GNOKU
-            # Oil type is first 3 letters
             oil_type = first_part[:3]  # GNO
-            # Rest are supplier codes
             supplier_codes.extend(list(first_part[3:]))  # K, U
     
     # Remove duplicates while preserving order
