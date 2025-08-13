@@ -381,7 +381,7 @@ def add_batch():
         # Process cost details with activity information
         total_production_cost = safe_decimal(data.get('seed_cost_total', 0))
         
-        # Insert all cost elements with validation
+        # FIXED: Insert all cost elements to batch_extended_costs instead of batch_cost_details
         cost_details = data.get('cost_details', [])
         for cost_item in cost_details:
             element_name = cost_item.get('element_name', '')
@@ -400,19 +400,49 @@ def add_batch():
             # Add to total production cost
             total_production_cost += Decimal(str(total_cost))
             
+            # Check if cost already exists (might be from time tracking)
             cur.execute("""
-                INSERT INTO batch_cost_details (
-                    batch_id, cost_element, master_rate, 
-                    override_rate, quantity, total_cost
-                ) VALUES (%s, %s, %s, %s, %s, %s)
-            """, (
-                batch_id,
-                element_name,
-                master_rate,
-                override_rate,
-                quantity,
-                total_cost
-            ))
+                SELECT cost_id FROM batch_extended_costs
+                WHERE batch_id = %s AND element_name = %s
+            """, (batch_id, element_name))
+            
+            existing = cur.fetchone()
+            
+            if existing:
+                # Update existing cost (probably from time tracking)
+                cur.execute("""
+                    UPDATE batch_extended_costs
+                    SET quantity_or_hours = %s,
+                        rate_used = %s,
+                        total_cost = %s,
+                        is_applied = %s,
+                        created_by = %s
+                    WHERE cost_id = %s
+                """, (
+                    quantity,
+                    override_rate,
+                    total_cost,
+                    True,
+                    'Batch Production',
+                    existing[0]
+                ))
+            else:
+                # Insert new cost into batch_extended_costs
+                cur.execute("""
+                    INSERT INTO batch_extended_costs (
+                        batch_id, element_name,
+                        quantity_or_hours, rate_used, total_cost,
+                        is_applied, created_by
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s)
+                """, (
+                    batch_id,
+                    element_name,
+                    quantity,
+                    override_rate,
+                    total_cost,
+                    True,
+                    'Batch Production'
+                ))
         
         # Calculate net oil cost
         cake_estimated_rate = safe_decimal(data.get('cake_estimated_rate', 0))
