@@ -643,7 +643,7 @@ def get_batch_history():
                 'batch_id': row[0],
                 'batch_code': row[1],
                 'oil_type': row[2],
-                'production_date': integer_to_date(row[3]),
+                'production_date': integer_to_date(row[3], '%d-%m-%Y'),
                 'seed_quantity_before': float(row[4]),
                 'seed_quantity_after': float(row[5]),
                 'drying_loss': float(row[6]),
