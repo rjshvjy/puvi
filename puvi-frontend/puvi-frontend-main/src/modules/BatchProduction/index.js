@@ -1,6 +1,6 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js
-// Complete Batch Production Module with Fixed Individual Report Loading
-// Version: 2.1 - Fixed per-batch report loading states
+// Complete Batch Production Module with Fixed Report Data Mapping
+// Version: 3.0 - Fixed response structure mapping for reports
 
 import React, { useState, useEffect, useRef } from 'react';
 import api from '../../services/api';
@@ -18,10 +18,10 @@ const BatchProduction = () => {
   const [showHistory, setShowHistory] = useState(false);
   const [batchHistory, setBatchHistory] = useState([]);
   
-  // Report states - FIXED: Track loading per batch ID
+  // Report states - Track loading per batch ID
   const [showReport, setShowReport] = useState(false);
   const [reportData, setReportData] = useState(null);
-  const [loadingReports, setLoadingReports] = useState({}); // Changed from single state to object
+  const [loadingReports, setLoadingReports] = useState({});
   const reportRef = useRef();
   
   // Time tracking data
@@ -118,15 +118,74 @@ const BatchProduction = () => {
     }
   };
 
-  // FIXED: Generate comprehensive batch report with individual loading state
+  // FIXED: Generate comprehensive batch report with proper data mapping
   const generateBatchReport = async (batchId, batchCode) => {
     // Set loading state for this specific batch
     setLoadingReports(prev => ({ ...prev, [batchId]: true }));
     
     try {
       const response = await api.costManagement.getBatchSummary(batchId);
-      if (response.success) {
-        setReportData(response);
+      if (response.success && response.summary) {
+        const summary = response.summary;
+        
+        // Transform the response to match the expected structure for the report modal
+        const transformedData = {
+          // Root level fields
+          batch_code: batchCode,
+          traceable_code: summary.traceable_code || batchCode,
+          
+          // Batch details section
+          batch_details: {
+            batch_code: summary.batch_code || batchCode,
+            oil_type: summary.oil_type || 'N/A',
+            production_date: summary.production_date || 'N/A',
+            seed_purchase_code: summary.seed_purchase_code || 'N/A',
+            traceable_code: summary.traceable_code || batchCode
+          },
+          
+          // Production summary section
+          production_summary: {
+            seed_quantity_before_drying: summary.seed_quantity || 0,
+            seed_quantity_after_drying: summary.seed_quantity || 0,
+            drying_loss_kg: 0, // Calculate if both before and after are available
+            drying_loss_percent: '0.00',
+            oil_yield: summary.oil_yield || 0,
+            oil_yield_percent: summary.seed_quantity > 0 
+              ? ((summary.oil_yield / summary.seed_quantity) * 100).toFixed(2)
+              : '0.00',
+            cake_yield: summary.cake_yield || 0,
+            sludge_yield: summary.sludge_yield || 0
+          },
+          
+          // Cost breakdown section
+          cost_breakdown: summary.extended_costs || [],
+          extended_costs: summary.extended_costs || [],
+          
+          // Cost summary section
+          cost_summary: {
+            total_production_cost: summary.total_production_cost || 0,
+            base_production_cost: summary.base_production_cost || 0,
+            extended_costs: summary.total_extended_costs || 0,
+            net_oil_cost: summary.net_oil_cost || 0,
+            oil_cost_per_kg: summary.oil_cost_per_kg || 0
+          },
+          
+          // Time tracking section
+          time_tracking: summary.time_tracking || {
+            total_hours: 0,
+            rounded_hours: 0,
+            labor_cost: 0
+          },
+          
+          // Validation section
+          validation: summary.validation || {
+            has_warnings: false,
+            warning_count: 0,
+            warnings: []
+          }
+        };
+        
+        setReportData(transformedData);
         setShowReport(true);
       } else {
         throw new Error('Failed to fetch batch report');
@@ -201,36 +260,46 @@ const BatchProduction = () => {
             table {
               width: 100%;
               border-collapse: collapse;
-              margin-bottom: 20px;
+              margin: 10px 0;
             }
-            table th, table td {
-              padding: 8px 12px;
+            th {
+              background: #f5f5f5;
+              padding: 8px;
               text-align: left;
-              border: 1px solid #ddd;
-            }
-            table th {
-              background-color: #f5f5f5;
               font-weight: bold;
+            }
+            td {
+              padding: 8px;
+              border-bottom: 1px solid #e0e0e0;
             }
             .highlight {
-              background-color: #fffbf0;
+              background: #fffbf0;
               font-weight: bold;
             }
-            .summary-box {
-              background-color: #f0f8ff;
-              padding: 15px;
-              border-radius: 5px;
-              margin: 20px 0;
+            .cost-row {
+              background: #f9f9f9;
             }
-            .footer {
-              margin-top: 50px;
-              padding-top: 20px;
-              border-top: 2px solid #e0e0e0;
+            .total-row {
+              background: #e8f4ff;
+              font-weight: bold;
+            }
+            .signature-section {
+              display: flex;
+              justify-content: space-around;
+              margin-top: 60px;
+              page-break-inside: avoid;
+            }
+            .signature-box {
+              width: 200px;
               text-align: center;
-              font-size: 12px;
-              color: #666;
+            }
+            .signature-line {
+              border-bottom: 1px solid #333;
+              margin-bottom: 5px;
+              height: 40px;
             }
             @media print {
+              body { margin: 0; }
               .section { page-break-inside: avoid; }
             }
           </style>
@@ -240,150 +309,81 @@ const BatchProduction = () => {
     `);
     
     printWindow.document.close();
+    printWindow.focus();
     printWindow.print();
+    printWindow.close();
   };
 
-  const handleSeedSelection = (e) => {
-    const seedId = e.target.value;
-    const seed = availableSeeds.find(s => s.material_id === parseInt(seedId));
+  // Handle seed selection
+  const handleSeedSelection = (seed) => {
+    setSelectedSeed(seed);
+    setBatchData(prev => ({
+      ...prev,
+      material_id: seed.material_id,
+      oil_type: seed.material_name.replace(' Seeds', ' Oil'),
+      seed_purchase_code: seed.latest_purchase_code || ''
+    }));
+  };
+
+  // Calculate totals
+  const calculateTotals = () => {
+    let totalCost = 0;
     
-    if (seed) {
-      setSelectedSeed(seed);
-      setBatchData({
-        ...batchData,
-        material_id: seedId,
-        oil_type: seed.material_name.replace(' Seed', ' Oil').replace(' Seeds', ' Oil'),
-        seed_purchase_code: seed.latest_purchase_code
-      });
-      
-      // Set default cake rate if available
-      const oilType = seed.material_name.replace(' Seed', '').replace(' Seeds', '');
-      if (oilCakeRates[oilType]) {
-        setBatchData(prev => ({
-          ...prev,
-          cake_estimated_rate: oilCakeRates[oilType].current_rate
-        }));
-      }
+    // Add seed cost
+    if (selectedSeed && batchData.seed_quantity_before_drying) {
+      totalCost += parseFloat(batchData.seed_quantity_before_drying) * selectedSeed.weighted_avg_cost;
     }
+    
+    // Add other costs
+    dryingCosts.forEach(cost => {
+      if (cost.is_applied) {
+        totalCost += cost.total_cost;
+      }
+    });
+    
+    crushingCosts.forEach(cost => {
+      if (cost.is_applied) {
+        totalCost += cost.total_cost;
+      }
+    });
+    
+    additionalCosts.forEach(cost => {
+      if (cost.is_applied) {
+        totalCost += cost.total_cost;
+      }
+    });
+    
+    return totalCost;
   };
 
-  const calculateDryingLoss = () => {
-    const before = parseFloat(batchData.seed_quantity_before_drying) || 0;
-    const after = parseFloat(batchData.seed_quantity_after_drying) || 0;
-    const loss = before - after;
-    const lossPercent = before > 0 ? (loss / before) * 100 : 0;
-    
-    return { loss, lossPercent };
-  };
-
-  const calculateYieldPercentages = () => {
-    const seedAfter = parseFloat(batchData.seed_quantity_after_drying) || 0;
-    const oilYield = parseFloat(batchData.oil_yield) || 0;
-    const cakeYield = parseFloat(batchData.cake_yield) || 0;
-    const sludgeYield = parseFloat(batchData.sludge_yield) || 0;
-    
-    return {
-      oilPercent: seedAfter > 0 ? (oilYield / seedAfter) * 100 : 0,
-      cakePercent: seedAfter > 0 ? (cakeYield / seedAfter) * 100 : 0,
-      sludgePercent: seedAfter > 0 ? (sludgeYield / seedAfter) * 100 : 0,
-      totalPercent: seedAfter > 0 ? ((oilYield + cakeYield + sludgeYield) / seedAfter) * 100 : 0
-    };
-  };
-
-  const calculateCosts = () => {
-    if (!selectedSeed) return { seedCost: 0, extendedCosts: [], totalCost: 0 };
-    
-    const seedQty = parseFloat(batchData.seed_quantity_before_drying) || 0;
-    const seedCost = seedQty * selectedSeed.weighted_avg_cost;
-    
-    // Calculate extended costs from all stages
-    const allCosts = [...dryingCosts, ...crushingCosts, ...additionalCosts];
-    const extendedCostsTotal = allCosts.reduce((sum, cost) => {
-      const qty = parseFloat(cost.quantity) || 0;
-      const rate = parseFloat(cost.override_rate || cost.rate || cost.default_rate) || 0;
-      return sum + (qty * rate);
-    }, 0);
-    
-    return {
-      seedCost,
-      extendedCosts: allCosts,
-      extendedCostsTotal,
-      totalCost: seedCost + extendedCostsTotal
-    };
-  };
-
+  // Submit batch
   const handleSubmit = async () => {
     setLoading(true);
     setMessage('');
     
     try {
-      const costs = calculateCosts();
+      // Prepare cost details
+      const allCosts = [...dryingCosts, ...crushingCosts, ...additionalCosts];
       
-      // Prepare batch data
-      const payload = {
+      // Calculate seed cost
+      const seedCost = selectedSeed 
+        ? parseFloat(batchData.seed_quantity_before_drying) * selectedSeed.weighted_avg_cost
+        : 0;
+      
+      const submitData = {
         ...batchData,
-        material_id: parseInt(batchData.material_id),
-        seed_quantity_before_drying: parseFloat(batchData.seed_quantity_before_drying),
-        seed_quantity_after_drying: parseFloat(batchData.seed_quantity_after_drying),
-        oil_yield: parseFloat(batchData.oil_yield),
-        cake_yield: parseFloat(batchData.cake_yield),
-        sludge_yield: parseFloat(batchData.sludge_yield) || 0,
-        cake_estimated_rate: parseFloat(batchData.cake_estimated_rate) || 0,
-        sludge_estimated_rate: parseFloat(batchData.sludge_estimated_rate) || 0,
-        time_tracking: timeTrackingData ? {
-          start_datetime: timeTrackingData.start_datetime,
-          end_datetime: timeTrackingData.end_datetime,
-          operator_name: timeTrackingData.operator_name,
-          notes: timeTrackingData.notes
-        } : null
+        seed_cost_total: seedCost,
+        cost_details: allCosts.filter(cost => cost.is_applied),
+        time_tracking: timeTrackingData,
+        created_by: 'Production Operator'
       };
       
-      const response = await api.batch.addBatch(payload);
+      const response = await api.batch.createBatch(submitData);
       
       if (response.success) {
-        // Save extended costs
-        if (costs.extendedCosts.length > 0 && response.batch_id) {
-          await api.costManagement.saveBatchCosts({
-            batch_id: response.batch_id,
-            costs: costs.extendedCosts.map(cost => ({
-              element_id: cost.element_id,
-              element_name: cost.element_name,
-              quantity: cost.quantity || 0,
-              rate: cost.rate || 0,
-              override_rate: cost.override_rate,
-              is_applied: true,
-              override_reason: cost.override_rate ? 'Manual adjustment during batch production' : null
-            })),
-            created_by: 'BatchProduction'
-          });
-        }
-        
-        // Save time tracking
-        if (timeTrackingData && response.batch_id) {
-          await api.costManagement.saveTimeTracking({
-            batch_id: response.batch_id,
-            process_type: 'crushing',
-            start_datetime: timeTrackingData.start_datetime,
-            end_datetime: timeTrackingData.end_datetime,
-            operator_name: timeTrackingData.operator_name || '',
-            notes: timeTrackingData.notes || ''
-          });
-        }
-        
-        setMessage(`✅ Batch created successfully!
-Batch Code: ${response.batch_code}
-Traceable Code: ${response.traceable_code}
-Oil Cost: ₹${response.oil_cost_per_kg.toFixed(2)}/kg
-Total Oil Produced: ${response.total_oil_produced} kg`);
-        
-        // Prompt for report generation
-        setTimeout(() => {
-          if (window.confirm('Batch created successfully! Would you like to view the production report?')) {
-            generateBatchReport(response.batch_id, response.batch_code);
-          }
-        }, 1000);
-        
+        setMessage('✅ Batch created successfully!');
         // Reset form
+        setCurrentStep(1);
         setBatchData({
           oil_type: '',
           batch_description: '',
@@ -403,391 +403,369 @@ Total Oil Produced: ${response.total_oil_produced} kg`);
           crushing_hours: 0
         });
         setSelectedSeed(null);
-        setTimeTrackingData(null);
         setDryingCosts([]);
         setCrushingCosts([]);
         setAdditionalCosts([]);
-        setCurrentStep(1);
+        setTimeTrackingData(null);
         
-        if (showHistory) {
-          fetchBatchHistory();
-        }
+        // Refresh history
+        fetchBatchHistory();
+      } else {
+        setMessage(`❌ Error: ${response.error}`);
       }
     } catch (error) {
-      console.error('Error submitting batch:', error);
-      setMessage(`❌ Error: ${error.message}`);
+      console.error('Error creating batch:', error);
+      setMessage('❌ Failed to create batch');
     } finally {
       setLoading(false);
     }
   };
 
-  const { loss, lossPercent } = calculateDryingLoss();
-  const yields = calculateYieldPercentages();
-  const costs = calculateCosts();
-
-  const formatDate = (dateStr) => {
-    if (!dateStr) return '';
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-GB');
-  };
-
   return (
     <div className="batch-production-container">
-      <div className="batch-header">
-        <h2>Batch Production Module</h2>
-        <button
-          className="view-history-btn"
-          onClick={() => {
-            setShowHistory(!showHistory);
-            if (!showHistory && batchHistory.length === 0) {
-              fetchBatchHistory();
-            }
-          }}
-        >
-          {showHistory ? 'Hide History' : 'View History'}
-        </button>
-      </div>
-
+      <h1>Batch Production</h1>
+      
       {message && (
         <div className={`message ${message.includes('✅') ? 'success' : 'error'}`}>
           {message}
         </div>
       )}
-
-      {!showHistory ? (
-        <>
-          {/* Progress Steps */}
-          <div className="progress-steps">
-            {['Basic Info', 'Seed & Drying', 'Outputs', 'Cost Review'].map((step, index) => (
-              <div
-                key={index}
-                className={`progress-step ${currentStep === index + 1 ? 'active' : ''} ${currentStep > index + 1 ? 'completed' : ''}`}
+      
+      {/* Step Navigation */}
+      <div className="step-navigation">
+        <div className={`step ${currentStep === 1 ? 'active' : ''}`}>
+          1. Select Seed & Basic Info
+        </div>
+        <div className={`step ${currentStep === 2 ? 'active' : ''}`}>
+          2. Drying Process
+        </div>
+        <div className={`step ${currentStep === 3 ? 'active' : ''}`}>
+          3. Crushing Process
+        </div>
+        <div className={`step ${currentStep === 4 ? 'active' : ''}`}>
+          4. Additional Costs
+        </div>
+        <div className={`step ${currentStep === 5 ? 'active' : ''}`}>
+          5. Review & Submit
+        </div>
+      </div>
+      
+      {/* Step Content */}
+      {currentStep === 1 && (
+        <div className="step-content">
+          <h2>Select Seed Material</h2>
+          
+          <div className="seed-selection-container">
+            {availableSeeds.map(seed => (
+              <div 
+                key={seed.material_id}
+                className={`seed-card ${selectedSeed?.material_id === seed.material_id ? 'selected' : ''}`}
+                onClick={() => handleSeedSelection(seed)}
               >
-                <span className="step-number">{index + 1}</span>
-                <span className="step-label">{step}</span>
+                <div className="seed-name">{seed.material_name}</div>
+                <div className="seed-info">
+                  <span>Available: {seed.available_quantity} {seed.unit}</span>
+                  <span>Rate: ₹{seed.weighted_avg_cost}/kg</span>
+                </div>
+                {seed.latest_purchase_code && (
+                  <div className="purchase-code">
+                    Purchase Code: {seed.latest_purchase_code}
+                  </div>
+                )}
               </div>
             ))}
           </div>
-
-          {/* Step 1: Basic Information */}
-          {currentStep === 1 && (
-            <div className="form-section">
-              <h3>Step 1: Basic Information</h3>
+          
+          {selectedSeed && (
+            <div className="basic-info-form">
+              <h3>Basic Information</h3>
               
               <div className="form-row">
                 <div className="form-group">
-                  <label>Production Date</label>
-                  <input
-                    type="date"
-                    value={batchData.production_date}
-                    onChange={(e) => setBatchData({...batchData, production_date: e.target.value})}
+                  <label>Oil Type</label>
+                  <input 
+                    type="text" 
+                    value={batchData.oil_type}
+                    readOnly
                   />
                 </div>
                 
                 <div className="form-group">
                   <label>Batch Description</label>
-                  <input
+                  <input 
                     type="text"
-                    placeholder="e.g., Morning Batch"
                     value={batchData.batch_description}
                     onChange={(e) => setBatchData({...batchData, batch_description: e.target.value})}
+                    placeholder="e.g., Morning, Evening"
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label>Production Date</label>
+                  <input 
+                    type="date"
+                    value={batchData.production_date}
+                    onChange={(e) => setBatchData({...batchData, production_date: e.target.value})}
                   />
                 </div>
               </div>
-
+              
+              <button 
+                className="btn-next"
+                onClick={() => setCurrentStep(2)}
+                disabled={!batchData.batch_description}
+              >
+                Next: Drying Process →
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+      
+      {currentStep === 2 && (
+        <div className="step-content">
+          <h2>Drying Process</h2>
+          
+          <div className="form-row">
+            <div className="form-group">
+              <label>Seed Quantity Before Drying (kg)</label>
+              <input 
+                type="number"
+                value={batchData.seed_quantity_before_drying}
+                onChange={(e) => setBatchData({...batchData, seed_quantity_before_drying: e.target.value})}
+                placeholder="Enter quantity"
+              />
+            </div>
+            
+            <div className="form-group">
+              <label>Seed Quantity After Drying (kg)</label>
+              <input 
+                type="number"
+                value={batchData.seed_quantity_after_drying}
+                onChange={(e) => setBatchData({...batchData, seed_quantity_after_drying: e.target.value})}
+                placeholder="Enter quantity"
+              />
+            </div>
+            
+            {batchData.seed_quantity_before_drying && batchData.seed_quantity_after_drying && (
               <div className="form-group">
-                <label>Select Seed Material</label>
-                <select
-                  value={batchData.material_id}
-                  onChange={handleSeedSelection}
-                  className="seed-select"
-                >
-                  <option value="">-- Select Seed --</option>
-                  {availableSeeds.map(seed => (
-                    <option key={seed.material_id} value={seed.material_id}>
-                      {seed.material_name} - {seed.available_quantity} kg @ ₹{seed.weighted_avg_cost}/kg
-                      {seed.latest_purchase_code && ` (${seed.latest_purchase_code})`}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {selectedSeed && (
-                <div className="seed-info-box">
-                  <h4>Selected Seed Information</h4>
-                  <div className="info-grid">
-                    <div>Material: {selectedSeed.material_name}</div>
-                    <div>Available: {selectedSeed.available_quantity} kg</div>
-                    <div>Rate: ₹{selectedSeed.weighted_avg_cost}/kg</div>
-                    <div>Purchase Code: {selectedSeed.latest_purchase_code}</div>
-                  </div>
+                <label>Drying Loss</label>
+                <div className="calculated-value">
+                  {(parseFloat(batchData.seed_quantity_before_drying) - parseFloat(batchData.seed_quantity_after_drying)).toFixed(2)} kg
+                  ({((1 - parseFloat(batchData.seed_quantity_after_drying) / parseFloat(batchData.seed_quantity_before_drying)) * 100).toFixed(2)}%)
                 </div>
-              )}
-
-              <div className="form-navigation">
-                <button 
-                  className="btn-next"
-                  onClick={() => setCurrentStep(2)}
-                  disabled={!batchData.material_id}
-                >
-                  Next →
-                </button>
               </div>
+            )}
+          </div>
+          
+          <CostCapture 
+            stage="drying"
+            costElements={extendedCostElements.filter(el => el.activity === 'Drying')}
+            onCostsUpdate={setDryingCosts}
+            batchData={batchData}
+          />
+          
+          <div className="navigation-buttons">
+            <button className="btn-prev" onClick={() => setCurrentStep(1)}>
+              ← Previous
+            </button>
+            <button 
+              className="btn-next"
+              onClick={() => setCurrentStep(3)}
+              disabled={!batchData.seed_quantity_after_drying}
+            >
+              Next: Crushing →
+            </button>
+          </div>
+        </div>
+      )}
+      
+      {currentStep === 3 && (
+        <div className="step-content">
+          <h2>Crushing Process</h2>
+          
+          <TimeTracker 
+            onTimeUpdate={(data) => setTimeTrackingData(data)}
+            initialData={timeTrackingData}
+          />
+          
+          <div className="form-row">
+            <div className="form-group">
+              <label>Oil Yield (kg)</label>
+              <input 
+                type="number"
+                value={batchData.oil_yield}
+                onChange={(e) => setBatchData({...batchData, oil_yield: e.target.value})}
+                placeholder="Enter oil quantity"
+              />
             </div>
-          )}
-
-          {/* Step 2: Seed & Drying */}
-          {currentStep === 2 && (
-            <div className="form-section">
-              <h3>Step 2: Seed Quantities & Drying</h3>
-              
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Seed Quantity Before Drying (kg)</label>
-                  <input
-                    type="number"
-                    value={batchData.seed_quantity_before_drying}
-                    onChange={(e) => setBatchData({...batchData, seed_quantity_before_drying: e.target.value})}
-                    max={selectedSeed?.available_quantity}
-                  />
-                </div>
-                
-                <div className="form-group">
-                  <label>Seed Quantity After Drying (kg)</label>
-                  <input
-                    type="number"
-                    value={batchData.seed_quantity_after_drying}
-                    onChange={(e) => setBatchData({...batchData, seed_quantity_after_drying: e.target.value})}
-                  />
-                </div>
-              </div>
-
-              {batchData.seed_quantity_before_drying && batchData.seed_quantity_after_drying && (
-                <div className="calculation-box">
-                  <h4>Drying Loss Calculation</h4>
-                  <div className="calc-row">
-                    <span>Loss: {loss.toFixed(2)} kg ({lossPercent.toFixed(2)}%)</span>
-                  </div>
-                </div>
-              )}
-
-              {/* Drying Costs */}
-              <div className="cost-capture-section">
-                <h4>Drying Costs</h4>
-                <CostCapture
-                  costElements={extendedCostElements.filter(e => e.activity === 'Drying')}
-                  capturedCosts={dryingCosts}
-                  onCostsChange={setDryingCosts}
-                  stage="drying"
-                />
-              </div>
-
-              <div className="form-navigation">
-                <button className="btn-prev" onClick={() => setCurrentStep(1)}>
-                  ← Previous
-                </button>
-                <button 
-                  className="btn-next"
-                  onClick={() => setCurrentStep(3)}
-                  disabled={!batchData.seed_quantity_after_drying}
-                >
-                  Next →
-                </button>
-              </div>
+            
+            <div className="form-group">
+              <label>Oil Cake Yield (kg)</label>
+              <input 
+                type="number"
+                value={batchData.cake_yield}
+                onChange={(e) => setBatchData({...batchData, cake_yield: e.target.value})}
+                placeholder="Enter cake quantity"
+              />
             </div>
-          )}
-
-          {/* Step 3: Production Outputs */}
-          {currentStep === 3 && (
-            <div className="form-section">
-              <h3>Step 3: Production Outputs & Processing</h3>
-              
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Oil Yield (kg)</label>
-                  <input
-                    type="number"
-                    value={batchData.oil_yield}
-                    onChange={(e) => setBatchData({...batchData, oil_yield: e.target.value})}
-                  />
-                </div>
-                
-                <div className="form-group">
-                  <label>Oil Cake Yield (kg)</label>
-                  <input
-                    type="number"
-                    value={batchData.cake_yield}
-                    onChange={(e) => setBatchData({...batchData, cake_yield: e.target.value})}
-                  />
-                </div>
-                
-                <div className="form-group">
-                  <label>Sludge Yield (kg)</label>
-                  <input
-                    type="number"
-                    value={batchData.sludge_yield}
-                    onChange={(e) => setBatchData({...batchData, sludge_yield: e.target.value})}
-                  />
-                </div>
-              </div>
-
-              {/* Yield Percentages */}
-              {batchData.oil_yield && (
-                <div className="calculation-box">
-                  <h4>Yield Analysis</h4>
-                  <div className="yield-grid">
-                    <div>Oil: {yields.oilPercent.toFixed(2)}%</div>
-                    <div>Cake: {yields.cakePercent.toFixed(2)}%</div>
-                    <div>Sludge: {yields.sludgePercent.toFixed(2)}%</div>
-                    <div className={yields.totalPercent > 100 ? 'error' : ''}>
-                      Total: {yields.totalPercent.toFixed(2)}%
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Time Tracking */}
-              <div className="time-tracking-section">
-                <h4>Crushing Time Tracking</h4>
-                <TimeTracker
-                  onTimeData={setTimeTrackingData}
-                  processType="crushing"
-                />
-              </div>
-
-              {/* Crushing Costs */}
-              <div className="cost-capture-section">
-                <h4>Crushing & Processing Costs</h4>
-                <CostCapture
-                  costElements={extendedCostElements.filter(e => e.activity === 'Crushing')}
-                  capturedCosts={crushingCosts}
-                  onCostsChange={setCrushingCosts}
-                  stage="crushing"
-                />
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <label>Estimated Cake Rate (₹/kg)</label>
-                  <input
-                    type="number"
-                    value={batchData.cake_estimated_rate}
-                    onChange={(e) => setBatchData({...batchData, cake_estimated_rate: e.target.value})}
-                  />
-                </div>
-                
-                <div className="form-group">
-                  <label>Estimated Sludge Rate (₹/kg)</label>
-                  <input
-                    type="number"
-                    value={batchData.sludge_estimated_rate}
-                    onChange={(e) => setBatchData({...batchData, sludge_estimated_rate: e.target.value})}
-                  />
-                </div>
-              </div>
-
-              <div className="form-navigation">
-                <button className="btn-prev" onClick={() => setCurrentStep(2)}>
-                  ← Previous
-                </button>
-                <button className="btn-next" onClick={() => setCurrentStep(4)}>
-                  Next →
-                </button>
-              </div>
+            
+            <div className="form-group">
+              <label>Sludge Yield (kg)</label>
+              <input 
+                type="number"
+                value={batchData.sludge_yield}
+                onChange={(e) => setBatchData({...batchData, sludge_yield: e.target.value})}
+                placeholder="Enter sludge quantity"
+              />
             </div>
-          )}
-
-          {/* Step 4: Cost Review & Submit */}
-          {currentStep === 4 && (
-            <div className="form-section">
-              <h3>Step 4: Cost Review & Submit</h3>
-              
-              {/* Additional Costs */}
-              <div className="cost-capture-section">
-                <h4>Additional Costs</h4>
-                <CostCapture
-                  costElements={extendedCostElements.filter(e => 
-                    e.activity !== 'Drying' && e.activity !== 'Crushing'
-                  )}
-                  capturedCosts={additionalCosts}
-                  onCostsChange={setAdditionalCosts}
-                  stage="additional"
-                />
-              </div>
-
-              {/* Cost Summary */}
-              <div className="cost-summary">
-                <h4>Total Cost Breakdown</h4>
-                <table className="summary-table">
-                  <tbody>
-                    <tr>
-                      <td>Seed Cost:</td>
-                      <td className="text-right">₹{costs.seedCost.toFixed(2)}</td>
-                    </tr>
-                    {dryingCosts.length > 0 && (
-                      <tr>
-                        <td>Drying Costs:</td>
-                        <td className="text-right">
-                          ₹{dryingCosts.reduce((sum, c) => sum + (c.quantity * (c.override_rate || c.rate)), 0).toFixed(2)}
-                        </td>
-                      </tr>
-                    )}
-                    {crushingCosts.length > 0 && (
-                      <tr>
-                        <td>Crushing Costs:</td>
-                        <td className="text-right">
-                          ₹{crushingCosts.reduce((sum, c) => sum + (c.quantity * (c.override_rate || c.rate)), 0).toFixed(2)}
-                        </td>
-                      </tr>
-                    )}
-                    {additionalCosts.length > 0 && (
-                      <tr>
-                        <td>Additional Costs:</td>
-                        <td className="text-right">
-                          ₹{additionalCosts.reduce((sum, c) => sum + (c.quantity * (c.override_rate || c.rate)), 0).toFixed(2)}
-                        </td>
-                      </tr>
-                    )}
-                    <tr className="total-row">
-                      <td><strong>Total Production Cost:</strong></td>
-                      <td className="text-right"><strong>₹{costs.totalCost.toFixed(2)}</strong></td>
-                    </tr>
-                    {batchData.oil_yield && (
-                      <tr className="highlight-row">
-                        <td><strong>Oil Cost per kg:</strong></td>
-                        <td className="text-right">
-                          <strong>₹{(costs.totalCost / parseFloat(batchData.oil_yield)).toFixed(2)}</strong>
-                        </td>
-                      </tr>
-                    )}
-                  </tbody>
-                </table>
-              </div>
-
-              <div className="form-navigation">
-                <button className="btn-prev" onClick={() => setCurrentStep(3)}>
-                  ← Previous
-                </button>
-                <button 
-                  className="btn-submit"
-                  onClick={handleSubmit}
-                  disabled={loading || !batchData.oil_yield}
-                >
-                  {loading ? 'Submitting...' : 'Submit Batch'}
-                </button>
-              </div>
+          </div>
+          
+          <div className="form-row">
+            <div className="form-group">
+              <label>Oil Cake Estimated Rate (₹/kg)</label>
+              <input 
+                type="number"
+                value={batchData.cake_estimated_rate}
+                onChange={(e) => setBatchData({...batchData, cake_estimated_rate: e.target.value})}
+                placeholder="Enter rate"
+              />
             </div>
-          )}
-        </>
-      ) : (
+            
+            <div className="form-group">
+              <label>Sludge Estimated Rate (₹/kg)</label>
+              <input 
+                type="number"
+                value={batchData.sludge_estimated_rate}
+                onChange={(e) => setBatchData({...batchData, sludge_estimated_rate: e.target.value})}
+                placeholder="Enter rate"
+              />
+            </div>
+          </div>
+          
+          <CostCapture 
+            stage="crushing"
+            costElements={extendedCostElements.filter(el => el.activity === 'Crushing')}
+            onCostsUpdate={setCrushingCosts}
+            batchData={batchData}
+          />
+          
+          <div className="navigation-buttons">
+            <button className="btn-prev" onClick={() => setCurrentStep(2)}>
+              ← Previous
+            </button>
+            <button 
+              className="btn-next"
+              onClick={() => setCurrentStep(4)}
+              disabled={!batchData.oil_yield || !batchData.cake_yield}
+            >
+              Next: Additional Costs →
+            </button>
+          </div>
+        </div>
+      )}
+      
+      {currentStep === 4 && (
+        <div className="step-content">
+          <h2>Additional Costs</h2>
+          
+          <CostCapture 
+            stage="additional"
+            costElements={extendedCostElements.filter(el => 
+              !['Drying', 'Crushing'].includes(el.activity)
+            )}
+            onCostsUpdate={setAdditionalCosts}
+            batchData={batchData}
+          />
+          
+          <div className="navigation-buttons">
+            <button className="btn-prev" onClick={() => setCurrentStep(3)}>
+              ← Previous
+            </button>
+            <button 
+              className="btn-next"
+              onClick={() => setCurrentStep(5)}
+            >
+              Next: Review →
+            </button>
+          </div>
+        </div>
+      )}
+      
+      {currentStep === 5 && (
+        <div className="step-content">
+          <h2>Review & Submit</h2>
+          
+          <div className="review-section">
+            <h3>Production Summary</h3>
+            <table className="review-table">
+              <tbody>
+                <tr>
+                  <td>Oil Type:</td>
+                  <td>{batchData.oil_type}</td>
+                  <td>Production Date:</td>
+                  <td>{batchData.production_date}</td>
+                </tr>
+                <tr>
+                  <td>Seed Before Drying:</td>
+                  <td>{batchData.seed_quantity_before_drying} kg</td>
+                  <td>Seed After Drying:</td>
+                  <td>{batchData.seed_quantity_after_drying} kg</td>
+                </tr>
+                <tr>
+                  <td>Oil Yield:</td>
+                  <td>{batchData.oil_yield} kg</td>
+                  <td>Cake Yield:</td>
+                  <td>{batchData.cake_yield} kg</td>
+                </tr>
+                <tr>
+                  <td>Total Production Cost:</td>
+                  <td colSpan="3">₹{calculateTotals().toFixed(2)}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <div className="navigation-buttons">
+            <button className="btn-prev" onClick={() => setCurrentStep(4)}>
+              ← Previous
+            </button>
+            <button 
+              className="btn-submit"
+              onClick={handleSubmit}
+              disabled={loading}
+            >
+              {loading ? 'Creating Batch...' : 'Submit Batch'}
+            </button>
+          </div>
+        </div>
+      )}
+      
+      {/* View History Button */}
+      <div className="history-toggle">
+        <button 
+          className="btn-history"
+          onClick={() => {
+            setShowHistory(!showHistory);
+            if (!showHistory) fetchBatchHistory();
+          }}
+        >
+          {showHistory ? 'Hide' : 'View'} Batch History
+        </button>
+      </div>
+      
+      {/* Batch History */}
+      {showHistory && (
         <div className="batch-history">
-          <h3>Batch Production History</h3>
-          <div className="history-table-container">
+          <h2>Recent Batches</h2>
+          <div className="table-container">
             <table className="history-table">
               <thead>
                 <tr>
-                  <th>Traceable Code</th>
+                  <th>Batch Code</th>
                   <th>Oil Type</th>
+                  <th>Production Date</th>
+                  <th>Seed Used</th>
                   <th>Oil Yield</th>
                   <th>Yield %</th>
                   <th>Cost/kg</th>
@@ -797,10 +775,10 @@ Total Oil Produced: ${response.total_oil_produced} kg`);
               <tbody>
                 {batchHistory.map((batch) => (
                   <tr key={batch.batch_id}>
-                    <td className="traceable-code">
-                      {batch.traceable_code || batch.batch_code}
-                    </td>
+                    <td>{batch.batch_code}</td>
                     <td>{batch.oil_type}</td>
+                    <td>{batch.production_date}</td>
+                    <td>{batch.seed_quantity_after_drying} kg</td>
                     <td>{batch.oil_yield} kg</td>
                     <td>
                       <span className={`yield-badge ${batch.oil_yield_percent > 30 ? 'high' : 'low'}`}>
@@ -814,7 +792,7 @@ Total Oil Produced: ${response.total_oil_produced} kg`);
                       <button 
                         onClick={() => generateBatchReport(batch.batch_id, batch.batch_code)}
                         className="view-costs-btn"
-                        disabled={loadingReports[batch.batch_id]} // FIXED: Check specific batch loading state
+                        disabled={loadingReports[batch.batch_id]}
                       >
                         {loadingReports[batch.batch_id] ? 'Loading...' : '📄 View Report'}
                       </button>
@@ -864,67 +842,173 @@ Total Oil Produced: ${response.total_oil_produced} kg`);
                   </div>
                 </div>
                 
-                {/* Batch Details Section */}
+                {/* Batch Information */}
                 <div className="section">
                   <div className="section-title">Batch Information</div>
                   <table>
                     <tbody>
                       <tr>
                         <th width="25%">Batch Code</th>
-                        <td width="25%">{reportData.batch_code}</td>
+                        <td width="25%">{reportData.batch_details?.batch_code}</td>
                         <th width="25%">Production Date</th>
-                        <td width="25%">{reportData.production_date}</td>
+                        <td width="25%">{reportData.batch_details?.production_date}</td>
                       </tr>
                       <tr>
                         <th>Oil Type</th>
-                        <td>{reportData.oil_type}</td>
+                        <td>{reportData.batch_details?.oil_type}</td>
                         <th>Seed Purchase Code</th>
-                        <td>{reportData.seed_purchase_code || 'N/A'}</td>
+                        <td className="highlight">{reportData.batch_details?.seed_purchase_code}</td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
                 
-                {/* Production Summary Section */}
+                {/* Production Summary */}
                 <div className="section">
                   <div className="section-title">Production Summary</div>
                   <table>
                     <tbody>
                       <tr>
-                        <th>Seed Before Drying</th>
-                        <td>{reportData.seed_quantity_before_drying} kg</td>
-                        <th>Seed After Drying</th>
-                        <td>{reportData.seed_quantity_after_drying} kg</td>
+                        <th width="25%">Seed Before Drying</th>
+                        <td width="25%">{reportData.production_summary?.seed_quantity_before_drying} kg</td>
+                        <th width="25%">Seed After Drying</th>
+                        <td width="25%">{reportData.production_summary?.seed_quantity_after_drying} kg</td>
                       </tr>
                       <tr>
                         <th>Oil Yield</th>
-                        <td className="highlight">{reportData.oil_yield} kg</td>
+                        <td className="highlight">
+                          {reportData.production_summary?.oil_yield} kg 
+                          ({reportData.production_summary?.oil_yield_percent}%)
+                        </td>
                         <th>Oil Cake Yield</th>
-                        <td>{reportData.cake_yield} kg</td>
+                        <td>{reportData.production_summary?.cake_yield} kg</td>
+                      </tr>
+                      <tr>
+                        <th>Sludge Yield</th>
+                        <td>{reportData.production_summary?.sludge_yield} kg</td>
+                        <th>Drying Loss</th>
+                        <td>
+                          {reportData.production_summary?.drying_loss_kg} kg
+                          ({reportData.production_summary?.drying_loss_percent}%)
+                        </td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
                 
-                {/* Cost Summary Section */}
+                {/* Cost Summary */}
                 <div className="section">
                   <div className="section-title">Cost Summary</div>
                   <table>
                     <tbody>
                       <tr>
+                        <th width="40%">Base Production Cost</th>
+                        <td width="60%">₹{reportData.cost_summary?.base_production_cost?.toFixed(2) || '0.00'}</td>
+                      </tr>
+                      <tr>
+                        <th>Extended Costs</th>
+                        <td>₹{reportData.cost_summary?.extended_costs?.toFixed(2) || '0.00'}</td>
+                      </tr>
+                      <tr className="total-row">
                         <th>Total Production Cost</th>
-                        <td className="highlight">₹{reportData.total_production_cost?.toFixed(2)}</td>
+                        <td>₹{reportData.cost_summary?.total_production_cost?.toFixed(2) || '0.00'}</td>
                       </tr>
                       <tr>
                         <th>Net Oil Cost</th>
-                        <td>₹{reportData.net_oil_cost?.toFixed(2)}</td>
+                        <td className="highlight">₹{reportData.cost_summary?.net_oil_cost?.toFixed(2) || '0.00'}</td>
                       </tr>
                       <tr>
                         <th>Cost per kg Oil</th>
-                        <td className="highlight">₹{reportData.oil_cost_per_kg?.toFixed(2)}/kg</td>
+                        <td className="highlight">₹{reportData.cost_summary?.oil_cost_per_kg?.toFixed(2) || '0.00'}/kg</td>
                       </tr>
                     </tbody>
                   </table>
+                </div>
+                
+                {/* Extended Costs Breakdown */}
+                {reportData.extended_costs && reportData.extended_costs.length > 0 && (
+                  <div className="section">
+                    <div className="section-title">Extended Costs Breakdown</div>
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Cost Element</th>
+                          <th>Activity</th>
+                          <th>Quantity</th>
+                          <th>Rate</th>
+                          <th>Total Cost</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {reportData.extended_costs.map((cost, index) => (
+                          <tr key={index} className="cost-row">
+                            <td>{cost.element_name}</td>
+                            <td>{cost.activity || 'General'}</td>
+                            <td>{cost.quantity || '-'}</td>
+                            <td>₹{cost.rate?.toFixed(2) || '0.00'}</td>
+                            <td>₹{cost.total_cost?.toFixed(2) || '0.00'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+                
+                {/* Time Tracking */}
+                {reportData.time_tracking && reportData.time_tracking.total_hours > 0 && (
+                  <div className="section">
+                    <div className="section-title">Time Tracking</div>
+                    <table>
+                      <tbody>
+                        <tr>
+                          <th width="40%">Total Hours Tracked</th>
+                          <td width="60%">{reportData.time_tracking.total_hours} hours</td>
+                        </tr>
+                        <tr>
+                          <th>Rounded Hours (for billing)</th>
+                          <td>{reportData.time_tracking.rounded_hours} hours</td>
+                        </tr>
+                        <tr>
+                          <th>Labor Cost</th>
+                          <td>₹{reportData.time_tracking.labor_cost?.toFixed(2) || '0.00'}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+                
+                {/* Validation Warnings */}
+                {reportData.validation && reportData.validation.has_warnings && (
+                  <div className="section">
+                    <div className="section-title">⚠️ Cost Validation Warnings</div>
+                    <div className="warning-box">
+                      <p>The following cost elements may be missing or incomplete:</p>
+                      <ul>
+                        {reportData.validation.warnings.map((warning, index) => (
+                          <li key={index}>{warning}</li>
+                        ))}
+                      </ul>
+                      <p className="warning-note">
+                        Total potential missing costs: ₹{reportData.validation.total_missing_cost?.toFixed(2) || '0.00'}
+                      </p>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Signature Section */}
+                <div className="signature-section">
+                  <div className="signature-box">
+                    <div className="signature-line"></div>
+                    <div>Production Operator</div>
+                  </div>
+                  <div className="signature-box">
+                    <div className="signature-line"></div>
+                    <div>Quality Controller</div>
+                  </div>
+                  <div className="signature-box">
+                    <div className="signature-line"></div>
+                    <div>Production Manager</div>
+                  </div>
                 </div>
               </div>
             </div>
