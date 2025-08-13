@@ -122,7 +122,7 @@ const BatchProduction = () => {
   const generateBatchReport = async (batchId, batchCode) => {
     setLoadingReport(true);
     try {
-      const response = await api.costAPI.getBatchSummary(batchId);
+      const response = await api.costManagement.getBatchSummary(batchId);
       if (response.success) {
         setReportData(response);
         setShowReport(true);
