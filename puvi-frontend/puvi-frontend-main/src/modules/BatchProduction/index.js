@@ -361,7 +361,12 @@ const BatchProduction = () => {
           
           extended_costs: summary.extended_costs || [],
           time_tracking: summary.time_tracking || timeTrackingData,
-          validation: summary.validation || { has_warnings: false, warning_count: 0, warnings: [] }
+          validation: summary.validation || { has_warnings: false, warning_count: 0, warnings: [] },
+          
+          // Add rates for by-product calculations
+          cake_rate: summary.cake_estimated_rate || batchData.cake_estimated_rate || 30,
+          sludge_rate: summary.sludge_estimated_rate || batchData.sludge_estimated_rate || 10,
+          seed_cost_per_kg: selectedSeed?.weighted_avg_cost || 0
         };
         
         setReportData(transformedData);
@@ -443,6 +448,9 @@ const BatchProduction = () => {
               border-collapse: collapse;
               margin-bottom: 15px;
             }
+            thead {
+              background: #e9ecef;
+            }
             th, td {
               border: 1px solid #ddd;
               padding: 8px;
@@ -453,6 +461,9 @@ const BatchProduction = () => {
               font-weight: bold;
               color: #555;
             }
+            .text-right {
+              text-align: right;
+            }
             .highlight {
               color: #2196F3;
               font-weight: bold;
@@ -460,6 +471,16 @@ const BatchProduction = () => {
             .total-row {
               background: #f8f9fa;
               font-weight: bold;
+            }
+            .total-row td {
+              font-weight: bold;
+            }
+            ul {
+              margin: 10px 0;
+              padding-left: 25px;
+            }
+            li {
+              margin: 5px 0;
             }
             .signature-section {
               margin-top: 50px;
@@ -1551,6 +1572,109 @@ const BatchProduction = () => {
                     </tbody>
                   </table>
                 </div>
+                
+                {/* Detailed Cost Breakdown */}
+                <div className="section">
+                  <div className="section-title">Detailed Cost Breakdown</div>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Cost Element</th>
+                        <th>Category</th>
+                        <th>Quantity</th>
+                        <th>Rate</th>
+                        <th>Total Cost</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {/* Seed Cost */}
+                      <tr>
+                        <td><strong>Seed Material</strong></td>
+                        <td>Raw Material</td>
+                        <td>{reportData.production_summary?.seed_quantity_before_drying || 0} kg</td>
+                        <td>-</td>
+                        <td className="text-right">
+                          ₹{((reportData.production_summary?.seed_quantity_before_drying || 0) * 
+                             (reportData.seed_cost_per_kg || selectedSeed?.weighted_avg_cost || 0)).toFixed(2)}
+                        </td>
+                      </tr>
+                      
+                      {/* Extended Costs from backend */}
+                      {reportData.extended_costs && reportData.extended_costs.map((cost, index) => (
+                        <tr key={`cost-${index}`}>
+                          <td>{cost.element_name}</td>
+                          <td>{cost.category || cost.activity || 'General'}</td>
+                          <td>{cost.quantity || 1} {cost.unit || 'units'}</td>
+                          <td>₹{cost.rate || 0}</td>
+                          <td className="text-right">₹{(cost.total_cost || 0).toFixed(2)}</td>
+                        </tr>
+                      ))}
+                      
+                      {/* Time Tracking Costs if available */}
+                      {reportData.time_tracking && reportData.time_tracking.costs && (
+                        <tr>
+                          <td>Time-based Costs</td>
+                          <td>Labor</td>
+                          <td>{reportData.time_tracking.rounded_hours || 0} hours</td>
+                          <td>-</td>
+                          <td className="text-right">₹{(reportData.time_tracking.costs.total || 0).toFixed(2)}</td>
+                        </tr>
+                      )}
+                      
+                      <tr className="total-row">
+                        <td colSpan="4"><strong>Total Production Cost</strong></td>
+                        <td className="text-right">
+                          <strong>₹{reportData.cost_summary?.total_production_cost?.toFixed(2) || '0.00'}</strong>
+                        </td>
+                      </tr>
+                      
+                      {/* By-product Value Deduction */}
+                      <tr>
+                        <td colSpan="4">Less: Oil Cake Value (@₹{reportData.cake_rate || 30}/kg)</td>
+                        <td className="text-right">
+                          -₹{((reportData.production_summary?.cake_yield || 0) * (reportData.cake_rate || 30)).toFixed(2)}
+                        </td>
+                      </tr>
+                      {reportData.production_summary?.sludge_yield > 0 && (
+                        <tr>
+                          <td colSpan="4">Less: Sludge Value (@₹{reportData.sludge_rate || 10}/kg)</td>
+                          <td className="text-right">
+                            -₹{((reportData.production_summary?.sludge_yield || 0) * (reportData.sludge_rate || 10)).toFixed(2)}
+                          </td>
+                        </tr>
+                      )}
+                      
+                      <tr className="total-row">
+                        <td colSpan="4"><strong>Net Oil Cost</strong></td>
+                        <td className="text-right">
+                          <strong>₹{reportData.cost_summary?.net_oil_cost?.toFixed(2) || '0.00'}</strong>
+                        </td>
+                      </tr>
+                      
+                      <tr className="highlight">
+                        <td colSpan="4">
+                          <strong>Oil Cost per KG</strong> 
+                          (Net Cost ÷ {reportData.production_summary?.oil_yield || 0} kg oil)
+                        </td>
+                        <td className="text-right">
+                          <strong>₹{reportData.cost_summary?.oil_cost_per_kg?.toFixed(2) || '0.00'}/kg</strong>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                
+                {/* Validation Warnings if any */}
+                {reportData.validation && reportData.validation.has_warnings && (
+                  <div className="section">
+                    <div className="section-title">Cost Validation Notes</div>
+                    <ul>
+                      {reportData.validation.warnings.map((warning, index) => (
+                        <li key={index}>{warning}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
                 
                 {/* Signature Section */}
                 <div className="signature-section">
