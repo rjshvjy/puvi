@@ -1,6 +1,6 @@
 /* File Path: puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/BatchProduction.css */
 /* Batch Production Module - Complete Professional Design System */
-/* Version: 4.0 - Step-by-Step Workflow with Cost Management */
+/* Version: 4.1 - Updated with all classes for no-inline-styles version */
 
 /* Variables */
 :root {
@@ -298,6 +298,10 @@
   margin-bottom: calc(var(--spacing-unit) * 1.25);
 }
 
+.form-row.mt-20 {
+  margin-top: 20px;
+}
+
 .form-group {
   display: flex;
   flex-direction: column;
@@ -334,6 +338,35 @@
   opacity: 0.7;
 }
 
+/* Step Description */
+.step-description {
+  color: #6c757d;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+/* Subsection Title */
+.subsection-title {
+  margin-top: 30px;
+  margin-bottom: 15px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+/* Rate Input Group */
+.rate-input-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.rate-hint {
+  color: #6c757d;
+  white-space: nowrap;
+  font-size: 13px;
+}
+
 /* Seed Selection */
 .seed-selection-container {
   margin-top: calc(var(--spacing-unit) * 1.25);
@@ -361,6 +394,7 @@
   cursor: pointer;
   transition: var(--transition);
   background: var(--white);
+  position: relative;
 }
 
 .seed-card:hover {
@@ -370,9 +404,9 @@
 }
 
 .seed-card.selected {
-  background: var(--primary-light);
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(47, 133, 90, 0.2);
+  background: linear-gradient(135deg, #e6f4ea 0%, #d4f1df 100%);
+  border: 3px solid var(--primary);
+  box-shadow: 0 4px 12px rgba(47, 133, 90, 0.3);
 }
 
 .seed-name {
@@ -391,7 +425,7 @@
 }
 
 .seed-quantity {
-  font-weight: 500;
+  color: var(--gray-600);
 }
 
 .seed-rate {
@@ -401,12 +435,28 @@
 
 .seed-code {
   font-size: 12px;
-  color: var(--gray-500);
+  color: var(--gray-600);
   font-family: 'Courier New', monospace;
   background: var(--gray-100);
-  padding: 2px 6px;
+  padding: 4px 8px;
   border-radius: 4px;
   margin-top: calc(var(--spacing-unit) * 0.5);
+}
+
+.seed-selected-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: var(--primary);
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
 }
 
 .selected-seed-info {
@@ -507,6 +557,64 @@
 .summary-item.highlight {
   background: #fffbf0;
   border-color: var(--warning);
+}
+
+/* Production Summary Box */
+.production-summary-box {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 5px;
+}
+
+.summary-subtitle {
+  margin-bottom: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.summary-details-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  font-size: 14px;
+}
+
+.summary-details-grid > div {
+  padding: 5px 0;
+}
+
+.traceable-info {
+  grid-column: span 2;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #dee2e6;
+}
+
+.traceable-item {
+  margin-bottom: 5px;
+}
+
+.traceable-label {
+  color: #6c757d;
+  margin-right: 10px;
+}
+
+.traceable-code-inline {
+  font-family: 'Courier New', monospace;
+  color: #2196F3;
+  background: #e3f2fd;
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.source-code-inline {
+  font-family: 'Courier New', monospace;
+  color: #856404;
+  background: #fffbf0;
+  padding: 2px 6px;
+  border-radius: 3px;
 }
 
 /* Form Actions */
@@ -669,6 +777,12 @@
   color: var(--text-color);
 }
 
+.traceable-code-cell {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: #2196F3;
+}
+
 .text-center {
   text-align: center;
 }
@@ -817,6 +931,8 @@
   padding: calc(var(--spacing-unit) * 2.5);
   max-width: 900px;
   margin: 0 auto;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  border-radius: 8px;
 }
 
 .report-header {
@@ -901,6 +1017,11 @@
   background: var(--gray-100);
   font-weight: 600;
   color: var(--text-color);
+  width: 25%;
+}
+
+.section td {
+  width: 25%;
 }
 
 .section td.traceable-highlight {
@@ -923,6 +1044,11 @@
 .total-row {
   background: var(--primary-light);
   font-weight: 600;
+}
+
+.total-row th,
+.total-row td {
+  font-weight: bold;
 }
 
 .warning-list {
@@ -1089,6 +1215,15 @@
   .step:not(:last-child)::after {
     display: none;
   }
+  
+  .summary-details-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .rate-input-group {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 @media (max-width: 480px) {
@@ -1153,6 +1288,7 @@
   
   .report-content {
     padding: 0;
+    box-shadow: none;
   }
   
   .section {
@@ -1166,5 +1302,29 @@
   
   .cost-summary {
     page-break-before: always;
+  }
+  
+  body {
+    font-family: 'Times New Roman', serif;
+    padding: 20px;
+    color: #333;
+  }
+  
+  .report-header {
+    border-bottom: 3px solid #2c3e50;
+  }
+  
+  .company-name {
+    color: #2c3e50;
+  }
+  
+  .section-title {
+    color: #2c3e50;
+    border-bottom: 2px solid #dee2e6;
+  }
+  
+  .section th {
+    background: #f5f5f5;
+    color: #2c3e50;
   }
 }
