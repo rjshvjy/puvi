@@ -57,6 +57,9 @@ const BatchProduction = () => {
   const [reportData, setReportData] = useState(null);
   const [loadingReports, setLoadingReports] = useState({});
   const reportRef = useRef();
+  
+  // Confirmation Dialog State
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
 
   // Load initial data
   useEffect(() => {
@@ -354,6 +357,13 @@ const BatchProduction = () => {
       return;
     }
     
+    // Show confirmation dialog instead of directly saving
+    setShowConfirmDialog(true);
+  };
+  
+  // Actual save after confirmation
+  const confirmAndSave = async () => {
+    setShowConfirmDialog(false);
     setLoading(true);
     setMessage('');
     
@@ -719,102 +729,193 @@ const BatchProduction = () => {
               </>
             )}
 
-            {/* Step 5: Production Output - WITH BY-PRODUCT RATES */}
+            {/* Step 5: Production Output - WITH BETTER TABLE DISPLAY */}
             {currentStep === 5 && (
               <div className="form-card">
                 <h3 className="card-title">Step 5: Production Output</h3>
                 
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>Oil Yield (kg)</label>
-                    <input
-                      type="number"
-                      className="form-control"
-                      value={batchData.oil_yield}
-                      onChange={(e) => setBatchData({...batchData, oil_yield: e.target.value})}
-                      step="0.01"
-                      required
-                    />
-                    {batchData.oil_yield && (
-                      <small className="yield-percent">Yield: {yields.oilPercent.toFixed(2)}%</small>
-                    )}
-                  </div>
-                  
-                  <div className="form-group">
-                    <label>Oil Cake Yield (kg)</label>
-                    <input
-                      type="number"
-                      className="form-control"
-                      value={batchData.cake_yield}
-                      onChange={(e) => setBatchData({...batchData, cake_yield: e.target.value})}
-                      step="0.01"
-                      required
-                    />
-                    {batchData.cake_yield && (
-                      <small className="yield-percent">Yield: {yields.cakePercent.toFixed(2)}%</small>
-                    )}
-                  </div>
-                  
-                  <div className="form-group">
-                    <label>Sludge Yield (kg)</label>
-                    <input
-                      type="number"
-                      className="form-control"
-                      value={batchData.sludge_yield}
-                      onChange={(e) => setBatchData({...batchData, sludge_yield: e.target.value})}
-                      step="0.01"
-                    />
-                    {batchData.sludge_yield && (
-                      <small className="yield-percent">Yield: {yields.sludgePercent.toFixed(2)}%</small>
-                    )}
-                  </div>
+                {/* Production Yields Table */}
+                <div className="output-table-container">
+                  <table className="output-table">
+                    <thead>
+                      <tr>
+                        <th>Output Type</th>
+                        <th>Quantity (kg)</th>
+                        <th>Yield %</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>
+                          <label htmlFor="oil-yield">Oil Yield</label>
+                        </td>
+                        <td>
+                          <input
+                            id="oil-yield"
+                            type="number"
+                            className="form-control table-input"
+                            value={batchData.oil_yield}
+                            onChange={(e) => setBatchData({...batchData, oil_yield: e.target.value})}
+                            step="0.01"
+                            required
+                          />
+                        </td>
+                        <td className="yield-cell">
+                          {batchData.oil_yield ? `${yields.oilPercent.toFixed(2)}%` : '-'}
+                        </td>
+                        <td>
+                          {batchData.oil_yield && (
+                            <span className={`status-badge ${yields.oilPercent > 30 ? 'good' : 'low'}`}>
+                              {yields.oilPercent > 30 ? 'Good' : 'Low'}
+                            </span>
+                          )}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <label htmlFor="cake-yield">Oil Cake Yield</label>
+                        </td>
+                        <td>
+                          <input
+                            id="cake-yield"
+                            type="number"
+                            className="form-control table-input"
+                            value={batchData.cake_yield}
+                            onChange={(e) => setBatchData({...batchData, cake_yield: e.target.value})}
+                            step="0.01"
+                            required
+                          />
+                        </td>
+                        <td className="yield-cell">
+                          {batchData.cake_yield ? `${yields.cakePercent.toFixed(2)}%` : '-'}
+                        </td>
+                        <td>
+                          {batchData.cake_yield && (
+                            <span className="status-badge normal">Normal</span>
+                          )}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>
+                          <label htmlFor="sludge-yield">Sludge Yield (Optional)</label>
+                        </td>
+                        <td>
+                          <input
+                            id="sludge-yield"
+                            type="number"
+                            className="form-control table-input"
+                            value={batchData.sludge_yield}
+                            onChange={(e) => setBatchData({...batchData, sludge_yield: e.target.value})}
+                            step="0.01"
+                          />
+                        </td>
+                        <td className="yield-cell">
+                          {batchData.sludge_yield ? `${yields.sludgePercent.toFixed(2)}%` : '-'}
+                        </td>
+                        <td>
+                          {batchData.sludge_yield && (
+                            <span className="status-badge optional">Optional</span>
+                          )}
+                        </td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr className="total-row">
+                        <td><strong>Total Output</strong></td>
+                        <td>
+                          <strong>
+                            {(parseFloat(batchData.oil_yield || 0) + 
+                              parseFloat(batchData.cake_yield || 0) + 
+                              parseFloat(batchData.sludge_yield || 0)).toFixed(2)} kg
+                          </strong>
+                        </td>
+                        <td>
+                          <strong>{yields.totalPercent.toFixed(2)}%</strong>
+                        </td>
+                        <td>
+                          {yields.totalPercent > 100 && (
+                            <span className="status-badge warning">⚠️ >100%</span>
+                          )}
+                          {yields.totalPercent > 95 && yields.totalPercent <= 100 && (
+                            <span className="status-badge good">✓ Optimal</span>
+                          )}
+                          {yields.totalPercent <= 95 && yields.totalPercent > 0 && (
+                            <span className="status-badge normal">Acceptable</span>
+                          )}
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
                 </div>
                 
-                {batchData.oil_yield && batchData.cake_yield && (
-                  <div className="total-yield-info">
-                    <strong>Total Output Yield:</strong> {yields.totalPercent.toFixed(2)}%
-                    {yields.totalPercent > 100 && (
-                      <span className="warning"> ⚠️ Total exceeds 100%</span>
-                    )}
-                  </div>
-                )}
-                
-                <h4 className="subsection-title">By-product Estimated Rates (From Master)</h4>
-                <div className="form-row">
-                  <div className="form-group">
-                    <label>Oil Cake Rate (₹/kg)</label>
-                    <div className="rate-input-group">
-                      <input
-                        type="number"
-                        className="form-control"
-                        value={batchData.cake_estimated_rate}
-                        onChange={(e) => setBatchData({...batchData, cake_estimated_rate: e.target.value})}
-                        step="0.01"
-                        required
-                        placeholder="Override master rate"
-                      />
-                      <small className="rate-hint">
-                        Master: ₹{oilCakeRates[batchData.oil_type?.split(' ')[0]]?.cake_rate || 30}/kg
-                      </small>
-                    </div>
-                  </div>
-                  
-                  <div className="form-group">
-                    <label>Sludge Rate (₹/kg)</label>
-                    <div className="rate-input-group">
-                      <input
-                        type="number"
-                        className="form-control"
-                        value={batchData.sludge_estimated_rate}
-                        onChange={(e) => setBatchData({...batchData, sludge_estimated_rate: e.target.value})}
-                        step="0.01"
-                        placeholder="Override master rate"
-                      />
-                      <small className="rate-hint">
-                        Master: ₹{oilCakeRates[batchData.oil_type?.split(' ')[0]]?.sludge_rate || 10}/kg
-                      </small>
-                    </div>
-                  </div>
+                {/* By-product Rates Table */}
+                <div className="byproduct-section">
+                  <h4 className="subsection-title">By-product Estimated Rates</h4>
+                  <table className="rates-table">
+                    <thead>
+                      <tr>
+                        <th>By-product</th>
+                        <th>Master Rate (₹/kg)</th>
+                        <th>Override Rate (₹/kg)</th>
+                        <th>Estimated Value</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>Oil Cake</td>
+                        <td className="rate-cell">
+                          ₹{oilCakeRates[batchData.oil_type?.split(' ')[0]]?.cake_rate || 30}/kg
+                        </td>
+                        <td>
+                          <input
+                            type="number"
+                            className="form-control table-input"
+                            value={batchData.cake_estimated_rate}
+                            onChange={(e) => setBatchData({...batchData, cake_estimated_rate: e.target.value})}
+                            step="0.01"
+                            required
+                            placeholder="Enter rate"
+                          />
+                        </td>
+                        <td className="value-cell">
+                          ₹{(parseFloat(batchData.cake_yield || 0) * 
+                             parseFloat(batchData.cake_estimated_rate || 0)).toFixed(2)}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>Sludge</td>
+                        <td className="rate-cell">
+                          ₹{oilCakeRates[batchData.oil_type?.split(' ')[0]]?.sludge_rate || 10}/kg
+                        </td>
+                        <td>
+                          <input
+                            type="number"
+                            className="form-control table-input"
+                            value={batchData.sludge_estimated_rate}
+                            onChange={(e) => setBatchData({...batchData, sludge_estimated_rate: e.target.value})}
+                            step="0.01"
+                            placeholder="Enter rate"
+                          />
+                        </td>
+                        <td className="value-cell">
+                          ₹{(parseFloat(batchData.sludge_yield || 0) * 
+                             parseFloat(batchData.sludge_estimated_rate || 0)).toFixed(2)}
+                        </td>
+                      </tr>
+                    </tbody>
+                    <tfoot>
+                      <tr className="total-row">
+                        <td colSpan="3"><strong>Total By-product Value</strong></td>
+                        <td className="value-cell">
+                          <strong>
+                            ₹{((parseFloat(batchData.cake_yield || 0) * parseFloat(batchData.cake_estimated_rate || 0)) +
+                               (parseFloat(batchData.sludge_yield || 0) * parseFloat(batchData.sludge_estimated_rate || 0))).toFixed(2)}
+                          </strong>
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
                 </div>
               </div>
             )}
@@ -1036,9 +1137,9 @@ const BatchProduction = () => {
                   type="submit" 
                   className="btn-submit btn-save-batch"
                   disabled={loading}
-                  title="Click to save batch permanently"
+                  title="Review and confirm before saving"
                 >
-                  {loading ? 'Creating Batch...' : '✓ Save Batch & Generate Report'}
+                  {loading ? 'Processing...' : '📋 Review & Confirm'}
                 </button>
               )}
             </div>
@@ -1272,6 +1373,82 @@ const BatchProduction = () => {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Confirmation Dialog */}
+      {showConfirmDialog && (
+        <div className="confirmation-overlay">
+          <div className="confirmation-dialog">
+            <div className="confirmation-header">
+              <h3>Confirm Batch Production</h3>
+            </div>
+            <div className="confirmation-body">
+              <p className="confirmation-warning">
+                ⚠️ Please confirm that all information is correct before saving.
+              </p>
+              
+              <div className="confirmation-summary">
+                <h4>Batch Summary:</h4>
+                <table className="confirmation-table">
+                  <tbody>
+                    <tr>
+                      <td>Oil Type:</td>
+                      <td><strong>{batchData.oil_type}</strong></td>
+                    </tr>
+                    <tr>
+                      <td>Seed Quantity:</td>
+                      <td><strong>{batchData.seed_quantity_before_drying} kg</strong></td>
+                    </tr>
+                    <tr>
+                      <td>Oil Yield:</td>
+                      <td><strong>{batchData.oil_yield} kg ({yields.oilPercent.toFixed(2)}%)</strong></td>
+                    </tr>
+                    <tr>
+                      <td>Cake Yield:</td>
+                      <td><strong>{batchData.cake_yield} kg</strong></td>
+                    </tr>
+                    <tr>
+                      <td>Total Cost:</td>
+                      <td><strong>₹{calculateTotalCost().toFixed(2)}</strong></td>
+                    </tr>
+                    <tr>
+                      <td>Oil Cost/kg:</td>
+                      <td><strong>₹{(calculateTotalCost() / parseFloat(batchData.oil_yield || 1)).toFixed(2)}</strong></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              
+              <p className="confirmation-note">
+                This action will:
+                <ul>
+                  <li>Save the batch production record permanently</li>
+                  <li>Deduct {batchData.seed_quantity_before_drying} kg from seed inventory</li>
+                  <li>Add {batchData.oil_yield} kg to oil inventory</li>
+                  <li>Add {batchData.cake_yield} kg to cake inventory</li>
+                  <li>Generate a traceable code for this batch</li>
+                </ul>
+              </p>
+            </div>
+            <div className="confirmation-footer">
+              <button 
+                type="button"
+                className="btn-cancel"
+                onClick={() => setShowConfirmDialog(false)}
+              >
+                Cancel
+              </button>
+              <button 
+                type="button"
+                className="btn-confirm"
+                onClick={confirmAndSave}
+                disabled={loading}
+              >
+                {loading ? 'Saving...' : 'Confirm & Save'}
+              </button>
             </div>
           </div>
         </div>
