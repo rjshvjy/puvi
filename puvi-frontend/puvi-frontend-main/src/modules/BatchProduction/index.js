@@ -182,16 +182,21 @@ const BatchProduction = () => {
     };
   };
 
-  // Handle cost updates from CostCapture component - FIXED to capture ALL costs
+  // Handle cost updates from CostCapture component - FIXED to ensure persistence
   const handleCostsUpdate = (stage, costs) => {
-    // Store all costs passed from CostCapture, including defaults
-    setStageCosts(prev => ({
-      ...prev,
-      [stage]: costs
-    }));
+    console.log(`📊 COSTS RECEIVED for ${stage}:`, costs);
+    console.log(`   - Count: ${costs.length}`);
+    console.log(`   - Total: ₹${costs.reduce((sum, c) => sum + c.total_cost, 0)}`);
     
-    // Log to verify all costs are captured
-    console.log(`Costs captured for ${stage}:`, costs);
+    // Store all costs passed from CostCapture, including defaults
+    setStageCosts(prev => {
+      const updated = {
+        ...prev,
+        [stage]: costs
+      };
+      console.log('📦 UPDATED stageCosts:', updated);
+      return updated;
+    });
   };
 
   // Handle time tracking update
@@ -291,12 +296,17 @@ const BatchProduction = () => {
     return seedCost + otherCosts;
   };
 
-  // Generate complete cost details array for submission - FIXED to ensure all costs are included
+  // Generate complete cost details array for submission - FIXED with debugging
   const generateCostDetailsForSubmission = () => {
+    console.log('🚀 PREPARING SUBMISSION:');
+    console.log('   Current stageCosts:', stageCosts);
+    
     const allCostDetails = [];
     
     // Process costs from each stage
     Object.entries(stageCosts).forEach(([stage, costs]) => {
+      console.log(`   Processing ${stage}: ${costs?.length || 0} costs`);
+      
       if (costs && costs.length > 0) {  // Only if costs exist
         costs.forEach(cost => {
           const costDetail = {
@@ -321,8 +331,8 @@ const BatchProduction = () => {
       }
     });
     
-    // Log to verify what's being sent
-    console.log('Cost details being submitted:', allCostDetails);
+    console.log('📤 FINAL cost_details array:', allCostDetails);
+    console.log(`   Total items: ${allCostDetails.length}`);
     
     return allCostDetails;
   };
