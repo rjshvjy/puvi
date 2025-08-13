@@ -5,6 +5,7 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
 import CostElementsManager from './CostElementsManager'; // Added for CRUD integration
+import { formatDateToDDMMYYYY, extractDateFromBatchCode } from '../../utils/dateUtils';
 import './CostManagement.css';
 
 const CostManagement = () => {
@@ -134,13 +135,20 @@ const CostManagement = () => {
     }
   };
 
-  // Batch analysis functions
+  // Batch analysis functions - UPDATED with date formatting
   const loadBatches = async () => {
     try {
       setLoading(true);
       const response = await api.batch.getBatchHistory({ limit: 100 });
       if (response.success) {
-        setBatches(response.batches);
+        // Format dates in batch data
+        const formattedBatches = response.batches.map(batch => ({
+          ...batch,
+          production_date: formatDateToDDMMYYYY(batch.production_date),
+          // Clean display text - remove any (Invalid Date) suffixes
+          display_date: formatDateToDDMMYYYY(batch.production_date)
+        }));
+        setBatches(formattedBatches);
       }
     } catch (error) {
       setMessage(`Error loading batches: ${error.message}`);
@@ -226,11 +234,9 @@ const CostManagement = () => {
     }
   };
 
-  // Helper functions
+  // Helper functions - UPDATED with centralized date utility
   const formatDate = (dateStr) => {
-    if (!dateStr) return '';
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-GB');
+    return formatDateToDDMMYYYY(dateStr);
   };
 
   const formatCurrency = (amount) => {
@@ -508,7 +514,7 @@ const CostManagement = () => {
           </div>
         )}
 
-        {/* Dashboard Tab */}
+        {/* Dashboard Tab - UPDATED with date formatting */}
         {activeTab === 'dashboard' && !loading && (
           <div>
             {/* Stats Cards */}
@@ -535,7 +541,7 @@ const CostManagement = () => {
               </div>
             </div>
 
-            {/* Recent Batches */}
+            {/* Recent Batches - UPDATED with date formatting */}
             <div style={styles.card}>
               <h3 style={styles.cardTitle}>📅 Recent Production Batches</h3>
               <table style={styles.table}>
@@ -553,7 +559,7 @@ const CostManagement = () => {
                 <tbody>
                   {dashboardStats.recentBatches.map(batch => (
                     <tr key={batch.batch_id}>
-                      <td style={styles.td}>{formatDate(batch.production_date)}</td>
+                      <td style={styles.td}>{formatDateToDDMMYYYY(batch.production_date)}</td>
                       <td style={styles.td}>
                         <strong>{batch.batch_code}</strong>
                       </td>
@@ -704,7 +710,7 @@ const CostManagement = () => {
           </div>
         )}
 
-        {/* Batch Analysis Tab */}
+        {/* Batch Analysis Tab - UPDATED with proper date formatting */}
         {activeTab === 'analysis' && !loading && (
           <div>
             <div style={styles.card}>
@@ -726,17 +732,20 @@ const CostManagement = () => {
                 value={selectedBatch || ''}
               >
                 <option value="">-- Select a Batch --</option>
-                {batches.map(batch => (
-                  <option key={batch.batch_id} value={batch.batch_id}>
-                    {batch.batch_code} - {batch.oil_type} ({formatDate(batch.production_date)})
-                  </option>
-                ))}
+                {batches.map(batch => {
+                  const dateStr = batch.display_date || formatDateToDDMMYYYY(batch.production_date);
+                  return (
+                    <option key={batch.batch_id} value={batch.batch_id}>
+                      {batch.batch_code} - {batch.oil_type} ({dateStr})
+                    </option>
+                  );
+                })}
               </select>
             </div>
 
             {batchCostDetails && (
               <>
-                {/* Batch Summary */}
+                {/* Batch Summary - UPDATED with date formatting */}
                 <div style={styles.card}>
                   <h3 style={styles.cardTitle}>📋 Batch Summary</h3>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
@@ -747,7 +756,7 @@ const CostManagement = () => {
                       <strong>Oil Type:</strong> {batchCostDetails.oil_type}
                     </div>
                     <div>
-                      <strong>Production Date:</strong> {batchCostDetails.production_date}
+                      <strong>Production Date:</strong> {formatDateToDDMMYYYY(batchCostDetails.production_date)}
                     </div>
                     <div>
                       <strong>Oil Yield:</strong> {batchCostDetails.oil_yield} kg
