@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-13T17:34:47.906Z",
+  "generatedAt": "2025-08-13T17:38:21.570Z",
   "filesScanned": 54,
   "jsFilesScanned": 33,
   "pyFilesScanned": 21,
@@ -717,9 +717,9 @@
         "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
         "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
         "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-        "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
         "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-        "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx"
+        "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
+        "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js"
       ]
     },
     {
@@ -1343,12 +1343,6 @@
       "type": "const"
     },
     {
-      "name": "CostElementRow",
-      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
-      "line": 29,
-      "type": "const"
-    },
-    {
       "name": "OpeningBalanceEntry",
       "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
       "line": 34,
@@ -1358,6 +1352,12 @@
       "name": "SystemStatusDashboard",
       "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
       "line": 34,
+      "type": "const"
+    },
+    {
+      "name": "CostElementRow",
+      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
+      "line": 29,
       "type": "const"
     }
   ],
@@ -7125,22 +7125,6 @@
       "isAsync": false
     },
     {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
-      "line": 71,
-      "name": "handleRateChange",
-      "params": "e",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
-      "line": 78,
-      "name": "getCategoryClass",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
       "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
       "line": 11,
       "name": "apiCall",
@@ -7329,6 +7313,22 @@
       "line": 96,
       "name": "formatCurrency",
       "params": "amount",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
+      "line": 71,
+      "name": "handleRateChange",
+      "params": "e",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
+      "line": 78,
+      "name": "getCategoryClass",
+      "params": "",
       "type": "arrow",
       "isAsync": false
     },
@@ -11658,46 +11658,6 @@
       "hook": "useEffect"
     },
     {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
-      "line": 45,
-      "type": "useState",
-      "name": "localOverrideRate",
-      "setter": "setLocalOverrideRate",
-      "initial": null
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
-      "line": 45,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
-      "line": 46,
-      "type": "useState",
-      "name": "showOverrideWarning",
-      "setter": "setShowOverrideWarning",
-      "initial": null
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
-      "line": 46,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
-      "line": 56,
-      "type": "useEffect",
-      "hook": "useEffect"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
-      "line": 66,
-      "type": "useEffect",
-      "hook": "useEffect"
-    },
-    {
       "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
       "line": 36,
       "type": "useState",
@@ -12054,6 +12014,46 @@
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
       "line": 44,
+      "type": "useEffect",
+      "hook": "useEffect"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
+      "line": 45,
+      "type": "useState",
+      "name": "localOverrideRate",
+      "setter": "setLocalOverrideRate",
+      "initial": null
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
+      "line": 45,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
+      "line": 46,
+      "type": "useState",
+      "name": "showOverrideWarning",
+      "setter": "setShowOverrideWarning",
+      "initial": null
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
+      "line": 46,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
+      "line": 56,
+      "type": "useEffect",
+      "hook": "useEffect"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
+      "line": 66,
       "type": "useEffect",
       "hook": "useEffect"
     }
