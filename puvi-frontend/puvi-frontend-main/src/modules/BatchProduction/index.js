@@ -1,6 +1,6 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js
 // BATCH PRODUCTION WITH STEP-BY-STEP COST MANAGEMENT - COMPLETE FIXED VERSION
-// Fixed: Seed selection, report display, history, and by-product rates
+// Fixed: Syntax error, removed all inline styles, uses CSS classes only
 
 import React, { useState, useEffect, useRef } from 'react';
 import api from '../../services/api';
@@ -314,98 +314,21 @@ const BatchProduction = () => {
     const printContent = reportRef.current.innerHTML;
     const printWindow = window.open('', '_blank', 'width=900,height=650');
     
+    // Get the CSS file content
+    const cssLink = Array.from(document.styleSheets).find(sheet => 
+      sheet.href && sheet.href.includes('BatchProduction.css')
+    );
+    
     printWindow.document.write(`
       <html>
         <head>
           <title>Batch Report - ${reportData?.batch_code || ''}</title>
+          <link rel="stylesheet" href="${cssLink?.href || ''}">
           <style>
             body { 
               font-family: 'Times New Roman', serif; 
               padding: 20px;
               color: #333;
-            }
-            .report-header {
-              text-align: center;
-              border-bottom: 3px solid #2c3e50;
-              padding-bottom: 20px;
-              margin-bottom: 30px;
-            }
-            .company-name {
-              font-size: 28px;
-              font-weight: bold;
-              color: #2c3e50;
-              margin-bottom: 10px;
-            }
-            .report-title {
-              font-size: 20px;
-              color: #495057;
-              margin-bottom: 10px;
-            }
-            .traceable-code {
-              font-size: 18px;
-              color: #2196F3;
-              font-weight: bold;
-              margin: 20px auto;
-              padding: 12px 24px;
-              border: 3px solid #2196F3;
-              border-radius: 8px;
-              display: inline-block;
-              background: #e3f2fd;
-              font-family: monospace;
-            }
-            .report-date {
-              font-size: 14px;
-              color: #6c757d;
-              margin-top: 10px;
-            }
-            .section {
-              margin: 25px 0;
-            }
-            .section-title {
-              font-size: 18px;
-              font-weight: bold;
-              color: #2c3e50;
-              border-bottom: 2px solid #dee2e6;
-              padding-bottom: 5px;
-              margin-bottom: 15px;
-            }
-            table {
-              width: 100%;
-              border-collapse: collapse;
-              margin: 15px 0;
-            }
-            th, td {
-              padding: 10px;
-              text-align: left;
-              border: 1px solid #ddd;
-            }
-            th {
-              background: #f5f5f5;
-              font-weight: bold;
-              color: #2c3e50;
-            }
-            .highlight {
-              background: #fffbf0;
-              font-weight: bold;
-            }
-            .total-row {
-              background: #e8f5e9;
-              font-weight: bold;
-            }
-            .signature-section {
-              display: flex;
-              justify-content: space-around;
-              margin-top: 60px;
-              padding-top: 30px;
-            }
-            .signature-box {
-              width: 200px;
-              text-align: center;
-            }
-            .signature-line {
-              border-bottom: 1px solid #333;
-              margin-bottom: 5px;
-              height: 40px;
             }
             @media print {
               body { margin: 0; }
@@ -417,7 +340,7 @@ const BatchProduction = () => {
     `);
     
     printWindow.document.close();
-    printWindow.print();
+    setTimeout(() => printWindow.print(), 500);
   };
 
   // Submit batch
@@ -630,37 +553,25 @@ const BatchProduction = () => {
                             key={seed.material_id}
                             className={`seed-card ${selectedSeed?.material_id === seed.material_id ? 'selected' : ''}`}
                             onClick={() => handleSeedSelection(seed)}
-                            style={{
-                              display: 'block',
-                              padding: '16px',
-                              border: selectedSeed?.material_id === seed.material_id ? '3px solid #2f855a' : '2px solid #e2e8f0',
-                              borderRadius: '8px',
-                              cursor: 'pointer',
-                              background: selectedSeed?.material_id === seed.material_id ? 'linear-gradient(135deg, #e6f4ea 0%, #d4f1df 100%)' : '#ffffff',
-                              boxShadow: selectedSeed?.material_id === seed.material_id ? '0 4px 12px rgba(47, 133, 90, 0.3)' : '0 1px 3px rgba(0, 0, 0, 0.1)',
-                              transition: 'all 0.2s ease'
-                            }}
                           >
-                            <div className="seed-name" style={{fontSize: '16px', fontWeight: '600', color: '#2d3748', marginBottom: '8px'}}>
+                            <div className="seed-name">
                               {seed.material_name}
                             </div>
-                            <div className="seed-details" style={{display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '14px'}}>
-                              <span className="seed-quantity" style={{color: '#718096'}}>
+                            <div className="seed-details">
+                              <span className="seed-quantity">
                                 Available: {seed.available_quantity} kg
                               </span>
-                              <span className="seed-rate" style={{color: '#2f855a', fontWeight: '600'}}>
+                              <span className="seed-rate">
                                 ₹{seed.weighted_avg_cost}/kg
                               </span>
                             </div>
                             {seed.latest_purchase_code && (
-                              <div className="seed-code" style={{fontSize: '12px', color: '#718096', fontFamily: 'monospace', background: '#f7fafc', padding: '4px 8px', borderRadius: '4px'}}>
+                              <div className="seed-code">
                                 Traceable: {seed.latest_purchase_code}
                               </div>
                             )}
                             {selectedSeed?.material_id === seed.material_id && (
-                              <div style={{position: 'absolute', top: '10px', right: '10px', background: '#2f855a', color: 'white', borderRadius: '50%', width: '24px', height: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
-                                ✓
-                              </div>
+                              <div className="seed-selected-badge">✓</div>
                             )}
                           </div>
                         ))}
@@ -674,13 +585,13 @@ const BatchProduction = () => {
                         <strong>Selected:</strong> {selectedSeed.material_name} - 
                         {selectedSeed.available_quantity} kg available @ ₹{selectedSeed.weighted_avg_cost}/kg
                         {selectedSeed.latest_purchase_code && (
-                          <div style={{marginTop: '5px', fontSize: '12px'}}>
+                          <div className="traceable-code-display">
                             Traceable Code: {selectedSeed.latest_purchase_code}
                           </div>
                         )}
                       </div>
                       
-                      <div className="form-row" style={{marginTop: '20px'}}>
+                      <div className="form-row mt-20">
                         <div className="form-group">
                           <label>Seed Quantity to Process (kg)</label>
                           <input
@@ -785,7 +696,7 @@ const BatchProduction = () => {
               <>
                 <div className="form-card">
                   <h3 className="card-title">Step 4: Filtering Process</h3>
-                  <p style={{color: '#6c757d', marginBottom: '20px'}}>
+                  <p className="step-description">
                     Capture filtering-specific costs for the batch
                   </p>
                 </div>
@@ -864,11 +775,11 @@ const BatchProduction = () => {
                   </div>
                 )}
                 
-                <h4 style={{marginTop: '30px', marginBottom: '15px'}}>By-product Estimated Rates (From Master)</h4>
+                <h4 className="subsection-title">By-product Estimated Rates (From Master)</h4>
                 <div className="form-row">
                   <div className="form-group">
                     <label>Oil Cake Rate (₹/kg)</label>
-                    <div style={{display: 'flex', gap: '10px', alignItems: 'center'}}>
+                    <div className="rate-input-group">
                       <input
                         type="number"
                         className="form-control"
@@ -878,7 +789,7 @@ const BatchProduction = () => {
                         required
                         placeholder="Override master rate"
                       />
-                      <small style={{color: '#6c757d', whiteSpace: 'nowrap'}}>
+                      <small className="rate-hint">
                         Master: ₹{oilCakeRates[batchData.oil_type?.split(' ')[0]]?.cake_rate || 30}/kg
                       </small>
                     </div>
@@ -886,7 +797,7 @@ const BatchProduction = () => {
                   
                   <div className="form-group">
                     <label>Sludge Rate (₹/kg)</label>
-                    <div style={{display: 'flex', gap: '10px', alignItems: 'center'}}>
+                    <div className="rate-input-group">
                       <input
                         type="number"
                         className="form-control"
@@ -895,7 +806,7 @@ const BatchProduction = () => {
                         step="0.01"
                         placeholder="Override master rate"
                       />
-                      <small style={{color: '#6c757d', whiteSpace: 'nowrap'}}>
+                      <small className="rate-hint">
                         Master: ₹{oilCakeRates[batchData.oil_type?.split(' ')[0]]?.sludge_rate || 10}/kg
                       </small>
                     </div>
@@ -958,9 +869,9 @@ const BatchProduction = () => {
                   </div>
                   
                   {/* Production Summary */}
-                  <div style={{marginTop: '20px', padding: '15px', background: '#f8f9fa', borderRadius: '5px'}}>
-                    <h4 style={{marginBottom: '10px'}}>Production Summary</h4>
-                    <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', fontSize: '14px'}}>
+                  <div className="production-summary-box">
+                    <h4 className="summary-subtitle">Production Summary</h4>
+                    <div className="summary-details-grid">
                       <div>Oil Type: <strong>{batchData.oil_type}</strong></div>
                       <div>Production Date: <strong>{batchData.production_date}</strong></div>
                       <div>Seed Used: <strong>{batchData.seed_quantity_before_drying} kg</strong></div>
@@ -970,17 +881,17 @@ const BatchProduction = () => {
                       {timeTrackingData && (
                         <div>Crushing Time: <strong>{timeTrackingData.rounded_hours} hours</strong></div>
                       )}
-                      <div style={{gridColumn: 'span 2', marginTop: '10px', paddingTop: '10px', borderTop: '1px solid #dee2e6'}}>
-                        <div style={{marginBottom: '5px'}}>
-                          <span style={{color: '#6c757d'}}>System Traceable Code:</span> 
-                          <strong style={{fontFamily: 'monospace', color: '#2196F3', marginLeft: '10px'}}>
+                      <div className="traceable-info">
+                        <div className="traceable-item">
+                          <span className="traceable-label">System Traceable Code:</span> 
+                          <strong className="traceable-code-inline">
                             {reportData?.traceable_code || 'Will be generated on submission'}
                           </strong>
                         </div>
                         {batchData.seed_purchase_code && (
-                          <div>
-                            <span style={{color: '#6c757d'}}>Source Seed Code:</span> 
-                            <strong style={{fontFamily: 'monospace', marginLeft: '10px'}}>{batchData.seed_purchase_code}</strong>
+                          <div className="traceable-item">
+                            <span className="traceable-label">Source Seed Code:</span> 
+                            <strong className="source-code-inline">{batchData.seed_purchase_code}</strong>
                           </div>
                         )}
                       </div>
@@ -991,21 +902,12 @@ const BatchProduction = () => {
             )}
 
             {/* Navigation Buttons */}
-            <div className="form-actions" style={{display: 'flex', justifyContent: 'space-between', padding: '20px 0'}}>
+            <div className="form-actions">
               <button 
                 type="button"
                 className="btn-secondary"
                 onClick={prevStep}
                 disabled={currentStep === 1}
-                style={{
-                  padding: '10px 20px',
-                  background: '#6c757d',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '5px',
-                  cursor: currentStep === 1 ? 'not-allowed' : 'pointer',
-                  opacity: currentStep === 1 ? 0.5 : 1
-                }}
               >
                 ← Previous
               </button>
@@ -1015,14 +917,6 @@ const BatchProduction = () => {
                   type="button"
                   className="btn-primary"
                   onClick={nextStep}
-                  style={{
-                    padding: '10px 20px',
-                    background: '#2f855a',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '5px',
-                    cursor: 'pointer'
-                  }}
                 >
                   Next →
                 </button>
@@ -1031,15 +925,6 @@ const BatchProduction = () => {
                   type="submit" 
                   className="btn-submit"
                   disabled={loading}
-                  style={{
-                    padding: '10px 30px',
-                    background: loading ? '#6c757d' : '#2f855a',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '5px',
-                    cursor: loading ? 'not-allowed' : 'pointer',
-                    fontWeight: 'bold'
-                  }}
                 >
                   {loading ? 'Creating Batch...' : '✓ Create Batch'}
                 </button>
@@ -1086,7 +971,7 @@ const BatchProduction = () => {
                   batchHistory.map((batch) => (
                     <tr key={batch.batch_id}>
                       <td className="batch-code">{batch.batch_code}</td>
-                      <td style={{fontFamily: 'monospace', fontSize: '12px'}}>{batch.traceable_code}</td>
+                      <td className="traceable-code-cell">{batch.traceable_code}</td>
                       <td>{batch.oil_type}</td>
                       <td>{batch.production_date}</td>
                       <td className="text-right">{batch.seed_quantity_after || batch.seed_quantity_after_drying}</td>
@@ -1139,75 +1024,69 @@ const BatchProduction = () => {
                 </button>
               </div>
               
-              <div ref={reportRef} className="report-content" style={{
-                background: 'white',
-                padding: '30px',
-                maxWidth: '900px',
-                margin: '0 auto',
-                boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
-                borderRadius: '8px'
-              }}>
- reportData.batch_code}
+              <div ref={reportRef} className="report-content">
+                {/* Report Header */}
+                <div className="report-header">
+                  <div className="company-name">PUVI OIL MANUFACTURING</div>
+                  <div className="report-title">Batch Production Report</div>
+                  <div className="traceable-code primary">
+                    Traceable Code: {reportData.traceable_code || reportData.batch_code}
                   </div>
-                  <div className="report-date" style={{fontSize: '14px', color: '#6c757d', marginTop: '10px'}}>
+                  <div className="report-date">
                     Generated: {new Date().toLocaleString('en-IN')}
                   </div>
                 </div>
                 
                 {/* Batch Information */}
-                <div className="section" style={{margin: '25px 0'}}>
-                  <div className="section-title" style={{fontSize: '18px', fontWeight: 'bold', color: '#2c3e50', borderBottom: '2px solid #dee2e6', paddingBottom: '5px', marginBottom: '15px'}}>
-                    Batch Information
-                  </div>
-                  <table style={{width: '100%', borderCollapse: 'collapse'}}>
+                <div className="section">
+                  <div className="section-title">Batch Information</div>
+                  <table>
                     <tbody>
                       <tr>
-                        <th style={{padding: '10px', textAlign: 'left', border: '1px solid #ddd', background: '#f5f5f5', width: '25%'}}>Batch Code</th>
-                        <td style={{padding: '10px', border: '1px solid #ddd', width: '25%'}}>{reportData.batch_details?.batch_code}</td>
-                        <th style={{padding: '10px', textAlign: 'left', border: '1px solid #ddd', background: '#f5f5f5', width: '25%'}}>Production Date</th>
-                        <td style={{padding: '10px', border: '1px solid #ddd', width: '25%'}}>{reportData.batch_details?.production_date}</td>
+                        <th>Batch Code</th>
+                        <td>{reportData.batch_details?.batch_code}</td>
+                        <th>Production Date</th>
+                        <td>{reportData.batch_details?.production_date}</td>
                       </tr>
                       <tr>
-                        <th style={{padding: '10px', textAlign: 'left', border: '1px solid #ddd', background: '#f5f5f5'}}>Oil Type</th>
-                        <td style={{padding: '10px', border: '1px solid #ddd'}}>{reportData.batch_details?.oil_type}</td>
-                        <th style={{padding: '10px', textAlign: 'left', border: '1px solid #ddd', background: '#f5f5f5'}}>Batch Traceable Code</th>
-                        <td style={{padding: '10px', border: '1px solid #ddd', background: '#e3f2fd', fontWeight: 'bold', fontFamily: 'monospace'}}>{reportData.batch_details?.traceable_code || reportData.traceable_code}</td>
+                        <th>Oil Type</th>
+                        <td>{reportData.batch_details?.oil_type}</td>
+                        <th>Batch Traceable Code</th>
+                        <td className="traceable-highlight">{reportData.batch_details?.traceable_code || reportData.traceable_code}</td>
                       </tr>
                       <tr>
-                        <th style={{padding: '10px', textAlign: 'left', border: '1px solid #ddd', background: '#f5f5f5'}}>Source Seed Code</th>
-                        <td colSpan="3" style={{padding: '10px', border: '1px solid #ddd', fontFamily: 'monospace', fontSize: '13px'}}>{reportData.batch_details?.seed_purchase_code}</td>
+                        <th>Source Seed Code</th>
+                        <td colSpan="3" className="source-highlight">{reportData.batch_details?.seed_purchase_code}</td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
                 
                 {/* Production Summary */}
-                <div className="section" style={{margin: '25px 0'}}>
-                  <div className="section-title" style={{fontSize: '18px', fontWeight: 'bold', color: '#2c3e50', borderBottom: '2px solid #dee2e6', paddingBottom: '5px', marginBottom: '15px'}}>
-                    Production Summary
-                  </div>
-                  <table style={{width: '100%', borderCollapse: 'collapse'}}>
+                <div className="section">
+                  <div className="section-title">Production Summary</div>
+                  <table>
                     <tbody>
                       <tr>
-                        <th style={{padding: '10px', textAlign: 'left', border: '1px solid #ddd', background: '#f5f5f5', width: '25%'}}>Seed Before Drying</th>
-                        <td style={{padding: '10px', border: '1px solid #ddd', width: '25%'}}>{reportData.production_summary?.seed_quantity_before_drying} kg</td>
-                        <th style={{padding: '10px', textAlign: 'left', border: '1px solid #ddd', background: '#f5f5f5', width: '25%'}}>Seed After Drying</th>
-                        <td style={{padding: '10px', border: '1px solid #ddd', width: '25%'}}>{reportData.production_summary?.seed_quantity_after_drying} kg</td>
+                        <th>Seed Before Drying</th>
+                        <td>{reportData.production_summary?.seed_quantity_before_drying} kg</td>
+                        <th>Seed After Drying</th>
+                        <td>{reportData.production_summary?.seed_quantity_after_drying} kg</td>
                       </tr>
                       <tr>
-                        <th style={{padding: '10px', textAlign: 'left', border: '1px solid #ddd', background: '#f5f5f5'}}>Drying Loss</th>
-                        <td style={{padding: '10px', border: '1px solid #ddd'}}>{reportData.production_summary?.drying_loss_kg} kg ({reportData.production_summary?.drying_loss_percent}%)</td>
-                        <th style={{padding: '10px', textAlign: 'left', border: '1px solid #ddd', background: '#f5f5f5'}}>Oil Yield</th>
-                        <td style={{padding: '10px', border: '1px solid #ddd', background: '#fffbf0', fontWeight: 'bold'}}>
+                        <th>Drying Loss</th>
+                        <td>{reportData.production_summary?.drying_loss_kg} kg ({reportData.production_summary?.drying_loss_percent}%)</td>
+                        <th>Oil Yield</th>
+                        <td className="highlight">
                           {reportData.production_summary?.oil_yield} kg 
                           ({reportData.production_summary?.oil_yield_percent}%)
                         </td>
                       </tr>
                       <tr>
-                        <th style={{padding: '10px', textAlign: 'left', border: '1px solid #ddd', background: '#f5f5f5'}}>Oil Cake Yield</th>
-                        <td style={{padding: '10px', border: '1px solid #ddd'}}>{reportData.production_summary?.cake_yield} kg</td>
-                        <th style={{padding: '10px', textAlign: 'left', border: '1px solid #ddd', background: '#f5f5f5'}}>Sludge Yield</th>
-                        <td style={{padding: '10px', border: '1px solid #ddd'}}>{reportData.production_summary?.sludge_yield} kg</td>
+                        <th>Oil Cake Yield</th>
+                        <td>{reportData.production_summary?.cake_yield} kg</td>
+                        <th>Sludge Yield</th>
+                        <td>{reportData.production_summary?.sludge_yield} kg</td>
                       </tr>
                     </tbody>
                   </table>
@@ -1215,22 +1094,20 @@ const BatchProduction = () => {
                 
                 {/* Time Tracking */}
                 {reportData.time_tracking && reportData.time_tracking.rounded_hours && (
-                  <div className="section" style={{margin: '25px 0'}}>
-                    <div className="section-title" style={{fontSize: '18px', fontWeight: 'bold', color: '#2c3e50', borderBottom: '2px solid #dee2e6', paddingBottom: '5px', marginBottom: '15px'}}>
-                      Time Tracking
-                    </div>
-                    <table style={{width: '100%', borderCollapse: 'collapse'}}>
+                  <div className="section">
+                    <div className="section-title">Time Tracking</div>
+                    <table>
                       <tbody>
                         <tr>
-                          <th style={{padding: '10px', textAlign: 'left', border: '1px solid #ddd', background: '#f5f5f5', width: '25%'}}>Process</th>
-                          <td style={{padding: '10px', border: '1px solid #ddd', width: '25%'}}>Crushing</td>
-                          <th style={{padding: '10px', textAlign: 'left', border: '1px solid #ddd', background: '#f5f5f5', width: '25%'}}>Duration</th>
-                          <td style={{padding: '10px', border: '1px solid #ddd', width: '25%'}}>{reportData.time_tracking.rounded_hours} hours</td>
+                          <th>Process</th>
+                          <td>Crushing</td>
+                          <th>Duration</th>
+                          <td>{reportData.time_tracking.rounded_hours} hours</td>
                         </tr>
                         {reportData.time_tracking.operator_name && (
                           <tr>
-                            <th style={{padding: '10px', textAlign: 'left', border: '1px solid #ddd', background: '#f5f5f5'}}>Operator</th>
-                            <td colSpan="3" style={{padding: '10px', border: '1px solid #ddd'}}>{reportData.time_tracking.operator_name}</td>
+                            <th>Operator</th>
+                            <td colSpan="3">{reportData.time_tracking.operator_name}</td>
                           </tr>
                         )}
                       </tbody>
@@ -1239,49 +1116,47 @@ const BatchProduction = () => {
                 )}
                 
                 {/* Cost Summary */}
-                <div className="section" style={{margin: '25px 0'}}>
-                  <div className="section-title" style={{fontSize: '18px', fontWeight: 'bold', color: '#2c3e50', borderBottom: '2px solid #dee2e6', paddingBottom: '5px', marginBottom: '15px'}}>
-                    Cost Summary
-                  </div>
-                  <table style={{width: '100%', borderCollapse: 'collapse'}}>
+                <div className="section">
+                  <div className="section-title">Cost Summary</div>
+                  <table>
                     <tbody>
                       <tr>
-                        <th style={{padding: '10px', textAlign: 'left', border: '1px solid #ddd', background: '#f5f5f5', width: '40%'}}>Base Production Cost</th>
-                        <td style={{padding: '10px', border: '1px solid #ddd', width: '60%'}}>₹{reportData.cost_summary?.base_production_cost?.toFixed(2) || '0.00'}</td>
+                        <th>Base Production Cost</th>
+                        <td>₹{reportData.cost_summary?.base_production_cost?.toFixed(2) || '0.00'}</td>
                       </tr>
                       <tr>
-                        <th style={{padding: '10px', textAlign: 'left', border: '1px solid #ddd', background: '#f5f5f5'}}>Extended Costs</th>
-                        <td style={{padding: '10px', border: '1px solid #ddd'}}>₹{reportData.cost_summary?.extended_costs?.toFixed(2) || '0.00'}</td>
+                        <th>Extended Costs</th>
+                        <td>₹{reportData.cost_summary?.extended_costs?.toFixed(2) || '0.00'}</td>
                       </tr>
-                      <tr style={{background: '#e8f5e9'}}>
-                        <th style={{padding: '10px', textAlign: 'left', border: '1px solid #ddd', fontWeight: 'bold'}}>Total Production Cost</th>
-                        <td style={{padding: '10px', border: '1px solid #ddd', fontWeight: 'bold'}}>₹{reportData.cost_summary?.total_production_cost?.toFixed(2) || '0.00'}</td>
-                      </tr>
-                      <tr>
-                        <th style={{padding: '10px', textAlign: 'left', border: '1px solid #ddd', background: '#f5f5f5'}}>Net Oil Cost</th>
-                        <td style={{padding: '10px', border: '1px solid #ddd', background: '#fffbf0', fontWeight: 'bold'}}>₹{reportData.cost_summary?.net_oil_cost?.toFixed(2) || '0.00'}</td>
+                      <tr className="total-row">
+                        <th>Total Production Cost</th>
+                        <td>₹{reportData.cost_summary?.total_production_cost?.toFixed(2) || '0.00'}</td>
                       </tr>
                       <tr>
-                        <th style={{padding: '10px', textAlign: 'left', border: '1px solid #ddd', background: '#f5f5f5'}}>Cost per kg Oil</th>
-                        <td style={{padding: '10px', border: '1px solid #ddd', background: '#fffbf0', fontWeight: 'bold'}}>₹{reportData.cost_summary?.oil_cost_per_kg?.toFixed(2) || '0.00'}/kg</td>
+                        <th>Net Oil Cost</th>
+                        <td className="highlight">₹{reportData.cost_summary?.net_oil_cost?.toFixed(2) || '0.00'}</td>
+                      </tr>
+                      <tr>
+                        <th>Cost per kg Oil</th>
+                        <td className="highlight">₹{reportData.cost_summary?.oil_cost_per_kg?.toFixed(2) || '0.00'}/kg</td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
                 
                 {/* Signature Section */}
-                <div className="signature-section" style={{display: 'flex', justifyContent: 'space-around', marginTop: '60px', paddingTop: '30px'}}>
-                  <div className="signature-box" style={{width: '200px', textAlign: 'center'}}>
-                    <div className="signature-line" style={{borderBottom: '1px solid #333', marginBottom: '5px', height: '40px'}}></div>
-                    <div style={{fontSize: '14px', color: '#6c757d'}}>Production Operator</div>
+                <div className="signature-section">
+                  <div className="signature-box">
+                    <div className="signature-line"></div>
+                    <div>Production Operator</div>
                   </div>
-                  <div className="signature-box" style={{width: '200px', textAlign: 'center'}}>
-                    <div className="signature-line" style={{borderBottom: '1px solid #333', marginBottom: '5px', height: '40px'}}></div>
-                    <div style={{fontSize: '14px', color: '#6c757d'}}>Quality Controller</div>
+                  <div className="signature-box">
+                    <div className="signature-line"></div>
+                    <div>Quality Controller</div>
                   </div>
-                  <div className="signature-box" style={{width: '200px', textAlign: 'center'}}>
-                    <div className="signature-line" style={{borderBottom: '1px solid #333', marginBottom: '5px', height: '40px'}}></div>
-                    <div style={{fontSize: '14px', color: '#6c757d'}}>Production Manager</div>
+                  <div className="signature-box">
+                    <div className="signature-line"></div>
+                    <div>Production Manager</div>
                   </div>
                 </div>
               </div>
