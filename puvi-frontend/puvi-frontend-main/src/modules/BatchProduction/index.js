@@ -1,6 +1,6 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js
-// BATCH PRODUCTION WITH STEP-BY-STEP COST MANAGEMENT - COMPLETE FIXED VERSION
-// Fixed: Cost saving, date display, in-page confirmation, print formatting
+// BATCH PRODUCTION WITH STEP-BY-STEP COST MANAGEMENT - ALL FIXES APPLIED
+// Fixed: Auto-save prevention, cost capture for defaults, date display
 
 import React, { useState, useEffect, useRef } from 'react';
 import api from '../../services/api';
@@ -96,14 +96,32 @@ const BatchProduction = () => {
       const response = await api.batch.getBatchHistory({ limit: 50 });
       if (response.success) {
         // Fix date formatting in batch history
-        const formattedBatches = response.batches.map(batch => ({
-          ...batch,
-          production_date: batch.production_date || 'N/A',
-          // Remove any invalid date strings from batch_code
-          batch_code: batch.batch_code?.replace(/ \(Invalid Date\)/g, '') || batch.batch_code,
-          // Ensure traceable_code is present
-          traceable_code: batch.traceable_code || batch.batch_code
-        }));
+        const formattedBatches = response.batches.map(batch => {
+          // Fix date formatting
+          let displayDate = 'N/A';
+          if (batch.production_date) {
+            // Handle different date formats
+            if (batch.production_date.includes('/')) {
+              // Already formatted
+              displayDate = batch.production_date;
+            } else if (batch.production_date.includes('-')) {
+              // Format: "2025-08-13" to "13/08/2025"
+              const parts = batch.production_date.split('-');
+              if (parts.length === 3) {
+                displayDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
+              }
+            } else {
+              displayDate = batch.production_date;
+            }
+          }
+          
+          return {
+            ...batch,
+            production_date: displayDate,
+            batch_code: batch.batch_code?.replace(/ \(Invalid Date\)/g, '') || batch.batch_code,
+            traceable_code: batch.traceable_code || batch.batch_code
+          };
+        });
         setBatchHistory(formattedBatches);
       }
     } catch (error) {
@@ -153,12 +171,16 @@ const BatchProduction = () => {
     };
   };
 
-  // Handle cost updates from CostCapture component
+  // Handle cost updates from CostCapture component - FIXED to capture ALL costs
   const handleCostsUpdate = (stage, costs) => {
+    // Store all costs passed from CostCapture, including defaults
     setStageCosts(prev => ({
       ...prev,
       [stage]: costs
     }));
+    
+    // Log to verify all costs are captured
+    console.log(`Costs captured for ${stage}:`, costs);
   };
 
   // Handle time tracking update
@@ -258,35 +280,38 @@ const BatchProduction = () => {
     return seedCost + otherCosts;
   };
 
-  // Generate complete cost details array for submission
+  // Generate complete cost details array for submission - FIXED to ensure all costs are included
   const generateCostDetailsForSubmission = () => {
     const allCostDetails = [];
     
     // Process costs from each stage
     Object.entries(stageCosts).forEach(([stage, costs]) => {
-      costs.forEach(cost => {
-        // Prepare cost detail matching batch_cost_details table structure
-        const costDetail = {
-          element_name: cost.element_name,
-          master_rate: cost.default_rate || cost.rate, // Always send original rate
-          quantity: cost.quantity,
-          total_cost: cost.total_cost
-        };
-        
-        // Only include override_rate if it's actually different from master_rate
-        if (cost.overrideRate !== null && 
-            cost.overrideRate !== undefined && 
-            cost.overrideRate !== '' && 
-            cost.overrideRate !== cost.default_rate) {
-          costDetail.override_rate = cost.overrideRate;
-        } else {
-          // Send the same as master_rate if no override
-          costDetail.override_rate = cost.default_rate || cost.rate;
-        }
-        
-        allCostDetails.push(costDetail);
-      });
+      if (costs && costs.length > 0) {  // Only if costs exist
+        costs.forEach(cost => {
+          const costDetail = {
+            element_name: cost.element_name,
+            master_rate: cost.default_rate || cost.rate,
+            quantity: cost.quantity || 1,  // Default quantity if missing
+            total_cost: cost.total_cost || ((cost.quantity || 1) * (cost.rate || 0))
+          };
+          
+          // Only include override_rate if different
+          if (cost.overrideRate !== null && 
+              cost.overrideRate !== undefined && 
+              cost.overrideRate !== '' && 
+              cost.overrideRate !== cost.default_rate) {
+            costDetail.override_rate = cost.overrideRate;
+          } else {
+            costDetail.override_rate = cost.default_rate || cost.rate;
+          }
+          
+          allCostDetails.push(costDetail);
+        });
+      }
     });
+    
+    // Log to verify what's being sent
+    console.log('Cost details being submitted:', allCostDetails);
     
     return allCostDetails;
   };
@@ -464,7 +489,7 @@ const BatchProduction = () => {
     setTimeout(() => printWindow.print(), 500);
   };
 
-  // Submit batch - Direct save without confirmation dialog
+  // Submit batch - FIXED: Removed auto-save logic
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -472,13 +497,10 @@ const BatchProduction = () => {
       return;
     }
     
-    // Direct save - confirmation is already done in Step 6
-    if (currentStep === 6) {
-      await saveBatch();
-    }
+    // Removed auto-save logic - form submit no longer saves automatically
   };
   
-  // Save batch after confirmation
+  // Save batch after confirmation - Called only by button click
   const saveBatch = async () => {
     setLoading(true);
     setMessage('');
@@ -767,7 +789,7 @@ const BatchProduction = () => {
                   )}
                 </div>
 
-                {/* Drying Costs */}
+                {/* Drying Costs - Added captureDefaults prop */}
                 <CostCapture
                   module="batch"
                   stage="drying"
@@ -777,6 +799,7 @@ const BatchProduction = () => {
                   onCostsUpdate={(costs) => handleCostsUpdate('drying', costs)}
                   showSummary={true}
                   allowOverride={true}
+                  captureDefaults={true}
                 />
               </>
             )}
@@ -794,7 +817,7 @@ const BatchProduction = () => {
                   />
                 </div>
 
-                {/* Crushing Costs */}
+                {/* Crushing Costs - Added captureDefaults prop */}
                 <CostCapture
                   module="batch"
                   stage="crushing"
@@ -804,6 +827,7 @@ const BatchProduction = () => {
                   onCostsUpdate={(costs) => handleCostsUpdate('crushing', costs)}
                   showSummary={true}
                   allowOverride={true}
+                  captureDefaults={true}
                 />
               </>
             )}
@@ -818,7 +842,7 @@ const BatchProduction = () => {
                   </p>
                 </div>
 
-                {/* Filtering Costs */}
+                {/* Filtering Costs - Added captureDefaults prop */}
                 <CostCapture
                   module="batch"
                   stage="filtering"
@@ -828,6 +852,7 @@ const BatchProduction = () => {
                   onCostsUpdate={(costs) => handleCostsUpdate('filtering', costs)}
                   showSummary={true}
                   allowOverride={true}
+                  captureDefaults={true}
                 />
               </>
             )}
@@ -1283,7 +1308,7 @@ const BatchProduction = () => {
               </>
             )}
 
-            {/* Navigation Buttons */}
+            {/* Navigation Buttons - FIXED button type and handler for Step 6 */}
             <div className="form-actions">
               <button 
                 type="button"
@@ -1304,8 +1329,9 @@ const BatchProduction = () => {
                 </button>
               ) : (
                 <button 
-                  type="submit" 
+                  type="button"  // Changed from "submit" to "button"
                   className="btn-submit btn-confirm-save"
+                  onClick={saveBatch}  // Direct onClick handler
                   disabled={loading}
                 >
                   {loading ? 'Saving Batch...' : '✅ Confirm & Save Batch'}
