@@ -249,8 +249,8 @@ const BatchProduction = () => {
     return seedCost + otherCosts;
   };
 
-  // Generate batch report - ENHANCED
-  const generateBatchReport = async (batchId, batchCode) => {
+  // Generate batch report - ENHANCED with proper traceable code handling
+  const generateBatchReport = async (batchId, batchCode, traceableCode = null) => {
     setLoadingReports(prev => ({ ...prev, [batchId]: true }));
     
     try {
@@ -258,16 +258,19 @@ const BatchProduction = () => {
       if (response.success && response.summary) {
         const summary = response.summary;
         
+        // Use traceable code from: 1) summary, 2) passed parameter, 3) fallback to batch code
+        const actualTraceableCode = summary.traceable_code || traceableCode || batchCode;
+        
         const transformedData = {
           batch_code: summary.batch_code || batchCode,
-          traceable_code: summary.traceable_code || batchCode,
+          traceable_code: actualTraceableCode,
           
           batch_details: {
             batch_code: summary.batch_code || batchCode,
             oil_type: summary.oil_type || 'N/A',
             production_date: summary.production_date || 'N/A',
-            seed_purchase_code: summary.seed_purchase_code || batchData.seed_purchase_code || 'N/A',
-            traceable_code: summary.traceable_code || batchCode
+            seed_purchase_code: summary.seed_purchase_code || batchData.seed_purchase_code || selectedSeed?.latest_purchase_code || 'N/A',
+            traceable_code: actualTraceableCode
           },
           
           production_summary: {
@@ -380,6 +383,7 @@ const BatchProduction = () => {
         seed_cost_total: seedCost,
         cost_details: allCostDetails,
         time_tracking: timeTrackingData,
+        seed_purchase_code: selectedSeed?.latest_purchase_code || batchData.seed_purchase_code || '',
         created_by: 'Production Operator'
       };
       
@@ -403,8 +407,8 @@ const BatchProduction = () => {
         // Reset form
         resetForm();
         
-        // Show report
-        generateBatchReport(response.batch_id, response.batch_code);
+        // Show report with traceable code
+        generateBatchReport(response.batch_id, response.batch_code, response.traceable_code);
       } else {
         setMessage(`Error: ${response.error || 'Failed to create batch'}`);
       }
@@ -567,7 +571,7 @@ const BatchProduction = () => {
                             </div>
                             {seed.latest_purchase_code && (
                               <div className="seed-code">
-                                Traceable: {seed.latest_purchase_code}
+                                Seed Code: {seed.latest_purchase_code}
                               </div>
                             )}
                             {selectedSeed?.material_id === seed.material_id && (
@@ -584,12 +588,12 @@ const BatchProduction = () => {
                       <div className="selected-seed-info">
                         <strong>Selected:</strong> {selectedSeed.material_name} - 
                         {selectedSeed.available_quantity} kg available @ ₹{selectedSeed.weighted_avg_cost}/kg
-                        {selectedSeed.latest_purchase_code && (
-                          <div className="traceable-code-display">
-                            Traceable Code: {selectedSeed.latest_purchase_code}
-                          </div>
-                        )}
                       </div>
+                      {selectedSeed.latest_purchase_code && (
+                        <div className="traceable-code-display">
+                          Seed Purchase Traceable Code: {selectedSeed.latest_purchase_code}
+                        </div>
+                      )}
                       
                       <div className="form-row mt-20">
                         <div className="form-group">
@@ -885,13 +889,13 @@ const BatchProduction = () => {
                         <div className="traceable-item">
                           <span className="traceable-label">System Traceable Code:</span> 
                           <strong className="traceable-code-inline">
-                            {reportData?.traceable_code || 'Will be generated on submission'}
+                            Will be generated on submission
                           </strong>
                         </div>
-                        {batchData.seed_purchase_code && (
+                        {(batchData.seed_purchase_code || selectedSeed?.latest_purchase_code) && (
                           <div className="traceable-item">
                             <span className="traceable-label">Source Seed Code:</span> 
-                            <strong className="source-code-inline">{batchData.seed_purchase_code}</strong>
+                            <strong className="source-code-inline">{batchData.seed_purchase_code || selectedSeed?.latest_purchase_code}</strong>
                           </div>
                         )}
                       </div>
@@ -984,7 +988,7 @@ const BatchProduction = () => {
                       <td className="text-right">₹{batch.oil_cost_per_kg?.toFixed(2)}</td>
                       <td className="text-center">
                         <button 
-                          onClick={() => generateBatchReport(batch.batch_id, batch.batch_code)}
+                          onClick={() => generateBatchReport(batch.batch_id, batch.batch_code, batch.traceable_code)}
                           className="btn-view-report"
                           disabled={loadingReports[batch.batch_id]}
                         >
