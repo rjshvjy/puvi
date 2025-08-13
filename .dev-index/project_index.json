@@ -1,8 +1,8 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-13T05:23:03.408Z",
-  "filesScanned": 52,
-  "jsFilesScanned": 31,
+  "generatedAt": "2025-08-13T05:25:09.266Z",
+  "filesScanned": 53,
+  "jsFilesScanned": 32,
   "pyFilesScanned": 21,
   "routes": [
     {
@@ -703,6 +703,7 @@
       "usedIn": [
         "puvi-frontend/puvi-frontend-main/src/App.js",
         "puvi-frontend/puvi-frontend-main/src/index.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/BatchProductionReport.js",
         "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
         "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
         "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
@@ -800,6 +801,12 @@
       "from": "./App",
       "usedIn": [
         "puvi-frontend/puvi-frontend-main/src/index.js"
+      ]
+    },
+    {
+      "from": "./BatchProductionReport.css",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/BatchProductionReport.js"
       ]
     },
     {
@@ -1152,6 +1159,12 @@
       "type": "default-export"
     },
     {
+      "name": "BatchProductionReport",
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/BatchProductionReport.js",
+      "line": 7,
+      "type": "const"
+    },
+    {
       "name": "BatchProduction",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
       "line": 11,
@@ -1352,6 +1365,12 @@
   ],
   "tags": [],
   "hardcodedValues": [
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/BatchProductionReport.js",
+      "line": 162,
+      "type": "object",
+      "code": "Generated: {new Date().toLocaleString('en-IN')}"
+    },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
       "line": 1241,
@@ -4911,6 +4930,22 @@
       "isAsync": true
     },
     {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/BatchProductionReport.js",
+      "line": 7,
+      "name": "BatchProductionReport",
+      "params": "{ reportData, onPrint, onClose }",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/BatchProductionReport.js",
+      "line": 22,
+      "name": "handlePrint",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
       "line": 11,
       "name": "BatchProduction",
@@ -8291,6 +8326,12 @@
       "line": 83,
       "type": "useEffect",
       "hook": "useEffect"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/BatchProductionReport.js",
+      "line": 8,
+      "type": "useRef",
+      "hook": "useRef"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
@@ -15117,18 +15158,18 @@
   ],
   "lineNumbers": {},
   "summary": {
-    "totalFiles": 52,
-    "jsFiles": 31,
+    "totalFiles": 53,
+    "jsFiles": 32,
     "pyFiles": 21,
-    "components": 35,
+    "components": 36,
     "routes": 77,
     "exports": 30,
-    "imports": 42,
-    "hardcodedValues": 15,
+    "imports": 43,
+    "hardcodedValues": 16,
     "databaseQueries": 238,
     "databaseTables": 41,
-    "functions": 426,
-    "stateHooks": 537,
+    "functions": 428,
+    "stateHooks": 538,
     "missingEndpoints": 2,
     "errorHandlers": 417
   }
