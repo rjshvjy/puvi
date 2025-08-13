@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-13T09:35:01.368Z",
+  "generatedAt": "2025-08-13T11:10:59.679Z",
   "filesScanned": 53,
   "jsFilesScanned": 32,
   "pyFilesScanned": 21,
@@ -1165,7 +1165,7 @@
     {
       "name": "StepIndicator",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 466,
+      "line": 569,
       "type": "const"
     },
     {
@@ -1371,7 +1371,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 1249,
+      "line": 1418,
       "type": "object",
       "code": "Generated: {new Date().toLocaleString('en-IN')}"
     },
@@ -4975,7 +4975,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 74,
+      "line": 71,
       "name": "fetchAvailableSeeds",
       "params": "",
       "type": "arrow",
@@ -4983,7 +4983,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 86,
+      "line": 83,
       "name": "fetchOilCakeRates",
       "params": "",
       "type": "arrow",
@@ -4991,7 +4991,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 97,
+      "line": 94,
       "name": "fetchBatchHistory",
       "params": "",
       "type": "arrow",
@@ -4999,7 +4999,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 110,
+      "line": 116,
       "name": "handleSeedSelection",
       "params": "seed",
       "type": "arrow",
@@ -5007,7 +5007,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 128,
+      "line": 134,
       "name": "calculateDryingLoss",
       "params": "",
       "type": "arrow",
@@ -5015,7 +5015,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 136,
+      "line": 142,
       "name": "calculateYieldPercentages",
       "params": "",
       "type": "arrow",
@@ -5023,7 +5023,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 151,
+      "line": 157,
       "name": "handleCostsUpdate",
       "params": "stage, costs",
       "type": "arrow",
@@ -5031,7 +5031,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 159,
+      "line": 165,
       "name": "handleTimeCalculated",
       "params": "timeData",
       "type": "arrow",
@@ -5039,7 +5039,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 164,
+      "line": 170,
       "name": "goToStep",
       "params": "step",
       "type": "arrow",
@@ -5047,7 +5047,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 170,
+      "line": 176,
       "name": "nextStep",
       "params": "",
       "type": "arrow",
@@ -5055,7 +5055,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 177,
+      "line": 183,
       "name": "prevStep",
       "params": "",
       "type": "arrow",
@@ -5063,7 +5063,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 182,
+      "line": 188,
       "name": "validateCurrentStep",
       "params": "",
       "type": "arrow",
@@ -5071,7 +5071,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 238,
+      "line": 244,
       "name": "calculateTotalCost",
       "params": "",
       "type": "arrow",
@@ -5079,7 +5079,15 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 256,
+      "line": 262,
+      "name": "generateCostDetailsForSubmission",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
+      "line": 295,
       "name": "generateBatchReport",
       "params": "batchId, batchCode, traceableCode = null",
       "type": "arrow",
@@ -5087,7 +5095,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 319,
+      "line": 358,
       "name": "handlePrintReport",
       "params": "",
       "type": "arrow",
@@ -5095,7 +5103,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 353,
+      "line": 468,
       "name": "handleSubmit",
       "params": "e",
       "type": "arrow",
@@ -5103,15 +5111,15 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 365,
-      "name": "confirmAndSave",
+      "line": 482,
+      "name": "saveBatch",
       "params": "",
       "type": "arrow",
       "isAsync": true
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 433,
+      "line": 536,
       "name": "resetForm",
       "params": "",
       "type": "arrow",
@@ -5119,7 +5127,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 466,
+      "line": 569,
       "name": "StepIndicator",
       "params": "",
       "type": "arrow",
@@ -8588,20 +8596,6 @@
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
       "line": 62,
-      "type": "useState",
-      "name": "showConfirmDialog",
-      "setter": "setShowConfirmDialog",
-      "initial": null
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 62,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 65,
       "type": "useEffect",
       "hook": "useEffect"
     },
@@ -12627,61 +12621,61 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 75,
+      "line": 72,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 80,
+      "line": 77,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 87,
+      "line": 84,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 92,
+      "line": 89,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 98,
+      "line": 95,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 103,
+      "line": 109,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 259,
+      "line": 298,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 306,
+      "line": 345,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 370,
+      "line": 486,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 425,
+      "line": 528,
       "type": "catch",
       "code": "} catch (error) {"
     },
@@ -15151,8 +15145,8 @@
     "hardcodedValues": 16,
     "databaseQueries": 238,
     "databaseTables": 42,
-    "functions": 430,
-    "stateHooks": 534,
+    "functions": 431,
+    "stateHooks": 532,
     "missingEndpoints": 1,
     "errorHandlers": 415
   }
