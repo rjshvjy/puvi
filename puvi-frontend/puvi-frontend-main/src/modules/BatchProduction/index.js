@@ -97,29 +97,40 @@ const BatchProduction = () => {
       if (response.success) {
         // Fix date formatting in batch history
         const formattedBatches = response.batches.map(batch => {
-          // Fix date formatting
+          // Fix date formatting - ensure it's a string
           let displayDate = 'N/A';
           if (batch.production_date) {
+            // Convert to string if it's not already
+            const dateStr = String(batch.production_date);
+            
             // Handle different date formats
-            if (batch.production_date.includes('/')) {
+            if (dateStr.includes('/')) {
               // Already formatted
-              displayDate = batch.production_date;
-            } else if (batch.production_date.includes('-')) {
+              displayDate = dateStr;
+            } else if (dateStr.includes('-')) {
               // Format: "2025-08-13" to "13/08/2025"
-              const parts = batch.production_date.split('-');
+              const parts = dateStr.split('-');
               if (parts.length === 3) {
                 displayDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
+              } else {
+                displayDate = dateStr;
               }
             } else {
-              displayDate = batch.production_date;
+              displayDate = dateStr;
             }
           }
           
           return {
             ...batch,
             production_date: displayDate,
-            batch_code: batch.batch_code?.replace(/ \(Invalid Date\)/g, '') || batch.batch_code,
-            traceable_code: batch.traceable_code || batch.batch_code
+            batch_code: String(batch.batch_code || '').replace(/ \(Invalid Date\)/g, ''),
+            traceable_code: String(batch.traceable_code || batch.batch_code || ''),
+            // Ensure all numeric fields are properly converted
+            seed_quantity_after: parseFloat(batch.seed_quantity_after || batch.seed_quantity_after_drying || 0),
+            seed_quantity_after_drying: parseFloat(batch.seed_quantity_after_drying || batch.seed_quantity_after || 0),
+            oil_yield: parseFloat(batch.oil_yield || 0),
+            oil_yield_percent: parseFloat(batch.oil_yield_percent || 0),
+            oil_cost_per_kg: parseFloat(batch.oil_cost_per_kg || 0)
           };
         });
         setBatchHistory(formattedBatches);
@@ -1399,18 +1410,18 @@ const BatchProduction = () => {
                 ) : (
                   batchHistory.map((batch) => (
                     <tr key={batch.batch_id}>
-                      <td className="batch-code">{batch.batch_code}</td>
-                      <td className="traceable-code-cell">{batch.traceable_code}</td>
-                      <td>{batch.oil_type}</td>
-                      <td>{batch.production_date}</td>
-                      <td className="text-right">{batch.seed_quantity_after || batch.seed_quantity_after_drying}</td>
-                      <td className="text-right">{batch.oil_yield}</td>
+                      <td className="batch-code">{String(batch.batch_code || '')}</td>
+                      <td className="traceable-code-cell">{String(batch.traceable_code || '')}</td>
+                      <td>{String(batch.oil_type || '')}</td>
+                      <td>{String(batch.production_date || 'N/A')}</td>
+                      <td className="text-right">{Number(batch.seed_quantity_after || batch.seed_quantity_after_drying || 0).toFixed(2)}</td>
+                      <td className="text-right">{Number(batch.oil_yield || 0).toFixed(2)}</td>
                       <td>
                         <span className={`yield-badge ${batch.oil_yield_percent > 30 ? 'high' : 'low'}`}>
-                          {batch.oil_yield_percent?.toFixed(1)}%
+                          {Number(batch.oil_yield_percent || 0).toFixed(1)}%
                         </span>
                       </td>
-                      <td className="text-right">₹{batch.oil_cost_per_kg?.toFixed(2)}</td>
+                      <td className="text-right">₹{Number(batch.oil_cost_per_kg || 0).toFixed(2)}</td>
                       <td className="text-center">
                         <button 
                           onClick={() => generateBatchReport(batch.batch_id, batch.batch_code, batch.traceable_code)}
