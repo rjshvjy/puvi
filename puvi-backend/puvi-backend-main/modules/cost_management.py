@@ -924,7 +924,7 @@ def get_batch_cost_summary(batch_id):
         summary = {
             'batch_code': batch[0],
             'oil_type': batch[1],
-            'production_date': integer_to_date(batch[2]),
+            'production_date': integer_to_date(batch[2], '%d-%m-%Y'),
             'seed_quantity': float(batch[3]),
             'oil_yield': float(batch[4]),
             'cake_yield': float(batch[5]),
