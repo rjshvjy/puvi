@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-13T17:39:31.351Z",
+  "generatedAt": "2025-08-13T17:40:21.729Z",
   "filesScanned": 54,
   "jsFilesScanned": 33,
   "pyFilesScanned": 21,
@@ -827,7 +827,8 @@
     {
       "from": "../../utils/dateUtils",
       "usedIn": [
-        "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js"
+        "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js"
       ]
     },
     {
@@ -1201,7 +1202,7 @@
     {
       "name": "CostManagement",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 10,
+      "line": 11,
       "type": "const"
     },
     {
@@ -5628,7 +5629,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 10,
+      "line": 11,
       "name": "CostManagement",
       "params": "",
       "type": "arrow",
@@ -5636,7 +5637,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 48,
+      "line": 49,
       "name": "loadTabData",
       "params": "",
       "type": "arrow",
@@ -5644,7 +5645,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 74,
+      "line": 75,
       "name": "loadDashboard",
       "params": "",
       "type": "arrow",
@@ -5652,7 +5653,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 106,
+      "line": 107,
       "name": "loadCostElements",
       "params": "",
       "type": "arrow",
@@ -5660,7 +5661,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 120,
+      "line": 121,
       "name": "handleRateUpdate",
       "params": "elementId",
       "type": "arrow",
@@ -5668,7 +5669,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 138,
+      "line": 139,
       "name": "loadBatches",
       "params": "",
       "type": "arrow",
@@ -5676,7 +5677,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 152,
+      "line": 160,
       "name": "loadBatchCostDetails",
       "params": "batchId",
       "type": "arrow",
@@ -5684,7 +5685,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 168,
+      "line": 176,
       "name": "loadValidationReport",
       "params": "",
       "type": "arrow",
@@ -5692,7 +5693,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 183,
+      "line": 191,
       "name": "loadCostTrends",
       "params": "",
       "type": "arrow",
@@ -5700,7 +5701,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 230,
+      "line": 238,
       "name": "formatDate",
       "params": "dateStr",
       "type": "arrow",
@@ -5708,7 +5709,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 236,
+      "line": 242,
       "name": "formatCurrency",
       "params": "amount",
       "type": "arrow",
@@ -5716,7 +5717,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 240,
+      "line": 246,
       "name": "getWarningLevel",
       "params": "missingCount",
       "type": "arrow",
@@ -9211,7 +9212,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 11,
+      "line": 12,
       "type": "useState",
       "name": "activeTab",
       "setter": "setActiveTab",
@@ -9219,13 +9220,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 11,
+      "line": 12,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 12,
+      "line": 13,
       "type": "useState",
       "name": "loading",
       "setter": "setLoading",
@@ -9233,13 +9234,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 12,
+      "line": 13,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 13,
+      "line": 14,
       "type": "useState",
       "name": "message",
       "setter": "setMessage",
@@ -9247,13 +9248,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 13,
+      "line": 14,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 16,
+      "line": 17,
       "type": "useState",
       "name": "dashboardStats",
       "setter": "setDashboardStats",
@@ -9261,13 +9262,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 16,
+      "line": 17,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 24,
+      "line": 25,
       "type": "useState",
       "name": "costElements",
       "setter": "setCostElements",
@@ -9275,13 +9276,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 24,
+      "line": 25,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 25,
+      "line": 26,
       "type": "useState",
       "name": "editingElement",
       "setter": "setEditingElement",
@@ -9289,13 +9290,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 25,
+      "line": 26,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 26,
+      "line": 27,
       "type": "useState",
       "name": "newRate",
       "setter": "setNewRate",
@@ -9303,13 +9304,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 26,
+      "line": 27,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 29,
+      "line": 30,
       "type": "useState",
       "name": "batches",
       "setter": "setBatches",
@@ -9317,13 +9318,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 29,
+      "line": 30,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 30,
+      "line": 31,
       "type": "useState",
       "name": "selectedBatch",
       "setter": "setSelectedBatch",
@@ -9331,13 +9332,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 30,
+      "line": 31,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 31,
+      "line": 32,
       "type": "useState",
       "name": "batchCostDetails",
       "setter": "setBatchCostDetails",
@@ -9345,13 +9346,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 31,
+      "line": 32,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 34,
+      "line": 35,
       "type": "useState",
       "name": "validationReport",
       "setter": "setValidationReport",
@@ -9359,13 +9360,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 34,
+      "line": 35,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 35,
+      "line": 36,
       "type": "useState",
       "name": "reportPeriod",
       "setter": "setReportPeriod",
@@ -9373,13 +9374,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 35,
+      "line": 36,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 38,
+      "line": 39,
       "type": "useState",
       "name": "costTrends",
       "setter": "setCostTrends",
@@ -9387,13 +9388,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 38,
+      "line": 39,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 44,
+      "line": 45,
       "type": "useEffect",
       "hook": "useEffect"
     },
@@ -13000,85 +13001,85 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 75,
+      "line": 76,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 98,
+      "line": 99,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 107,
+      "line": 108,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 113,
+      "line": 114,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 126,
+      "line": 127,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 132,
+      "line": 133,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 139,
+      "line": 140,
       "type": "try-catch",
       "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 145,
-      "type": "catch",
-      "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
       "line": 153,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 160,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 169,
+      "line": 161,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 175,
+      "line": 168,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 184,
+      "line": 177,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-      "line": 222,
+      "line": 183,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
+      "line": 192,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
+      "line": 230,
       "type": "catch",
       "code": "} catch (error) {"
     },
