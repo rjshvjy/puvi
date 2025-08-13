@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-13T12:31:28.664Z",
+  "generatedAt": "2025-08-13T12:49:58.010Z",
   "filesScanned": 53,
   "jsFilesScanned": 32,
   "pyFilesScanned": 21,
@@ -1165,7 +1165,7 @@
     {
       "name": "StepIndicator",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 612,
+      "line": 623,
       "type": "const"
     },
     {
@@ -1371,7 +1371,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 1465,
+      "line": 1476,
       "type": "object",
       "code": "Generated: {new Date().toLocaleString('en-IN')}"
     },
@@ -5021,7 +5021,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 134,
+      "line": 145,
       "name": "handleSeedSelection",
       "params": "seed",
       "type": "arrow",
@@ -5029,7 +5029,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 152,
+      "line": 163,
       "name": "calculateDryingLoss",
       "params": "",
       "type": "arrow",
@@ -5037,7 +5037,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 160,
+      "line": 171,
       "name": "calculateYieldPercentages",
       "params": "",
       "type": "arrow",
@@ -5045,7 +5045,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 175,
+      "line": 186,
       "name": "handleCostsUpdate",
       "params": "stage, costs",
       "type": "arrow",
@@ -5053,7 +5053,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 187,
+      "line": 198,
       "name": "handleTimeCalculated",
       "params": "timeData",
       "type": "arrow",
@@ -5061,7 +5061,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 192,
+      "line": 203,
       "name": "goToStep",
       "params": "step",
       "type": "arrow",
@@ -5069,7 +5069,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 198,
+      "line": 209,
       "name": "nextStep",
       "params": "",
       "type": "arrow",
@@ -5077,7 +5077,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 205,
+      "line": 216,
       "name": "prevStep",
       "params": "",
       "type": "arrow",
@@ -5085,7 +5085,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 210,
+      "line": 221,
       "name": "validateCurrentStep",
       "params": "",
       "type": "arrow",
@@ -5093,7 +5093,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 266,
+      "line": 277,
       "name": "calculateTotalCost",
       "params": "",
       "type": "arrow",
@@ -5101,7 +5101,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 284,
+      "line": 295,
       "name": "generateCostDetailsForSubmission",
       "params": "",
       "type": "arrow",
@@ -5109,7 +5109,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 320,
+      "line": 331,
       "name": "generateBatchReport",
       "params": "batchId, batchCode, traceableCode = null",
       "type": "arrow",
@@ -5117,7 +5117,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 388,
+      "line": 399,
       "name": "handlePrintReport",
       "params": "",
       "type": "arrow",
@@ -5125,7 +5125,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 514,
+      "line": 525,
       "name": "handleSubmit",
       "params": "e",
       "type": "arrow",
@@ -5133,7 +5133,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 525,
+      "line": 536,
       "name": "saveBatch",
       "params": "",
       "type": "arrow",
@@ -5141,7 +5141,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 579,
+      "line": 590,
       "name": "resetForm",
       "params": "",
       "type": "arrow",
@@ -5149,7 +5149,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 612,
+      "line": 623,
       "name": "StepIndicator",
       "params": "",
       "type": "arrow",
@@ -12681,31 +12681,31 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 127,
+      "line": 138,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 323,
+      "line": 334,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 375,
+      "line": 386,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 529,
+      "line": 540,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 571,
+      "line": 582,
       "type": "catch",
       "code": "} catch (error) {"
     },
