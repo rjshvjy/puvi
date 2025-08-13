@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-13T12:19:18.143Z",
+  "generatedAt": "2025-08-13T12:31:28.664Z",
   "filesScanned": 53,
   "jsFilesScanned": 32,
   "pyFilesScanned": 21,
@@ -1165,7 +1165,7 @@
     {
       "name": "StepIndicator",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 591,
+      "line": 612,
       "type": "const"
     },
     {
@@ -1371,7 +1371,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 1444,
+      "line": 1465,
       "type": "object",
       "code": "Generated: {new Date().toLocaleString('en-IN')}"
     },
@@ -5117,7 +5117,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 383,
+      "line": 388,
       "name": "handlePrintReport",
       "params": "",
       "type": "arrow",
@@ -5125,7 +5125,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 493,
+      "line": 514,
       "name": "handleSubmit",
       "params": "e",
       "type": "arrow",
@@ -5133,7 +5133,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 504,
+      "line": 525,
       "name": "saveBatch",
       "params": "",
       "type": "arrow",
@@ -5141,7 +5141,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 558,
+      "line": 579,
       "name": "resetForm",
       "params": "",
       "type": "arrow",
@@ -5149,7 +5149,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 591,
+      "line": 612,
       "name": "StepIndicator",
       "params": "",
       "type": "arrow",
@@ -12693,19 +12693,19 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 370,
+      "line": 375,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 508,
+      "line": 529,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 550,
+      "line": 571,
       "type": "catch",
       "code": "} catch (error) {"
     },
