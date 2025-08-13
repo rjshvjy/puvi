@@ -154,6 +154,68 @@ def get_next_batch_serial(seed_material_id, seed_purchase_code, production_date,
     return next_serial
 
 
+def generate_batch_code(production_date, batch_description, cur):
+    """
+    Generate unique batch code with automatic serial numbering
+    Format: BATCH-YYYYMMDD-Description or BATCH-YYYYMMDD-Description-1, -2, etc.
+    
+    Args:
+        production_date: Production date as integer (days since epoch)
+        batch_description: Description from user (e.g., 'Morning', 'Evening')
+        cur: Database cursor
+    
+    Returns:
+        str: Generated unique batch code
+    """
+    # Format date as YYYYMMDD
+    dt = date(1970, 1, 1) + timedelta(days=production_date)
+    date_str = dt.strftime('%Y%m%d')
+    
+    # Clean the description - remove any special characters that might cause issues
+    import re
+    clean_description = re.sub(r'[^A-Za-z0-9]', '', batch_description) if batch_description else 'PROD'
+    
+    # Base batch code without serial
+    base_code = f"BATCH-{date_str}-{clean_description}"
+    
+    # Check if this base code exists
+    cur.execute("SELECT batch_code FROM batch WHERE batch_code = %s", (base_code,))
+    if not cur.fetchone():
+        # Base code doesn't exist, use it
+        return base_code
+    
+    # Base code exists, find the highest serial number for this pattern
+    # Pattern: BATCH-YYYYMMDD-Description-N where N is a number
+    search_pattern = f"{base_code}-%"
+    cur.execute("""
+        SELECT batch_code 
+        FROM batch 
+        WHERE batch_code = %s OR batch_code LIKE %s
+        ORDER BY batch_id DESC
+    """, (base_code, search_pattern))
+    
+    existing_codes = cur.fetchall()
+    max_serial = 0
+    
+    for (code,) in existing_codes:
+        if code == base_code:
+            # Base code exists without serial, so we need at least serial 1
+            max_serial = max(max_serial, 0)
+        elif code.startswith(f"{base_code}-"):
+            # Extract serial number from codes like BATCH-20250813-Morning-1
+            try:
+                serial_part = code[len(base_code)+1:]  # Get part after base_code-
+                serial = int(serial_part)
+                max_serial = max(max_serial, serial)
+            except (ValueError, IndexError):
+                # Not a valid serial, skip
+                continue
+    
+    # Return next serial
+    next_serial = max_serial + 1
+    return f"{base_code}-{next_serial}"
+
+
 def generate_purchase_traceable_code(material_id, supplier_id, purchase_date, cur):
     """
     Generate traceable code for purchase
