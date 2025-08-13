@@ -821,7 +821,7 @@ const BatchProduction = () => {
                   )}
                 </div>
 
-                {/* Drying Costs - Added captureDefaults prop */}
+                {/* Drying Costs */}
                 <CostCapture
                   module="batch"
                   stage="drying"
@@ -831,7 +831,6 @@ const BatchProduction = () => {
                   onCostsUpdate={(costs) => handleCostsUpdate('drying', costs)}
                   showSummary={true}
                   allowOverride={true}
-                  captureDefaults={true}
                 />
               </>
             )}
@@ -849,7 +848,7 @@ const BatchProduction = () => {
                   />
                 </div>
 
-                {/* Crushing Costs - Added captureDefaults prop */}
+                {/* Crushing Costs */}
                 <CostCapture
                   module="batch"
                   stage="crushing"
@@ -859,7 +858,6 @@ const BatchProduction = () => {
                   onCostsUpdate={(costs) => handleCostsUpdate('crushing', costs)}
                   showSummary={true}
                   allowOverride={true}
-                  captureDefaults={true}
                 />
               </>
             )}
@@ -874,7 +872,7 @@ const BatchProduction = () => {
                   </p>
                 </div>
 
-                {/* Filtering Costs - Added captureDefaults prop */}
+                {/* Filtering Costs */}
                 <CostCapture
                   module="batch"
                   stage="filtering"
@@ -884,7 +882,6 @@ const BatchProduction = () => {
                   onCostsUpdate={(costs) => handleCostsUpdate('filtering', costs)}
                   showSummary={true}
                   allowOverride={true}
-                  captureDefaults={true}
                 />
               </>
             )}
