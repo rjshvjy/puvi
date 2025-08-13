@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-13T13:08:21.705Z",
+  "generatedAt": "2025-08-13T13:30:44.606Z",
   "filesScanned": 53,
   "jsFilesScanned": 32,
   "pyFilesScanned": 21,
@@ -697,11 +697,11 @@
         "puvi-frontend/puvi-frontend-main/src/index.js",
         "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/BatchProductionReport.js",
         "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
         "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
         "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostElementsManager.js",
         "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
         "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
-        "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
         "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/index.js",
         "puvi-frontend/puvi-frontend-main/src/modules/MaterialSales/index.js",
         "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
@@ -1169,9 +1169,15 @@
       "type": "const"
     },
     {
+      "name": "Blending",
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 3,
+      "type": "const"
+    },
+    {
       "name": "CostCapture",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
-      "line": 8,
+      "line": 9,
       "type": "const"
     },
     {
@@ -1190,12 +1196,6 @@
       "name": "CostManagement",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
       "line": 10,
-      "type": "const"
-    },
-    {
-      "name": "Blending",
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 3,
       "type": "const"
     },
     {
@@ -5156,8 +5156,96 @@
       "isAsync": false
     },
     {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 3,
+      "name": "Blending",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 34,
+      "name": "fetchOilTypes",
+      "params": "",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 47,
+      "name": "fetchBatchesForOilType",
+      "params": "oilType, componentId",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 62,
+      "name": "fetchBlendHistory",
+      "params": "",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 74,
+      "name": "handleOilTypeChange",
+      "params": "componentId, oilType",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 94,
+      "name": "handleBatchChange",
+      "params": "componentId, batchId",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 117,
+      "name": "handlePercentageChange",
+      "params": "componentId, percentage",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 127,
+      "name": "addComponent",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 142,
+      "name": "removeComponent",
+      "params": "componentId",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 149,
+      "name": "calculateTotals",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 175,
+      "name": "handleSubmit",
+      "params": "",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
-      "line": 27,
+      "line": 28,
       "name": "getActivityFromStage",
       "params": "currentStage",
       "type": "arrow",
@@ -5165,7 +5253,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
-      "line": 40,
+      "line": 41,
       "name": "filterElementsByActivity",
       "params": "elements, currentStage",
       "type": "arrow",
@@ -5173,7 +5261,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
-      "line": 73,
+      "line": 74,
       "name": "calculateAllCosts",
       "params": "",
       "type": "arrow",
@@ -5181,7 +5269,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
-      "line": 186,
+      "line": 198,
       "name": "fetchCostElements",
       "params": "",
       "type": "arrow",
@@ -5189,7 +5277,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
-      "line": 252,
+      "line": 264,
       "name": "handleCheckboxChange",
       "params": "elementId",
       "type": "arrow",
@@ -5197,7 +5285,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
-      "line": 262,
+      "line": 274,
       "name": "handleOverrideChange",
       "params": "elementId, value",
       "type": "arrow",
@@ -5205,7 +5293,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
-      "line": 273,
+      "line": 285,
       "name": "handleActualCostChange",
       "params": "elementId, value",
       "type": "arrow",
@@ -5213,7 +5301,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
-      "line": 284,
+      "line": 296,
       "name": "toggleCategory",
       "params": "category",
       "type": "arrow",
@@ -5221,7 +5309,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
-      "line": 301,
+      "line": 313,
       "name": "getCategoryColor",
       "params": "category",
       "type": "arrow",
@@ -5229,7 +5317,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
-      "line": 315,
+      "line": 327,
       "name": "getActivityColor",
       "params": "activity",
       "type": "arrow",
@@ -5237,7 +5325,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
-      "line": 329,
+      "line": 341,
       "name": "getStageDisplayName",
       "params": "",
       "type": "arrow",
@@ -5578,94 +5666,6 @@
       "params": "missingCount",
       "type": "arrow",
       "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 3,
-      "name": "Blending",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 34,
-      "name": "fetchOilTypes",
-      "params": "",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 47,
-      "name": "fetchBatchesForOilType",
-      "params": "oilType, componentId",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 62,
-      "name": "fetchBlendHistory",
-      "params": "",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 74,
-      "name": "handleOilTypeChange",
-      "params": "componentId, oilType",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 94,
-      "name": "handleBatchChange",
-      "params": "componentId, batchId",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 117,
-      "name": "handlePercentageChange",
-      "params": "componentId, percentage",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 127,
-      "name": "addComponent",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 142,
-      "name": "removeComponent",
-      "params": "componentId",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 149,
-      "name": "calculateTotals",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 175,
-      "name": "handleSubmit",
-      "params": "",
-      "type": "arrow",
-      "isAsync": true
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/index.js",
@@ -8630,8 +8630,126 @@
       "hook": "useEffect"
     },
     {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 4,
+      "type": "useState",
+      "name": "oilTypes",
+      "setter": "setOilTypes",
+      "initial": "[]"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 4,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 5,
+      "type": "useState",
+      "name": "blendHistory",
+      "setter": "setBlendHistory",
+      "initial": "[]"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 5,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 6,
+      "type": "useState",
+      "name": "showHistory",
+      "setter": "setShowHistory",
+      "initial": null
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 6,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 7,
+      "type": "useState",
+      "name": "loading",
+      "setter": "setLoading",
+      "initial": null
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 7,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 8,
+      "type": "useState",
+      "name": "message",
+      "setter": "setMessage",
+      "initial": ""
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 8,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 11,
+      "type": "useState",
+      "name": "blendData",
+      "setter": "setBlendData",
+      "initial": "{}"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 11,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
       "line": 19,
+      "type": "useState",
+      "name": "components",
+      "setter": "setComponents",
+      "initial": "[]"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 19,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 25,
+      "type": "useState",
+      "name": "batchesForComponents",
+      "setter": "setBatchesForComponents",
+      "initial": "{}"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 25,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 30,
+      "type": "useEffect",
+      "hook": "useEffect"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
+      "line": 20,
       "type": "useState",
       "name": "costElements",
       "setter": "setCostElements",
@@ -8639,13 +8757,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
-      "line": 19,
+      "line": 20,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
-      "line": 20,
+      "line": 21,
       "type": "useState",
       "name": "costInputs",
       "setter": "setCostInputs",
@@ -8653,13 +8771,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
-      "line": 20,
+      "line": 21,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
-      "line": 21,
+      "line": 22,
       "type": "useState",
       "name": "loading",
       "setter": "setLoading",
@@ -8667,13 +8785,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
-      "line": 21,
+      "line": 22,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
-      "line": 22,
+      "line": 23,
       "type": "useState",
       "name": "totalCost",
       "setter": "setTotalCost",
@@ -8681,13 +8799,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
-      "line": 22,
+      "line": 23,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
-      "line": 23,
+      "line": 24,
       "type": "useState",
       "name": "expandedCategories",
       "setter": "setExpandedCategories",
@@ -8695,13 +8813,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
-      "line": 23,
+      "line": 24,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
-      "line": 24,
+      "line": 25,
       "type": "useState",
       "name": "error",
       "setter": "setError",
@@ -8709,19 +8827,19 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
-      "line": 24,
+      "line": 25,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
-      "line": 68,
+      "line": 69,
       "type": "useEffect",
       "hook": "useEffect"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
-      "line": 180,
+      "line": 192,
       "type": "useEffect",
       "hook": "useEffect"
     },
@@ -9221,124 +9339,6 @@
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
       "line": 44,
-      "type": "useEffect",
-      "hook": "useEffect"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 4,
-      "type": "useState",
-      "name": "oilTypes",
-      "setter": "setOilTypes",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 4,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 5,
-      "type": "useState",
-      "name": "blendHistory",
-      "setter": "setBlendHistory",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 5,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 6,
-      "type": "useState",
-      "name": "showHistory",
-      "setter": "setShowHistory",
-      "initial": null
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 6,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 7,
-      "type": "useState",
-      "name": "loading",
-      "setter": "setLoading",
-      "initial": null
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 7,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 8,
-      "type": "useState",
-      "name": "message",
-      "setter": "setMessage",
-      "initial": ""
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 8,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 11,
-      "type": "useState",
-      "name": "blendData",
-      "setter": "setBlendData",
-      "initial": "{}"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 11,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 19,
-      "type": "useState",
-      "name": "components",
-      "setter": "setComponents",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 19,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 25,
-      "type": "useState",
-      "name": "batchesForComponents",
-      "setter": "setBatchesForComponents",
-      "initial": "{}"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 25,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 30,
       "type": "useEffect",
       "hook": "useEffect"
     },
@@ -12710,26 +12710,74 @@
       "code": "} catch (error) {"
     },
     {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 35,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 41,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 48,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 57,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 63,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 69,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 197,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 245,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
-      "line": 187,
+      "line": 199,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
-      "line": 195,
+      "line": 207,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
-      "line": 204,
+      "line": 216,
       "type": "catch",
       "code": "} catch (activityError) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
-      "line": 244,
+      "line": 256,
       "type": "catch",
       "code": "} catch (error) {"
     },
@@ -12964,54 +13012,6 @@
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
       "line": 222,
-      "type": "catch",
-      "code": "} catch (error) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 35,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 41,
-      "type": "catch",
-      "code": "} catch (error) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 48,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 57,
-      "type": "catch",
-      "code": "} catch (error) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 63,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 69,
-      "type": "catch",
-      "code": "} catch (error) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 197,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 245,
       "type": "catch",
       "code": "} catch (error) {"
     },
