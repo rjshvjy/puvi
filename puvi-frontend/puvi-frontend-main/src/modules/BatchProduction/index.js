@@ -1,9 +1,8 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js
-// Complete Batch Production Module with Full Cost Management Integration
-// FIXED: Override rate type conversion and persistence issues
-// FIXED: toFixed() errors with proper safeParseFloat usage
+// Complete Batch Production Module with Report Generation
+// Version: 2.0 - Includes comprehensive batch reports with traceability
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import api from '../../services/api';
 import TimeTracker from '../CostManagement/TimeTracker';
 import CostCapture from '../CostManagement/CostCapture';
@@ -18,6 +17,12 @@ const BatchProduction = () => {
   const [message, setMessage] = useState('');
   const [showHistory, setShowHistory] = useState(false);
   const [batchHistory, setBatchHistory] = useState([]);
+  
+  // Report states
+  const [showReport, setShowReport] = useState(false);
+  const [reportData, setReportData] = useState(null);
+  const [loadingReport, setLoadingReport] = useState(false);
+  const reportRef = useRef();
   
   // Time tracking data
   const [timeTrackingData, setTimeTrackingData] = useState(null);
@@ -71,7 +76,6 @@ const BatchProduction = () => {
 
   const fetchCostElements = async () => {
     try {
-      // Uses the updated endpoint that queries cost_elements_master
       const response = await api.batch.getCostElementsForBatch();
       if (response.success) {
         setCostElements(response.cost_elements);
@@ -83,7 +87,6 @@ const BatchProduction = () => {
 
   const fetchExtendedCostElements = async () => {
     try {
-      // Get full cost elements from cost management module
       const response = await api.costManagement.getCostElementsByStage('batch');
       if (response.success) {
         setExtendedCostElements(response.cost_elements);
@@ -115,6 +118,148 @@ const BatchProduction = () => {
     }
   };
 
+  // Generate comprehensive batch report
+  const generateBatchReport = async (batchId, batchCode) => {
+    setLoadingReport(true);
+    try {
+      const response = await api.costAPI.getBatchSummary(batchId);
+      if (response.success) {
+        setReportData(response);
+        setShowReport(true);
+      } else {
+        throw new Error('Failed to fetch batch report');
+      }
+    } catch (error) {
+      console.error('Error generating report:', error);
+      setMessage('❌ Failed to generate batch report');
+    } finally {
+      setLoadingReport(false);
+    }
+  };
+
+  // Print report
+  const handlePrintReport = () => {
+    const printContent = reportRef.current.innerHTML;
+    const printWindow = window.open('', '_blank', 'width=900,height=650');
+    
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Batch Report - ${reportData?.batch_code || ''}</title>
+          <style>
+            body { 
+              font-family: 'Times New Roman', serif; 
+              padding: 20px;
+              color: #333;
+            }
+            .report-header {
+              text-align: center;
+              border-bottom: 3px solid #2c3e50;
+              padding-bottom: 20px;
+              margin-bottom: 30px;
+            }
+            .company-name {
+              font-size: 28px;
+              font-weight: bold;
+              color: #2c3e50;
+              margin-bottom: 10px;
+            }
+            .report-title {
+              font-size: 20px;
+              color: #555;
+              margin-bottom: 10px;
+            }
+            .traceable-code {
+              font-size: 18px;
+              color: #2196F3;
+              font-weight: bold;
+              margin: 15px 0;
+              padding: 10px;
+              border: 2px solid #2196F3;
+              border-radius: 5px;
+              display: inline-block;
+            }
+            .section {
+              margin: 25px 0;
+              page-break-inside: avoid;
+            }
+            .section-title {
+              font-size: 18px;
+              font-weight: bold;
+              color: #2c3e50;
+              border-bottom: 2px solid #e0e0e0;
+              padding-bottom: 5px;
+              margin-bottom: 15px;
+            }
+            table {
+              width: 100%;
+              border-collapse: collapse;
+              margin: 15px 0;
+            }
+            th, td {
+              padding: 10px;
+              text-align: left;
+              border: 1px solid #ddd;
+            }
+            th {
+              background-color: #f5f5f5;
+              font-weight: bold;
+              color: #555;
+            }
+            .highlight {
+              background-color: #fffacd;
+            }
+            .cost-total {
+              font-weight: bold;
+              font-size: 16px;
+              background-color: #e8f5e9;
+            }
+            .warning {
+              color: #ff9800;
+              font-weight: bold;
+            }
+            .footer {
+              margin-top: 50px;
+              padding-top: 20px;
+              border-top: 2px solid #e0e0e0;
+              text-align: center;
+              color: #666;
+              font-size: 12px;
+            }
+            .signature-section {
+              display: flex;
+              justify-content: space-around;
+              margin-top: 60px;
+            }
+            .signature-box {
+              width: 200px;
+              text-align: center;
+            }
+            .signature-line {
+              border-bottom: 1px solid #333;
+              margin-bottom: 5px;
+              height: 40px;
+            }
+            @media print {
+              body { margin: 0; }
+              .no-print { display: none; }
+            }
+          </style>
+        </head>
+        <body>
+          ${printContent}
+        </body>
+      </html>
+    `);
+    
+    printWindow.document.close();
+    printWindow.focus();
+    setTimeout(() => {
+      printWindow.print();
+      printWindow.close();
+    }, 250);
+  };
+
   // Helper function to safely parse numeric values
   const safeParseFloat = (value, defaultValue = 0) => {
     if (value === null || value === undefined || value === '') {
@@ -135,7 +280,7 @@ const BatchProduction = () => {
     }));
   };
 
-  // FIXED: Calculate all extended costs including overrides with proper type conversion
+  // Calculate all extended costs including overrides
   const calculateExtendedCosts = () => {
     const allCosts = [];
     
@@ -149,7 +294,6 @@ const BatchProduction = () => {
           activity: cost.activity || 'Drying',
           quantity: safeParseFloat(cost.quantity, 0),
           rate: safeParseFloat(cost.rate || cost.default_rate, 0),
-          // FIXED: Ensure override_rate is converted to number or null
           override_rate: cost.overrideRate !== null && cost.overrideRate !== undefined && cost.overrideRate !== '' 
             ? safeParseFloat(cost.overrideRate, null) 
             : null,
@@ -171,7 +315,6 @@ const BatchProduction = () => {
           activity: cost.activity || 'Crushing',
           quantity: safeParseFloat(cost.quantity, 0),
           rate: safeParseFloat(cost.rate || cost.default_rate, 0),
-          // FIXED: Ensure override_rate is converted to number or null
           override_rate: cost.overrideRate !== null && cost.overrideRate !== undefined && cost.overrideRate !== '' 
             ? safeParseFloat(cost.overrideRate, null) 
             : null,
@@ -186,7 +329,6 @@ const BatchProduction = () => {
     // Add additional costs
     if (additionalCosts && additionalCosts.length > 0) {
       additionalCosts.forEach(cost => {
-        // Avoid duplicates
         const exists = allCosts.find(c => c.element_name === cost.element_name);
         if (!exists) {
           allCosts.push({
@@ -196,7 +338,6 @@ const BatchProduction = () => {
             activity: cost.activity || 'General',
             quantity: safeParseFloat(cost.quantity, 0),
             rate: safeParseFloat(cost.rate || cost.default_rate, 0),
-            // FIXED: Ensure override_rate is converted to number or null
             override_rate: cost.overrideRate !== null && cost.overrideRate !== undefined && cost.overrideRate !== '' 
               ? safeParseFloat(cost.overrideRate, null) 
               : null,
@@ -248,7 +389,6 @@ const BatchProduction = () => {
     costElements.forEach(element => {
       let quantity = 0;
       
-      // Check if there's an override value
       const overrideValue = batchData.cost_overrides[element.element_id];
       let rate;
       if (overrideValue !== null && overrideValue !== undefined && overrideValue !== '') {
@@ -257,11 +397,10 @@ const BatchProduction = () => {
         rate = element.default_rate;
       }
       
-      // Determine quantity based on calculation method
       if (element.unit_type === 'Per Kg') {
         quantity = seedQty;
       } else if (element.unit_type === 'Per Bag') {
-        quantity = seedQty / 50; // Convert to bags
+        quantity = seedQty / 50;
       } else if (element.calculation_method === 'per_hour') {
         quantity = timeTrackingData?.rounded_hours || 0;
       } else {
@@ -283,11 +422,9 @@ const BatchProduction = () => {
       });
     });
     
-    // Get all extended costs
     const extendedCosts = calculateExtendedCosts();
     const extendedCostTotal = extendedCosts.reduce((sum, cost) => sum + (cost.total_cost || 0), 0);
     
-    // Calculate revenues
     const cakeRevenue = safeParseFloat(batchData.cake_yield) * safeParseFloat(batchData.cake_estimated_rate);
     const sludgeRevenue = safeParseFloat(batchData.sludge_yield) * safeParseFloat(batchData.sludge_estimated_rate);
     
@@ -315,11 +452,10 @@ const BatchProduction = () => {
     setBatchData({
       ...batchData,
       material_id: seed.material_id,
-      oil_type: seed.material_name.split(' ')[0], // Extract oil type from seed name
+      oil_type: seed.material_name.split(' ')[0],
       seed_purchase_code: seed.latest_purchase_code || ''
     });
     
-    // Set default cake rates if available
     const oilType = seed.material_name.split(' ')[0];
     if (oilCakeRates[oilType]) {
       setBatchData(prev => ({
@@ -330,11 +466,9 @@ const BatchProduction = () => {
     }
   };
 
-  // Clean and validate data before submission
   const prepareDataForSubmission = () => {
     const cleanedData = { ...batchData };
     
-    // Clean numeric fields
     const numericFields = [
       'seed_quantity_before_drying',
       'seed_quantity_after_drying',
@@ -362,10 +496,8 @@ const BatchProduction = () => {
       const costs = calculateCosts();
       const cleanedBatchData = prepareDataForSubmission();
       
-      // Prepare cost details combining basic and manual overrides
       const allCostDetails = [
         ...costs.basicCostDetails,
-        // Add any additional manual cost elements
       ];
       
       const payload = {
@@ -382,11 +514,10 @@ const BatchProduction = () => {
         } : null
       };
       
-      // Create the batch
       const response = await api.batch.addBatch(payload);
       
       if (response.success) {
-        // Save extended costs with override support using cost management module
+        // Save extended costs
         if (costs.extendedCosts.length > 0 && response.batch_id) {
           await api.costManagement.saveBatchCosts({
             batch_id: response.batch_id,
@@ -403,7 +534,7 @@ const BatchProduction = () => {
           });
         }
         
-        // Save time tracking if available
+        // Save time tracking
         if (timeTrackingData && response.batch_id) {
           await api.costManagement.saveTimeTracking({
             batch_id: response.batch_id,
@@ -419,10 +550,14 @@ const BatchProduction = () => {
 Batch Code: ${response.batch_code}
 Traceable Code: ${response.traceable_code}
 Oil Cost: ₹${response.oil_cost_per_kg.toFixed(2)}/kg
-Total Oil Produced: ${response.total_oil_produced} kg
-${costs.extendedCosts.filter(c => c.override_rate).length > 0 ? 
-  `\n⚠️ ${costs.extendedCosts.filter(c => c.override_rate).length} cost overrides applied` : ''}
-${timeTrackingData ? `\n⏱️ Time Tracked: ${timeTrackingData.rounded_hours} hours` : ''}`);
+Total Oil Produced: ${response.total_oil_produced} kg`);
+        
+        // Prompt for report generation
+        setTimeout(() => {
+          if (window.confirm('Batch created successfully! Would you like to view the production report?')) {
+            generateBatchReport(response.batch_id, response.batch_code);
+          }
+        }, 1000);
         
         // Reset form
         setBatchData({
@@ -450,7 +585,6 @@ ${timeTrackingData ? `\n⏱️ Time Tracked: ${timeTrackingData.rounded_hours} h
         setAdditionalCosts([]);
         setCurrentStep(1);
         
-        // Refresh history if visible
         if (showHistory) {
           fetchBatchHistory();
         }
@@ -467,11 +601,10 @@ ${timeTrackingData ? `\n⏱️ Time Tracked: ${timeTrackingData.rounded_hours} h
   const yields = calculateYieldPercentages();
   const costs = calculateCosts();
 
-  // Format date for display
   const formatDate = (dateStr) => {
     if (!dateStr) return '';
     const date = new Date(dateStr);
-    return date.toLocaleDateString('en-GB'); // DD/MM/YYYY format
+    return date.toLocaleDateString('en-GB');
   };
 
   return (
@@ -638,7 +771,6 @@ ${timeTrackingData ? `\n⏱️ Time Tracked: ${timeTrackingData.rounded_hours} h
                 </div>
               )}
               
-              {/* CostCapture Component for Drying Stage */}
               {batchData.seed_quantity_before_drying && (
                 <CostCapture
                   module="batch"
@@ -673,7 +805,6 @@ ${timeTrackingData ? `\n⏱️ Time Tracked: ${timeTrackingData.rounded_hours} h
             <div className="step-content">
               <h3>Production Outputs & Time Tracking</h3>
               
-              {/* Time Tracking Component */}
               <TimeTracker 
                 batchId={null}
                 onTimeCalculated={handleTimeTracking}
@@ -764,7 +895,6 @@ ${timeTrackingData ? `\n⏱️ Time Tracked: ${timeTrackingData.rounded_hours} h
                 </div>
               )}
               
-              {/* CostCapture for Crushing Stage */}
               {batchData.oil_yield && timeTrackingData && (
                 <div>
                   <h4>Crushing Stage Costs</h4>
@@ -781,7 +911,6 @@ ${timeTrackingData ? `\n⏱️ Time Tracked: ${timeTrackingData.rounded_hours} h
                 </div>
               )}
               
-              {/* Additional Cost Elements */}
               <div>
                 <h4>Additional Cost Elements</h4>
                 <CostCapture
@@ -813,12 +942,11 @@ ${timeTrackingData ? `\n⏱️ Time Tracked: ${timeTrackingData.rounded_hours} h
             </div>
           )}
 
-          {/* Step 4: Complete Cost Review - FIXED: Properly handle override display */}
+          {/* Step 4: Complete Cost Review */}
           {currentStep === 4 && costs && (
             <div className="step-content">
               <h3>Complete Cost Review & Summary</h3>
               
-              {/* Basic Costs Table */}
               <h4>Basic Production Costs</h4>
               <table className="cost-table">
                 <thead>
@@ -865,7 +993,6 @@ ${timeTrackingData ? `\n⏱️ Time Tracked: ${timeTrackingData.rounded_hours} h
                 </tbody>
               </table>
 
-              {/* Extended Costs Table - FIXED: Properly display override rates */}
               {costs.extendedCosts.length > 0 && (
                 <>
                   <h4>Extended Cost Elements (All Stages)</h4>
@@ -884,7 +1011,6 @@ ${timeTrackingData ? `\n⏱️ Time Tracked: ${timeTrackingData.rounded_hours} h
                     </thead>
                     <tbody>
                       {costs.extendedCosts.map((cost, idx) => {
-                        // FIXED: Use actual rate (override if present, else default) with safe parsing
                         const displayRate = cost.override_rate !== null && cost.override_rate !== undefined 
                           ? safeParseFloat(cost.override_rate) 
                           : safeParseFloat(cost.rate);
@@ -941,7 +1067,6 @@ ${timeTrackingData ? `\n⏱️ Time Tracked: ${timeTrackingData.rounded_hours} h
                 </>
               )}
 
-              {/* Final Cost Summary */}
               <table className="cost-table">
                 <tbody>
                   <tr className="total-row">
@@ -987,7 +1112,6 @@ ${timeTrackingData ? `\n⏱️ Time Tracked: ${timeTrackingData.rounded_hours} h
                 </tbody>
               </table>
 
-              {/* Override Warning - FIXED: Check for override_rate not null */}
               {costs.extendedCosts.filter(c => c.override_rate !== null && c.override_rate !== undefined).length > 0 && (
                 <div className="override-info">
                   <strong>⚠️ Cost Overrides Applied:</strong>
@@ -1001,7 +1125,6 @@ ${timeTrackingData ? `\n⏱️ Time Tracked: ${timeTrackingData.rounded_hours} h
                 </div>
               )}
 
-              {/* Time & Tracking Summary */}
               {timeTrackingData && (
                 <div className="time-tracking-info">
                   <strong>⏱️ Time Tracking:</strong> {timeTrackingData.actual_hours} hours 
@@ -1067,20 +1190,212 @@ ${timeTrackingData ? `\n⏱️ Time Tracked: ${timeTrackingData.rounded_hours} h
                     </td>
                     <td className="text-center">
                       <button 
-                        onClick={async () => {
-                          const summary = await api.batch.getBatchCostSummary(batch.batch_id);
-                          console.log('Batch Cost Summary:', summary);
-                          alert(`Batch ${batch.batch_code} has ${summary.summary?.validation?.warning_count || 0} cost warnings`);
-                        }}
+                        onClick={() => generateBatchReport(batch.batch_id, batch.batch_code)}
                         className="view-costs-btn"
+                        disabled={loadingReport}
                       >
-                        View Costs
+                        {loadingReport ? 'Loading...' : '📄 View Report'}
                       </button>
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {/* Report Modal */}
+      {showReport && reportData && (
+        <div className="report-modal-overlay">
+          <div className="report-modal">
+            <div className="report-modal-header">
+              <h2>Batch Production Report</h2>
+              <button 
+                className="close-btn" 
+                onClick={() => {
+                  setShowReport(false);
+                  setReportData(null);
+                }}
+              >
+                ✕
+              </button>
+            </div>
+            
+            <div className="report-modal-content">
+              <div className="report-actions">
+                <button onClick={handlePrintReport} className="btn-print">
+                  🖨️ Print Report
+                </button>
+              </div>
+              
+              <div ref={reportRef} className="report-content">
+                {/* Report Header */}
+                <div className="report-header">
+                  <div className="company-name">PUVI OIL MANUFACTURING</div>
+                  <div className="report-title">Batch Production Report</div>
+                  <div className="traceable-code">
+                    Traceable Code: {reportData.traceable_code || reportData.batch_code}
+                  </div>
+                  <div className="report-date">
+                    Generated: {new Date().toLocaleString('en-IN')}
+                  </div>
+                </div>
+                
+                {/* Batch Details Section */}
+                <div className="section">
+                  <div className="section-title">Batch Information</div>
+                  <table>
+                    <tbody>
+                      <tr>
+                        <th width="25%">Batch Code</th>
+                        <td width="25%">{reportData.batch_code}</td>
+                        <th width="25%">Production Date</th>
+                        <td width="25%">{reportData.production_date}</td>
+                      </tr>
+                      <tr>
+                        <th>Oil Type</th>
+                        <td>{reportData.oil_type}</td>
+                        <th>Seed Purchase Code</th>
+                        <td className="highlight">{reportData.seed_purchase_code || 'N/A'}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                
+                {/* Production Summary Section */}
+                <div className="section">
+                  <div className="section-title">Production Summary</div>
+                  <table>
+                    <tbody>
+                      <tr>
+                        <th>Seed Before Drying</th>
+                        <td>{reportData.seed_quantity_before_drying} kg</td>
+                        <th>Seed After Drying</th>
+                        <td>{reportData.seed_quantity_after_drying} kg</td>
+                      </tr>
+                      <tr>
+                        <th>Oil Yield</th>
+                        <td className="highlight">{reportData.oil_yield} kg</td>
+                        <th>Oil Cake Yield</th>
+                        <td>{reportData.cake_yield} kg</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                
+                {/* Activities & Costs */}
+                {reportData.extended_costs && reportData.extended_costs.length > 0 && (
+                  <div className="section">
+                    <div className="section-title">Production Activities & Costs</div>
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Activity</th>
+                          <th>Category</th>
+                          <th>Quantity</th>
+                          <th>Rate</th>
+                          <th>Total</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {reportData.extended_costs.map((cost, idx) => (
+                          <tr key={idx}>
+                            <td>{cost.element_name}</td>
+                            <td>{cost.category}</td>
+                            <td>{cost.quantity}</td>
+                            <td>₹{cost.rate}</td>
+                            <td>₹{cost.total_cost}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+                
+                {/* Time Tracking */}
+                {reportData.time_tracking && reportData.time_tracking.length > 0 && (
+                  <div className="section">
+                    <div className="section-title">Time Tracking</div>
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Process</th>
+                          <th>Start</th>
+                          <th>End</th>
+                          <th>Hours</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {reportData.time_tracking.map((time, idx) => (
+                          <tr key={idx}>
+                            <td>{time.process_type}</td>
+                            <td>{time.start_time}</td>
+                            <td>{time.end_time}</td>
+                            <td>{time.billed_hours} hrs</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+                
+                {/* Cost Summary */}
+                <div className="section">
+                  <div className="section-title">Cost Summary</div>
+                  <table>
+                    <tbody>
+                      <tr>
+                        <th>Total Production Cost</th>
+                        <td>₹{reportData.total_production_cost}</td>
+                      </tr>
+                      <tr>
+                        <th>Net Oil Cost</th>
+                        <td>₹{reportData.net_oil_cost}</td>
+                      </tr>
+                      <tr className="cost-total highlight">
+                        <th>Cost per kg Oil</th>
+                        <td>₹{reportData.oil_cost_per_kg}/kg</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                
+                {/* Validation Warnings */}
+                {reportData.validation && reportData.validation.warnings && reportData.validation.warnings.length > 0 && (
+                  <div className="section">
+                    <div className="section-title warning">⚠️ Validation Warnings</div>
+                    <ul>
+                      {reportData.validation.warnings.map((warning, idx) => (
+                        <li key={idx} className="warning">{warning}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                
+                {/* Signature Section */}
+                <div className="signature-section">
+                  <div className="signature-box">
+                    <div className="signature-line"></div>
+                    <div>Production Supervisor</div>
+                  </div>
+                  <div className="signature-box">
+                    <div className="signature-line"></div>
+                    <div>Quality Control</div>
+                  </div>
+                  <div className="signature-box">
+                    <div className="signature-line"></div>
+                    <div>Plant Manager</div>
+                  </div>
+                </div>
+                
+                {/* Footer */}
+                <div className="footer">
+                  <p>System-generated report for regulatory compliance</p>
+                  <p>Report ID: {reportData.batch_code}-{Date.now()}</p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
