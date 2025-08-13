@@ -1,6 +1,7 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js
 // Cost Capture Component - ACTIVITY-BASED FILTERING VERSION
 // Fixed: Removed name-based filtering, now uses activity field from backend
+// UPDATED: Added hasChanges flag to calculateAllCosts to prevent infinite loops
 
 import React, { useState, useEffect, useCallback } from 'react';
 import api from '../../services/api';
@@ -69,7 +70,7 @@ const CostCapture = ({
     fetchCostElements();
   }, [stage, module]);
 
-  // Calculate costs
+  // Calculate costs - FIXED VERSION WITH hasChanges FLAG
   const calculateAllCosts = () => {
     if (!costElements || costElements.length === 0) {
       return;
@@ -78,6 +79,7 @@ const CostCapture = ({
     let total = 0;
     const updatedInputs = { ...costInputs };
     const costsArray = [];
+    let hasChanges = false;
 
     costElements.forEach(element => {
       // Check if input exists, if not create it
@@ -91,6 +93,7 @@ const CostCapture = ({
           totalCost: 0
         };
         updatedInputs[element.element_id] = input;
+        hasChanges = true;  // New input created, mark as changed
       }
 
       let elementQuantity = 0;
@@ -138,6 +141,11 @@ const CostCapture = ({
           elementCost = elementQuantity * rate;
       }
 
+      // Check if values have changed
+      if (input.quantity !== elementQuantity || input.totalCost !== elementCost) {
+        hasChanges = true;
+      }
+
       // Update the input with calculated values
       updatedInputs[element.element_id] = {
         ...input,
@@ -167,10 +175,14 @@ const CostCapture = ({
       }
     });
 
-    setCostInputs(updatedInputs);
     setTotalCost(total);
 
-    // Send updated costs to parent
+    // Only update state if changes detected - THIS PREVENTS INFINITE LOOP
+    if (hasChanges) {
+      setCostInputs(updatedInputs);
+    }
+
+    // Always send updated costs to parent - THIS ENSURES DEFAULTS ARE CAPTURED
     if (onCostsUpdate && typeof onCostsUpdate === 'function') {
       onCostsUpdate(costsArray);
     }
