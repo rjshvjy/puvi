@@ -6,6 +6,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import api from '../../services/api';
 import CostCapture from '../CostManagement/CostCapture';
 import TimeTracker from '../CostManagement/TimeTracker';
+import { formatDateToDDMMYYYY } from '../../utils/dateUtils';
 import './BatchProduction.css';
 
 const BatchProduction = () => {
@@ -95,34 +96,15 @@ const BatchProduction = () => {
     try {
       const response = await api.batch.getBatchHistory({ limit: 50 });
       if (response.success) {
-        // Fix date formatting in batch history
+        // Fix date formatting in batch history - UPDATED WITH NEW DATE UTILITY
         const formattedBatches = response.batches.map(batch => {
-          // Fix date formatting - ensure it's a string
-          let displayDate = 'N/A';
-          if (batch.production_date) {
-            // Convert to string if it's not already
-            const dateStr = String(batch.production_date);
-            
-            // Handle different date formats
-            if (dateStr.includes('/')) {
-              // Already formatted
-              displayDate = dateStr;
-            } else if (dateStr.includes('-')) {
-              // Format: "2025-08-13" to "13/08/2025"
-              const parts = dateStr.split('-');
-              if (parts.length === 3) {
-                displayDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
-              } else {
-                displayDate = dateStr;
-              }
-            } else {
-              displayDate = dateStr;
-            }
-          }
+          // Format the date properly using centralized utility
+          const displayDate = formatDateToDDMMYYYY(batch.production_date);
           
           return {
             ...batch,
             production_date: displayDate,
+            // Clean up batch code - remove any (Invalid Date) suffixes
             batch_code: String(batch.batch_code || '').replace(/ \(Invalid Date\)/g, ''),
             traceable_code: String(batch.traceable_code || batch.batch_code || ''),
             // Ensure all numeric fields are properly converted
@@ -337,7 +319,7 @@ const BatchProduction = () => {
     return allCostDetails;
   };
 
-  // Generate batch report
+  // Generate batch report - UPDATED with date formatting
   const generateBatchReport = async (batchId, batchCode, traceableCode = null) => {
     setLoadingReports(prev => ({ ...prev, [batchId]: true }));
     
@@ -356,7 +338,7 @@ const BatchProduction = () => {
           batch_details: {
             batch_code: summary.batch_code || batchCode,
             oil_type: summary.oil_type || 'N/A',
-            production_date: summary.production_date || 'N/A',
+            production_date: formatDateToDDMMYYYY(summary.production_date) || 'N/A',  // FIXED: Use date utility
             seed_purchase_code: summary.seed_purchase_code || batchData.seed_purchase_code || selectedSeed?.latest_purchase_code || 'N/A',
             traceable_code: actualTraceableCode
           },
