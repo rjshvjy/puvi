@@ -10,7 +10,7 @@ from decimal import Decimal
 from db_utils import get_db_connection, close_connection
 from utils.date_utils import parse_date, integer_to_date
 from utils.validation import safe_decimal, safe_float, validate_positive_number
-from utils.traceability import generate_batch_traceable_code
+from utils.traceability import generate_batch_traceable_code, generate_batch_code
 
 # Create Blueprint
 batch_bp = Blueprint('batch', __name__)
@@ -262,8 +262,7 @@ def add_batch():
         production_date = parse_date(data['production_date'])
         
         # Generate batch code
-        date_str = data['production_date'].replace('-', '')
-        batch_code = f"BATCH-{date_str}-{data['batch_description']}"
+        batch_code = generate_batch_code(production_date, data['batch_description'], cur)
         
         # Get seed purchase traceable code for this material
         seed_purchase_code = data.get('seed_purchase_code')
