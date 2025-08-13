@@ -825,6 +825,7 @@ const BatchProduction = () => {
                 <div className="form-card cost-summary">
                   <h3 className="card-title">Step 6: Final Cost Summary & Review</h3>
                   
+                  {/* Main Cost Summary */}
                   <div className="summary-grid">
                     <div className="summary-item">
                       <span>Seed Cost:</span>
@@ -864,13 +865,107 @@ const BatchProduction = () => {
                       <strong>₹{totalCost.toFixed(2)}</strong>
                     </div>
                     
+                    {/* By-product Value Offset */}
+                    {(batchData.cake_yield || batchData.sludge_yield) && (
+                      <>
+                        <div className="summary-item-divider"></div>
+                        <div className="summary-item info">
+                          <span>Est. Cake Value:</span>
+                          <strong>₹{(parseFloat(batchData.cake_yield || 0) * parseFloat(batchData.cake_estimated_rate || 0)).toFixed(2)}</strong>
+                        </div>
+                        {batchData.sludge_yield && (
+                          <div className="summary-item info">
+                            <span>Est. Sludge Value:</span>
+                            <strong>₹{(parseFloat(batchData.sludge_yield || 0) * parseFloat(batchData.sludge_estimated_rate || 0)).toFixed(2)}</strong>
+                          </div>
+                        )}
+                        <div className="summary-item highlight">
+                          <span>Net Oil Cost (after by-products):</span>
+                          <strong>₹{(
+                            totalCost - 
+                            (parseFloat(batchData.cake_yield || 0) * parseFloat(batchData.cake_estimated_rate || 0)) -
+                            (parseFloat(batchData.sludge_yield || 0) * parseFloat(batchData.sludge_estimated_rate || 0))
+                          ).toFixed(2)}</strong>
+                        </div>
+                      </>
+                    )}
+                    
                     {batchData.oil_yield && (
-                      <div className="summary-item highlight">
-                        <span>Estimated Oil Cost/kg:</span>
-                        <strong>₹{(totalCost / parseFloat(batchData.oil_yield)).toFixed(2)}</strong>
+                      <div className="summary-item highlight large">
+                        <span>Final Oil Cost/kg:</span>
+                        <strong>₹{(
+                          (totalCost - 
+                           (parseFloat(batchData.cake_yield || 0) * parseFloat(batchData.cake_estimated_rate || 0)) -
+                           (parseFloat(batchData.sludge_yield || 0) * parseFloat(batchData.sludge_estimated_rate || 0))
+                          ) / parseFloat(batchData.oil_yield)
+                        ).toFixed(2)}</strong>
                       </div>
                     )}
                   </div>
+                  
+                  {/* Detailed Cost Breakdown */}
+                  <details className="cost-breakdown-details">
+                    <summary className="cost-breakdown-summary">View Detailed Cost Breakdown</summary>
+                    <div className="detailed-costs-table">
+                      <table className="cost-details-table">
+                        <thead>
+                          <tr>
+                            <th>Stage</th>
+                            <th>Cost Element</th>
+                            <th>Quantity</th>
+                            <th>Rate</th>
+                            <th>Total</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr className="stage-row">
+                            <td>Material</td>
+                            <td>{selectedSeed?.material_name || 'Seeds'}</td>
+                            <td>{batchData.seed_quantity_before_drying} kg</td>
+                            <td>₹{selectedSeed?.weighted_avg_cost || 0}/kg</td>
+                            <td>₹{(parseFloat(batchData.seed_quantity_before_drying || 0) * (selectedSeed?.weighted_avg_cost || 0)).toFixed(2)}</td>
+                          </tr>
+                          
+                          {Object.entries(stageCosts).map(([stage, costs]) => 
+                            costs.map((cost, index) => (
+                              <tr key={`${stage}-${index}`}>
+                                <td>{index === 0 ? stage.charAt(0).toUpperCase() + stage.slice(1) : ''}</td>
+                                <td>{cost.element_name}</td>
+                                <td>{cost.quantity} {cost.unit || 'units'}</td>
+                                <td>
+                                  {cost.overrideRate && cost.overrideRate !== cost.default_rate ? (
+                                    <>
+                                      <span className="original-rate">₹{cost.default_rate}</span>
+                                      <span className="override-rate">₹{cost.overrideRate}</span>
+                                    </>
+                                  ) : (
+                                    `₹${cost.rate || cost.default_rate}`
+                                  )}
+                                </td>
+                                <td>₹{cost.total_cost.toFixed(2)}</td>
+                              </tr>
+                            ))
+                          )}
+                          
+                          {timeTrackingData && timeTrackingData.costs?.breakdown && (
+                            <tr>
+                              <td>Time</td>
+                              <td>Crushing Time</td>
+                              <td>{timeTrackingData.rounded_hours} hours</td>
+                              <td>-</td>
+                              <td>₹{(timeTrackingData.costs?.total || 0).toFixed(2)}</td>
+                            </tr>
+                          )}
+                        </tbody>
+                        <tfoot>
+                          <tr className="total-row">
+                            <td colSpan="4">Total Production Cost</td>
+                            <td>₹{totalCost.toFixed(2)}</td>
+                          </tr>
+                        </tfoot>
+                      </table>
+                    </div>
+                  </details>
                   
                   {/* Production Summary */}
                   <div className="production-summary-box">
@@ -901,6 +996,18 @@ const BatchProduction = () => {
                       </div>
                     </div>
                   </div>
+                  
+                  {/* Review Confirmation */}
+                  <div className="review-confirmation">
+                    <h4>⚠️ Please Review Before Submission</h4>
+                    <ul className="review-checklist">
+                      <li>All quantities and yields have been verified</li>
+                      <li>Cost elements have been reviewed and adjusted if needed</li>
+                      <li>By-product rates have been confirmed</li>
+                      <li>Time tracking data is accurate</li>
+                      <li>This action cannot be undone once submitted</li>
+                    </ul>
+                  </div>
                 </div>
               </>
             )}
@@ -927,10 +1034,11 @@ const BatchProduction = () => {
               ) : (
                 <button 
                   type="submit" 
-                  className="btn-submit"
+                  className="btn-submit btn-save-batch"
                   disabled={loading}
+                  title="Click to save batch permanently"
                 >
-                  {loading ? 'Creating Batch...' : '✓ Create Batch'}
+                  {loading ? 'Creating Batch...' : '✓ Save Batch & Generate Report'}
                 </button>
               )}
             </div>
