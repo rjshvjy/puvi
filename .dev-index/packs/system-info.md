@@ -1,5 +1,5 @@
 # Feature Pack: SYSTEM-INFO
-Generated: 2025-08-16T06:53:17.294Z
+Generated: 2025-08-16T07:34:39.035Z
 Routes: 1 | Tables: 6 | Files: 1
 
 ## Table of Contents
@@ -20,10 +20,10 @@ GET    /api/system_info
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
 | batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 7 other modules |
-| materials | batch-production, blending, material-writeoff | 🔴 HIGH | Changes affect 8 other modules |
+| materials | batch-production, blending, material-writeoff | 🔴 HIGH | Changes affect 9 other modules |
 | purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 5 other modules |
-| sku_master | sku-management, sku-production, unknown | 🔴 HIGH | Changes affect 3 other modules |
-| suppliers | opening-balance, purchase, unknown | 🔴 HIGH | Changes affect 3 other modules |
+| sku_master | sku-management, sku-production, system-config | 🔴 HIGH | Changes affect 4 other modules |
+| suppliers | opening-balance, purchase, system-config | 🔴 HIGH | Changes affect 4 other modules |
 | system_configuration | opening-balance, unknown | 🟡 MEDIUM | Changes affect 2 other modules |
 
 ## Backend Implementation
@@ -31,10 +31,10 @@ GET    /api/system_info
 ## Data Flow & Integration
 ### 🔗 Cascading Dependencies
 - **materials** (HIGH RISK)
-  - Shared with: batch-production, blending, material-writeoff, opening-balance, purchase, sku-management, sku-production, unknown
+  - Shared with: batch-production, blending, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, unknown
   - Impact: Changes will cascade to these modules
 - **suppliers** (HIGH RISK)
-  - Shared with: opening-balance, purchase, unknown
+  - Shared with: opening-balance, purchase, system-config, unknown
   - Impact: Changes will cascade to these modules
 
 ### Integration Points

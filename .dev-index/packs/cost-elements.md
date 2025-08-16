@@ -1,5 +1,5 @@
 # Feature Pack: COST-ELEMENTS
-Generated: 2025-08-16T06:53:17.286Z
+Generated: 2025-08-16T07:34:39.029Z
 Routes: 9 | Tables: 5 | Files: 1
 
 ## Table of Contents
@@ -38,7 +38,7 @@ GET    /api/cost_elements/batch_summary/<int:batch_id>
 | batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 7 other modules |
 | batch_extended_costs | batch-production, cost-management | 🟡 MEDIUM | Changes affect 2 other modules |
 | batch_time_tracking | cost-management | 🟡 MEDIUM | Changes affect 1 other modules |
-| cost_elements_master | cost-management, sku-management, sku-production | 🔴 HIGH | Changes affect 3 other modules |
+| cost_elements_master | cost-management, sku-management, sku-production | 🔴 HIGH | Changes affect 4 other modules |
 | cost_override_log | cost-management | 🟡 MEDIUM | Changes affect 1 other modules |
 
 ## Backend Implementation
@@ -46,7 +46,7 @@ GET    /api/cost_elements/batch_summary/<int:batch_id>
 ## Data Flow & Integration
 ### 🔗 Cascading Dependencies
 - **cost_elements_master** (HIGH RISK)
-  - Shared with: cost-management, sku-management, sku-production
+  - Shared with: cost-management, sku-management, sku-production, system-config
   - Impact: Changes will cascade to these modules
 
 ### Integration Points

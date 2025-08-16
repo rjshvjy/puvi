@@ -1,5 +1,5 @@
 # Feature Pack: INVENTORY-FOR-WRITEOFF
-Generated: 2025-08-16T06:53:17.291Z
+Generated: 2025-08-16T07:34:39.032Z
 Routes: 1 | Tables: 4 | Files: 1
 
 ## Table of Contents
@@ -21,7 +21,7 @@ GET    /api/inventory_for_writeoff
 |-------|-------------|------|--------|
 | inventory | batch-production, blending, material-writeoff | 🔴 HIGH | Changes affect 7 other modules |
 | material_writeoffs | material-writeoff, opening-balance | 🟡 MEDIUM | Changes affect 2 other modules |
-| materials | batch-production, blending, material-writeoff | 🔴 HIGH | Changes affect 8 other modules |
+| materials | batch-production, blending, material-writeoff | 🔴 HIGH | Changes affect 9 other modules |
 | writeoff_reasons | material-writeoff | 🟡 MEDIUM | Changes affect 1 other modules |
 
 ## Backend Implementation
@@ -32,7 +32,7 @@ GET    /api/inventory_for_writeoff
   - Shared with: batch-production, blending, material-writeoff, opening-balance, purchase, sku-production, unknown
   - Impact: Changes will cascade to these modules
 - **materials** (HIGH RISK)
-  - Shared with: batch-production, blending, material-writeoff, opening-balance, purchase, sku-management, sku-production, unknown
+  - Shared with: batch-production, blending, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, unknown
   - Impact: Changes will cascade to these modules
 
 ### Integration Points

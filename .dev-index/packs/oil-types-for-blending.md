@@ -1,5 +1,5 @@
 # Feature Pack: OIL-TYPES-FOR-BLENDING
-Generated: 2025-08-16T06:53:17.285Z
+Generated: 2025-08-16T07:34:39.028Z
 Routes: 1 | Tables: 6 | Files: 1
 
 ## Table of Contents
@@ -23,7 +23,7 @@ GET    /api/oil_types_for_blending
 | blend_batch_components | blending | 🟡 MEDIUM | Changes affect 1 other modules |
 | blend_batches | blending, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
 | inventory | batch-production, blending, material-writeoff | 🔴 HIGH | Changes affect 7 other modules |
-| materials | batch-production, blending, material-writeoff | 🔴 HIGH | Changes affect 8 other modules |
+| materials | batch-production, blending, material-writeoff | 🔴 HIGH | Changes affect 9 other modules |
 | purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 5 other modules |
 
 ## Backend Implementation
@@ -34,7 +34,7 @@ GET    /api/oil_types_for_blending
   - Shared with: batch-production, blending, material-writeoff, opening-balance, purchase, sku-production, unknown
   - Impact: Changes will cascade to these modules
 - **materials** (HIGH RISK)
-  - Shared with: batch-production, blending, material-writeoff, opening-balance, purchase, sku-management, sku-production, unknown
+  - Shared with: batch-production, blending, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, unknown
   - Impact: Changes will cascade to these modules
 
 ### Integration Points

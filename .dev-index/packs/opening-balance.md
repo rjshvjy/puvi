@@ -1,5 +1,5 @@
 # Feature Pack: OPENING-BALANCE
-Generated: 2025-08-16T06:53:17.292Z
+Generated: 2025-08-16T07:34:39.033Z
 Routes: 8 | Tables: 11 | Files: 1
 
 ## Table of Contents
@@ -37,11 +37,11 @@ POST   /api/opening_balance/import
 | inventory | batch-production, blending, material-writeoff | 🔴 HIGH | Changes affect 6 other modules |
 | masters_audit_log | masters-common | 🟡 MEDIUM | Changes affect 1 other modules |
 | material_writeoffs | material-writeoff | 🟡 MEDIUM | Changes affect 1 other modules |
-| materials | batch-production, blending, material-writeoff | 🔴 HIGH | Changes affect 7 other modules |
+| materials | batch-production, blending, material-writeoff | 🔴 HIGH | Changes affect 8 other modules |
 | opening_balances | None | 🟢 LOW | Isolated to this module |
 | purchases | batch-production, blending, purchase | 🔴 HIGH | Changes affect 4 other modules |
 | serial_number_tracking | unknown | 🟡 MEDIUM | Changes affect 1 other modules |
-| suppliers | purchase, unknown | 🟡 MEDIUM | Changes affect 2 other modules |
+| suppliers | purchase, system-config, unknown | 🔴 HIGH | Changes affect 3 other modules |
 | system_configuration | unknown | 🟡 MEDIUM | Changes affect 1 other modules |
 | year_end_closing | None | 🟢 LOW | Isolated to this module |
 
@@ -53,10 +53,10 @@ POST   /api/opening_balance/import
   - Shared with: batch-production, blending, material-writeoff, purchase, sku-production, unknown
   - Impact: Changes will cascade to these modules
 - **materials** (HIGH RISK)
-  - Shared with: batch-production, blending, material-writeoff, purchase, sku-management, sku-production, unknown
+  - Shared with: batch-production, blending, material-writeoff, purchase, sku-management, sku-production, system-config, unknown
   - Impact: Changes will cascade to these modules
-- **suppliers** (MEDIUM RISK)
-  - Shared with: purchase, unknown
+- **suppliers** (HIGH RISK)
+  - Shared with: purchase, system-config, unknown
   - Impact: Changes will cascade to these modules
 
 ### Integration Points

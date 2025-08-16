@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "generatedAt": "2025-08-16T06:53:17.228Z",
+  "generatedAt": "2025-08-16T07:34:38.975Z",
   "summary": {
     "totalTables": 41,
     "sharedTables": 17,
@@ -73,9 +73,10 @@
         "purchase",
         "sku-management",
         "sku-production",
+        "system-config",
         "unknown"
       ],
-      "fileCount": 9,
+      "fileCount": 10,
       "operations": {
         "batch-production": {
           "files": [
@@ -116,6 +117,12 @@
         "sku-production": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/sku_production.py"
+          ],
+          "queryCount": 0
+        },
+        "system-config": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/system_config.py"
           ],
           "queryCount": 0
         },
@@ -343,9 +350,10 @@
       "usedBy": [
         "cost-management",
         "sku-management",
-        "sku-production"
+        "sku-production",
+        "system-config"
       ],
-      "fileCount": 3,
+      "fileCount": 4,
       "operations": {
         "cost-management": {
           "files": [
@@ -362,6 +370,12 @@
         "sku-production": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/sku_production.py"
+          ],
+          "queryCount": 0
+        },
+        "system-config": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/system_config.py"
           ],
           "queryCount": 0
         }
@@ -532,9 +546,10 @@
       "usedBy": [
         "opening-balance",
         "purchase",
+        "system-config",
         "unknown"
       ],
-      "fileCount": 4,
+      "fileCount": 5,
       "operations": {
         "opening-balance": {
           "files": [
@@ -545,6 +560,12 @@
         "purchase": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/purchase.py"
+          ],
+          "queryCount": 0
+        },
+        "system-config": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/system_config.py"
           ],
           "queryCount": 0
         },
@@ -624,9 +645,10 @@
       "usedBy": [
         "sku-management",
         "sku-production",
+        "system-config",
         "unknown"
       ],
-      "fileCount": 3,
+      "fileCount": 4,
       "operations": {
         "sku-management": {
           "files": [
@@ -637,6 +659,12 @@
         "sku-production": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/sku_production.py"
+          ],
+          "queryCount": 0
+        },
+        "system-config": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/system_config.py"
           ],
           "queryCount": 0
         },
@@ -888,12 +916,13 @@
         "purchase",
         "sku-management",
         "sku-production",
+        "system-config",
         "unknown"
       ],
-      "moduleCount": 8,
-      "fileCount": 9,
+      "moduleCount": 9,
+      "fileCount": 10,
       "risk": "HIGH",
-      "recommendation": "⚠️ CRITICAL: Changes require coordination across 8 modules"
+      "recommendation": "⚠️ CRITICAL: Changes require coordination across 9 modules"
     },
     {
       "table": "purchases",
@@ -930,36 +959,39 @@
       "sharedBy": [
         "cost-management",
         "sku-management",
-        "sku-production"
+        "sku-production",
+        "system-config"
       ],
-      "moduleCount": 3,
-      "fileCount": 3,
-      "risk": "MEDIUM",
-      "recommendation": "Changes will affect cost-management, sku-management, sku-production"
+      "moduleCount": 4,
+      "fileCount": 4,
+      "risk": "HIGH",
+      "recommendation": "⚠️ CRITICAL: Changes require coordination across 4 modules"
     },
     {
       "table": "suppliers",
       "sharedBy": [
         "opening-balance",
         "purchase",
+        "system-config",
         "unknown"
       ],
-      "moduleCount": 3,
-      "fileCount": 4,
-      "risk": "MEDIUM",
-      "recommendation": "Changes will affect opening-balance, purchase, unknown"
+      "moduleCount": 4,
+      "fileCount": 5,
+      "risk": "HIGH",
+      "recommendation": "⚠️ CRITICAL: Changes require coordination across 4 modules"
     },
     {
       "table": "sku_master",
       "sharedBy": [
         "sku-management",
         "sku-production",
+        "system-config",
         "unknown"
       ],
-      "moduleCount": 3,
-      "fileCount": 3,
-      "risk": "MEDIUM",
-      "recommendation": "Changes will affect sku-management, sku-production, unknown"
+      "moduleCount": 4,
+      "fileCount": 4,
+      "risk": "HIGH",
+      "recommendation": "⚠️ CRITICAL: Changes require coordination across 4 modules"
     },
     {
       "table": "purchase_items",

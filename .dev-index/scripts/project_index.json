@@ -1,9 +1,9 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-16T06:53:16.467Z",
-  "filesScanned": 55,
+  "generatedAt": "2025-08-16T07:34:38.193Z",
+  "filesScanned": 56,
   "jsFilesScanned": 34,
-  "pyFilesScanned": 21,
+  "pyFilesScanned": 22,
   "routes": [
     {
       "method": "GETCOSTELEMENTSBYSTAGE",
@@ -659,6 +659,15 @@
       "line": 1271,
       "blueprint": "sku_production_bp",
       "function": "allocate_oil_for_production",
+      "source": "backend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/config/<config_type>",
+      "file": "puvi-backend/puvi-backend-main/modules/system_config.py",
+      "line": 12,
+      "blueprint": "config_bp",
+      "function": "get_config",
       "source": "backend"
     },
     {
@@ -1588,6 +1597,12 @@
       "line": 625,
       "type": "object",
       "code": "return False, f\"{field_config.get('label', field_name)} must be one of: {', '.join(options)}\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/system_config.py",
+      "line": 116,
+      "type": "object",
+      "code": "'error': f'Unknown config type: {config_type}'"
     }
   ],
   "databaseQueries": [
@@ -4415,6 +4430,78 @@
       "preview": "cur.execute(\"\"\""
     },
     {
+      "file": "puvi-backend/puvi-backend-main/modules/system_config.py",
+      "line": 23,
+      "type": "SELECT",
+      "tables": [
+        "materials"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/system_config.py",
+      "line": 33,
+      "type": "SELECT",
+      "tables": [
+        "materials"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/system_config.py",
+      "line": 43,
+      "type": "SELECT",
+      "tables": [
+        "materials",
+        "sku_master"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/system_config.py",
+      "line": 53,
+      "type": "SELECT",
+      "tables": [
+        "materials",
+        "sku_master"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/system_config.py",
+      "line": 74,
+      "type": "SELECT",
+      "tables": [
+        "materials",
+        "sku_master",
+        "cost_elements_master"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/system_config.py",
+      "line": 87,
+      "type": "SELECT",
+      "tables": [
+        "materials",
+        "sku_master",
+        "cost_elements_master"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/system_config.py",
+      "line": 98,
+      "type": "SELECT",
+      "tables": [
+        "materials",
+        "sku_master",
+        "cost_elements_master",
+        "suppliers"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
       "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
       "line": 167,
       "type": "OTHER",
@@ -4711,6 +4798,7 @@
         "puvi-backend/puvi-backend-main/modules/purchase.py",
         "puvi-backend/puvi-backend-main/modules/sku_management.py",
         "puvi-backend/puvi-backend-main/modules/sku_production.py",
+        "puvi-backend/puvi-backend-main/modules/system_config.py",
         "puvi-backend/puvi-backend-main/utils/traceability.py",
         "puvi-backend/puvi-backend-main/app.py"
       ]
@@ -4783,7 +4871,8 @@
       "files": [
         "puvi-backend/puvi-backend-main/modules/cost_management.py",
         "puvi-backend/puvi-backend-main/modules/sku_management.py",
-        "puvi-backend/puvi-backend-main/modules/sku_production.py"
+        "puvi-backend/puvi-backend-main/modules/sku_production.py",
+        "puvi-backend/puvi-backend-main/modules/system_config.py"
       ]
     },
     {
@@ -4854,6 +4943,7 @@
       "files": [
         "puvi-backend/puvi-backend-main/modules/opening_balance.py",
         "puvi-backend/puvi-backend-main/modules/purchase.py",
+        "puvi-backend/puvi-backend-main/modules/system_config.py",
         "puvi-backend/puvi-backend-main/utils/traceability.py",
         "puvi-backend/puvi-backend-main/app.py"
       ]
@@ -4888,6 +4978,7 @@
       "files": [
         "puvi-backend/puvi-backend-main/modules/sku_management.py",
         "puvi-backend/puvi-backend-main/modules/sku_production.py",
+        "puvi-backend/puvi-backend-main/modules/system_config.py",
         "puvi-backend/puvi-backend-main/app.py"
       ]
     },
@@ -8193,6 +8284,14 @@
       "line": 1272,
       "name": "allocate_oil_for_production",
       "params": "",
+      "type": "python",
+      "isRoute": true
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/system_config.py",
+      "line": 13,
+      "name": "get_config",
+      "params": "config_type",
       "type": "python",
       "isRoute": true
     },
@@ -12768,6 +12867,15 @@
         "function": "allocate_oil_for_production"
       }
     ],
+    "config_bp": [
+      {
+        "method": "GET",
+        "path": "/api/config/<config_type>",
+        "file": "puvi-backend/puvi-backend-main/modules/system_config.py",
+        "line": 12,
+        "function": "get_config"
+      }
+    ],
     "app": [
       {
         "method": "GET",
@@ -15149,6 +15257,19 @@
       "code": "except Exception as e:"
     },
     {
+      "file": "puvi-backend/puvi-backend-main/modules/system_config.py",
+      "line": 18,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/system_config.py",
+      "line": 125,
+      "type": "except",
+      "exception": "Exception",
+      "code": "except Exception as e:"
+    },
+    {
       "file": "puvi-backend/puvi-backend-main/utils/date_utils.py",
       "line": 57,
       "type": "try-catch",
@@ -15430,19 +15551,19 @@
   ],
   "lineNumbers": {},
   "summary": {
-    "totalFiles": 55,
+    "totalFiles": 56,
     "jsFiles": 34,
-    "pyFiles": 21,
+    "pyFiles": 22,
     "components": 37,
-    "routes": 76,
+    "routes": 77,
     "exports": 41,
     "imports": 45,
-    "hardcodedValues": 17,
-    "databaseQueries": 242,
+    "hardcodedValues": 18,
+    "databaseQueries": 249,
     "databaseTables": 41,
-    "functions": 446,
+    "functions": 447,
     "stateHooks": 532,
     "missingEndpoints": 1,
-    "errorHandlers": 423
+    "errorHandlers": 425
   }
 }
