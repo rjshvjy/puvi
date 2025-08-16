@@ -40,6 +40,16 @@ jobs:
         run: npm run gen:index
         working-directory: .dev-index
         
+      - name: Copy project_index.json to scripts directory
+        run: |
+          if [ -f ".dev-index/project_index.json" ]; then
+            cp .dev-index/project_index.json .dev-index/scripts/
+            echo "✓ Copied project_index.json to scripts directory"
+          else
+            echo "❌ project_index.json not found!"
+            exit 1
+          fi
+          
       - name: Generate dependency matrix
         run: node scripts/build-dependency-matrix.mjs
         working-directory: .dev-index
@@ -48,22 +58,32 @@ jobs:
         run: node scripts/build-feature-packs.mjs
         working-directory: .dev-index
         
+      - name: Move generated files to proper locations
+        run: |
+          # Move dependency files back to .dev-index root
+          if [ -f ".dev-index/scripts/dependency-matrix.json" ]; then
+            mv .dev-index/scripts/dependency-matrix.json .dev-index/
+          fi
+          if [ -f ".dev-index/scripts/DEPENDENCY-REPORT.md" ]; then
+            mv .dev-index/scripts/DEPENDENCY-REPORT.md .dev-index/
+          fi
+          # Move packs directory to .dev-index root
+          if [ -d ".dev-index/scripts/packs" ]; then
+            mv .dev-index/scripts/packs .dev-index/
+          fi
+          
       - name: Debug - Check generated files
         run: |
           echo "=== Generated Files ==="
           echo "Contents of .dev-index directory:"
           ls -la .dev-index/
           echo ""
-          echo "Contents of .dev-index/scripts directory:"
-          ls -la .dev-index/scripts/
-          echo ""
-          if [ -d ".dev-index/scripts/packs" ]; then
+          if [ -d ".dev-index/packs" ]; then
             echo "Feature packs generated:"
-            ls -la .dev-index/scripts/packs/
+            ls -la .dev-index/packs/
           fi
-          echo ""
-          if [ -f ".dev-index/scripts/DEPENDENCY-REPORT.md" ]; then
-            echo "Dependency report generated ✓"
+          if [ -f ".dev-index/DEPENDENCY-REPORT.md" ]; then
+            echo "✓ Dependency report generated"
           fi
           
       - name: Commit all dev artifacts
@@ -72,9 +92,9 @@ jobs:
           commit_message: "chore: update dev index, feature packs, and dependency analysis"
           file_pattern: |
             .dev-index/project_index.json
-            .dev-index/scripts/*.json
-            .dev-index/scripts/*.md
-            .dev-index/scripts/packs/*.md
+            .dev-index/dependency-matrix.json
+            .dev-index/DEPENDENCY-REPORT.md
+            .dev-index/packs/*.md
           skip_dirty_check: false
           skip_fetch: false
           skip_checkout: false
