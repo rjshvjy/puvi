@@ -20,50 +20,63 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
+          
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-
+          
       - name: Install dev-index deps
         run: npm ci || npm i
         working-directory: .dev-index
-
+        
       - name: Generate index
         run: npm run gen:index
         working-directory: .dev-index
-
-      - name: Debug - Check file location
+        
+      - name: Generate dependency matrix
+        run: node scripts/build-dependency-matrix.mjs
+        working-directory: .dev-index
+        
+      - name: Build feature packs
+        run: node scripts/build-feature-packs.mjs
+        working-directory: .dev-index
+        
+      - name: Debug - Check generated files
         run: |
-          echo "Checking for project_index.json files:"
-          find . -name "project_index.json" -type f 2>/dev/null || echo "No project_index.json found"
-          echo ""
+          echo "=== Generated Files ==="
           echo "Contents of .dev-index directory:"
           ls -la .dev-index/
           echo ""
-          if [ -f ".dev-index/project_index.json" ]; then
-            echo "File found at .dev-index/project_index.json"
-            echo "File size: $(stat -c%s .dev-index/project_index.json) bytes"
-            echo "First 500 chars:"
-            head -c 500 .dev-index/project_index.json
-          else
-            echo "File NOT found at .dev-index/project_index.json"
+          echo "Contents of .dev-index/scripts directory:"
+          ls -la .dev-index/scripts/
+          echo ""
+          if [ -d ".dev-index/scripts/packs" ]; then
+            echo "Feature packs generated:"
+            ls -la .dev-index/scripts/packs/
           fi
-
-      - name: Commit .dev-index/project_index.json
+          echo ""
+          if [ -f ".dev-index/scripts/DEPENDENCY-REPORT.md" ]; then
+            echo "Dependency report generated ✓"
+          fi
+          
+      - name: Commit all dev artifacts
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "chore: update .dev-index/project_index.json"
-          file_pattern: .dev-index/project_index.json
+          commit_message: "chore: update dev index, feature packs, and dependency analysis"
+          file_pattern: |
+            .dev-index/project_index.json
+            .dev-index/scripts/*.json
+            .dev-index/scripts/*.md
+            .dev-index/scripts/packs/*.md
           skip_dirty_check: false
           skip_fetch: false
           skip_checkout: false
-          disable_globbing: true
+          disable_globbing: false
           add_options: '-A'
