@@ -64,18 +64,22 @@ jobs:
         run: |
           # Move dependency files back to .dev-index root
           if [ -f ".dev-index/scripts/dependency-matrix.json" ]; then
-            mv .dev-index/scripts/dependency-matrix.json .dev-index/
+            cp .dev-index/scripts/dependency-matrix.json .dev-index/
+            rm .dev-index/scripts/dependency-matrix.json
           fi
           if [ -f ".dev-index/scripts/DEPENDENCY-REPORT.md" ]; then
-            mv .dev-index/scripts/DEPENDENCY-REPORT.md .dev-index/
+            cp .dev-index/scripts/DEPENDENCY-REPORT.md .dev-index/
+            rm .dev-index/scripts/DEPENDENCY-REPORT.md
           fi
           
-          # Handle packs directory - remove old and move new
+          # Handle packs directory - use rsync to merge/overwrite
           if [ -d ".dev-index/scripts/packs" ]; then
-            # Remove existing packs directory if it exists
-            rm -rf .dev-index/packs
-            # Move the new packs directory
-            mv .dev-index/scripts/packs .dev-index/
+            # Create packs directory if it doesn't exist
+            mkdir -p .dev-index/packs
+            # Copy all files from scripts/packs to packs, overwriting existing
+            cp -rf .dev-index/scripts/packs/* .dev-index/packs/ 2>/dev/null || true
+            # Clean up scripts/packs
+            rm -rf .dev-index/scripts/packs
           fi
           
       - name: List all generated files
