@@ -26,6 +26,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ github.token }}
           
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -72,31 +73,22 @@ jobs:
             mv .dev-index/scripts/packs .dev-index/
           fi
           
-      - name: Debug - Check generated files
+      - name: List all generated files
         run: |
-          echo "=== Generated Files ==="
-          echo "Contents of .dev-index directory:"
-          ls -la .dev-index/
+          echo "=== All files in .dev-index ==="
+          find .dev-index -type f -name "*.md" -o -name "*.json" | head -20
           echo ""
-          if [ -d ".dev-index/packs" ]; then
-            echo "Feature packs generated:"
-            ls -la .dev-index/packs/
-          fi
-          if [ -f ".dev-index/DEPENDENCY-REPORT.md" ]; then
-            echo "✓ Dependency report generated"
-          fi
+          echo "=== Packs directory contents ==="
+          ls -la .dev-index/packs/ || echo "No packs directory found"
           
-      - name: Commit all dev artifacts
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          commit_message: "chore: update dev index, feature packs, and dependency analysis"
-          file_pattern: |
-            .dev-index/project_index.json
-            .dev-index/dependency-matrix.json
-            .dev-index/DEPENDENCY-REPORT.md
-            .dev-index/packs/*.md
-          skip_dirty_check: false
-          skip_fetch: false
-          skip_checkout: false
-          disable_globbing: false
-          add_options: '-A'
+      - name: Configure Git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+      - name: Add and commit all changes
+        run: |
+          git add -A .dev-index/
+          git status
+          git commit -m "chore: update dev index, feature packs, and dependency analysis" || echo "No changes to commit"
+          git push || echo "Nothing to push"
