@@ -1,3 +1,4 @@
+# .github/workflows/update-dev-index.yml
 name: Update Dev Index
 
 on:
@@ -68,8 +69,12 @@ jobs:
           if [ -f ".dev-index/scripts/DEPENDENCY-REPORT.md" ]; then
             mv .dev-index/scripts/DEPENDENCY-REPORT.md .dev-index/
           fi
-          # Move packs directory to .dev-index root
+          
+          # Handle packs directory - remove old and move new
           if [ -d ".dev-index/scripts/packs" ]; then
+            # Remove existing packs directory if it exists
+            rm -rf .dev-index/packs
+            # Move the new packs directory
             mv .dev-index/scripts/packs .dev-index/
           fi
           
