@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-17T00:43:28.599Z",
+  "generatedAt": "2025-08-17T01:01:11.073Z",
   "filesScanned": 56,
   "jsFilesScanned": 34,
   "pyFilesScanned": 22,
@@ -976,7 +976,8 @@
         "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
         "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
         "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
-        "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js"
+        "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js"
       ]
     },
     {
@@ -1359,7 +1360,7 @@
     {
       "name": "SKUMaster",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 6,
+      "line": 8,
       "type": "const"
     },
     {
@@ -6933,7 +6934,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 6,
+      "line": 8,
       "name": "SKUMaster",
       "params": "",
       "type": "arrow",
@@ -6941,7 +6942,15 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 63,
+      "line": 66,
+      "name": "fetchOilTypes",
+      "params": "",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
+      "line": 99,
       "name": "fetchSKUs",
       "params": "",
       "type": "arrow",
@@ -6949,7 +6958,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 84,
+      "line": 126,
       "name": "applyFilters",
       "params": "",
       "type": "arrow",
@@ -6957,7 +6966,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 122,
+      "line": 164,
       "name": "paginate",
       "params": "pageNumber",
       "type": "arrow",
@@ -6965,7 +6974,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 125,
+      "line": 167,
       "name": "formatDateForDisplay",
       "params": "dateInt",
       "type": "arrow",
@@ -6973,7 +6982,23 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 147,
+      "line": 189,
+      "name": "toBackendOilType",
+      "params": "displayOilType",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
+      "line": 195,
+      "name": "toDisplayOilType",
+      "params": "backendOilType",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
+      "line": 203,
       "name": "handleOpenModal",
       "params": "mode, sku = null",
       "type": "arrow",
@@ -6981,7 +7006,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 183,
+      "line": 239,
       "name": "handleCloseModal",
       "params": "",
       "type": "arrow",
@@ -6989,7 +7014,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 201,
+      "line": 257,
       "name": "handleInputChange",
       "params": "e",
       "type": "arrow",
@@ -6997,7 +7022,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 215,
+      "line": 271,
       "name": "validateForm",
       "params": "",
       "type": "arrow",
@@ -7005,7 +7030,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 234,
+      "line": 290,
       "name": "handleSubmit",
       "params": "e",
       "type": "arrow",
@@ -7013,7 +7038,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 276,
+      "line": 331,
       "name": "handleDelete",
       "params": "sku",
       "type": "arrow",
@@ -7021,7 +7046,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 282,
+      "line": 337,
       "name": "confirmDelete",
       "params": "",
       "type": "arrow",
@@ -7029,7 +7054,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 316,
+      "line": 368,
       "name": "clearFilters",
       "params": "",
       "type": "arrow",
@@ -11405,7 +11430,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 8,
+      "line": 10,
       "type": "useState",
       "name": "skuList",
       "setter": "setSKUList",
@@ -11413,13 +11438,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 8,
+      "line": 10,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 9,
+      "line": 11,
       "type": "useState",
       "name": "filteredList",
       "setter": "setFilteredList",
@@ -11427,13 +11452,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 9,
+      "line": 11,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 10,
+      "line": 12,
       "type": "useState",
       "name": "loading",
       "setter": "setLoading",
@@ -11441,13 +11466,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 10,
+      "line": 12,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 11,
+      "line": 13,
       "type": "useState",
       "name": "message",
       "setter": "setMessage",
@@ -11455,13 +11480,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 11,
+      "line": 13,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 14,
+      "line": 16,
       "type": "useState",
       "name": "showModal",
       "setter": "setShowModal",
@@ -11469,13 +11494,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 14,
+      "line": 16,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 15,
+      "line": 17,
       "type": "useState",
       "name": "modalMode",
       "setter": "setModalMode",
@@ -11483,13 +11508,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 15,
+      "line": 17,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 16,
+      "line": 18,
       "type": "useState",
       "name": "selectedSKU",
       "setter": "setSelectedSKU",
@@ -11497,13 +11522,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 16,
+      "line": 18,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 19,
+      "line": 21,
       "type": "useState",
       "name": "showDeleteConfirm",
       "setter": "setShowDeleteConfirm",
@@ -11511,13 +11536,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 19,
+      "line": 21,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 20,
+      "line": 22,
       "type": "useState",
       "name": "deleteTarget",
       "setter": "setDeleteTarget",
@@ -11525,13 +11550,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 20,
+      "line": 22,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 23,
+      "line": 25,
       "type": "useState",
       "name": "oilTypes",
       "setter": "setOilTypes",
@@ -11539,13 +11564,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 23,
+      "line": 25,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 24,
+      "line": 26,
       "type": "useState",
       "name": "packageSizes",
       "setter": "setPackageSizes",
@@ -11553,13 +11578,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 24,
+      "line": 26,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 27,
+      "line": 29,
       "type": "useState",
       "name": "formData",
       "setter": "setFormData",
@@ -11567,13 +11592,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 27,
+      "line": 29,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 40,
+      "line": 42,
       "type": "useState",
       "name": "errors",
       "setter": "setErrors",
@@ -11581,13 +11606,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 40,
+      "line": 42,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 43,
+      "line": 45,
       "type": "useState",
       "name": "searchTerm",
       "setter": "setSearchTerm",
@@ -11595,13 +11620,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 43,
+      "line": 45,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 44,
+      "line": 46,
       "type": "useState",
       "name": "filterOilType",
       "setter": "setFilterOilType",
@@ -11609,13 +11634,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 44,
+      "line": 46,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 45,
+      "line": 47,
       "type": "useState",
       "name": "filterPackageSize",
       "setter": "setFilterPackageSize",
@@ -11623,13 +11648,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 45,
+      "line": 47,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 46,
+      "line": 48,
       "type": "useState",
       "name": "filterActive",
       "setter": "setFilterActive",
@@ -11637,13 +11662,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 46,
+      "line": 48,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 49,
+      "line": 51,
       "type": "useState",
       "name": "currentPage",
       "setter": "setCurrentPage",
@@ -11651,32 +11676,32 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 49,
+      "line": 51,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 50,
+      "line": 52,
       "type": "useState",
       "name": "itemsPerPage",
       "initial": 10
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 50,
+      "line": 52,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 53,
+      "line": 55,
       "type": "useEffect",
       "hook": "useEffect"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 58,
+      "line": 61,
       "type": "useEffect",
       "hook": "useEffect"
     },
@@ -13917,49 +13942,61 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 65,
+      "line": 67,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 74,
+      "line": 86,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 128,
+      "line": 101,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 141,
+      "line": 116,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 240,
+      "line": 170,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 267,
+      "line": 183,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 286,
+      "line": 296,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
-      "line": 305,
+      "line": 322,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
+      "line": 341,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
+      "line": 357,
       "type": "catch",
       "code": "} catch (error) {"
     },
@@ -15633,9 +15670,9 @@
     "hardcodedValues": 18,
     "databaseQueries": 250,
     "databaseTables": 41,
-    "functions": 448,
+    "functions": 451,
     "stateHooks": 532,
     "missingEndpoints": 1,
-    "errorHandlers": 427
+    "errorHandlers": 429
   }
 }
