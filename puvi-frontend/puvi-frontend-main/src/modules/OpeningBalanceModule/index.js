@@ -6,6 +6,7 @@ import React, { useState, useEffect } from 'react';
 import SystemInitializationWizard from '../../components/OpeningBalance/SystemInitializationWizard';
 import OpeningBalanceEntry from '../../components/OpeningBalance/OpeningBalanceEntry';
 import SystemStatusDashboard from '../../components/OpeningBalance/SystemStatusDashboard';
+import './OpeningBalanceModule.css'; // Import CSS file
 
 const OpeningBalanceModule = () => {
   // View state management
@@ -108,38 +109,34 @@ const OpeningBalanceModule = () => {
     ];
 
     return (
-      <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+      <div className="breadcrumb-container">
+        <div className="breadcrumb-content">
+          <div className="breadcrumb-items">
             {breadcrumbItems.map((item, index) => (
               <React.Fragment key={item.id}>
-                {index > 0 && <span className="text-gray-400">→</span>}
+                {index > 0 && <span className="breadcrumb-separator">→</span>}
                 <button
                   onClick={() => {
                     if (item.id === 'dashboard') navigateToDashboard();
                     else if (item.id === 'wizard') navigateToWizard();
                     else if (item.id === 'entry') navigateToEntry();
                   }}
-                  className={`px-3 py-1 rounded transition-colors ${
-                    currentView === item.id
-                      ? 'bg-blue-100 text-blue-700 font-semibold'
-                      : 'text-gray-600 hover:bg-gray-100'
-                  }`}
+                  className={`breadcrumb-button ${currentView === item.id ? 'active' : ''}`}
                 >
-                  <span className="mr-1">{item.icon}</span>
+                  <span>{item.icon}</span>
                   {item.label}
                 </button>
               </React.Fragment>
             ))}
           </div>
           
-          <div className="flex items-center gap-3">
+          <div className="status-badges">
             {systemInitialized ? (
-              <span className="px-3 py-1 bg-green-100 text-green-700 rounded text-sm font-medium">
+              <span className="status-badge initialized">
                 ✅ System Initialized
               </span>
             ) : (
-              <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded text-sm font-medium">
+              <span className="status-badge not-initialized">
                 ⚠️ Not Initialized
               </span>
             )}
@@ -162,14 +159,14 @@ const OpeningBalanceModule = () => {
 
       case 'entry':
         return (
-          <div className="bg-white rounded-lg shadow-sm p-6">
-            <div className="mb-4 flex justify-between items-center">
-              <h2 className="text-xl font-semibold">
+          <div className="content-card">
+            <div className="content-header">
+              <h2 className="content-title">
                 {systemInitialized ? 'View Opening Balances' : 'Manage Opening Balances'}
               </h2>
               <button
                 onClick={navigateToDashboard}
-                className="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300"
+                className="back-button"
               >
                 ← Back to Dashboard
               </button>
@@ -196,34 +193,36 @@ const OpeningBalanceModule = () => {
   return (
     <div className="opening-balance-module">
       {/* Module Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6 rounded-lg shadow-lg mb-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold mb-2">Opening Balance Management</h1>
-            <p className="text-blue-100">
+      <div className="module-header-gradient">
+        <div className="module-header-content">
+          <div className="module-header-info">
+            <h1>Opening Balance Management</h1>
+            <p>
               Initialize your system with opening balances and manage financial year operations
             </p>
           </div>
-          <div className="text-6xl opacity-20">
+          <div className="module-header-icon">
             💼
           </div>
         </div>
         
         {/* Quick Stats */}
-        <div className="grid grid-cols-3 gap-4 mt-6">
-          <div className="bg-white bg-opacity-20 rounded p-3">
-            <p className="text-sm text-blue-100">Module Status</p>
-            <p className="text-lg font-semibold">
+        <div className="module-quick-stats">
+          <div className="stat-card">
+            <p className="stat-label">Module Status</p>
+            <p className="stat-value">
               {systemInitialized ? 'Active' : 'Setup Required'}
             </p>
           </div>
-          <div className="bg-white bg-opacity-20 rounded p-3">
-            <p className="text-sm text-blue-100">Current View</p>
-            <p className="text-lg font-semibold capitalize">{currentView}</p>
+          <div className="stat-card">
+            <p className="stat-label">Current View</p>
+            <p className="stat-value" style={{ textTransform: 'capitalize' }}>
+              {currentView}
+            </p>
           </div>
-          <div className="bg-white bg-opacity-20 rounded p-3">
-            <p className="text-sm text-blue-100">Actions Available</p>
-            <p className="text-lg font-semibold">
+          <div className="stat-card">
+            <p className="stat-label">Actions Available</p>
+            <p className="stat-value">
               {systemInitialized ? 'View Only' : 'Full Access'}
             </p>
           </div>
@@ -232,29 +231,21 @@ const OpeningBalanceModule = () => {
 
       {/* Notification */}
       {notification && (
-        <div className={`mb-4 p-4 rounded-lg shadow-sm animate-pulse ${
-          notification.type === 'success' ? 'bg-green-50 border border-green-200' :
-          notification.type === 'error' ? 'bg-red-50 border border-red-200' :
-          'bg-blue-50 border border-blue-200'
-        }`}>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <span className="text-2xl">
+        <div className={`notification ${notification.type}`}>
+          <div className="notification-content">
+            <div className="notification-message">
+              <span className="notification-icon">
                 {notification.type === 'success' ? '✅' :
                  notification.type === 'error' ? '❌' : 'ℹ️'}
               </span>
-              <p className={`font-medium ${
-                notification.type === 'success' ? 'text-green-800' :
-                notification.type === 'error' ? 'text-red-800' :
-                'text-blue-800'
-              }`}>
+              <p className={`notification-text ${notification.type}`}>
                 {notification.message}
               </p>
             </div>
             {!notification.autoHide && (
               <button
                 onClick={() => setNotification(null)}
-                className="text-gray-500 hover:text-gray-700"
+                className="notification-close"
               >
                 ✕
               </button>
@@ -267,12 +258,12 @@ const OpeningBalanceModule = () => {
       {renderBreadcrumb()}
 
       {/* Main Content */}
-      <div className="min-h-screen">
+      <div className="content-wrapper">
         {renderContent()}
       </div>
 
       {/* Footer */}
-      <div className="mt-8 p-4 bg-gray-50 rounded-lg text-center text-sm text-gray-600">
+      <div className="module-footer">
         <p>
           Opening Balance Module | 
           {systemInitialized ? ' System Initialized - View Mode' : ' Setup Mode'} | 
