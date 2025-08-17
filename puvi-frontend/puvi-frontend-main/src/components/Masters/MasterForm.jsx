@@ -1,7 +1,9 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx
 // Professional Master Form Component with Enterprise UI
+// Updated: Dynamic options from database (no hardcoded values)
 
 import React, { useState, useEffect, useRef } from 'react';
+import { configAPI } from '../../services/api'; // NEW: Import configAPI for dynamic options
 import './MasterForm.css';
 
 // API configuration
@@ -188,23 +190,25 @@ const NumberField = ({ id, label, value, onChange, error, required, disabled, mi
   </div>
 );
 
-const SelectField = ({ id, label, value, onChange, options, error, required, disabled, help }) => (
+// UPDATED: SelectField to handle dynamic options loading
+const SelectField = ({ id, label, value, onChange, options, error, required, disabled, help, loading = false }) => (
   <div className="field">
     <label htmlFor={id} className="label">
       {label}
       {required && <span className="required">*</span>}
+      {loading && <span className="form-help" style={{ marginLeft: '10px' }}>(Loading...)</span>}
     </label>
     <select
       id={id}
       className={`select ${error ? 'error' : ''}`}
       value={value || ''}
       onChange={(e) => onChange(e.target.value)}
-      disabled={disabled}
+      disabled={disabled || loading}
       aria-invalid={!!error}
       aria-describedby={error ? `${id}-error` : help ? `${id}-help` : undefined}
     >
       <option value="">Select {label}</option>
-      {options.map(option => (
+      {!loading && options && options.map(option => (
         <option key={option} value={option}>
           {option}
         </option>
@@ -435,6 +439,10 @@ const MasterForm = ({
     'material-naming': true
   });
   
+  // NEW: State for dynamic options
+  const [dynamicOptions, setDynamicOptions] = useState({});
+  const [loadingDynamicOptions, setLoadingDynamicOptions] = useState({});
+  
   // Refs
   const firstErrorRef = useRef(null);
   const formRef = useRef(null);
@@ -463,8 +471,17 @@ const MasterForm = ({
       setErrors({});
       setTouchedFields({});
       setAlert(null);
+      setDynamicOptions({}); // Reset dynamic options
+      setLoadingDynamicOptions({}); // Reset loading states
     }
   }, [masterType, editData, isOpen]);
+  
+  // NEW: Load dynamic options when schema changes
+  useEffect(() => {
+    if (schema && schema.fields) {
+      loadDynamicOptions();
+    }
+  }, [schema]);
   
   // Load schema
   const loadSchema = async () => {
@@ -484,6 +501,107 @@ const MasterForm = ({
       });
     } finally {
       setLoadingSchema(false);
+    }
+  };
+  
+  // NEW: Load dynamic options for fields marked as dynamic
+  const loadDynamicOptions = async () => {
+    if (!schema || !schema.fields) return;
+    
+    console.log('Loading dynamic options for schema:', schema);
+    
+    for (const field of schema.fields) {
+      // Check if field has dynamic options
+      if (field.options === 'dynamic' && field.options_endpoint) {
+        console.log(`Loading dynamic options for field: ${field.name} from ${field.options_endpoint}`);
+        
+        // Set loading state for this field
+        setLoadingDynamicOptions(prev => ({ ...prev, [field.name]: true }));
+        
+        try {
+          // Determine which API to call based on endpoint
+          let optionsData = [];
+          
+          if (field.options_endpoint.includes('/api/materials/categories')) {
+            const response = await configAPI.getMaterialCategories();
+            optionsData = response.categories || response.values || [];
+          } else if (field.options_endpoint.includes('/api/materials/units')) {
+            const response = await configAPI.getMaterialUnits();
+            optionsData = response.units || response.values || [];
+          } else if (field.options_endpoint.includes('/api/config/gst_rates')) {
+            const response = await configAPI.getGSTRates();
+            optionsData = response.values || response.rates || [];
+          } else if (field.options_endpoint.includes('/api/config/density_values')) {
+            const response = await configAPI.getDensityValues();
+            optionsData = response.values || response.densities || [];
+          } else {
+            // Generic fetch for other endpoints
+            const response = await fetch(`${API_BASE_URL}${field.options_endpoint}`);
+            const data = await response.json();
+            
+            if (response.ok && data.success) {
+              // Extract the options array from various possible response structures
+              optionsData = data.categories || data.units || data.values || 
+                          data.options || data.data || data.items || [];
+            }
+          }
+          
+          console.log(`Loaded options for ${field.name}:`, optionsData);
+          
+          // Set the dynamic options for this field
+          setDynamicOptions(prev => ({
+            ...prev,
+            [field.name]: optionsData
+          }));
+        } catch (error) {
+          console.error(`Failed to load dynamic options for ${field.name}:`, error);
+          // Set empty array on error to prevent undefined
+          setDynamicOptions(prev => ({
+            ...prev,
+            [field.name]: []
+          }));
+        } finally {
+          // Clear loading state for this field
+          setLoadingDynamicOptions(prev => ({ ...prev, [field.name]: false }));
+        }
+      } else if (field.options === 'dynamic' && !field.options_endpoint) {
+        // Handle special cases where options are dynamic but endpoint is determined by field name
+        console.log(`Field ${field.name} is dynamic but no endpoint specified, trying by name`);
+        
+        setLoadingDynamicOptions(prev => ({ ...prev, [field.name]: true }));
+        
+        try {
+          let optionsData = [];
+          
+          // Map field names to appropriate API calls
+          if (field.name === 'category') {
+            const response = await configAPI.getMaterialCategories();
+            optionsData = response.categories || [];
+          } else if (field.name === 'unit') {
+            const response = await configAPI.getMaterialUnits();
+            optionsData = response.units || [];
+          } else if (field.name === 'gst_rate') {
+            const response = await configAPI.getGSTRates();
+            optionsData = response.values || response.rates || [];
+          }
+          
+          if (optionsData.length > 0) {
+            console.log(`Loaded options for ${field.name} by name:`, optionsData);
+            setDynamicOptions(prev => ({
+              ...prev,
+              [field.name]: optionsData
+            }));
+          }
+        } catch (error) {
+          console.error(`Failed to load dynamic options for ${field.name}:`, error);
+          setDynamicOptions(prev => ({
+            ...prev,
+            [field.name]: []
+          }));
+        } finally {
+          setLoadingDynamicOptions(prev => ({ ...prev, [field.name]: false }));
+        }
+      }
     }
   };
   
@@ -691,13 +809,29 @@ const MasterForm = ({
       );
     }
     
-    // Select field
-    if (field.type === 'select' && field.options) {
+    // UPDATED: Handle dynamic select fields
+    if (field.type === 'select') {
+      // Check if this field has dynamic options
+      const isDynamic = field.options === 'dynamic';
+      const isLoading = loadingDynamicOptions[field.name];
+      
+      let fieldOptions = [];
+      
+      if (isDynamic) {
+        // Use dynamic options if available
+        fieldOptions = dynamicOptions[field.name] || [];
+        console.log(`Using dynamic options for ${field.name}:`, fieldOptions);
+      } else if (Array.isArray(field.options)) {
+        // Use static options if provided
+        fieldOptions = field.options;
+      }
+      
       return (
         <SelectField
           {...commonProps}
-          options={field.options}
-          help={field.help}
+          options={fieldOptions}
+          loading={isLoading}
+          help={field.help || (isLoading ? 'Loading options...' : undefined)}
         />
       );
     }
@@ -714,15 +848,17 @@ const MasterForm = ({
       );
     }
     
-    // Number fields
+    // Number fields (including density)
     if (field.type === 'decimal' || field.type === 'integer') {
+      // Special handling for density field to show it's now editable
+      const isDensityField = field.name === 'density';
       return (
         <NumberField
           {...commonProps}
           min={field.min}
           max={field.max}
           step={field.type === 'decimal' ? 0.01 : 1}
-          help={field.help}
+          help={field.help || (isDensityField ? 'Density value (specific gravity) - now editable' : undefined)}
         />
       );
     }
@@ -764,6 +900,13 @@ const MasterForm = ({
           description: 'Financial information',
           fields: schema.fields.filter(f => 
             ['current_cost', 'gst_rate'].includes(f.name)
+          )
+        },
+        {
+          title: 'Physical Properties',
+          description: 'Material specifications',
+          fields: schema.fields.filter(f => 
+            ['density'].includes(f.name)
           )
         },
         {
@@ -869,6 +1012,7 @@ const MasterForm = ({
       <div aria-live="polite" aria-atomic="true" className="visually-hidden">
         {saving && 'Saving form...'}
         {alert?.type === 'success' && alert.message}
+        {Object.keys(loadingDynamicOptions).some(key => loadingDynamicOptions[key]) && 'Loading form options...'}
       </div>
       
       {/* Page Header */}
@@ -885,6 +1029,18 @@ const MasterForm = ({
       
       {/* Alert Messages */}
       {alert && <InlineAlert {...alert} />}
+      
+      {/* NEW: Show if dynamic options are being loaded */}
+      {Object.keys(loadingDynamicOptions).some(key => loadingDynamicOptions[key]) && (
+        <div className="inline-alert info">
+          <div className="inline-alert-icon"></div>
+          <div className="inline-alert-content">
+            <div className="inline-alert-message">
+              Loading dropdown options from database...
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* Error Summary */}
       {hasValidationErrors && (
@@ -953,7 +1109,7 @@ const MasterForm = ({
             <button
               type="submit"
               className="btn btn-primary"
-              disabled={saving}
+              disabled={saving || Object.keys(loadingDynamicOptions).some(key => loadingDynamicOptions[key])}
             >
               {saving ? (
                 <>
