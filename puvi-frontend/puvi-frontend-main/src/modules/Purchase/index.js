@@ -1,6 +1,3 @@
-# Complete Frontend Purchase Module with Category/Subcategory Support
-
-```javascript
 // File Path: puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js
 // Purchase Module with Category/Subcategory Support for Dynamic Oil Types
 // Enhanced with material creation form and category validation
@@ -1069,65 +1066,3 @@ Items: ${response.items_count}`);
 };
 
 export default Purchase;
-```
-
-## CSS Additions (add to Purchase.css)
-
-```css
-/* Material Form Styles */
-.material-form {
-  margin-bottom: 1.5rem;
-  background: #f8f9fa;
-  border: 2px dashed #dee2e6;
-}
-
-.material-creation-form .form-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1rem;
-}
-
-.header-actions {
-  display: flex;
-  gap: 1rem;
-}
-
-.btn-primary {
-  background-color: #007bff;
-  color: white;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.btn-primary:hover {
-  background-color: #0056b3;
-}
-
-.btn-primary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* Highlight oil type in material dropdown */
-.material-select option {
-  padding: 0.25rem;
-}
-```
-
-## Key Changes Summary
-
-### ✨ New Features:
-1. **Material Creation Form** - Complete form with category/subcategory validation
-2. **Category Management** - Fetches categories from API, shows subcategory when required
-3. **Oil Type Display** - Shows `[Oil Type]` in material dropdown for clarity
-4. **Validation** - Ensures Seeds/Oil categories have subcategory selected
-
-### 🔄 Enhanced:
-- Material dropdown shows oil type for Oil materials
-- "+ New Material" button only enabled when supplier selected
-- Clear validation messages for subcategory requirements
-
-### 🎯 Critical Logic:
-- Categories "Seeds" and "Oil" REQUIRE subcategor
