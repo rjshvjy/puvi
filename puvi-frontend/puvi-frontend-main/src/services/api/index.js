@@ -1,5 +1,6 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/services/api/index.js
-// Main API Service Module - FIXED with getCostElementsByActivity method added
+// Main API Service Module - COMPLETE with Category Management APIs
+// Version: FINAL - Includes all endpoints for oil types management
 
 // Import utilities
 import { skuDateUtils, expiryUtils, formatUtils } from './skuUtilities';
@@ -146,6 +147,65 @@ const api = {
     getSuppliers: () => api.get('/api/suppliers'),
     getMaterials: () => api.get('/api/materials'),
     getCostElements: () => api.get('/api/cost_elements/master') // FIXED: Use master endpoint
+  },
+  
+  // NEW: Category Management APIs - REQUIRED FOR DYNAMIC OIL TYPES
+  categories: {
+    // Get all categories with their subcategory requirements
+    getAll: async () => {
+      const response = await fetch(`${API_BASE_URL}/api/categories`);
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to fetch categories');
+      }
+      return data;
+    },
+    
+    // Get subcategories, optionally filtered by category_id
+    getSubcategories: async (categoryId = null) => {
+      const url = categoryId 
+        ? `${API_BASE_URL}/api/subcategories?category_id=${categoryId}`
+        : `${API_BASE_URL}/api/subcategories`;
+      const response = await fetch(url);
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to fetch subcategories');
+      }
+      return data;
+    },
+    
+    // Get single subcategory details by ID
+    getSubcategoryDetails: async (subcategoryId) => {
+      const response = await fetch(`${API_BASE_URL}/api/subcategories/${subcategoryId}`);
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to fetch subcategory details');
+      }
+      return data;
+    }
+  },
+  
+  // NEW: Material Management API - REQUIRED FOR PURCHASE MODULE
+  materials: {
+    // Create new material with category/subcategory support
+    create: async (materialData) => {
+      const response = await fetch(`${API_BASE_URL}/api/materials`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(materialData)
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to create material');
+      }
+      return data;
+    },
+    
+    // Get materials (existing endpoint for compatibility)
+    getAll: () => api.get('/api/materials'),
+    
+    // Get materials by supplier
+    getBySupplier: (supplierId) => api.get('/api/materials', { supplier_id: supplierId })
   },
   
   openingBalance: {
@@ -381,6 +441,21 @@ export const costAPI = {
   calculateBatchCosts: (batchId) => api.post('/api/cost_elements/calculate', { batch_id: batchId }),
   getBatchSummary: (batchId) => api.get(`/api/cost_elements/batch_summary/${batchId}`),
   getValidationReport: (days) => api.get('/api/cost_elements/validation_report', { days })
+};
+
+// NEW: Category API endpoints - EXPORTED FOR DIRECT USE
+export const categoryAPI = {
+  // Get all categories
+  getCategories: () => api.categories.getAll(),
+  
+  // Get subcategories by category
+  getSubcategories: (categoryId) => api.categories.getSubcategories(categoryId),
+  
+  // Get all subcategories
+  getAllSubcategories: () => api.categories.getSubcategories(),
+  
+  // Get subcategory details
+  getSubcategoryDetails: (id) => api.categories.getSubcategoryDetails(id)
 };
 
 // Export the API base URL for components that need it directly
