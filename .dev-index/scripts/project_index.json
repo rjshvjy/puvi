@@ -1,8 +1,8 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-17T17:57:57.351Z",
-  "filesScanned": 56,
-  "jsFilesScanned": 34,
+  "generatedAt": "2025-08-17T18:02:23.142Z",
+  "filesScanned": 57,
+  "jsFilesScanned": 35,
   "pyFilesScanned": 22,
   "routes": [
     {
@@ -1429,6 +1429,12 @@
       "name": "MaterialWriteoff",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
       "line": 11,
+      "type": "const"
+    },
+    {
+      "name": "SystemStatusDashboard",
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/OpeningBalanceModule/SystemStatusDashboard.jsx",
+      "line": 119,
       "type": "const"
     },
     {
@@ -6725,6 +6731,14 @@
       "params": "e",
       "type": "arrow",
       "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/OpeningBalanceModule/SystemStatusDashboard.jsx",
+      "line": 119,
+      "name": "SystemStatusDashboard",
+      "params": "{ onInitialize, onManageBalances }",
+      "type": "arrow",
+      "isAsync": false
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/OpeningBalanceModule/index.js",
@@ -16852,17 +16866,17 @@
   ],
   "lineNumbers": {},
   "summary": {
-    "totalFiles": 56,
-    "jsFiles": 34,
+    "totalFiles": 57,
+    "jsFiles": 35,
     "pyFiles": 22,
-    "components": 37,
+    "components": 38,
     "routes": 90,
     "exports": 43,
     "imports": 47,
     "hardcodedValues": 22,
     "databaseQueries": 276,
     "databaseTables": 45,
-    "functions": 471,
+    "functions": 472,
     "stateHooks": 554,
     "missingEndpoints": 1,
     "errorHandlers": 465
