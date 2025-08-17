@@ -1,5 +1,11 @@
+# Updated BOMConfig.js - Complete Replacement
+
+## File Path: `puvi-frontend/src/modules/SKUManagement/components/BOMConfig.js`
+
+```javascript
 // BOM Configuration Component for SKU Management with MRP & Shelf Life
 // File Path: puvi-frontend/src/modules/SKUManagement/components/BOMConfig.js
+// Updated: Removed all hardcoded values, uses database-driven categories
 
 import React, { useState, useEffect } from 'react';
 
@@ -16,11 +22,44 @@ const BOMConfig = () => {
   const [showHistory, setShowHistory] = useState(false);
   const [currentMRP, setCurrentMRP] = useState(null);
   const [mrpHistory, setMrpHistory] = useState([]);
+  
+  // NEW: State for dynamic BOM categories
+  const [bomCategories, setBomCategories] = useState([]);
+  const [loadingCategories, setLoadingCategories] = useState(false);
 
   useEffect(() => {
     fetchSKUs();
     fetchMaterials();
+    fetchBOMCategories(); // NEW: Fetch categories on mount
   }, []);
+
+  // NEW: Fetch BOM categories from database
+  const fetchBOMCategories = async () => {
+    setLoadingCategories(true);
+    try {
+      const response = await fetch('https://puvi-backend.onrender.com/api/config/bom_categories');
+      if (!response.ok) throw new Error('Failed to fetch BOM categories');
+      const data = await response.json();
+      
+      if (data.success && data.categories) {
+        setBomCategories(data.categories);
+      } else {
+        // Fallback if no categories configured
+        setBomCategories([
+          { value: 'Other', label: 'Other' }
+        ]);
+      }
+    } catch (error) {
+      console.error('Error fetching BOM categories:', error);
+      setMessage({ type: 'warning', text: 'Using default categories. Configure BOM categories in Masters.' });
+      // Fallback categories
+      setBomCategories([
+        { value: 'Other', label: 'Other' }
+      ]);
+    } finally {
+      setLoadingCategories(false);
+    }
+  };
 
   const fetchSKUs = async () => {
     try {
@@ -42,13 +81,26 @@ const BOMConfig = () => {
     }
   };
 
-  const fetchMaterials = async () => {
+  // UPDATED: Fetch materials with optional BOM category filter
+  const fetchMaterials = async (bomCategory = null) => {
     try {
-      const response = await fetch('https://puvi-backend.onrender.com/api/materials?category=Packing');
-      if (!response.ok) throw new Error('Failed to fetch materials');
-      const data = await response.json();
+      let url = 'https://puvi-backend.onrender.com/api/config/bom_materials';
+      if (bomCategory) {
+        url += `?bom_category=${encodeURIComponent(bomCategory)}`;
+      }
       
-      // Handle wrapped response and correct field names
+      const response = await fetch(url);
+      if (!response.ok) {
+        // Fallback to old endpoint if new one fails
+        const fallbackResponse = await fetch('https://puvi-backend.onrender.com/api/materials?category=Packaging');
+        if (!fallbackResponse.ok) throw new Error('Failed to fetch materials');
+        const fallbackData = await fallbackResponse.json();
+        const materialsList = fallbackData.materials || fallbackData || [];
+        setMaterials(Array.isArray(materialsList) ? materialsList : []);
+        return;
+      }
+      
+      const data = await response.json();
       const materialsList = data.materials || data || [];
       setMaterials(Array.isArray(materialsList) ? materialsList : []);
       
@@ -160,6 +212,7 @@ const BOMConfig = () => {
     }]);
   };
 
+  // UPDATED: Removed auto-detect logic, now user selects category
   const handleMaterialChange = (index, field, value) => {
     const updated = [...bomDetails];
     updated[index][field] = value;
@@ -167,35 +220,22 @@ const BOMConfig = () => {
     if (field === 'material_id' && value) {
       const material = materials.find(m => m.material_id === parseInt(value));
       if (material) {
-        // Auto-detect category based on material name
-        const materialName = material.material_name.toLowerCase();
-        if (materialName.includes('bottle')) {
-          updated[index].material_category = 'Bottle';
-        } else if (materialName.includes('cap')) {
-          updated[index].material_category = 'Cap';
-        } else if (materialName.includes('label')) {
-          updated[index].material_category = 'Label';
-        } else if (materialName.includes('seal')) {
-          updated[index].material_category = 'Inner Seal';
-        } else if (materialName.includes('carton')) {
-          updated[index].material_category = 'Carton';
-        } else {
-          updated[index].material_category = 'Other';
-        }
-        
-        // Check if it's a shared material (for 1L and 500ml)
-        if (material.material_name.includes('Fliptop') || 
-            material.material_name.includes('Inner cap for 1L & 500ml') ||
-            material.material_name.includes('1L & 500ml')) {
-          updated[index].is_shared = true;
-          updated[index].applicable_sizes = ['1L', '500ml'];
-        }
-        
         // Update cost fields - Use correct field names
         const unitCost = material.rate || material.cost_per_unit || material.current_cost || 0;
         updated[index].unit_cost = unitCost;
         updated[index].total_cost = unitCost * updated[index].quantity_per_unit;
+        
+        // Let user manually set category - no auto-detect
+        if (!updated[index].material_category) {
+          updated[index].material_category = 'Other';
+        }
       }
+    }
+    
+    // NEW: When category changes, optionally refresh materials list
+    if (field === 'material_category' && value) {
+      // Fetch filtered materials for this category
+      fetchMaterials(value);
     }
     
     // Recalculate total cost if quantity changes
@@ -313,45 +353,28 @@ const BOMConfig = () => {
   };
 
   const calculateCostBreakdown = () => {
-    const breakdown = {
-      bottle: 0,
-      cap: 0,
-      label: 0,
-      seal: 0,
-      other: 0,
-      total: 0
-    };
+    const breakdown = {};
+    let total = 0;
     
+    // Group costs by category dynamically
     bomDetails.forEach(item => {
       const material = materials.find(m => m.material_id === parseInt(item.material_id));
       if (material) {
         const unitCost = material.rate || material.cost_per_unit || material.current_cost || 0;
         const cost = unitCost * parseFloat(item.quantity_per_unit || 0);
+        const category = item.material_category || 'Other';
         
-        switch(item.material_category) {
-          case 'Bottle':
-            breakdown.bottle += cost;
-            break;
-          case 'Cap':
-            breakdown.cap += cost;
-            break;
-          case 'Label':
-            breakdown.label += cost;
-            break;
-          case 'Inner Seal':
-            breakdown.seal += cost;
-            break;
-          default:
-            breakdown.other += cost;
+        if (!breakdown[category]) {
+          breakdown[category] = 0;
         }
-        breakdown.total += cost;
+        breakdown[category] += cost;
+        total += cost;
       }
     });
     
+    breakdown.total = total;
     return breakdown;
   };
-
-
 
   return (
     <div className="bom-config">
@@ -455,17 +478,18 @@ const BOMConfig = () => {
                           </select>
                         </td>
                         <td>
+                          {/* UPDATED: Dynamic categories from database */}
                           <select 
                             value={item.material_category}
                             onChange={(e) => handleMaterialChange(index, 'material_category', e.target.value)}
+                            disabled={loadingCategories}
                           >
                             <option value="">-- Select --</option>
-                            <option value="Bottle">Bottle</option>
-                            <option value="Cap">Cap</option>
-                            <option value="Label">Label</option>
-                            <option value="Inner Seal">Inner Seal</option>
-                            <option value="Carton">Carton</option>
-                            <option value="Other">Other</option>
+                            {bomCategories.map(cat => (
+                              <option key={cat.value} value={cat.value}>
+                                {cat.label}
+                              </option>
+                            ))}
                           </select>
                         </td>
                         <td>
@@ -532,41 +556,13 @@ const BOMConfig = () => {
                     return (
                       <table className="breakdown-table">
                         <tbody>
-                          {breakdown.bottle > 0 && (
-                            <tr>
-                              <td>Bottle Cost:</td>
-                              <td>₹{breakdown.bottle.toFixed(2)}</td>
-                              <td>{breakdown.total > 0 ? `(${((breakdown.bottle/breakdown.total)*100).toFixed(1)}%)` : ''}</td>
+                          {Object.entries(breakdown).filter(([key]) => key !== 'total' && breakdown[key] > 0).map(([category, cost]) => (
+                            <tr key={category}>
+                              <td>{category} Cost:</td>
+                              <td>₹{cost.toFixed(2)}</td>
+                              <td>{breakdown.total > 0 ? `(${((cost/breakdown.total)*100).toFixed(1)}%)` : ''}</td>
                             </tr>
-                          )}
-                          {breakdown.cap > 0 && (
-                            <tr>
-                              <td>Cap Cost:</td>
-                              <td>₹{breakdown.cap.toFixed(2)}</td>
-                              <td>{breakdown.total > 0 ? `(${((breakdown.cap/breakdown.total)*100).toFixed(1)}%)` : ''}</td>
-                            </tr>
-                          )}
-                          {breakdown.label > 0 && (
-                            <tr>
-                              <td>Label Cost:</td>
-                              <td>₹{breakdown.label.toFixed(2)}</td>
-                              <td>{breakdown.total > 0 ? `(${((breakdown.label/breakdown.total)*100).toFixed(1)}%)` : ''}</td>
-                            </tr>
-                          )}
-                          {breakdown.seal > 0 && (
-                            <tr>
-                              <td>Seal Cost:</td>
-                              <td>₹{breakdown.seal.toFixed(2)}</td>
-                              <td>{breakdown.total > 0 ? `(${((breakdown.seal/breakdown.total)*100).toFixed(1)}%)` : ''}</td>
-                            </tr>
-                          )}
-                          {breakdown.other > 0 && (
-                            <tr>
-                              <td>Other Cost:</td>
-                              <td>₹{breakdown.other.toFixed(2)}</td>
-                              <td>{breakdown.total > 0 ? `(${((breakdown.other/breakdown.total)*100).toFixed(1)}%)` : ''}</td>
-                            </tr>
-                          )}
+                          ))}
                           <tr className="total-row">
                             <td><strong>Total BOM Cost:</strong></td>
                             <td><strong>₹{breakdown.total.toFixed(2)}</strong></td>
@@ -667,3 +663,53 @@ const BOMConfig = () => {
 };
 
 export default BOMConfig;
+```
+
+## Key Changes Made
+
+### 1. **Added Dynamic BOM Categories** (Lines 22-23, 31-57)
+- New state: `bomCategories` and `loadingCategories`
+- New function: `fetchBOMCategories()` - fetches from `/api/config/bom_categories`
+- Called on component mount
+
+### 2. **Updated Material Fetching** (Lines 78-108)
+- Now accepts optional `bomCategory` parameter
+- Can fetch filtered materials using `/api/config/bom_materials?bom_category=X`
+- Falls back to old endpoint if new one fails
+
+### 3. **Removed Auto-Detect Logic** (Lines 205-237)
+- Removed all hardcoded category detection based on material names
+- User now manually selects category from dropdown
+- When category changes, optionally refreshes material list
+
+### 4. **Dynamic Category Dropdown** (Lines 474-483)
+- Categories now populated from `bomCategories` state
+- Shows loading state while fetching
+- No hardcoded options
+
+### 5. **Dynamic Cost Breakdown** (Lines 341-366)
+- Groups costs by actual categories from database
+- No hardcoded category names in breakdown
+
+## Testing Instructions
+
+1. **Check BOM categories load**: Open developer console and verify `/api/config/bom_categories` is called
+2. **Verify dropdown populated**: Category dropdown should show values from database
+3. **Test material filtering**: When selecting a category, materials should filter
+4. **Cost breakdown**: Should group by actual categories, not hardcoded ones
+5. **Save BOM**: Ensure saving still works with dynamic categories
+
+## Dependencies
+
+Requires these backend endpoints to be working:
+- `/api/config/bom_categories` - Returns BOM category list
+- `/api/config/bom_materials` - Returns filtered materials (optional)
+- Existing SKU and material endpoints
+
+## Next Steps
+
+After implementing this:
+1. Clear browser cache
+2. Test all BOM operations
+3. Update TimeTracker.js for labor rates
+4. Update MasterForm.jsx for dynamic dropdowns
