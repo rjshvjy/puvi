@@ -1,12 +1,14 @@
 """
 Common utilities and configurations for Masters CRUD operations
 File Path: puvi-backend/puvi-backend-main/modules/masters_common.py
+Updated: Added density field, expanded categories, added BOM mapping master
 """
 
 import re
 import json
 from decimal import Decimal
 from datetime import datetime
+from db_utils import get_db_connection, close_connection
 
 # =====================================================
 # JSON SERIALIZATION HANDLER - FIXES DECIMAL BUG
@@ -130,7 +132,10 @@ MASTERS_CONFIG = {
             'category': {
                 'type': 'select',
                 'required': True,
-                'options': ['Seeds', 'Oil', 'Chemical', 'Packing'],
+                # DYNAMIC: Options loaded from database via API
+                'options': 'dynamic',  # Signal to frontend to fetch from /api/materials/categories
+                'options_source': 'api',
+                'options_endpoint': '/api/materials/categories',
                 'label': 'Category'
             },
             'unit': {
@@ -154,6 +159,16 @@ MASTERS_CONFIG = {
                 'decimal_places': 2,
                 'default': 5.00,
                 'label': 'GST Rate (%)'
+            },
+            # NEW: Added density field for materials
+            'density': {
+                'type': 'decimal',
+                'required': False,
+                'min': 0,
+                'max': 2,
+                'decimal_places': 2,
+                'default': 0.91,
+                'label': 'Density (g/ml)'
             },
             'supplier_id': {
                 'type': 'reference',
@@ -202,6 +217,55 @@ MASTERS_CONFIG = {
                 'message': 'Material has {count} writeoff records'
             }
         }
+    },
+    
+    # NEW: Added BOM Category Mapping master
+    'bom_category_mapping': {
+        'table': 'bom_category_mapping',
+        'primary_key': 'mapping_id',
+        'display_name': 'BOM Categories',
+        'name_field': 'bom_category',
+        'fields': {
+            'bom_category': {
+                'type': 'text',
+                'required': True,
+                'unique': True,
+                'max_length': 50,
+                'label': 'BOM Category Name'
+            },
+            'material_categories': {
+                'type': 'text',
+                'required': False,
+                'max_length': 500,
+                'label': 'Material Categories (comma-separated)',
+                'placeholder': 'Packaging, Bottles'
+            },
+            'keywords': {
+                'type': 'text',
+                'required': False,
+                'max_length': 500,
+                'label': 'Keywords (comma-separated)',
+                'placeholder': 'bottle, jar, pet'
+            },
+            'display_order': {
+                'type': 'integer',
+                'required': False,
+                'min': 0,
+                'max': 999,
+                'default': 0,
+                'label': 'Display Order'
+            }
+        },
+        'list_query': """
+            SELECT 
+                bcm.*,
+                array_length(material_categories, 1) as category_count,
+                array_length(keywords, 1) as keyword_count
+            FROM bom_category_mapping bcm
+            WHERE bcm.is_active = true
+            ORDER BY display_order, bom_category
+        """,
+        'dependencies': {}
     },
     
     'tags': {
