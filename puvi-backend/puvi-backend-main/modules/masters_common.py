@@ -141,7 +141,10 @@ MASTERS_CONFIG = {
             'unit': {
                 'type': 'select',
                 'required': True,
-                'options': ['Kg', 'L', 'Nos', 'MT'],
+                # DYNAMIC: Options loaded from database via API
+                'options': 'dynamic',
+                'options_source': 'api',
+                'options_endpoint': '/api/materials/units',
                 'label': 'Unit of Measure'
             },
             'current_cost': {
