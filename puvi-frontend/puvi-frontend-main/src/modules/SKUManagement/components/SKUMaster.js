@@ -1,8 +1,9 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js
 // ROBUST VERSION - Uses API service for all calls, ready for category/subcategory migration
+// Updated: Dynamic package sizes from database (no hardcoded values)
 
 import React, { useState, useEffect } from 'react';
-import api, { skuAPI } from '../../../services/api';
+import api, { skuAPI, configAPI } from '../../../services/api'; // UPDATED: Added configAPI import
 import './SKUMaster.css';
 
 const SKUMaster = () => {
@@ -21,16 +22,17 @@ const SKUMaster = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
   
-  // Oil types and package sizes - NOW DYNAMIC
+  // Oil types and package sizes - NOW BOTH DYNAMIC
   const [oilTypes, setOilTypes] = useState([]);
-  const [packageSizes, setPackageSizes] = useState(['500ml', '1L', '5L', '15L']);
+  const [packageSizes, setPackageSizes] = useState([]); // UPDATED: No hardcoded values
+  const [loadingPackageSizes, setLoadingPackageSizes] = useState(false); // NEW: Loading state
   
   // Form states
   const [formData, setFormData] = useState({
     sku_code: '',
     product_name: '',
     oil_type: '',
-    package_size: '1L',
+    package_size: '',  // UPDATED: Empty default instead of '1L'
     density: 0.91,
     mrp_current: '',
     shelf_life_months: 9,
@@ -54,7 +56,8 @@ const SKUMaster = () => {
   // Fetch data on component mount
   useEffect(() => {
     fetchSKUs();
-    fetchOilTypes(); // NEW: Fetch oil types from API
+    fetchOilTypes(); // Fetch oil types from API
+    fetchPackageSizes(); // NEW: Fetch package sizes from API
   }, []);
 
   // Apply filters whenever filter values or SKU list changes
@@ -62,7 +65,59 @@ const SKUMaster = () => {
     applyFilters();
   }, [searchTerm, filterOilType, filterPackageSize, filterActive, skuList]);
 
-  // NEW: Fetch oil types from API - NO HARDCODED FALLBACKS
+  // NEW: Fetch package sizes from API - NO HARDCODED FALLBACKS
+  const fetchPackageSizes = async () => {
+    setLoadingPackageSizes(true);
+    try {
+      // Use the configAPI to get package sizes from database
+      const response = await configAPI.getPackageSizes();
+      
+      if (response.success && response.values && response.values.length > 0) {
+        // Set package sizes from database
+        setPackageSizes(response.values);
+        
+        // Set default package size in form if available
+        if (response.values.length > 0 && !formData.package_size) {
+          setFormData(prev => ({
+            ...prev,
+            package_size: response.values.includes('1L') ? '1L' : response.values[0]
+          }));
+        }
+      } else if (response.success && response.data && response.data.length > 0) {
+        // Handle alternative response structure
+        setPackageSizes(response.data);
+        
+        if (response.data.length > 0 && !formData.package_size) {
+          setFormData(prev => ({
+            ...prev,
+            package_size: response.data.includes('1L') ? '1L' : response.data[0]
+          }));
+        }
+      } else {
+        // NO FALLBACK - If no package sizes exist, show empty
+        console.warn('No package sizes available in database');
+        setPackageSizes([]);
+        
+        // Show message to user
+        setMessage({ 
+          type: 'warning', 
+          text: 'No package sizes configured. Please configure package sizes in the system.' 
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching package sizes:', error);
+      // NO FALLBACK - On error, show empty
+      setPackageSizes([]);
+      setMessage({ 
+        type: 'warning', 
+        text: 'Could not load package sizes. Please ensure package sizes are configured in the system.' 
+      });
+    } finally {
+      setLoadingPackageSizes(false);
+    }
+  };
+
+  // Fetch oil types from API - NO HARDCODED FALLBACKS
   const fetchOilTypes = async () => {
     try {
       // Use the API service for clean architecture
@@ -217,12 +272,14 @@ const SKUMaster = () => {
         is_active: sku.is_active !== undefined ? sku.is_active : true
       });
     } else {
-      // Reset form for add mode
+      // Reset form for add mode - UPDATED to use first available package size
       setFormData({
         sku_code: '',
         product_name: '',
         oil_type: '',
-        package_size: '1L',
+        package_size: packageSizes.length > 0 
+          ? (packageSizes.includes('1L') ? '1L' : packageSizes[0]) 
+          : '',
         density: 0.91,
         mrp_current: '',
         shelf_life_months: 9,
@@ -243,7 +300,9 @@ const SKUMaster = () => {
       sku_code: '',
       product_name: '',
       oil_type: '',
-      package_size: '1L',
+      package_size: packageSizes.length > 0 
+        ? (packageSizes.includes('1L') ? '1L' : packageSizes[0]) 
+        : '',
       density: 0.91,
       mrp_current: '',
       shelf_life_months: 9,
@@ -380,6 +439,7 @@ const SKUMaster = () => {
         <button 
           className="btn-add-sku" 
           onClick={() => handleOpenModal('add')}
+          disabled={oilTypes.length === 0 || packageSizes.length === 0}
         >
           + Add New SKU
         </button>
@@ -390,6 +450,16 @@ const SKUMaster = () => {
         <div className={`message ${message.type}`}>
           {message.text}
           <button onClick={() => setMessage({ type: '', text: '' })}>×</button>
+        </div>
+      )}
+
+      {/* NEW: Warning if configurations are missing */}
+      {(oilTypes.length === 0 || packageSizes.length === 0) && (
+        <div className="message warning">
+          ⚠️ SKU creation is disabled. 
+          {oilTypes.length === 0 && ' No oil types configured.'}
+          {packageSizes.length === 0 && ' No package sizes configured.'}
+          Please configure these in the system first.
         </div>
       )}
 
@@ -425,8 +495,12 @@ const SKUMaster = () => {
             <select
               value={filterPackageSize}
               onChange={(e) => setFilterPackageSize(e.target.value)}
+              disabled={packageSizes.length === 0 || loadingPackageSizes}
             >
-              <option value="">All Sizes</option>
+              <option value="">
+                {loadingPackageSizes ? 'Loading...' : 
+                 packageSizes.length === 0 ? 'No Package Sizes' : 'All Sizes'}
+              </option>
               {packageSizes.map(size => (
                 <option key={size} value={size}>{size}</option>
               ))}
@@ -610,13 +684,20 @@ const SKUMaster = () => {
                 </div>
                 
                 <div className="form-group">
-                  <label>Package Size <span className="required">*</span></label>
+                  <label>
+                    Package Size <span className="required">*</span>
+                    {loadingPackageSizes && <span style={{ fontSize: '12px', color: '#999' }}> (Loading...)</span>}
+                  </label>
                   <select
                     name="package_size"
                     value={formData.package_size}
                     onChange={handleInputChange}
                     className={errors.package_size ? 'error' : ''}
+                    disabled={packageSizes.length === 0 || loadingPackageSizes}
                   >
+                    {packageSizes.length === 0 && !loadingPackageSizes && (
+                      <option value="">No package sizes configured</option>
+                    )}
                     {packageSizes.map(size => (
                       <option key={size} value={size}>{size}</option>
                     ))}
