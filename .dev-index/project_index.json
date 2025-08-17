@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-17T00:05:54.099Z",
+  "generatedAt": "2025-08-17T00:34:29.869Z",
   "filesScanned": 56,
   "jsFilesScanned": 34,
   "pyFilesScanned": 22,
@@ -41,19 +41,10 @@
       "source": "backend"
     },
     {
-      "method": "GET",
-      "path": "/api/oil_types",
-      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 230,
-      "blueprint": "batch_bp",
-      "function": "get_oil_types",
-      "source": "backend"
-    },
-    {
       "method": "POST",
       "path": "/api/add_batch",
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 300,
+      "line": 232,
       "blueprint": "batch_bp",
       "function": "add_batch",
       "source": "backend"
@@ -62,7 +53,7 @@
       "method": "GET",
       "path": "/api/batch_history",
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 648,
+      "line": 580,
       "blueprint": "batch_bp",
       "function": "get_batch_history",
       "source": "backend"
@@ -734,10 +725,10 @@
         "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
         "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
         "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
-        "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-        "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
         "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-        "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx"
+        "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
+        "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+        "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx"
       ]
     },
     {
@@ -1369,6 +1360,18 @@
       "type": "const"
     },
     {
+      "name": "OpeningBalanceEntry",
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 34,
+      "type": "const"
+    },
+    {
+      "name": "SystemStatusDashboard",
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
+      "line": 34,
+      "type": "const"
+    },
+    {
       "name": "FormSection",
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
       "line": 37,
@@ -1432,18 +1435,6 @@
       "name": "MastersList",
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
       "line": 35,
-      "type": "const"
-    },
-    {
-      "name": "OpeningBalanceEntry",
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 34,
-      "type": "const"
-    },
-    {
-      "name": "SystemStatusDashboard",
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
-      "line": 34,
       "type": "const"
     }
   ],
@@ -1678,8 +1669,47 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 244,
+      "line": 271,
       "type": "SELECT",
+      "tables": [
+        "inventory",
+        "materials",
+        "purchases",
+        "purchase_items",
+        "oil_cake_rate_master"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
+      "line": 329,
+      "type": "SELECT",
+      "tables": [
+        "inventory",
+        "materials",
+        "purchases",
+        "purchase_items",
+        "oil_cake_rate_master"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
+      "line": 350,
+      "type": "OTHER",
+      "tables": [
+        "inventory",
+        "materials",
+        "purchases",
+        "purchase_items",
+        "oil_cake_rate_master"
+      ],
+      "preview": "cur.execute(\"BEGIN\")"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
+      "line": 353,
+      "type": "INSERT",
       "tables": [
         "inventory",
         "materials",
@@ -1692,7 +1722,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 260,
+      "line": 404,
       "type": "SELECT",
       "tables": [
         "inventory",
@@ -1701,89 +1731,13 @@
         "purchase_items",
         "oil_cake_rate_master",
         "batch",
-        "sku_master"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 339,
-      "type": "SELECT",
-      "tables": [
-        "inventory",
-        "materials",
-        "purchases",
-        "purchase_items",
-        "oil_cake_rate_master",
-        "batch",
-        "sku_master"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 397,
-      "type": "SELECT",
-      "tables": [
-        "inventory",
-        "materials",
-        "purchases",
-        "purchase_items",
-        "oil_cake_rate_master",
-        "batch",
-        "sku_master"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 418,
-      "type": "OTHER",
-      "tables": [
-        "inventory",
-        "materials",
-        "purchases",
-        "purchase_items",
-        "oil_cake_rate_master",
-        "batch",
-        "sku_master"
-      ],
-      "preview": "cur.execute(\"BEGIN\")"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 421,
-      "type": "INSERT",
-      "tables": [
-        "inventory",
-        "materials",
-        "purchases",
-        "purchase_items",
-        "oil_cake_rate_master",
-        "batch",
-        "sku_master"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 472,
-      "type": "SELECT",
-      "tables": [
-        "inventory",
-        "materials",
-        "purchases",
-        "purchase_items",
-        "oil_cake_rate_master",
-        "batch",
-        "sku_master",
         "batch_extended_costs"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 481,
+      "line": 413,
       "type": "UPDATE",
       "tables": [
         "inventory",
@@ -1792,14 +1746,13 @@
         "purchase_items",
         "oil_cake_rate_master",
         "batch",
-        "sku_master",
         "batch_extended_costs"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 499,
+      "line": 431,
       "type": "INSERT",
       "tables": [
         "inventory",
@@ -1808,14 +1761,13 @@
         "purchase_items",
         "oil_cake_rate_master",
         "batch",
-        "sku_master",
         "batch_extended_costs"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 525,
+      "line": 457,
       "type": "UPDATE",
       "tables": [
         "inventory",
@@ -1824,14 +1776,13 @@
         "purchase_items",
         "oil_cake_rate_master",
         "batch",
-        "sku_master",
         "batch_extended_costs"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 544,
+      "line": 476,
       "type": "UPDATE",
       "tables": [
         "inventory",
@@ -1840,14 +1791,13 @@
         "purchase_items",
         "oil_cake_rate_master",
         "batch",
-        "sku_master",
         "batch_extended_costs"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 559,
+      "line": 491,
       "type": "SELECT",
       "tables": [
         "inventory",
@@ -1856,14 +1806,13 @@
         "purchase_items",
         "oil_cake_rate_master",
         "batch",
-        "sku_master",
         "batch_extended_costs"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 583,
+      "line": 515,
       "type": "UPDATE",
       "tables": [
         "inventory",
@@ -1872,14 +1821,13 @@
         "purchase_items",
         "oil_cake_rate_master",
         "batch",
-        "sku_master",
         "batch_extended_costs"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 592,
+      "line": 524,
       "type": "INSERT",
       "tables": [
         "inventory",
@@ -1888,14 +1836,13 @@
         "purchase_items",
         "oil_cake_rate_master",
         "batch",
-        "sku_master",
         "batch_extended_costs"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 610,
+      "line": 542,
       "type": "INSERT",
       "tables": [
         "inventory",
@@ -1904,7 +1851,6 @@
         "purchase_items",
         "oil_cake_rate_master",
         "batch",
-        "sku_master",
         "batch_extended_costs",
         "oil_cake_inventory"
       ],
@@ -1912,7 +1858,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 706,
+      "line": 638,
       "type": "OTHER",
       "tables": [
         "inventory",
@@ -1921,7 +1867,6 @@
         "purchase_items",
         "oil_cake_rate_master",
         "batch",
-        "sku_master",
         "batch_extended_costs",
         "oil_cake_inventory"
       ],
@@ -1929,7 +1874,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 758,
+      "line": 690,
       "type": "OTHER",
       "tables": [
         "inventory",
@@ -1938,7 +1883,6 @@
         "purchase_items",
         "oil_cake_rate_master",
         "batch",
-        "sku_master",
         "batch_extended_costs",
         "oil_cake_inventory"
       ],
@@ -1946,7 +1890,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 762,
+      "line": 694,
       "type": "SELECT",
       "tables": [
         "inventory",
@@ -1955,7 +1899,6 @@
         "purchase_items",
         "oil_cake_rate_master",
         "batch",
-        "sku_master",
         "batch_extended_costs",
         "oil_cake_inventory"
       ],
@@ -4897,16 +4840,6 @@
       ]
     },
     {
-      "name": "sku_master",
-      "files": [
-        "puvi-backend/puvi-backend-main/modules/batch_production.py",
-        "puvi-backend/puvi-backend-main/modules/sku_management.py",
-        "puvi-backend/puvi-backend-main/modules/sku_production.py",
-        "puvi-backend/puvi-backend-main/modules/system_config.py",
-        "puvi-backend/puvi-backend-main/app.py"
-      ]
-    },
-    {
       "name": "batch_extended_costs",
       "files": [
         "puvi-backend/puvi-backend-main/modules/batch_production.py",
@@ -5038,6 +4971,15 @@
       "name": "tags",
       "files": [
         "puvi-backend/puvi-backend-main/modules/purchase.py"
+      ]
+    },
+    {
+      "name": "sku_master",
+      "files": [
+        "puvi-backend/puvi-backend-main/modules/sku_management.py",
+        "puvi-backend/puvi-backend-main/modules/sku_production.py",
+        "puvi-backend/puvi-backend-main/modules/system_config.py",
+        "puvi-backend/puvi-backend-main/app.py"
       ]
     },
     {
@@ -7066,6 +7008,198 @@
       "isAsync": false
     },
     {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 11,
+      "name": "apiCall",
+      "params": "url, options = {}",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 34,
+      "name": "OpeningBalanceEntry",
+      "params": "{ readOnly = false, onSave, onCancel }",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 82,
+      "name": "loadSystemStatus",
+      "params": "",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 99,
+      "name": "loadMaterials",
+      "params": "",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 130,
+      "name": "calculateFinancialYear",
+      "params": "dateStr",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 143,
+      "name": "calculateSummary",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 170,
+      "name": "handleBalanceChange",
+      "params": "materialId, field, value",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 185,
+      "name": "handleSelectMaterial",
+      "params": "materialId",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 198,
+      "name": "handleSelectAll",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 208,
+      "name": "applyBulkRate",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 233,
+      "name": "clearAllBalances",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 241,
+      "name": "resetToOriginal",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 277,
+      "name": "getCategories",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 283,
+      "name": "saveOpeningBalances",
+      "params": "",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 328,
+      "name": "downloadTemplate",
+      "params": "",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 353,
+      "name": "handleCSVImport",
+      "params": "event",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 396,
+      "name": "exportBalances",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 431,
+      "name": "quickFillFromCurrentCost",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
+      "line": 11,
+      "name": "apiCall",
+      "params": "url, options = {}",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
+      "line": 34,
+      "name": "SystemStatusDashboard",
+      "params": "{ onInitialize, onManageBalances }",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
+      "line": 57,
+      "name": "loadSystemStatus",
+      "params": "silent = false",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
+      "line": 79,
+      "name": "getDaysSinceCutoff",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
+      "line": 89,
+      "name": "getStatusColor",
+      "params": "status",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
+      "line": 96,
+      "name": "formatCurrency",
+      "params": "amount",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
       "line": 11,
       "name": "apiCall",
@@ -7370,198 +7504,6 @@
       "isAsync": false
     },
     {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 11,
-      "name": "apiCall",
-      "params": "url, options = {}",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 34,
-      "name": "OpeningBalanceEntry",
-      "params": "{ readOnly = false, onSave, onCancel }",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 82,
-      "name": "loadSystemStatus",
-      "params": "",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 99,
-      "name": "loadMaterials",
-      "params": "",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 130,
-      "name": "calculateFinancialYear",
-      "params": "dateStr",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 143,
-      "name": "calculateSummary",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 170,
-      "name": "handleBalanceChange",
-      "params": "materialId, field, value",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 185,
-      "name": "handleSelectMaterial",
-      "params": "materialId",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 198,
-      "name": "handleSelectAll",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 208,
-      "name": "applyBulkRate",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 233,
-      "name": "clearAllBalances",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 241,
-      "name": "resetToOriginal",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 277,
-      "name": "getCategories",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 283,
-      "name": "saveOpeningBalances",
-      "params": "",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 328,
-      "name": "downloadTemplate",
-      "params": "",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 353,
-      "name": "handleCSVImport",
-      "params": "event",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 396,
-      "name": "exportBalances",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 431,
-      "name": "quickFillFromCurrentCost",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
-      "line": 11,
-      "name": "apiCall",
-      "params": "url, options = {}",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
-      "line": 34,
-      "name": "SystemStatusDashboard",
-      "params": "{ onInitialize, onManageBalances }",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
-      "line": 57,
-      "name": "loadSystemStatus",
-      "params": "silent = false",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
-      "line": 79,
-      "name": "getDaysSinceCutoff",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
-      "line": 89,
-      "name": "getStatusColor",
-      "params": "status",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
-      "line": 96,
-      "name": "formatCurrency",
-      "params": "amount",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
       "file": "puvi-frontend/puvi-frontend-main/src/services/configService.js",
       "line": 13,
       "name": "getConfig",
@@ -7691,15 +7633,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 231,
-      "name": "get_oil_types",
-      "params": "",
-      "type": "python",
-      "isRoute": true
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 301,
+      "line": 233,
       "name": "add_batch",
       "params": "",
       "type": "python",
@@ -7707,7 +7641,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 649,
+      "line": 581,
       "name": "get_batch_history",
       "params": "",
       "type": "python",
@@ -11735,302 +11669,6 @@
       "hook": "useEffect"
     },
     {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 241,
-      "type": "useState",
-      "name": "filter",
-      "setter": "setFilter",
-      "initial": ""
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 241,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 424,
-      "type": "useState",
-      "name": "formData",
-      "setter": "setFormData",
-      "initial": "{}"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 424,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 425,
-      "type": "useState",
-      "name": "schema",
-      "setter": "setSchema",
-      "initial": null
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 425,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 426,
-      "type": "useState",
-      "name": "errors",
-      "setter": "setErrors",
-      "initial": "{}"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 426,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 427,
-      "type": "useState",
-      "name": "touchedFields",
-      "setter": "setTouchedFields",
-      "initial": "{}"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 427,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 428,
-      "type": "useState",
-      "name": "loadingSchema",
-      "setter": "setLoadingSchema",
-      "initial": null
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 428,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 429,
-      "type": "useState",
-      "name": "saving",
-      "setter": "setSaving",
-      "initial": null
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 429,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 430,
-      "type": "useState",
-      "name": "suppliers",
-      "setter": "setSuppliers",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 430,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 431,
-      "type": "useState",
-      "name": "alert",
-      "setter": "setAlert",
-      "initial": null
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 431,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 432,
-      "type": "useState",
-      "name": "expandedGuidelines",
-      "setter": "setExpandedGuidelines",
-      "initial": "{}"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 432,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 439,
-      "type": "useRef",
-      "hook": "useRef"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 440,
-      "type": "useRef",
-      "hook": "useRef"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 454,
-      "type": "useEffect",
-      "hook": "useEffect"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 42,
-      "type": "useState",
-      "name": "records",
-      "setter": "setRecords",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 42,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 43,
-      "type": "useState",
-      "name": "loading",
-      "setter": "setLoading",
-      "initial": null
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 43,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 44,
-      "type": "useState",
-      "name": "schema",
-      "setter": "setSchema",
-      "initial": null
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 44,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 45,
-      "type": "useState",
-      "name": "searchTerm",
-      "setter": "setSearchTerm",
-      "initial": ""
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 45,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 46,
-      "type": "useState",
-      "name": "sortConfig",
-      "setter": "setSortConfig",
-      "initial": "{}"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 46,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 47,
-      "type": "useState",
-      "name": "includeInactive",
-      "setter": "setIncludeInactive",
-      "initial": null
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 47,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 50,
-      "type": "useState",
-      "name": "pagination",
-      "setter": "setPagination",
-      "initial": "{}"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 50,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 60,
-      "type": "useState",
-      "name": "deleteModal",
-      "setter": "setDeleteModal",
-      "initial": "{}"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 60,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 68,
-      "type": "useState",
-      "name": "message",
-      "setter": "setMessage",
-      "initial": "{}"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 68,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 100,
-      "type": "useEffect",
-      "hook": "useEffect"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 108,
-      "type": "useEffect",
-      "hook": "useEffect"
-    },
-    {
       "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
       "line": 36,
       "type": "useState",
@@ -12389,6 +12027,302 @@
       "line": 44,
       "type": "useEffect",
       "hook": "useEffect"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 241,
+      "type": "useState",
+      "name": "filter",
+      "setter": "setFilter",
+      "initial": ""
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 241,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 424,
+      "type": "useState",
+      "name": "formData",
+      "setter": "setFormData",
+      "initial": "{}"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 424,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 425,
+      "type": "useState",
+      "name": "schema",
+      "setter": "setSchema",
+      "initial": null
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 425,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 426,
+      "type": "useState",
+      "name": "errors",
+      "setter": "setErrors",
+      "initial": "{}"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 426,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 427,
+      "type": "useState",
+      "name": "touchedFields",
+      "setter": "setTouchedFields",
+      "initial": "{}"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 427,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 428,
+      "type": "useState",
+      "name": "loadingSchema",
+      "setter": "setLoadingSchema",
+      "initial": null
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 428,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 429,
+      "type": "useState",
+      "name": "saving",
+      "setter": "setSaving",
+      "initial": null
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 429,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 430,
+      "type": "useState",
+      "name": "suppliers",
+      "setter": "setSuppliers",
+      "initial": "[]"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 430,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 431,
+      "type": "useState",
+      "name": "alert",
+      "setter": "setAlert",
+      "initial": null
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 431,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 432,
+      "type": "useState",
+      "name": "expandedGuidelines",
+      "setter": "setExpandedGuidelines",
+      "initial": "{}"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 432,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 439,
+      "type": "useRef",
+      "hook": "useRef"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 440,
+      "type": "useRef",
+      "hook": "useRef"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 454,
+      "type": "useEffect",
+      "hook": "useEffect"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 42,
+      "type": "useState",
+      "name": "records",
+      "setter": "setRecords",
+      "initial": "[]"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 42,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 43,
+      "type": "useState",
+      "name": "loading",
+      "setter": "setLoading",
+      "initial": null
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 43,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 44,
+      "type": "useState",
+      "name": "schema",
+      "setter": "setSchema",
+      "initial": null
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 44,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 45,
+      "type": "useState",
+      "name": "searchTerm",
+      "setter": "setSearchTerm",
+      "initial": ""
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 45,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 46,
+      "type": "useState",
+      "name": "sortConfig",
+      "setter": "setSortConfig",
+      "initial": "{}"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 46,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 47,
+      "type": "useState",
+      "name": "includeInactive",
+      "setter": "setIncludeInactive",
+      "initial": null
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 47,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 50,
+      "type": "useState",
+      "name": "pagination",
+      "setter": "setPagination",
+      "initial": "{}"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 50,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 60,
+      "type": "useState",
+      "name": "deleteModal",
+      "setter": "setDeleteModal",
+      "initial": "{}"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 60,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 68,
+      "type": "useState",
+      "name": "message",
+      "setter": "setMessage",
+      "initial": "{}"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 68,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 100,
+      "type": "useEffect",
+      "hook": "useEffect"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 108,
+      "type": "useEffect",
+      "hook": "useEffect"
     }
   ],
   "missingEndpoints": [
@@ -12432,24 +12366,17 @@
         "function": "get_oil_cake_rates"
       },
       {
-        "method": "GET",
-        "path": "/api/oil_types",
-        "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-        "line": 230,
-        "function": "get_oil_types"
-      },
-      {
         "method": "POST",
         "path": "/api/add_batch",
         "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-        "line": 300,
+        "line": 232,
         "function": "add_batch"
       },
       {
         "method": "GET",
         "path": "/api/batch_history",
         "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-        "line": 648,
+        "line": 580,
         "function": "get_batch_history"
       }
     ],
@@ -13978,6 +13905,102 @@
       "code": "} catch (error) {"
     },
     {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 12,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 28,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 83,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 93,
+      "type": "catch",
+      "code": "} catch (err) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 101,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 122,
+      "type": "catch",
+      "code": "} catch (err) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 287,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 320,
+      "type": "catch",
+      "code": "} catch (err) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 329,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 347,
+      "type": "catch",
+      "code": "} catch (err) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 364,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 388,
+      "type": "catch",
+      "code": "} catch (err) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
+      "line": 12,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
+      "line": 28,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
+      "line": 61,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
+      "line": 70,
+      "type": "catch",
+      "code": "} catch (err) {"
+    },
+    {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
       "line": 12,
       "type": "try-catch",
@@ -14116,102 +14139,6 @@
       "code": "} catch (error) {"
     },
     {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 12,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 28,
-      "type": "catch",
-      "code": "} catch (error) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 83,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 93,
-      "type": "catch",
-      "code": "} catch (err) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 101,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 122,
-      "type": "catch",
-      "code": "} catch (err) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 287,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 320,
-      "type": "catch",
-      "code": "} catch (err) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 329,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 347,
-      "type": "catch",
-      "code": "} catch (err) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 364,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 388,
-      "type": "catch",
-      "code": "} catch (err) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
-      "line": 12,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
-      "line": 28,
-      "type": "catch",
-      "code": "} catch (error) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
-      "line": 61,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
-      "line": 70,
-      "type": "catch",
-      "code": "} catch (err) {"
-    },
-    {
       "file": "puvi-frontend/puvi-frontend-main/src/services/configService.js",
       "line": 21,
       "type": "try-catch",
@@ -14337,78 +14264,39 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 239,
+      "line": 238,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 243,
+      "line": 291,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 254,
+      "line": 298,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 259,
-      "type": "try-catch",
-      "code": "try:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 270,
+      "line": 570,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 288,
-      "type": "except",
-      "exception": "Exception",
-      "code": "except Exception as e:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 306,
+      "line": 586,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 359,
-      "type": "try-catch",
-      "code": "try:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 366,
-      "type": "except",
-      "exception": "Exception",
-      "code": "except Exception as e:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 638,
-      "type": "except",
-      "exception": "Exception",
-      "code": "except Exception as e:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 654,
-      "type": "try-catch",
-      "code": "try:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 802,
+      "line": 734,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
@@ -15667,15 +15555,15 @@
     "jsFiles": 34,
     "pyFiles": 22,
     "components": 37,
-    "routes": 78,
+    "routes": 77,
     "exports": 41,
     "imports": 45,
     "hardcodedValues": 18,
-    "databaseQueries": 251,
+    "databaseQueries": 249,
     "databaseTables": 41,
-    "functions": 448,
+    "functions": 447,
     "stateHooks": 532,
     "missingEndpoints": 1,
-    "errorHandlers": 431
+    "errorHandlers": 425
   }
 }
