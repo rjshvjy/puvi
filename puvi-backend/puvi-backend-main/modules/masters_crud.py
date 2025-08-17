@@ -836,3 +836,163 @@ def import_from_csv(master_type):
         return jsonify({'success': False, 'error': str(e)}), 500
     finally:
         close_connection(conn, cur)
+
+# =====================================================
+# CATEGORY AND SUBCATEGORY ENDPOINTS
+# =====================================================
+
+@masters_crud_bp.route('/api/categories', methods=['GET'])
+def get_categories():
+    """Get all categories with their subcategory requirements"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        cur.execute("""
+            SELECT 
+                category_id,
+                category_name,
+                requires_subcategory,
+                is_active
+            FROM categories_master
+            WHERE is_active = true
+            ORDER BY category_name
+        """)
+        
+        categories = []
+        for row in cur.fetchall():
+            categories.append({
+                'category_id': row[0],
+                'category_name': row[1],
+                'requires_subcategory': row[2],
+                'is_active': row[3]
+            })
+        
+        return jsonify({
+            'success': True,
+            'categories': categories,
+            'count': len(categories)
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+@masters_crud_bp.route('/api/subcategories', methods=['GET'])
+def get_subcategories():
+    """Get subcategories, optionally filtered by category_id"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        category_id = request.args.get('category_id', type=int)
+        
+        if category_id:
+            # Get subcategories for specific category
+            cur.execute("""
+                SELECT 
+                    s.subcategory_id,
+                    s.category_id,
+                    c.category_name,
+                    s.subcategory_name,
+                    s.subcategory_code,
+                    s.oil_type,
+                    s.is_active
+                FROM subcategories_master s
+                JOIN categories_master c ON s.category_id = c.category_id
+                WHERE s.category_id = %s AND s.is_active = true
+                ORDER BY s.subcategory_name
+            """, (category_id,))
+        else:
+            # Get all subcategories
+            cur.execute("""
+                SELECT 
+                    s.subcategory_id,
+                    s.category_id,
+                    c.category_name,
+                    s.subcategory_name,
+                    s.subcategory_code,
+                    s.oil_type,
+                    s.is_active
+                FROM subcategories_master s
+                JOIN categories_master c ON s.category_id = c.category_id
+                WHERE s.is_active = true
+                ORDER BY c.category_name, s.subcategory_name
+            """)
+        
+        subcategories = []
+        for row in cur.fetchall():
+            subcategories.append({
+                'subcategory_id': row[0],
+                'category_id': row[1],
+                'category_name': row[2],
+                'subcategory_name': row[3],
+                'subcategory_code': row[4],
+                'oil_type': row[5],
+                'is_active': row[6]
+            })
+        
+        return jsonify({
+            'success': True,
+            'subcategories': subcategories,
+            'count': len(subcategories)
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+@masters_crud_bp.route('/api/subcategories/<int:subcategory_id>', methods=['GET'])
+def get_subcategory_details(subcategory_id):
+    """Get details of a single subcategory"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        cur.execute("""
+            SELECT 
+                s.subcategory_id,
+                s.category_id,
+                c.category_name,
+                s.subcategory_name,
+                s.subcategory_code,
+                s.oil_type,
+                s.is_active,
+                s.created_at
+            FROM subcategories_master s
+            JOIN categories_master c ON s.category_id = c.category_id
+            WHERE s.subcategory_id = %s
+        """, (subcategory_id,))
+        
+        row = cur.fetchone()
+        
+        if not row:
+            return jsonify({
+                'success': False,
+                'error': 'Subcategory not found'
+            }), 404
+        
+        subcategory = {
+            'subcategory_id': row[0],
+            'category_id': row[1],
+            'category_name': row[2],
+            'subcategory_name': row[3],
+            'subcategory_code': row[4],
+            'oil_type': row[5],
+            'is_active': row[6],
+            'created_at': row[7].isoformat() if row[7] else None
+        }
+        
+        return jsonify({
+            'success': True,
+            'subcategory': subcategory
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
