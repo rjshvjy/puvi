@@ -712,22 +712,3 @@ def get_tags():
         return jsonify({'success': False, 'error': str(e)}), 500
     finally:
         close_connection(conn, cur)
-```
-
-## Key Changes Summary
-
-### 🔄 Modified Functions:
-1. **`get_materials()`** - Added subcategory info to material queries
-2. **`get_purchase_history()`** - Added subcategory/oil_type to item details
-
-### ✨ New Function:
-3. **`create_material()`** - Complete material creation with subcategory validation
-
-### 🎯 Critical Logic:
-- Categories "Seeds" and "Oil" **REQUIRE** subcategory selection
-- Oil type comes from subcategory, NOT from parsing material name
-- Validates subcategory belongs to selected category
-- Maintains backward compatibility for existing materials
-
-### 📋 Usage:
-Replace entire `purchase.py` file with this code to enable full subcategory support.
