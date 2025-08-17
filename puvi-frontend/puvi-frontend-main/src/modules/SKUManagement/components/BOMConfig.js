@@ -1,8 +1,3 @@
-# Updated BOMConfig.js - Complete Replacement
-
-## File Path: `puvi-frontend/src/modules/SKUManagement/components/BOMConfig.js`
-
-
 // BOM Configuration Component for SKU Management with MRP & Shelf Life
 // File Path: puvi-frontend/src/modules/SKUManagement/components/BOMConfig.js
 // Updated: Removed all hardcoded values, uses database-driven categories
