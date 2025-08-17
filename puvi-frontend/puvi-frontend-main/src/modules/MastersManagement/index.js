@@ -1,6 +1,9 @@
+// File Path: puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/index.js
+
 import React, { useState } from 'react';
 import MastersList from '../../components/Masters/MastersList';
 import MasterForm from '../../components/Masters/MasterForm';
+import './MastersManagement.css'; // Added CSS import
 
 const MastersManagement = () => {
   const [activeTab, setActiveTab] = useState('suppliers');
@@ -40,20 +43,17 @@ const MastersManagement = () => {
   };
 
   return (
-    <div>
-      {/* Tab Navigation */}
-      <div className="flex gap-2 mb-4 border-b">
+    <div className="masters-management-container">
+      {/* Tab Navigation - Updated className */}
+      <div className="masters-tabs">
         {masterTabs.map(tab => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`px-4 py-2 ${
-              activeTab === tab.id 
-                ? 'border-b-2 border-blue-500 text-blue-600' 
-                : 'text-gray-600'
-            }`}
+            className={`masters-tab ${activeTab === tab.id ? 'active' : ''}`}
           >
-            {tab.icon} {tab.label}
+            <span className="masters-tab-icon">{tab.icon}</span>
+            <span className="masters-tab-label">{tab.label}</span>
           </button>
         ))}
       </div>
