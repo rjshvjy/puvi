@@ -227,75 +227,7 @@ def get_oil_cake_rates():
         return jsonify({'success': False, 'error': str(e)}), 500
     finally:
         close_connection(conn, cur)
-@batch_bp.route('/api/oil_types', methods=['GET'])
-def get_oil_types():
-    """
-    Get distinct oil types from production data
-    Returns combined list from batch and sku_master tables plus standard types
-    """
-    conn = get_db_connection()
-    cur = conn.cursor()
-    
-    try:
-        oil_types = set()
-        
-        # Query 1: Get oil types from batch table
-        try:
-            cur.execute("""
-                SELECT DISTINCT oil_type
-                FROM batch
-                WHERE oil_type IS NOT NULL
-                ORDER BY oil_type
-            """)
-            
-            for row in cur.fetchall():
-                if row[0]:  # Check not empty
-                    oil_types.add(row[0])
-        except Exception as e:
-            print(f"Error querying batch table: {e}")
-            # Continue even if batch table has issues
-        
-        # Query 2: Get oil types from sku_master table
-        try:
-            cur.execute("""
-                SELECT DISTINCT oil_type
-                FROM sku_master
-                WHERE oil_type IS NOT NULL
-                ORDER BY oil_type
-            """)
-            
-            for row in cur.fetchall():
-                if row[0]:  # Check not empty
-                    oil_types.add(row[0])
-        except Exception as e:
-            print(f"Error querying sku_master table: {e}")
-            # Continue even if sku_master table has issues
-        
-        # Ensure standard oil types are always included
-        standard_types = ['Groundnut', 'Sesame', 'Coconut', 'Mustard']
-        for oil_type in standard_types:
-            oil_types.add(oil_type)
-        
-        # Convert to sorted list
-        oil_types_list = sorted(list(oil_types))
-        
-        return jsonify({
-            'success': True,
-            'oil_types': oil_types_list,
-            'count': len(oil_types_list)
-        })
-        
-    except Exception as e:
-        print(f"Error in get_oil_types: {str(e)}")
-        # Return standard types as fallback
-        return jsonify({
-            'success': True,
-            'oil_types': ['Groundnut', 'Sesame', 'Coconut', 'Mustard'],
-            'count': 4,
-            'note': 'Using default oil types due to database error'
-        })
-    finally:
-        close_connection(conn, cur)
+
 
 @batch_bp.route('/api/add_batch', methods=['POST'])
 def add_batch():
