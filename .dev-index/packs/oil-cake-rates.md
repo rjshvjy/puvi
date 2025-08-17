@@ -1,5 +1,5 @@
 # Feature Pack: OIL-CAKE-RATES
-Generated: 2025-08-17T01:01:11.848Z
+Generated: 2025-08-17T05:25:49.704Z
 Routes: 1 | Tables: 9 | Files: 1
 
 ## Table of Contents
@@ -19,6 +19,7 @@ GET    /api/oil_cake_rates
 ## Database Dependencies
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
+| available_oil_types | batch-production | 🟡 MEDIUM | Changes affect 1 other modules |
 | batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 7 other modules |
 | batch_extended_costs | batch-production, cost-management | 🟡 MEDIUM | Changes affect 2 other modules |
 | inventory | batch-production, blending, material-writeoff | 🔴 HIGH | Changes affect 7 other modules |
@@ -27,7 +28,6 @@ GET    /api/oil_cake_rates
 | oil_cake_rate_master | batch-production | 🟡 MEDIUM | Changes affect 1 other modules |
 | purchase_items | batch-production, purchase | 🟡 MEDIUM | Changes affect 2 other modules |
 | purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 5 other modules |
-| sku_master | batch-production, sku-management, sku-production | 🔴 HIGH | Changes affect 5 other modules |
 
 ### ⚠️ Hardcoded Values Detected
 - `batch_production.py:214` - object
