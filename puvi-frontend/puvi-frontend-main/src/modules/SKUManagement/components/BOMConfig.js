@@ -2,7 +2,7 @@
 
 ## File Path: `puvi-frontend/src/modules/SKUManagement/components/BOMConfig.js`
 
-```javascript
+
 // BOM Configuration Component for SKU Management with MRP & Shelf Life
 // File Path: puvi-frontend/src/modules/SKUManagement/components/BOMConfig.js
 // Updated: Removed all hardcoded values, uses database-driven categories
@@ -663,53 +663,3 @@ const BOMConfig = () => {
 };
 
 export default BOMConfig;
-```
-
-## Key Changes Made
-
-### 1. **Added Dynamic BOM Categories** (Lines 22-23, 31-57)
-- New state: `bomCategories` and `loadingCategories`
-- New function: `fetchBOMCategories()` - fetches from `/api/config/bom_categories`
-- Called on component mount
-
-### 2. **Updated Material Fetching** (Lines 78-108)
-- Now accepts optional `bomCategory` parameter
-- Can fetch filtered materials using `/api/config/bom_materials?bom_category=X`
-- Falls back to old endpoint if new one fails
-
-### 3. **Removed Auto-Detect Logic** (Lines 205-237)
-- Removed all hardcoded category detection based on material names
-- User now manually selects category from dropdown
-- When category changes, optionally refreshes material list
-
-### 4. **Dynamic Category Dropdown** (Lines 474-483)
-- Categories now populated from `bomCategories` state
-- Shows loading state while fetching
-- No hardcoded options
-
-### 5. **Dynamic Cost Breakdown** (Lines 341-366)
-- Groups costs by actual categories from database
-- No hardcoded category names in breakdown
-
-## Testing Instructions
-
-1. **Check BOM categories load**: Open developer console and verify `/api/config/bom_categories` is called
-2. **Verify dropdown populated**: Category dropdown should show values from database
-3. **Test material filtering**: When selecting a category, materials should filter
-4. **Cost breakdown**: Should group by actual categories, not hardcoded ones
-5. **Save BOM**: Ensure saving still works with dynamic categories
-
-## Dependencies
-
-Requires these backend endpoints to be working:
-- `/api/config/bom_categories` - Returns BOM category list
-- `/api/config/bom_materials` - Returns filtered materials (optional)
-- Existing SKU and material endpoints
-
-## Next Steps
-
-After implementing this:
-1. Clear browser cache
-2. Test all BOM operations
-3. Update TimeTracker.js for labor rates
-4. Update MasterForm.jsx for dynamic dropdowns
