@@ -1,0 +1,458 @@
+/* File Path: puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/MastersManagement.css */
+/* Masters Management Module - Professional Design System */
+
+/* ==================== Main Container ==================== */
+.masters-management-container {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+/* ==================== Module Header ==================== */
+.masters-header {
+  margin-bottom: 24px;
+  text-align: center;
+  padding: 20px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.masters-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 8px 0;
+}
+
+.masters-subtitle {
+  color: #6b7280;
+  font-size: 14px;
+  margin: 0;
+}
+
+/* ==================== Tab Navigation ==================== */
+.masters-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  padding: 12px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  overflow-x: auto;
+}
+
+.masters-tab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  color: #4b5563;
+  cursor: pointer;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  min-width: fit-content;
+}
+
+.masters-tab:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.masters-tab.active {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: white;
+  border-color: #2563eb;
+  box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+}
+
+.masters-tab-icon {
+  font-size: 18px;
+}
+
+.masters-tab-label {
+  font-size: 14px;
+}
+
+/* ==================== Content Area ==================== */
+.masters-content {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  min-height: 500px;
+}
+
+/* ==================== Table Styles (for MastersList) ==================== */
+.masters-table-container {
+  overflow-x: auto;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.masters-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.masters-table thead {
+  background: #f9fafb;
+  border-bottom: 2px solid #e5e7eb;
+}
+
+.masters-table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  color: #374151;
+  white-space: nowrap;
+}
+
+.masters-table tbody tr {
+  border-bottom: 1px solid #f3f4f6;
+  transition: background 0.2s ease;
+}
+
+.masters-table tbody tr:hover {
+  background: #f9fafb;
+}
+
+.masters-table td {
+  padding: 12px 16px;
+  color: #1f2937;
+}
+
+/* ==================== Form Styles (for MasterForm) ==================== */
+.masters-form-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.masters-form-container {
+  background: white;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.masters-form-header {
+  padding: 20px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #f9fafb;
+  border-radius: 12px 12px 0 0;
+}
+
+.masters-form-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0;
+}
+
+.masters-form-body {
+  padding: 24px;
+}
+
+.masters-form-group {
+  margin-bottom: 20px;
+}
+
+.masters-form-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.masters-form-label .required {
+  color: #ef4444;
+  margin-left: 4px;
+}
+
+.masters-form-input,
+.masters-form-select,
+.masters-form-textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #1f2937;
+  background: white;
+  transition: all 0.2s ease;
+}
+
+.masters-form-input:focus,
+.masters-form-select:focus,
+.masters-form-textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.masters-form-textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.masters-form-checkbox {
+  margin-right: 8px;
+}
+
+.masters-form-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #e5e7eb;
+  background: #f9fafb;
+  border-radius: 0 0 12px 12px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+}
+
+/* ==================== Button Styles ==================== */
+.masters-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.masters-btn-primary {
+  background: #2563eb;
+  color: white;
+}
+
+.masters-btn-primary:hover {
+  background: #1d4ed8;
+  box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+}
+
+.masters-btn-secondary {
+  background: #6b7280;
+  color: white;
+}
+
+.masters-btn-secondary:hover {
+  background: #4b5563;
+}
+
+.masters-btn-success {
+  background: #10b981;
+  color: white;
+}
+
+.masters-btn-success:hover {
+  background: #059669;
+}
+
+.masters-btn-danger {
+  background: #ef4444;
+  color: white;
+}
+
+.masters-btn-danger:hover {
+  background: #dc2626;
+}
+
+.masters-btn-sm {
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
+/* ==================== Badge Styles ==================== */
+.masters-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.masters-badge-active {
+  background: #d4edda;
+  color: #155724;
+}
+
+.masters-badge-inactive {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+/* ==================== Search and Filter Styles ==================== */
+.masters-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.masters-search {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  max-width: 400px;
+}
+
+.masters-search-input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.masters-search-input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.masters-filter-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #4b5563;
+}
+
+.masters-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* ==================== Loading and Empty States ==================== */
+.masters-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 60px;
+  color: #6b7280;
+}
+
+.masters-empty {
+  text-align: center;
+  padding: 60px;
+  color: #6b7280;
+}
+
+.masters-empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.masters-empty-text {
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+/* ==================== Responsive Design ==================== */
+@media (max-width: 768px) {
+  .masters-tabs {
+    overflow-x: auto;
+    padding: 8px;
+  }
+  
+  .masters-tab {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+  
+  .masters-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .masters-search {
+    max-width: 100%;
+  }
+  
+  .masters-table {
+    font-size: 13px;
+  }
+  
+  .masters-table th,
+  .masters-table td {
+    padding: 8px 12px;
+  }
+  
+  .masters-form-container {
+    width: 95%;
+    margin: 10px;
+  }
+}
+
+/* ==================== Print Styles ==================== */
+@media print {
+  .masters-tabs,
+  .masters-controls,
+  .masters-btn,
+  .masters-form-modal {
+    display: none !important;
+  }
+  
+  .masters-table {
+    border: 1px solid #000;
+  }
+  
+  .masters-table th,
+  .masters-table td {
+    border: 1px solid #000;
+  }
+}
