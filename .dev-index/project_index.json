@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-17T05:36:10.677Z",
+  "generatedAt": "2025-08-17T05:42:19.278Z",
   "filesScanned": 56,
   "jsFilesScanned": 34,
   "pyFilesScanned": 22,
@@ -467,16 +467,25 @@
       "method": "GET",
       "path": "/api/materials",
       "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-      "line": 17,
+      "line": 22,
       "blueprint": "purchase_bp",
       "function": "get_materials",
       "source": "backend"
     },
     {
       "method": "POST",
+      "path": "/api/materials",
+      "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
+      "line": 122,
+      "blueprint": "purchase_bp",
+      "function": "create_material",
+      "source": "backend"
+    },
+    {
+      "method": "POST",
       "path": "/api/add_purchase",
       "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-      "line": 101,
+      "line": 273,
       "blueprint": "purchase_bp",
       "function": "add_purchase",
       "source": "backend"
@@ -485,7 +494,7 @@
       "method": "GET",
       "path": "/api/purchase_history",
       "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-      "line": 311,
+      "line": 483,
       "blueprint": "purchase_bp",
       "function": "get_purchase_history",
       "source": "backend"
@@ -494,7 +503,7 @@
       "method": "GET",
       "path": "/api/suppliers",
       "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-      "line": 448,
+      "line": 629,
       "blueprint": "purchase_bp",
       "function": "get_suppliers",
       "source": "backend"
@@ -503,7 +512,7 @@
       "method": "GET",
       "path": "/api/tags",
       "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-      "line": 497,
+      "line": 678,
       "blueprint": "purchase_bp",
       "function": "get_tags",
       "source": "backend"
@@ -3638,61 +3647,54 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-      "line": 28,
-      "type": "SELECT",
-      "tables": [
-        "materials",
-        "material_tags",
-        "tags"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-      "line": 48,
+      "line": 34,
       "type": "SELECT",
       "tables": [
         "materials",
         "material_tags",
         "tags",
+        "subcategories_master"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
+      "line": 59,
+      "type": "SELECT",
+      "tables": [
+        "materials",
+        "material_tags",
+        "tags",
+        "subcategories_master",
         "suppliers"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-      "line": 126,
+      "line": 145,
       "type": "SELECT",
       "tables": [
         "materials",
         "material_tags",
         "tags",
-        "suppliers"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-      "line": 138,
-      "type": "OTHER",
-      "tables": [
-        "materials",
-        "material_tags",
-        "tags",
-        "suppliers"
-      ],
-      "preview": "cur.execute(\"BEGIN\")"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-      "line": 165,
-      "type": "INSERT",
-      "tables": [
-        "materials",
-        "material_tags",
-        "tags",
+        "subcategories_master",
         "suppliers",
-        "purchases"
+        "categories_master"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
+      "line": 170,
+      "type": "SELECT",
+      "tables": [
+        "materials",
+        "material_tags",
+        "tags",
+        "subcategories_master",
+        "suppliers",
+        "categories_master"
       ],
       "preview": "cur.execute(\"\"\""
     },
@@ -3704,8 +3706,23 @@
         "materials",
         "material_tags",
         "tags",
+        "subcategories_master",
         "suppliers",
-        "purchases"
+        "categories_master"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
+      "line": 209,
+      "type": "INSERT",
+      "tables": [
+        "materials",
+        "material_tags",
+        "tags",
+        "subcategories_master",
+        "suppliers",
+        "categories_master"
       ],
       "preview": "cur.execute(\"\"\""
     },
@@ -3717,7 +3734,109 @@
         "materials",
         "material_tags",
         "tags",
+        "subcategories_master",
         "suppliers",
+        "categories_master"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
+      "line": 248,
+      "type": "SELECT",
+      "tables": [
+        "materials",
+        "material_tags",
+        "tags",
+        "subcategories_master",
+        "suppliers",
+        "categories_master"
+      ],
+      "preview": "cur.execute(\"SELECT tag_id FROM tags WHERE tag_name = %s\", (tag_name,))"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
+      "line": 252,
+      "type": "INSERT",
+      "tables": [
+        "materials",
+        "material_tags",
+        "tags",
+        "subcategories_master",
+        "suppliers",
+        "categories_master"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
+      "line": 298,
+      "type": "SELECT",
+      "tables": [
+        "materials",
+        "material_tags",
+        "tags",
+        "subcategories_master",
+        "suppliers",
+        "categories_master"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
+      "line": 310,
+      "type": "OTHER",
+      "tables": [
+        "materials",
+        "material_tags",
+        "tags",
+        "subcategories_master",
+        "suppliers",
+        "categories_master"
+      ],
+      "preview": "cur.execute(\"BEGIN\")"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
+      "line": 337,
+      "type": "INSERT",
+      "tables": [
+        "materials",
+        "material_tags",
+        "tags",
+        "subcategories_master",
+        "suppliers",
+        "categories_master",
+        "purchases"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
+      "line": 363,
+      "type": "SELECT",
+      "tables": [
+        "materials",
+        "material_tags",
+        "tags",
+        "subcategories_master",
+        "suppliers",
+        "categories_master",
+        "purchases"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
+      "line": 409,
+      "type": "INSERT",
+      "tables": [
+        "materials",
+        "material_tags",
+        "tags",
+        "subcategories_master",
+        "suppliers",
+        "categories_master",
         "purchases",
         "purchase_items"
       ],
@@ -3725,73 +3844,15 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-      "line": 268,
+      "line": 440,
       "type": "SELECT",
       "tables": [
         "materials",
         "material_tags",
         "tags",
+        "subcategories_master",
         "suppliers",
-        "purchases",
-        "purchase_items",
-        "inventory"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-      "line": 283,
-      "type": "UPDATE",
-      "tables": [
-        "materials",
-        "material_tags",
-        "tags",
-        "suppliers",
-        "purchases",
-        "purchase_items",
-        "inventory"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-      "line": 353,
-      "type": "OTHER",
-      "tables": [
-        "materials",
-        "material_tags",
-        "tags",
-        "suppliers",
-        "purchases",
-        "purchase_items",
-        "inventory"
-      ],
-      "preview": "cur.execute(query, params)"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-      "line": 373,
-      "type": "SELECT",
-      "tables": [
-        "materials",
-        "material_tags",
-        "tags",
-        "suppliers",
-        "purchases",
-        "purchase_items",
-        "inventory"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-      "line": 418,
-      "type": "SELECT",
-      "tables": [
-        "materials",
-        "material_tags",
-        "tags",
-        "suppliers",
+        "categories_master",
         "purchases",
         "purchase_items",
         "inventory"
@@ -3801,12 +3862,14 @@
     {
       "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
       "line": 455,
-      "type": "SELECT",
+      "type": "UPDATE",
       "tables": [
         "materials",
         "material_tags",
         "tags",
+        "subcategories_master",
         "suppliers",
+        "categories_master",
         "purchases",
         "purchase_items",
         "inventory"
@@ -3815,13 +3878,83 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-      "line": 504,
+      "line": 525,
+      "type": "OTHER",
+      "tables": [
+        "materials",
+        "material_tags",
+        "tags",
+        "subcategories_master",
+        "suppliers",
+        "categories_master",
+        "purchases",
+        "purchase_items",
+        "inventory"
+      ],
+      "preview": "cur.execute(query, params)"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
+      "line": 546,
       "type": "SELECT",
       "tables": [
         "materials",
         "material_tags",
         "tags",
+        "subcategories_master",
         "suppliers",
+        "categories_master",
+        "purchases",
+        "purchase_items",
+        "inventory"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
+      "line": 599,
+      "type": "SELECT",
+      "tables": [
+        "materials",
+        "material_tags",
+        "tags",
+        "subcategories_master",
+        "suppliers",
+        "categories_master",
+        "purchases",
+        "purchase_items",
+        "inventory"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
+      "line": 636,
+      "type": "SELECT",
+      "tables": [
+        "materials",
+        "material_tags",
+        "tags",
+        "subcategories_master",
+        "suppliers",
+        "categories_master",
+        "purchases",
+        "purchase_items",
+        "inventory"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
+      "line": 685,
+      "type": "SELECT",
+      "tables": [
+        "materials",
+        "material_tags",
+        "tags",
+        "subcategories_master",
+        "suppliers",
+        "categories_master",
         "purchases",
         "purchase_items",
         "inventory"
@@ -5009,13 +5142,15 @@
     {
       "name": "categories_master",
       "files": [
-        "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+        "puvi-backend/puvi-backend-main/modules/masters_crud.py",
+        "puvi-backend/puvi-backend-main/modules/purchase.py"
       ]
     },
     {
       "name": "subcategories_master",
       "files": [
-        "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+        "puvi-backend/puvi-backend-main/modules/masters_crud.py",
+        "puvi-backend/puvi-backend-main/modules/purchase.py"
       ]
     },
     {
@@ -8261,7 +8396,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-      "line": 18,
+      "line": 23,
       "name": "get_materials",
       "params": "",
       "type": "python",
@@ -8269,7 +8404,15 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-      "line": 102,
+      "line": 123,
+      "name": "create_material",
+      "params": "",
+      "type": "python",
+      "isRoute": true
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
+      "line": 274,
       "name": "add_purchase",
       "params": "",
       "type": "python",
@@ -8277,7 +8420,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-      "line": 312,
+      "line": 484,
       "name": "get_purchase_history",
       "params": "",
       "type": "python",
@@ -8285,7 +8428,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-      "line": 449,
+      "line": 630,
       "name": "get_suppliers",
       "params": "",
       "type": "python",
@@ -8293,7 +8436,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-      "line": 498,
+      "line": 679,
       "name": "get_tags",
       "params": "",
       "type": "python",
@@ -12892,35 +13035,42 @@
         "method": "GET",
         "path": "/api/materials",
         "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-        "line": 17,
+        "line": 22,
         "function": "get_materials"
+      },
+      {
+        "method": "POST",
+        "path": "/api/materials",
+        "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
+        "line": 122,
+        "function": "create_material"
       },
       {
         "method": "POST",
         "path": "/api/add_purchase",
         "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-        "line": 101,
+        "line": 273,
         "function": "add_purchase"
       },
       {
         "method": "GET",
         "path": "/api/purchase_history",
         "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-        "line": 311,
+        "line": 483,
         "function": "get_purchase_history"
       },
       {
         "method": "GET",
         "path": "/api/suppliers",
         "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-        "line": 448,
+        "line": 629,
         "function": "get_suppliers"
       },
       {
         "method": "GET",
         "path": "/api/tags",
         "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-        "line": 497,
+        "line": 678,
         "function": "get_tags"
       }
     ],
@@ -15179,78 +15329,91 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-      "line": 23,
+      "line": 28,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-      "line": 95,
+      "line": 115,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-      "line": 108,
+      "line": 131,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-      "line": 221,
-      "type": "try-catch",
-      "code": "try:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-      "line": 229,
+      "line": 266,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-      "line": 302,
+      "line": 280,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
+      "line": 393,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
+      "line": 401,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-      "line": 317,
-      "type": "try-catch",
-      "code": "try:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-      "line": 442,
+      "line": 474,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-      "line": 454,
+      "line": 489,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-      "line": 491,
+      "line": 623,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-      "line": 503,
+      "line": 635,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
-      "line": 533,
+      "line": 672,
+      "type": "except",
+      "exception": "Exception",
+      "code": "except Exception as e:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
+      "line": 684,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/purchase.py",
+      "line": 714,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
@@ -15827,15 +15990,15 @@
     "jsFiles": 34,
     "pyFiles": 22,
     "components": 37,
-    "routes": 81,
+    "routes": 82,
     "exports": 41,
     "imports": 45,
     "hardcodedValues": 18,
-    "databaseQueries": 254,
+    "databaseQueries": 261,
     "databaseTables": 44,
-    "functions": 454,
+    "functions": 455,
     "stateHooks": 532,
     "missingEndpoints": 1,
-    "errorHandlers": 435
+    "errorHandlers": 437
   }
 }

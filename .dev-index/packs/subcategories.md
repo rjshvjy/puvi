@@ -1,5 +1,5 @@
 # Feature Pack: SUBCATEGORIES
-Generated: 2025-08-17T05:36:11.471Z
+Generated: 2025-08-17T05:42:20.097Z
 Routes: 2 | Tables: 2 | Files: 1
 
 ## Table of Contents
@@ -21,8 +21,8 @@ GET    /api/subcategories/<int:subcategory_id>
 ## Database Dependencies
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
-| categories_master | masters-crud | 🟡 MEDIUM | Changes affect 1 other modules |
-| subcategories_master | masters-crud | 🟡 MEDIUM | Changes affect 1 other modules |
+| categories_master | masters-crud, purchase | 🟡 MEDIUM | Changes affect 2 other modules |
+| subcategories_master | masters-crud, purchase | 🟡 MEDIUM | Changes affect 2 other modules |
 
 ## Backend Implementation
 

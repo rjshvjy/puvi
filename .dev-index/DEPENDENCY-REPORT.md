@@ -1,12 +1,12 @@
 # PUVI System - Dependency Analysis Report
 
-**Generated:** 2025-08-17T05:36:11.413Z
+**Generated:** 2025-08-17T05:42:20.039Z
 **Version:** 1.0
 
 ## Executive Summary
 
 - **Total Tables:** 44
-- **Shared Tables:** 17 (cross-module dependencies)
+- **Shared Tables:** 19 (cross-module dependencies)
 - **Hardcoded Categories:** 0
 - **Migration Opportunities:** 0
 

@@ -1,9 +1,9 @@
 {
   "version": "1.0",
-  "generatedAt": "2025-08-17T05:36:11.413Z",
+  "generatedAt": "2025-08-17T05:42:20.039Z",
   "summary": {
     "totalTables": 44,
-    "sharedTables": 17,
+    "sharedTables": 19,
     "hardcodedCategories": 0,
     "migrationOpportunities": 0
   },
@@ -446,13 +446,20 @@
     },
     "categories_master": {
       "usedBy": [
-        "masters-crud"
+        "masters-crud",
+        "purchase"
       ],
-      "fileCount": 1,
+      "fileCount": 2,
       "operations": {
         "masters-crud": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+          ],
+          "queryCount": 0
+        },
+        "purchase": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/purchase.py"
           ],
           "queryCount": 0
         }
@@ -460,13 +467,20 @@
     },
     "subcategories_master": {
       "usedBy": [
-        "masters-crud"
+        "masters-crud",
+        "purchase"
       ],
-      "fileCount": 1,
+      "fileCount": 2,
       "operations": {
         "masters-crud": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+          ],
+          "queryCount": 0
+        },
+        "purchase": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/purchase.py"
           ],
           "queryCount": 0
         }
@@ -1089,6 +1103,28 @@
       "fileCount": 2,
       "risk": "LOW",
       "recommendation": "Changes will affect masters-common, opening-balance"
+    },
+    {
+      "table": "categories_master",
+      "sharedBy": [
+        "masters-crud",
+        "purchase"
+      ],
+      "moduleCount": 2,
+      "fileCount": 2,
+      "risk": "LOW",
+      "recommendation": "Changes will affect masters-crud, purchase"
+    },
+    {
+      "table": "subcategories_master",
+      "sharedBy": [
+        "masters-crud",
+        "purchase"
+      ],
+      "moduleCount": 2,
+      "fileCount": 2,
+      "risk": "LOW",
+      "recommendation": "Changes will affect masters-crud, purchase"
     },
     {
       "table": "material_writeoffs",

@@ -1,6 +1,6 @@
 # Feature Pack: TAGS
-Generated: 2025-08-17T05:36:11.474Z
-Routes: 1 | Tables: 7 | Files: 1
+Generated: 2025-08-17T05:42:20.100Z
+Routes: 1 | Tables: 9 | Files: 1
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -19,11 +19,13 @@ GET    /api/tags
 ## Database Dependencies
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
+| categories_master | masters-crud, purchase | 🟡 MEDIUM | Changes affect 2 other modules |
 | inventory | batch-production, blending, material-writeoff | 🔴 HIGH | Changes affect 7 other modules |
 | material_tags | purchase | 🟡 MEDIUM | Changes affect 1 other modules |
 | materials | batch-production, blending, material-writeoff | 🔴 HIGH | Changes affect 9 other modules |
 | purchase_items | batch-production, purchase | 🟡 MEDIUM | Changes affect 2 other modules |
 | purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 5 other modules |
+| subcategories_master | masters-crud, purchase | 🟡 MEDIUM | Changes affect 2 other modules |
 | suppliers | opening-balance, purchase, system-config | 🔴 HIGH | Changes affect 4 other modules |
 | tags | purchase | 🟡 MEDIUM | Changes affect 1 other modules |
 
