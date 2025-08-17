@@ -1,8 +1,10 @@
 // Time Tracker Component for PUVI Oil Manufacturing System
 // File Path: puvi-frontend/src/modules/CostManagement/TimeTracker.js
 // Purpose: Track crushing time with proper datetime format for backend
+// Updated: Dynamic labor rates from database (no hardcoded values)
 
 import React, { useState, useEffect } from 'react';
+import { configAPI } from '../../services/api';
 
 const TimeTracker = ({ batchId, onTimeCalculated, showCostBreakdown = true }) => {
   const [startDateTime, setStartDateTime] = useState('');
@@ -10,14 +12,104 @@ const TimeTracker = ({ batchId, onTimeCalculated, showCostBreakdown = true }) =>
   const [duration, setDuration] = useState(null);
   const [operatorName, setOperatorName] = useState('');
   const [notes, setNotes] = useState('');
+  
+  // NEW: State for labor rates fetched from database
+  const [laborRates, setLaborRates] = useState({
+    crushing: 0,
+    electricity: 0,
+    loading: false,
+    error: null
+  });
+
+  // NEW: Fetch labor rates from database on component mount
+  useEffect(() => {
+    fetchLaborRates();
+  }, []);
+
+  // NEW: Function to fetch labor rates from API
+  const fetchLaborRates = async () => {
+    setLaborRates(prev => ({ ...prev, loading: true, error: null }));
+    
+    try {
+      // Fetch labor rates from the config API
+      const response = await configAPI.getLaborRates('Crushing');
+      
+      if (response.success && response.rates) {
+        // Parse the response to extract crushing and electricity rates
+        let crushingRate = 0;
+        let electricityRate = 0;
+        
+        response.rates.forEach(rate => {
+          // Match rates based on element name
+          if (rate.element_name && rate.element_name.toLowerCase().includes('crushing')) {
+            if (rate.element_name.toLowerCase().includes('labour') || 
+                rate.element_name.toLowerCase().includes('labor')) {
+              crushingRate = rate.rate || rate.default_rate || 0;
+            }
+          }
+          if (rate.element_name && rate.element_name.toLowerCase().includes('electricity')) {
+            electricityRate = rate.rate || rate.default_rate || 0;
+          }
+        });
+        
+        // If specific rates not found, try to get from general labor category
+        if (crushingRate === 0 || electricityRate === 0) {
+          // Fetch all labor rates as fallback
+          const allRatesResponse = await configAPI.getLaborRates();
+          
+          if (allRatesResponse.success && allRatesResponse.rates) {
+            allRatesResponse.rates.forEach(rate => {
+              if (crushingRate === 0 && rate.element_name === 'Crushing Labour') {
+                crushingRate = rate.rate || rate.default_rate || 150; // Fallback to 150 if DB is empty
+              }
+              if (electricityRate === 0 && rate.element_name === 'Electricity - Crushing') {
+                electricityRate = rate.rate || rate.default_rate || 75; // Fallback to 75 if DB is empty
+              }
+            });
+          }
+        }
+        
+        setLaborRates({
+          crushing: crushingRate,
+          electricity: electricityRate,
+          loading: false,
+          error: null
+        });
+        
+      } else {
+        // If API call succeeds but no rates found, use defaults with warning
+        console.warn('No labor rates found in database, using defaults');
+        setLaborRates({
+          crushing: 150, // Emergency fallback
+          electricity: 75, // Emergency fallback
+          loading: false,
+          error: 'Using default rates - database rates not configured'
+        });
+      }
+    } catch (error) {
+      console.error('Failed to fetch labor rates:', error);
+      // On error, use fallback rates to not break functionality
+      setLaborRates({
+        crushing: 150, // Emergency fallback
+        electricity: 75, // Emergency fallback
+        loading: false,
+        error: 'Failed to fetch rates from database - using defaults'
+      });
+    }
+  };
 
   useEffect(() => {
     calculateDuration();
-  }, [startDateTime, endDateTime]);
+  }, [startDateTime, endDateTime, laborRates.crushing, laborRates.electricity]);
 
   const calculateDuration = () => {
     if (!startDateTime || !endDateTime) {
       setDuration(null);
+      return;
+    }
+
+    // Don't calculate if rates are still loading
+    if (laborRates.loading) {
       return;
     }
 
@@ -33,12 +125,13 @@ const TimeTracker = ({ batchId, onTimeCalculated, showCostBreakdown = true }) =>
     const diffHours = diffMs / (1000 * 60 * 60);
     const roundedHours = Math.ceil(diffHours);
 
+    // Use dynamic rates from database instead of hardcoded values
     const calculatedDuration = {
       actual_hours: diffHours.toFixed(2),
       rounded_hours: roundedHours,
-      crushing_labour_cost: roundedHours * 150,
-      electricity_cost: roundedHours * 75,
-      total_time_cost: roundedHours * (150 + 75)
+      crushing_labour_cost: roundedHours * laborRates.crushing,
+      electricity_cost: roundedHours * laborRates.electricity,
+      total_time_cost: roundedHours * (laborRates.crushing + laborRates.electricity)
     };
 
     setDuration(calculatedDuration);
@@ -61,6 +154,10 @@ const TimeTracker = ({ batchId, onTimeCalculated, showCostBreakdown = true }) =>
           crushing_labour: calculatedDuration.crushing_labour_cost,
           electricity: calculatedDuration.electricity_cost,
           total: calculatedDuration.total_time_cost
+        },
+        rates_used: {
+          crushing_labour_rate: laborRates.crushing,
+          electricity_rate: laborRates.electricity
         }
       });
     }
@@ -201,12 +298,54 @@ const TimeTracker = ({ batchId, onTimeCalculated, showCostBreakdown = true }) =>
       borderRadius: '4px',
       fontSize: '14px',
       color: '#6c757d'
+    },
+    loadingBox: {
+      padding: '15px',
+      backgroundColor: '#e3f2fd',
+      borderRadius: '5px',
+      marginBottom: '15px',
+      color: '#1976d2',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '10px'
+    },
+    rateIndicator: {
+      fontSize: '11px',
+      color: '#6c757d',
+      fontStyle: 'italic',
+      marginLeft: '5px'
     }
   };
 
   return (
     <div style={styles.container}>
       <h4 style={styles.title}>⏱️ Crushing Time Tracking</h4>
+      
+      {/* NEW: Loading indicator for rates */}
+      {laborRates.loading && (
+        <div style={styles.loadingBox}>
+          <span>⏳</span>
+          <span>Loading labor rates from database...</span>
+        </div>
+      )}
+      
+      {/* NEW: Error/Warning message if rates couldn't be fetched */}
+      {laborRates.error && !laborRates.loading && (
+        <div style={styles.warningBox}>
+          ⚠️ {laborRates.error}
+        </div>
+      )}
+      
+      {/* NEW: Display current rates being used */}
+      {!laborRates.loading && (laborRates.crushing > 0 || laborRates.electricity > 0) && (
+        <div style={styles.infoBox}>
+          <strong>📊 Current Rates (from database):</strong>
+          <div style={{ marginTop: '5px', fontSize: '13px' }}>
+            • Crushing Labour: ₹{laborRates.crushing}/hour
+            {' '}• Electricity: ₹{laborRates.electricity}/hour
+          </div>
+        </div>
+      )}
       
       {/* Success message for datetime format */}
       {startDateTime && endDateTime && (
@@ -226,6 +365,7 @@ const TimeTracker = ({ batchId, onTimeCalculated, showCostBreakdown = true }) =>
             style={styles.input}
             value={startDateTime}
             onChange={handleStartDateTimeChange}
+            disabled={laborRates.loading}
           />
           {startDateTime && (
             <div style={styles.helpText}>
@@ -246,6 +386,7 @@ const TimeTracker = ({ batchId, onTimeCalculated, showCostBreakdown = true }) =>
             value={endDateTime}
             onChange={handleEndDateTimeChange}
             min={startDateTime}
+            disabled={laborRates.loading}
           />
           {endDateTime && (
             <div style={styles.helpText}>
@@ -263,7 +404,7 @@ const TimeTracker = ({ batchId, onTimeCalculated, showCostBreakdown = true }) =>
         </div>
       )}
 
-      {duration && (
+      {duration && !laborRates.loading && (
         <div style={styles.durationBox}>
           <div style={{ fontSize: '16px', fontWeight: '600', marginBottom: '10px' }}>
             ⏱️ Duration Calculated
@@ -281,13 +422,16 @@ const TimeTracker = ({ batchId, onTimeCalculated, showCostBreakdown = true }) =>
             <div style={styles.costBreakdown}>
               <div style={{ fontWeight: '600', marginBottom: '8px' }}>
                 💰 Time-Based Costs (Auto-calculated):
+                <span style={styles.rateIndicator}>
+                  {laborRates.error ? 'using defaults' : 'from database'}
+                </span>
               </div>
               <div style={styles.costRow}>
-                <span>Crushing Labour ({duration.rounded_hours} hrs × ₹150):</span>
+                <span>Crushing Labour ({duration.rounded_hours} hrs × ₹{laborRates.crushing}):</span>
                 <span>₹{duration.crushing_labour_cost.toFixed(2)}</span>
               </div>
               <div style={styles.costRow}>
-                <span>Electricity - Crushing ({duration.rounded_hours} hrs × ₹75):</span>
+                <span>Electricity - Crushing ({duration.rounded_hours} hrs × ₹{laborRates.electricity}):</span>
                 <span>₹{duration.electricity_cost.toFixed(2)}</span>
               </div>
               <div style={styles.totalRow}>
@@ -310,6 +454,7 @@ const TimeTracker = ({ batchId, onTimeCalculated, showCostBreakdown = true }) =>
             value={operatorName}
             onChange={handleOperatorNameChange}
             placeholder="Enter operator name"
+            disabled={laborRates.loading}
           />
         </div>
 
@@ -322,6 +467,7 @@ const TimeTracker = ({ batchId, onTimeCalculated, showCostBreakdown = true }) =>
             value={notes}
             onChange={handleNotesChange}
             placeholder="Any additional notes about the crushing process..."
+            disabled={laborRates.loading}
           />
         </div>
       </div>
@@ -331,6 +477,8 @@ const TimeTracker = ({ batchId, onTimeCalculated, showCostBreakdown = true }) =>
           ℹ️ Time tracking will be saved automatically when batch is created
           <br />
           📌 DateTime format is automatically converted for backend compatibility
+          <br />
+          💡 Labor rates are fetched from the database and updated automatically
         </div>
       )}
 
@@ -339,6 +487,8 @@ const TimeTracker = ({ batchId, onTimeCalculated, showCostBreakdown = true }) =>
           ℹ️ Time tracking for Batch ID: {batchId}
           <br />
           📌 Data will be saved in proper format (YYYY-MM-DD HH:MM)
+          <br />
+          💰 Using current database rates: Labour ₹{laborRates.crushing}/hr, Electricity ₹{laborRates.electricity}/hr
         </div>
       )}
     </div>
