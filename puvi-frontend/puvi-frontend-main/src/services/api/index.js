@@ -458,6 +458,62 @@ export const categoryAPI = {
   getSubcategoryDetails: (id) => api.categories.getSubcategoryDetails(id)
 };
 
+// ===================================================================
+// NEW CONFIGURATION API SECTION - Added for Dynamic Values from DB
+// ===================================================================
+export const configAPI = {
+  // Get BOM material categories from database
+  getBOMCategories: () => api.get('/api/config/bom_categories'),
+  
+  // Get filtered materials for BOM based on category
+  getBOMMaterials: (bomCategory) => {
+    const params = bomCategory ? { bom_category: bomCategory } : {};
+    return api.get('/api/config/bom_materials', params);
+  },
+  
+  // Get material categories from database
+  getMaterialCategories: () => api.get('/api/materials/categories'),
+  
+  // Get material units from database
+  getMaterialUnits: () => api.get('/api/materials/units'),
+  
+  // Get writeoff reasons from database
+  getWriteoffReasons: () => api.get('/api/config/writeoff_reasons'),
+  
+  // Get labor rates from cost_elements_master
+  getLaborRates: (activity) => {
+    const params = activity ? { activity } : {};
+    return api.get('/api/config/labor_rates', params);
+  },
+  
+  // Get package sizes from SKU master
+  getPackageSizes: () => api.get('/api/config/package_sizes'),
+  
+  // Get oil types from available_oil_types table
+  getOilTypes: () => api.get('/api/config/oil_types'),
+  
+  // Get GST rates from materials
+  getGSTRates: () => api.get('/api/config/gst_rates'),
+  
+  // Get density values from materials
+  getDensityValues: () => api.get('/api/config/density_values'),
+  
+  // Get cost elements from cost_elements_master
+  getCostElements: () => api.get('/api/config/cost_elements'),
+  
+  // Get bottle types from SKU master
+  getBottleTypes: () => api.get('/api/config/bottle_types'),
+  
+  // Get suppliers with their details
+  getSuppliers: () => api.get('/api/config/suppliers'),
+  
+  // Get units used in materials
+  getUnits: () => api.get('/api/config/units'),
+  
+  // Generic config endpoint for any config type
+  getConfig: (configType) => api.get(`/api/config/${configType}`)
+};
+
 // Export the API base URL for components that need it directly
 export const API_URL = API_BASE_URL;
 
