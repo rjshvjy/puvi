@@ -229,6 +229,46 @@ def get_oil_cake_rates():
         close_connection(conn, cur)
 
 
+@batch_bp.route('/api/oil_types', methods=['GET'])
+def get_oil_types():
+    """
+    Get distinct oil types from existing production data
+    Simple query from batch and sku_master tables only
+    """
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        # Simple UNION query to get all distinct oil types
+        cur.execute("""
+            SELECT DISTINCT oil_type 
+            FROM (
+                SELECT oil_type FROM batch WHERE oil_type IS NOT NULL
+                UNION
+                SELECT oil_type FROM sku_master WHERE oil_type IS NOT NULL
+            ) AS combined_oil_types
+            ORDER BY oil_type
+        """)
+        
+        oil_types = [row[0] for row in cur.fetchall() if row[0]]
+        
+        return jsonify({
+            'success': True,
+            'oil_types': oil_types,
+            'count': len(oil_types)
+        })
+        
+    except Exception as e:
+        print(f"Error in get_oil_types: {str(e)}")
+        return jsonify({
+            'success': False,
+            'oil_types': [],
+            'error': str(e)
+        }), 500
+    finally:
+        close_connection(conn, cur)
+
+
 @batch_bp.route('/api/add_batch', methods=['POST'])
 def add_batch():
     """Create a new batch production record with comprehensive validation and traceability"""
