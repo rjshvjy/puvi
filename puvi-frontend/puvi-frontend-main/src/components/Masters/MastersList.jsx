@@ -312,8 +312,8 @@ const MastersList = ({
     // Handle is_active field specially
     if (fieldName === 'is_active') {
       return value ? 
-        <span className="px-2 py-1 text-xs font-medium bg-green-100 text-green-800 rounded">Active</span> :
-        <span className="px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded">Inactive</span>;
+        <span className="masters-status-badge masters-status-active">✅ Active</span> :
+        <span className="masters-status-badge masters-status-inactive">❌ Inactive</span>;
     }
     
     // Handle currency fields
@@ -338,11 +338,11 @@ const MastersList = ({
   // Render sort indicator
   const renderSortIndicator = (columnKey) => {
     if (sortConfig.key !== columnKey) {
-      return <span className="text-gray-400 ml-1">↕️</span>;
+      return <span className="masters-sort-indicator">↕️</span>;
     }
     return sortConfig.direction === 'ASC' ? 
-      <span className="text-blue-600 ml-1">↑</span> : 
-      <span className="text-blue-600 ml-1">↓</span>;
+      <span className="masters-sort-indicator active-asc">↑</span> : 
+      <span className="masters-sort-indicator active-desc">↓</span>;
   };
 
   // Get column label
@@ -354,24 +354,24 @@ const MastersList = ({
   return (
     <div className="masters-list-container">
       {/* Header Section */}
-      <div className="bg-white rounded-lg shadow-sm p-4 mb-4">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <h2 className="text-xl font-semibold text-gray-800">
+      <div className="masters-list-header">
+        <div className="masters-list-header-content">
+          <h2 className="masters-list-title">
             {masterDisplayConfig[masterType]?.icon} {masterType.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
           </h2>
           
-          <div className="flex flex-wrap gap-2">
+          <div className="masters-list-controls">
             {/* Search Input */}
             <input
               type="text"
               placeholder="Search..."
               value={searchTerm}
               onChange={handleSearch}
-              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="masters-search-input"
             />
             
             {/* Include Inactive Toggle */}
-            <label className="flex items-center gap-2 px-3 py-2 bg-gray-50 rounded-md cursor-pointer">
+            <label className="masters-filter-checkbox">
               <input
                 type="checkbox"
                 checked={includeInactive}
@@ -379,22 +379,21 @@ const MastersList = ({
                   setIncludeInactive(e.target.checked);
                   setPagination(prev => ({ ...prev, page: 1 }));
                 }}
-                className="w-4 h-4 text-blue-600 rounded focus:ring-blue-500"
               />
-              <span className="text-sm text-gray-700">Show Inactive</span>
+              <span>Show Inactive</span>
             </label>
             
             {/* Action Buttons */}
             <button
               onClick={onAdd}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
+              className="masters-btn-add"
             >
               + Add New
             </button>
             
             <button
               onClick={handleExport}
-              className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
+              className="masters-btn-export"
             >
               📥 Export CSV
             </button>
@@ -403,75 +402,79 @@ const MastersList = ({
       </div>
 
       {/* Table Section */}
-      <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+      <div className="masters-table-wrapper">
         {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <div className="text-gray-500">Loading...</div>
+          <div className="masters-loading">
+            <div className="masters-loading-spinner"></div>
           </div>
         ) : records.length === 0 ? (
-          <div className="flex justify-center items-center h-64">
-            <div className="text-gray-500">
+          <div className="masters-empty">
+            <div className="masters-empty-icon">📋</div>
+            <div className="masters-empty-text">
               {searchTerm ? 'No records found matching your search' : 'No records found'}
             </div>
           </div>
         ) : (
           <>
             {/* Table */}
-            <div className="overflow-x-auto">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+            <div style={{ overflowX: 'auto' }}>
+              <table className="masters-table">
+                <thead>
                   <tr>
                     {getVisibleColumns().map(column => (
                       <th
                         key={column}
                         onClick={() => handleSort(column)}
-                        className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+                        style={{ cursor: 'pointer' }}
                       >
-                        <div className="flex items-center">
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
                           {getColumnLabel(column)}
                           {renderSortIndicator(column)}
                         </div>
                       </th>
                     ))}
-                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    <th style={{ textAlign: 'right' }}>
                       Actions
                     </th>
                   </tr>
                 </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
+                <tbody>
                   {records.map((record, index) => (
-                    <tr key={record[schema?.primary_key] || index} className="hover:bg-gray-50">
+                    <tr key={record[schema?.primary_key] || index}>
                       {getVisibleColumns().map(column => (
-                        <td key={column} className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        <td key={column}>
                           {formatFieldValue(record[column], column)}
                         </td>
                       ))}
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <button
-                          onClick={() => onEdit(record)}
-                          className="text-blue-600 hover:text-blue-900 mr-3"
-                          title="Edit"
-                        >
-                          ✏️
-                        </button>
-                        
-                        {record.is_active ? (
+                      <td>
+                        <div className="masters-actions">
                           <button
-                            onClick={() => checkDependencies(record)}
-                            className="text-red-600 hover:text-red-900"
-                            title="Delete"
+                            onClick={() => onEdit(record)}
+                            className="masters-btn-edit"
+                            title="Edit"
                           >
-                            🗑️
+                            ✏️
                           </button>
-                        ) : (
-                          <button
-                            onClick={() => handleRestore(record)}
-                            className="text-green-600 hover:text-green-900"
-                            title="Restore"
-                          >
-                            ♻️
-                          </button>
-                        )}
+                          
+                          {record.is_active ? (
+                            <button
+                              onClick={() => checkDependencies(record)}
+                              className="masters-btn-delete"
+                              title="Delete"
+                            >
+                              🗑️
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => handleRestore(record)}
+                              className="masters-btn-edit"
+                              title="Restore"
+                              style={{ color: '#10b981', borderColor: '#10b981' }}
+                            >
+                              ♻️
+                            </button>
+                          )}
+                        </div>
                       </td>
                     </tr>
                   ))}
@@ -481,63 +484,41 @@ const MastersList = ({
 
             {/* Pagination */}
             {pagination.total_pages > 1 && (
-              <div className="bg-gray-50 px-4 py-3 flex items-center justify-between sm:px-6">
-                <div className="flex-1 flex justify-between sm:hidden">
+              <div className="masters-pagination">
+                <div className="masters-pagination-info">
+                  Showing page <span style={{ fontWeight: '600' }}>{pagination.page}</span> of{' '}
+                  <span style={{ fontWeight: '600' }}>{pagination.total_pages}</span> |
+                  Total <span style={{ fontWeight: '600' }}>{pagination.total_count}</span> records
+                </div>
+                <div className="masters-pagination-controls">
+                  <button
+                    onClick={() => handlePageChange(1)}
+                    disabled={pagination.page === 1}
+                    className="masters-pagination-btn"
+                  >
+                    First
+                  </button>
                   <button
                     onClick={() => handlePageChange(pagination.page - 1)}
                     disabled={!pagination.has_prev}
-                    className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="masters-pagination-btn"
                   >
                     Previous
                   </button>
                   <button
                     onClick={() => handlePageChange(pagination.page + 1)}
                     disabled={!pagination.has_next}
-                    className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="masters-pagination-btn"
                   >
                     Next
                   </button>
-                </div>
-                <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
-                  <div>
-                    <p className="text-sm text-gray-700">
-                      Showing page <span className="font-medium">{pagination.page}</span> of{' '}
-                      <span className="font-medium">{pagination.total_pages}</span> |
-                      Total <span className="font-medium">{pagination.total_count}</span> records
-                    </p>
-                  </div>
-                  <div>
-                    <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
-                      <button
-                        onClick={() => handlePageChange(1)}
-                        disabled={pagination.page === 1}
-                        className="relative inline-flex items-center px-3 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        First
-                      </button>
-                      <button
-                        onClick={() => handlePageChange(pagination.page - 1)}
-                        disabled={!pagination.has_prev}
-                        className="relative inline-flex items-center px-3 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        Previous
-                      </button>
-                      <button
-                        onClick={() => handlePageChange(pagination.page + 1)}
-                        disabled={!pagination.has_next}
-                        className="relative inline-flex items-center px-3 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        Next
-                      </button>
-                      <button
-                        onClick={() => handlePageChange(pagination.total_pages)}
-                        disabled={pagination.page === pagination.total_pages}
-                        className="relative inline-flex items-center px-3 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        Last
-                      </button>
-                    </nav>
-                  </div>
+                  <button
+                    onClick={() => handlePageChange(pagination.total_pages)}
+                    disabled={pagination.page === pagination.total_pages}
+                    className="masters-pagination-btn"
+                  >
+                    Last
+                  </button>
                 </div>
               </div>
             )}
@@ -547,60 +528,62 @@ const MastersList = ({
 
       {/* Delete Confirmation Modal */}
       {deleteModal.show && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-            <div className="mt-3">
-              <h3 className="text-lg leading-6 font-medium text-gray-900">
+        <div className="masters-modal-overlay">
+          <div className="masters-form-container" style={{ maxWidth: '400px' }}>
+            <div className="masters-form-header">
+              <h3 className="masters-form-title">
                 Confirm Delete
               </h3>
-              
+            </div>
+            
+            <div className="masters-form-body">
               {deleteModal.checking ? (
-                <div className="mt-2 py-3">
-                  <p className="text-sm text-gray-500">Checking dependencies...</p>
+                <div style={{ padding: '12px 0' }}>
+                  <p style={{ color: '#6b7280', fontSize: '14px' }}>Checking dependencies...</p>
                 </div>
               ) : (
-                <div className="mt-2 py-3">
+                <div style={{ padding: '12px 0' }}>
                   {Object.keys(deleteModal.dependencies || {}).length > 0 ? (
                     <>
-                      <p className="text-sm text-red-600 mb-2">
+                      <p style={{ color: '#dc2626', fontSize: '14px', marginBottom: '8px' }}>
                         ⚠️ This record has dependencies and will be soft deleted:
                       </p>
-                      <ul className="text-sm text-gray-600 list-disc list-inside">
+                      <ul style={{ fontSize: '14px', color: '#4b5563', listStyle: 'disc', paddingLeft: '20px' }}>
                         {Object.entries(deleteModal.dependencies).map(([key, value]) => (
                           <li key={key}>
                             {key.replace(/_/g, ' ')}: {value} record(s)
                           </li>
                         ))}
                       </ul>
-                      <p className="text-sm text-gray-500 mt-2">
+                      <p style={{ fontSize: '14px', color: '#6b7280', marginTop: '8px' }}>
                         The record will be marked as inactive and can be restored later.
                       </p>
                     </>
                   ) : (
-                    <p className="text-sm text-gray-500">
+                    <p style={{ fontSize: '14px', color: '#6b7280' }}>
                       This record has no dependencies and will be permanently deleted.
                       Are you sure you want to continue?
                     </p>
                   )}
                 </div>
               )}
-              
-              <div className="items-center px-4 py-3">
+            </div>
+            
+            <div className="masters-form-footer">
+              <button
+                onClick={() => setDeleteModal({ show: false, record: null, dependencies: null, checking: false })}
+                className="masters-btn masters-btn-secondary"
+              >
+                Cancel
+              </button>
+              {!deleteModal.checking && (
                 <button
-                  onClick={() => setDeleteModal({ show: false, record: null, dependencies: null, checking: false })}
-                  className="px-4 py-2 bg-gray-500 text-white text-base font-medium rounded-md w-24 mr-2 hover:bg-gray-600"
+                  onClick={handleDelete}
+                  className="masters-btn masters-btn-danger"
                 >
-                  Cancel
+                  Delete
                 </button>
-                {!deleteModal.checking && (
-                  <button
-                    onClick={handleDelete}
-                    className="px-4 py-2 bg-red-600 text-white text-base font-medium rounded-md w-24 hover:bg-red-700"
-                  >
-                    Delete
-                  </button>
-                )}
-              </div>
+              )}
             </div>
           </div>
         </div>
