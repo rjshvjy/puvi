@@ -1,5 +1,5 @@
 # Feature Pack: WRITEOFF-HISTORY
-Generated: 2025-08-17T10:24:22.912Z
+Generated: 2025-08-17T10:31:05.568Z
 Routes: 1 | Tables: 4 | Files: 1
 
 ## Table of Contents
@@ -22,7 +22,7 @@ GET    /api/writeoff_history
 | inventory | batch-production, blending, material-writeoff | 🔴 HIGH | Changes affect 7 other modules |
 | material_writeoffs | material-writeoff, opening-balance | 🟡 MEDIUM | Changes affect 2 other modules |
 | materials | batch-production, blending, material-writeoff | 🔴 HIGH | Changes affect 9 other modules |
-| writeoff_reasons | material-writeoff | 🟡 MEDIUM | Changes affect 1 other modules |
+| writeoff_reasons | material-writeoff, system-config | 🟡 MEDIUM | Changes affect 2 other modules |
 
 ## Backend Implementation
 

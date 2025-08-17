@@ -1,12 +1,12 @@
 # PUVI System - Dependency Analysis Report
 
-**Generated:** 2025-08-17T10:24:22.852Z
+**Generated:** 2025-08-17T10:31:05.509Z
 **Version:** 1.0
 
 ## Executive Summary
 
-- **Total Tables:** 44
-- **Shared Tables:** 19 (cross-module dependencies)
+- **Total Tables:** 45
+- **Shared Tables:** 21 (cross-module dependencies)
 - **Hardcoded Categories:** 0
 - **Migration Opportunities:** 0
 
@@ -72,5 +72,5 @@ Hardcoded values that should be moved to database:
 - **suppliers**: Used by opening-balance, purchase, system-config, unknown (5 files)
 - **sku_master**: Used by sku-management, sku-production, system-config, unknown (4 files)
 - **purchase_items**: Used by batch-production, purchase (2 files)
+- **available_oil_types**: Used by batch-production, system-config (2 files)
 - **batch_extended_costs**: Used by batch-production, cost-management (2 files)
-- **oil_cake_inventory**: Used by batch-production, material-sales (2 files)

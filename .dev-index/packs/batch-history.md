@@ -1,5 +1,5 @@
 # Feature Pack: BATCH-HISTORY
-Generated: 2025-08-17T10:24:22.907Z
+Generated: 2025-08-17T10:31:05.563Z
 Routes: 1 | Tables: 9 | Files: 1
 
 ## Table of Contents
@@ -19,7 +19,7 @@ GET    /api/batch_history
 ## Database Dependencies
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
-| available_oil_types | batch-production | 🟡 MEDIUM | Changes affect 1 other modules |
+| available_oil_types | batch-production, system-config | 🟡 MEDIUM | Changes affect 2 other modules |
 | batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 7 other modules |
 | batch_extended_costs | batch-production, cost-management | 🟡 MEDIUM | Changes affect 2 other modules |
 | inventory | batch-production, blending, material-writeoff | 🔴 HIGH | Changes affect 7 other modules |

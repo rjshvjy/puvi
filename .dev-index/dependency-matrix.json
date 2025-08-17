@@ -1,9 +1,9 @@
 {
   "version": "1.0",
-  "generatedAt": "2025-08-17T10:24:22.852Z",
+  "generatedAt": "2025-08-17T10:31:05.509Z",
   "summary": {
-    "totalTables": 44,
-    "sharedTables": 19,
+    "totalTables": 45,
+    "sharedTables": 21,
     "hardcodedCategories": 0,
     "migrationOpportunities": 0
   },
@@ -214,13 +214,20 @@
     },
     "available_oil_types": {
       "usedBy": [
-        "batch-production"
+        "batch-production",
+        "system-config"
       ],
-      "fileCount": 1,
+      "fileCount": 2,
       "operations": {
         "batch-production": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/batch_production.py"
+          ],
+          "queryCount": 0
+        },
+        "system-config": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/system_config.py"
           ],
           "queryCount": 0
         }
@@ -530,13 +537,20 @@
     },
     "writeoff_reasons": {
       "usedBy": [
-        "material-writeoff"
+        "material-writeoff",
+        "system-config"
       ],
-      "fileCount": 1,
+      "fileCount": 2,
       "operations": {
         "material-writeoff": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/material_writeoff.py"
+          ],
+          "queryCount": 0
+        },
+        "system-config": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/system_config.py"
           ],
           "queryCount": 0
         }
@@ -886,6 +900,20 @@
         }
       }
     },
+    "bom_category_mapping": {
+      "usedBy": [
+        "system-config"
+      ],
+      "fileCount": 1,
+      "operations": {
+        "system-config": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/system_config.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
     "existing": {
       "usedBy": [
         "unknown"
@@ -1061,6 +1089,17 @@
       "recommendation": "Changes will affect batch-production, purchase"
     },
     {
+      "table": "available_oil_types",
+      "sharedBy": [
+        "batch-production",
+        "system-config"
+      ],
+      "moduleCount": 2,
+      "fileCount": 2,
+      "risk": "LOW",
+      "recommendation": "Changes will affect batch-production, system-config"
+    },
+    {
       "table": "batch_extended_costs",
       "sharedBy": [
         "batch-production",
@@ -1125,6 +1164,17 @@
       "fileCount": 2,
       "risk": "LOW",
       "recommendation": "Changes will affect masters-crud, purchase"
+    },
+    {
+      "table": "writeoff_reasons",
+      "sharedBy": [
+        "material-writeoff",
+        "system-config"
+      ],
+      "moduleCount": 2,
+      "fileCount": 2,
+      "risk": "LOW",
+      "recommendation": "Changes will affect material-writeoff, system-config"
     },
     {
       "table": "material_writeoffs",

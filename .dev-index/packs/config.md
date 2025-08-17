@@ -1,6 +1,6 @@
 # Feature Pack: CONFIG
-Generated: 2025-08-17T10:24:22.913Z
-Routes: 1 | Tables: 4 | Files: 1
+Generated: 2025-08-17T10:31:05.569Z
+Routes: 5 | Tables: 7 | Files: 1
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -14,18 +14,29 @@ Routes: 1 | Tables: 4 | Files: 1
 ```
 # get_config
 GET    /api/config/<config_type>
+# get_bom_categories
+GET    /api/config/bom_categories
+# get_bom_materials
+GET    /api/config/bom_materials
+# get_writeoff_reasons
+GET    /api/config/writeoff_reasons
+# get_labor_rates
+GET    /api/config/labor_rates
 ```
 
 ## Database Dependencies
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
+| available_oil_types | batch-production, system-config | 🟡 MEDIUM | Changes affect 2 other modules |
+| bom_category_mapping | system-config | 🟡 MEDIUM | Changes affect 1 other modules |
 | cost_elements_master | cost-management, sku-management, sku-production | 🔴 HIGH | Changes affect 4 other modules |
 | materials | batch-production, blending, material-writeoff | 🔴 HIGH | Changes affect 9 other modules |
 | sku_master | sku-management, sku-production, system-config | 🔴 HIGH | Changes affect 4 other modules |
 | suppliers | opening-balance, purchase, system-config | 🔴 HIGH | Changes affect 4 other modules |
+| writeoff_reasons | material-writeoff, system-config | 🟡 MEDIUM | Changes affect 2 other modules |
 
 ### ⚠️ Hardcoded Values Detected
-- `system_config.py:116` - object
+- `system_config.py:188` - object
 
 ## Backend Implementation
 
