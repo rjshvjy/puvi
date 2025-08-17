@@ -1,6 +1,6 @@
-# Feature Pack: BYPRODUCT-TYPES
+# Feature Pack: SUBCATEGORIES
 Generated: 2025-08-17T05:36:11.471Z
-Routes: 1 | Tables: 5 | Files: 1
+Routes: 2 | Tables: 2 | Files: 1
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -12,18 +12,17 @@ Routes: 1 | Tables: 5 | Files: 1
 
 ## API Endpoints
 ```
-# get_byproduct_types
-GET    /api/byproduct_types
+# get_subcategories
+GET    /api/subcategories
+# get_subcategory_details
+GET    /api/subcategories/<int:subcategory_id>
 ```
 
 ## Database Dependencies
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
-| batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 7 other modules |
-| batches | material-sales | 🟡 MEDIUM | Changes affect 1 other modules |
-| oil_cake_inventory | batch-production, material-sales | 🟡 MEDIUM | Changes affect 2 other modules |
-| oil_cake_sale_allocations | material-sales | 🟡 MEDIUM | Changes affect 1 other modules |
-| oil_cake_sales | material-sales | 🟡 MEDIUM | Changes affect 1 other modules |
+| categories_master | masters-crud | 🟡 MEDIUM | Changes affect 1 other modules |
+| subcategories_master | masters-crud | 🟡 MEDIUM | Changes affect 1 other modules |
 
 ## Backend Implementation
 

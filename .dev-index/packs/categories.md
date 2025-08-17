@@ -1,6 +1,6 @@
-# Feature Pack: MASTERS
+# Feature Pack: CATEGORIES
 Generated: 2025-08-17T05:36:11.470Z
-Routes: 11 | Tables: 2 | Files: 2
+Routes: 1 | Tables: 2 | Files: 1
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -12,28 +12,8 @@ Routes: 11 | Tables: 2 | Files: 2
 
 ## API Endpoints
 ```
-# list_master_types
-GET    /api/masters/types
-# get_master_schema
-GET    /api/masters/<master_type>/schema
-# list_master_records
-GET    /api/masters/<master_type>
-# get_single_record
-GET    /api/masters/<master_type>/<record_id>
-# create_record
-POST   /api/masters/<master_type>
-# update_record
-PUT    /api/masters/<master_type>/<record_id>
-# delete_record
-DELETE /api/masters/<master_type>/<record_id>
-# restore_record_endpoint
-POST   /api/masters/<master_type>/<record_id>/restore
-# check_record_dependencies
-GET    /api/masters/<master_type>/<record_id>/dependencies
-# export_to_csv
-GET    /api/masters/<master_type>/export
-# import_from_csv
-POST   /api/masters/<master_type>/import
+# get_categories
+GET    /api/categories
 ```
 
 ## Database Dependencies
@@ -43,8 +23,6 @@ POST   /api/masters/<master_type>/import
 | subcategories_master | masters-crud | 🟡 MEDIUM | Changes affect 1 other modules |
 
 ## Backend Implementation
-
-## Frontend Components
 
 ## Data Flow & Integration
 *No critical cross-module dependencies detected*
