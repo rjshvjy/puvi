@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-17T10:56:25.232Z",
+  "generatedAt": "2025-08-17T11:19:18.393Z",
   "filesScanned": 56,
   "jsFilesScanned": 34,
   "pyFilesScanned": 22,
@@ -1288,34 +1288,39 @@
       "line": 447
     },
     {
+      "name": "configAPI",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "line": 464
+    },
+    {
       "name": "API_URL",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 462
+      "line": 518
     },
     {
       "name": "skuDateUtils",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 465
+      "line": 521
     },
     {
       "name": "expiryUtils",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 465
+      "line": 521
     },
     {
       "name": "formatUtils",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 465
+      "line": 521
     },
     {
       "name": "apiCall",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 471
+      "line": 527
     },
     {
       "name": "API_BASE_URL",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 471
+      "line": 527
     },
     {
       "name": "skuDateUtils",
@@ -16670,7 +16675,7 @@
     "pyFiles": 22,
     "components": 37,
     "routes": 90,
-    "exports": 42,
+    "exports": 43,
     "imports": 45,
     "hardcodedValues": 18,
     "databaseQueries": 276,
