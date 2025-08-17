@@ -1,5 +1,6 @@
 /* File Path: puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/MastersManagement.css */
-/* Masters Management Module - Professional Design System */
+/* Masters Management Module - Complete Professional Design System */
+/* Includes styles for MastersManagement, MastersList, and MasterForm components */
 
 /* ==================== Main Container ==================== */
 .masters-management-container {
@@ -93,14 +94,147 @@
   min-height: 500px;
 }
 
-/* ==================== Table Styles (for MastersList) ==================== */
-.masters-table-container {
-  overflow-x: auto;
+/* ==================== MastersList Component Styles ==================== */
+
+/* List Container */
+.masters-list-container {
+  padding: 20px;
   background: white;
   border-radius: 8px;
+}
+
+/* Header Section with Title and Controls */
+.masters-list-header {
+  background: white;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
+.masters-list-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.masters-list-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #111827;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Controls Section (Search, Filters, Buttons) */
+.masters-list-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Search Input */
+.masters-search-input {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  width: 200px;
+  transition: all 0.2s ease;
+}
+
+.masters-search-input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Checkbox Filter */
+.masters-filter-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  background: #f9fafb;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #4b5563;
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
+}
+
+.masters-filter-checkbox:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.masters-filter-checkbox input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+/* Action Buttons */
+.masters-btn-add {
+  padding: 8px 16px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.masters-btn-add:hover {
+  background: #1d4ed8;
+  box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+  transform: translateY(-1px);
+}
+
+.masters-btn-export {
+  padding: 8px 16px;
+  background: #10b981;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.masters-btn-export:hover {
+  background: #059669;
+  box-shadow: 0 4px 6px rgba(16, 185, 129, 0.2);
+  transform: translateY(-1px);
+}
+
+/* ==================== Table Styles ==================== */
+
+/* Table Container */
+.masters-table-wrapper,
+.masters-table-container {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow-x: auto;
+}
+
+/* Table */
 .masters-table {
   width: 100%;
   border-collapse: collapse;
@@ -109,6 +243,9 @@
 
 .masters-table thead {
   background: #f9fafb;
+}
+
+.masters-table thead tr {
   border-bottom: 2px solid #e5e7eb;
 }
 
@@ -118,8 +255,26 @@
   font-weight: 600;
   color: #374151;
   white-space: nowrap;
+  position: relative;
 }
 
+/* Sort Indicators */
+.masters-sort-indicator {
+  margin-left: 6px;
+  color: #9ca3af;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.masters-sort-indicator.active-asc {
+  color: #2563eb;
+}
+
+.masters-sort-indicator.active-desc {
+  color: #2563eb;
+}
+
+/* Table Body */
 .masters-table tbody tr {
   border-bottom: 1px solid #f3f4f6;
   transition: background 0.2s ease;
@@ -132,10 +287,129 @@
 .masters-table td {
   padding: 12px 16px;
   color: #1f2937;
+  vertical-align: middle;
 }
 
-/* ==================== Form Styles (for MasterForm) ==================== */
-.masters-form-modal {
+/* Status Badge */
+.masters-status-badge,
+.masters-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  gap: 4px;
+  line-height: 1;
+}
+
+.masters-status-active,
+.masters-badge-active {
+  background: #d4edda;
+  color: #155724;
+}
+
+.masters-status-inactive,
+.masters-badge-inactive {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+/* Action Buttons in Table */
+.masters-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.masters-btn-edit,
+.masters-btn-delete {
+  padding: 4px 8px;
+  background: transparent;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
+.masters-btn-edit {
+  color: #2563eb;
+  border-color: #2563eb;
+}
+
+.masters-btn-edit:hover {
+  background: #2563eb;
+  color: white;
+  transform: scale(1.1);
+}
+
+.masters-btn-delete {
+  color: #ef4444;
+  border-color: #ef4444;
+}
+
+.masters-btn-delete:hover {
+  background: #ef4444;
+  color: white;
+  transform: scale(1.1);
+}
+
+/* ==================== Pagination ==================== */
+.masters-pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  background: white;
+  border-top: 1px solid #e5e7eb;
+}
+
+.masters-pagination-info {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.masters-pagination-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.masters-pagination-btn {
+  padding: 6px 12px;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  color: #374151;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.masters-pagination-btn:hover:not(:disabled) {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+
+.masters-pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.masters-pagination-btn.active {
+  background: #2563eb;
+  color: white;
+  border-color: #2563eb;
+}
+
+/* ==================== Form Styles (MasterForm Component) ==================== */
+.masters-form-modal,
+.masters-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
@@ -311,26 +585,6 @@
   font-size: 13px;
 }
 
-/* ==================== Badge Styles ==================== */
-.masters-badge {
-  display: inline-block;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 600;
-  line-height: 1;
-}
-
-.masters-badge-active {
-  background: #d4edda;
-  color: #155724;
-}
-
-.masters-badge-inactive {
-  background: #f8d7da;
-  color: #721c24;
-}
-
 /* ==================== Search and Filter Styles ==================== */
 .masters-controls {
   display: flex;
@@ -349,29 +603,13 @@
   max-width: 400px;
 }
 
-.masters-search-input {
-  flex: 1;
-  padding: 8px 12px;
-  border: 1px solid #d1d5db;
-  border-radius: 6px;
-  font-size: 14px;
-}
-
-.masters-search-input:focus {
-  outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-}
-
-.masters-filter-checkbox {
+.masters-filter {
   display: flex;
   align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  color: #4b5563;
+  gap: 12px;
 }
 
-.masters-actions {
+.masters-actions-group {
   display: flex;
   gap: 8px;
 }
@@ -383,6 +621,21 @@
   align-items: center;
   padding: 60px;
   color: #6b7280;
+}
+
+.masters-loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #e5e7eb;
+  border-top-color: #2563eb;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .masters-empty {
@@ -399,6 +652,13 @@
 
 .masters-empty-text {
   font-size: 16px;
+  margin-bottom: 8px;
+  color: #4b5563;
+}
+
+.masters-empty-subtext {
+  font-size: 14px;
+  color: #9ca3af;
   margin-bottom: 20px;
 }
 
@@ -414,16 +674,27 @@
     font-size: 13px;
   }
   
-  .masters-controls {
+  .masters-list-header-content {
     flex-direction: column;
     align-items: stretch;
   }
   
-  .masters-search {
-    max-width: 100%;
+  .masters-list-controls {
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+  }
+  
+  .masters-search-input {
+    width: 100%;
+  }
+  
+  .masters-table-wrapper {
+    overflow-x: auto;
   }
   
   .masters-table {
+    min-width: 600px;
     font-size: 13px;
   }
   
@@ -436,14 +707,25 @@
     width: 95%;
     margin: 10px;
   }
+  
+  .masters-pagination {
+    flex-direction: column;
+    gap: 12px;
+  }
 }
 
 /* ==================== Print Styles ==================== */
 @media print {
   .masters-tabs,
   .masters-controls,
+  .masters-list-controls,
   .masters-btn,
-  .masters-form-modal {
+  .masters-btn-add,
+  .masters-btn-export,
+  .masters-btn-edit,
+  .masters-btn-delete,
+  .masters-form-modal,
+  .masters-pagination-controls {
     display: none !important;
   }
   
