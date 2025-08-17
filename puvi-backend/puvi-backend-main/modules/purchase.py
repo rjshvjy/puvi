@@ -1,6 +1,3 @@
-# Complete purchase.py Replacement File
-
-```python
 """
 Purchase Module for PUVI Oil Manufacturing System - Multi-Item Support
 Handles multi-item purchase invoices with tag support and traceability
