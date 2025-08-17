@@ -1,5 +1,5 @@
 # Feature Pack: OPENING-BALANCE
-Generated: 2025-08-17T11:44:51.904Z
+Generated: 2025-08-17T12:03:40.666Z
 Routes: 8 | Tables: 11 | Files: 1
 
 ## Table of Contents
