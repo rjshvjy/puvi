@@ -1,6 +1,6 @@
 # Feature Pack: MATERIALS
-Generated: 2025-08-17T05:42:20.100Z
-Routes: 2 | Tables: 9 | Files: 1
+Generated: 2025-08-17T05:52:38.984Z
+Routes: 3 | Tables: 9 | Files: 2
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -12,6 +12,8 @@ Routes: 2 | Tables: 9 | Files: 1
 
 ## API Endpoints
 ```
+# misc
+GET    /api/materials
 # get_materials
 GET    /api/materials
 # create_material

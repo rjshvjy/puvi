@@ -1,6 +1,6 @@
 # Feature Pack: CATEGORIES
-Generated: 2025-08-17T05:42:20.097Z
-Routes: 1 | Tables: 2 | Files: 1
+Generated: 2025-08-17T05:52:38.983Z
+Routes: 2 | Tables: 2 | Files: 2
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -12,6 +12,8 @@ Routes: 1 | Tables: 2 | Files: 1
 
 ## API Endpoints
 ```
+# misc
+GET    /api/categories
 # get_categories
 GET    /api/categories
 ```
