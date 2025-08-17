@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-17T11:19:18.393Z",
+  "generatedAt": "2025-08-17T11:44:51.069Z",
   "filesScanned": 56,
   "jsFilesScanned": 34,
   "pyFilesScanned": 22,
@@ -928,6 +928,7 @@
       "usedIn": [
         "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
         "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
         "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
         "puvi-frontend/puvi-frontend-main/src/modules/MaterialSales/index.js",
         "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
@@ -1390,7 +1391,7 @@
     {
       "name": "TimeTracker",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
-      "line": 7,
+      "line": 9,
       "type": "const"
     },
     {
@@ -1655,6 +1656,34 @@
         "sales"
       ],
       "code": "const modules = ['all', 'batch', 'sku', 'blend', 'sales'];"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
+      "line": 39,
+      "type": "number",
+      "name": "crushingRate",
+      "value": "0",
+      "code": "let crushingRate = 0;"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
+      "line": 40,
+      "type": "number",
+      "name": "electricityRate",
+      "value": "0",
+      "code": "let electricityRate = 0;"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
+      "line": 158,
+      "type": "object",
+      "code": "rates_used: {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
+      "line": 312,
+      "type": "object",
+      "code": "rateIndicator: {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialSales/index.js",
@@ -6310,7 +6339,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
-      "line": 7,
+      "line": 9,
       "name": "TimeTracker",
       "params": "{ batchId, onTimeCalculated, showCostBreakdown = true }",
       "type": "arrow",
@@ -6318,7 +6347,15 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
-      "line": 18,
+      "line": 30,
+      "name": "fetchLaborRates",
+      "params": "",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
+      "line": 105,
       "name": "calculateDuration",
       "params": "",
       "type": "arrow",
@@ -6326,7 +6363,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
-      "line": 69,
+      "line": 166,
       "name": "formatDateTime",
       "params": "date",
       "type": "arrow",
@@ -6334,7 +6371,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
-      "line": 82,
+      "line": 179,
       "name": "handleStartDateTimeChange",
       "params": "e",
       "type": "arrow",
@@ -6342,7 +6379,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
-      "line": 86,
+      "line": 183,
       "name": "handleEndDateTimeChange",
       "params": "e",
       "type": "arrow",
@@ -6350,7 +6387,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
-      "line": 91,
+      "line": 188,
       "name": "handleOperatorNameChange",
       "params": "e",
       "type": "arrow",
@@ -6358,7 +6395,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
-      "line": 100,
+      "line": 197,
       "name": "handleNotesChange",
       "params": "e",
       "type": "arrow",
@@ -10137,7 +10174,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
-      "line": 8,
+      "line": 10,
       "type": "useState",
       "name": "startDateTime",
       "setter": "setStartDateTime",
@@ -10145,13 +10182,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
-      "line": 8,
+      "line": 10,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
-      "line": 9,
+      "line": 11,
       "type": "useState",
       "name": "endDateTime",
       "setter": "setEndDateTime",
@@ -10159,13 +10196,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
-      "line": 9,
+      "line": 11,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
-      "line": 10,
+      "line": 12,
       "type": "useState",
       "name": "duration",
       "setter": "setDuration",
@@ -10173,13 +10210,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
-      "line": 10,
+      "line": 12,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
-      "line": 11,
+      "line": 13,
       "type": "useState",
       "name": "operatorName",
       "setter": "setOperatorName",
@@ -10187,13 +10224,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
-      "line": 11,
+      "line": 13,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
-      "line": 12,
+      "line": 14,
       "type": "useState",
       "name": "notes",
       "setter": "setNotes",
@@ -10201,13 +10238,33 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
-      "line": 12,
+      "line": 14,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
-      "line": 14,
+      "line": 17,
+      "type": "useState",
+      "name": "laborRates",
+      "setter": "setLaborRates",
+      "initial": "{}"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
+      "line": 17,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
+      "line": 25,
+      "type": "useEffect",
+      "hook": "useEffect"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
+      "line": 101,
       "type": "useEffect",
       "hook": "useEffect"
     },
@@ -14185,6 +14242,18 @@
       "code": "} catch (error) {"
     },
     {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
+      "line": 33,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
+      "line": 89,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js",
       "line": 76,
       "type": "try-catch",
@@ -16677,12 +16746,12 @@
     "routes": 90,
     "exports": 43,
     "imports": 45,
-    "hardcodedValues": 18,
+    "hardcodedValues": 22,
     "databaseQueries": 276,
     "databaseTables": 45,
-    "functions": 468,
-    "stateHooks": 544,
+    "functions": 469,
+    "stateHooks": 547,
     "missingEndpoints": 1,
-    "errorHandlers": 457
+    "errorHandlers": 459
   }
 }
