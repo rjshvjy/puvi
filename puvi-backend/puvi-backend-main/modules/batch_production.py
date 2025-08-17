@@ -240,15 +240,7 @@ def get_oil_types():
     
     try:
         # Simple UNION query to get all distinct oil types
-        cur.execute("""
-            SELECT DISTINCT oil_type 
-            FROM (
-                SELECT oil_type FROM batch WHERE oil_type IS NOT NULL
-                UNION
-                SELECT oil_type FROM sku_master WHERE oil_type IS NOT NULL
-            ) AS combined_oil_types
-            ORDER BY oil_type
-        """)
+        cur.execute("SELECT oil_type FROM available_oil_types")
         
         oil_types = [row[0] for row in cur.fetchall() if row[0]]
         
