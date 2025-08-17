@@ -1,6 +1,11 @@
+# Complete purchase.py Replacement File
+
+```python
 """
 Purchase Module for PUVI Oil Manufacturing System - Multi-Item Support
 Handles multi-item purchase invoices with tag support and traceability
+Enhanced with category/subcategory support for dynamic oil types
+File Path: puvi-backend/puvi-backend-main/modules/purchase.py
 """
 
 from flask import Blueprint, request, jsonify
@@ -24,7 +29,8 @@ def get_materials():
         supplier_id = request.args.get('supplier_id', type=int)
         
         if supplier_id:
-            # Get materials for specific supplier with tags
+            # Get materials for specific supplier with tags and subcategory info
+            # ENHANCED: Added subcategory information to material queries
             cur.execute("""
                 SELECT 
                     m.material_id,
@@ -34,17 +40,22 @@ def get_materials():
                     m.unit,
                     m.category,
                     ARRAY_AGG(DISTINCT t.tag_name) as tags,
-                    m.short_code
+                    m.short_code,
+                    m.subcategory_id,
+                    s.subcategory_name,
+                    s.oil_type
                 FROM materials m
                 LEFT JOIN material_tags mt ON m.material_id = mt.material_id
                 LEFT JOIN tags t ON mt.tag_id = t.tag_id
+                LEFT JOIN subcategories_master s ON m.subcategory_id = s.subcategory_id
                 WHERE m.supplier_id = %s
                 GROUP BY m.material_id, m.material_name, m.current_cost, 
-                         m.gst_rate, m.unit, m.category, m.short_code
+                         m.gst_rate, m.unit, m.category, m.short_code,
+                         m.subcategory_id, s.subcategory_name, s.oil_type
                 ORDER BY m.material_name
             """, (supplier_id,))
         else:
-            # Get all materials with supplier info and tags
+            # Get all materials with supplier info, tags, and subcategory info
             cur.execute("""
                 SELECT 
                     m.material_id,
@@ -53,17 +64,22 @@ def get_materials():
                     m.gst_rate,
                     m.unit,
                     m.category,
-                    s.supplier_id,
-                    s.supplier_name,
+                    sup.supplier_id,
+                    sup.supplier_name,
                     ARRAY_AGG(DISTINCT t.tag_name) as tags,
-                    m.short_code
+                    m.short_code,
+                    m.subcategory_id,
+                    s.subcategory_name,
+                    s.oil_type
                 FROM materials m
-                LEFT JOIN suppliers s ON m.supplier_id = s.supplier_id
+                LEFT JOIN suppliers sup ON m.supplier_id = sup.supplier_id
                 LEFT JOIN material_tags mt ON m.material_id = mt.material_id
                 LEFT JOIN tags t ON mt.tag_id = t.tag_id
+                LEFT JOIN subcategories_master s ON m.subcategory_id = s.subcategory_id
                 GROUP BY m.material_id, m.material_name, m.current_cost, 
-                         m.gst_rate, m.unit, m.category, s.supplier_id, 
-                         s.supplier_name, m.short_code
+                         m.gst_rate, m.unit, m.category, sup.supplier_id, 
+                         sup.supplier_name, m.short_code, m.subcategory_id,
+                         s.subcategory_name, s.oil_type
                 ORDER BY m.material_name
             """)
         
@@ -77,7 +93,11 @@ def get_materials():
                 'unit': row[4],
                 'category': row[5],
                 'tags': row[6] if supplier_id else row[8],
-                'short_code': row[7] if supplier_id else row[9]
+                'short_code': row[7] if supplier_id else row[9],
+                # NEW: Subcategory information
+                'subcategory_id': row[8] if supplier_id else row[10],
+                'subcategory_name': row[9] if supplier_id else row[11],
+                'oil_type': row[10] if supplier_id else row[12]
             }
             
             if not supplier_id:
@@ -93,6 +113,158 @@ def get_materials():
         })
         
     except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+# NEW ENDPOINT: Create material with subcategory support
+@purchase_bp.route('/api/materials', methods=['POST'])
+def create_material():
+    """
+    Create a new material with category/subcategory support
+    ENHANCED: Validates subcategory requirement for Seeds/Oil categories
+    """
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        data = request.json
+        
+        # Validate required fields
+        required = ['material_name', 'supplier_id', 'category', 'unit', 'current_cost', 'gst_rate']
+        is_valid, missing = validate_required_fields(data, required)
+        
+        if not is_valid:
+            return jsonify({
+                'success': False,
+                'error': f'Missing required fields: {", ".join(missing)}'
+            }), 400
+        
+        # CRITICAL: Check if category requires subcategory
+        cur.execute("""
+            SELECT requires_subcategory 
+            FROM categories_master 
+            WHERE category_name = %s AND is_active = true
+        """, (data['category'],))
+        
+        category_result = cur.fetchone()
+        if not category_result:
+            return jsonify({
+                'success': False,
+                'error': f'Invalid category: {data["category"]}'
+            }), 400
+        
+        requires_subcategory = category_result[0]
+        
+        # Validate subcategory requirement
+        if requires_subcategory and not data.get('subcategory_id'):
+            return jsonify({
+                'success': False,
+                'error': f'Category "{data["category"]}" requires a subcategory selection'
+            }), 400
+        
+        # If subcategory provided, validate it belongs to the category
+        subcategory_id = data.get('subcategory_id')
+        if subcategory_id:
+            cur.execute("""
+                SELECT s.subcategory_name, c.category_name 
+                FROM subcategories_master s
+                JOIN categories_master c ON s.category_id = c.category_id
+                WHERE s.subcategory_id = %s AND s.is_active = true
+            """, (subcategory_id,))
+            
+            subcat_result = cur.fetchone()
+            if not subcat_result:
+                return jsonify({
+                    'success': False,
+                    'error': 'Invalid subcategory ID'
+                }), 400
+            
+            if subcat_result[1] != data['category']:
+                return jsonify({
+                    'success': False,
+                    'error': f'Subcategory does not belong to category {data["category"]}'
+                }), 400
+        
+        # Check if material already exists for this supplier
+        cur.execute("""
+            SELECT material_id FROM materials 
+            WHERE material_name = %s AND supplier_id = %s
+        """, (data['material_name'], data['supplier_id']))
+        
+        if cur.fetchone():
+            return jsonify({
+                'success': False,
+                'error': 'Material already exists for this supplier'
+            }), 400
+        
+        # Generate short code if not provided
+        short_code = data.get('short_code')
+        if not short_code:
+            # Auto-generate from first 6 chars of name
+            short_code = ''.join(data['material_name'].split())[:6].upper()
+        
+        # Insert new material with subcategory
+        cur.execute("""
+            INSERT INTO materials (
+                material_name, supplier_id, category, subcategory_id,
+                unit, current_cost, gst_rate, density, 
+                short_code, material_type, is_active, last_updated
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            RETURNING material_id
+        """, (
+            data['material_name'],
+            data['supplier_id'],
+            data['category'],
+            subcategory_id,  # Can be NULL for categories that don't require it
+            data['unit'],
+            float(data['current_cost']),
+            float(data['gst_rate']),
+            float(data.get('density', 0.91)),
+            short_code,
+            data.get('material_type', 'raw'),
+            True,
+            date_to_day_number('today')
+        ))
+        
+        material_id = cur.fetchone()[0]
+        
+        # Handle tags if provided
+        if 'tags' in data and data['tags']:
+            for tag_name in data['tags']:
+                # Get or create tag
+                cur.execute("""
+                    INSERT INTO tags (tag_name, tag_category)
+                    VALUES (%s, %s)
+                    ON CONFLICT (tag_name) DO NOTHING
+                    RETURNING tag_id
+                """, (tag_name, 'material'))
+                
+                result = cur.fetchone()
+                if result:
+                    tag_id = result[0]
+                else:
+                    cur.execute("SELECT tag_id FROM tags WHERE tag_name = %s", (tag_name,))
+                    tag_id = cur.fetchone()[0]
+                
+                # Link tag to material
+                cur.execute("""
+                    INSERT INTO material_tags (material_id, tag_id)
+                    VALUES (%s, %s)
+                    ON CONFLICT DO NOTHING
+                """, (material_id, tag_id))
+        
+        conn.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Material created successfully',
+            'material_id': material_id
+        }), 201
+        
+    except Exception as e:
+        conn.rollback()
         return jsonify({'success': False, 'error': str(e)}), 500
     finally:
         close_connection(conn, cur)
@@ -369,7 +541,8 @@ def get_purchase_history():
                 'traceable_code': row[11]
             }
             
-            # Get items for this purchase
+            # Get items for this purchase with subcategory info
+            # ENHANCED: Added subcategory and oil_type to item details
             cur.execute("""
                 SELECT 
                     pi.item_id,
@@ -385,9 +558,13 @@ def get_purchase_history():
                     pi.handling_charges,
                     pi.total_amount,
                     pi.landed_cost_per_unit,
-                    m.short_code
+                    m.short_code,
+                    m.category,
+                    s.subcategory_name,
+                    s.oil_type
                 FROM purchase_items pi
                 JOIN materials m ON pi.material_id = m.material_id
+                LEFT JOIN subcategories_master s ON m.subcategory_id = s.subcategory_id
                 WHERE pi.purchase_id = %s
                 ORDER BY pi.item_id
             """, (row[0],))
@@ -408,7 +585,11 @@ def get_purchase_history():
                     'handling_charges': float(item_row[10]),
                     'total_amount': float(item_row[11]),
                     'landed_cost_per_unit': float(item_row[12]),
-                    'material_short_code': item_row[13]
+                    'material_short_code': item_row[13],
+                    # NEW: Category and subcategory info
+                    'category': item_row[14],
+                    'subcategory_name': item_row[15],
+                    'oil_type': item_row[16]
                 })
             
             purchase['items'] = items
@@ -534,3 +715,22 @@ def get_tags():
         return jsonify({'success': False, 'error': str(e)}), 500
     finally:
         close_connection(conn, cur)
+```
+
+## Key Changes Summary
+
+### 🔄 Modified Functions:
+1. **`get_materials()`** - Added subcategory info to material queries
+2. **`get_purchase_history()`** - Added subcategory/oil_type to item details
+
+### ✨ New Function:
+3. **`create_material()`** - Complete material creation with subcategory validation
+
+### 🎯 Critical Logic:
+- Categories "Seeds" and "Oil" **REQUIRE** subcategory selection
+- Oil type comes from subcategory, NOT from parsing material name
+- Validates subcategory belongs to selected category
+- Maintains backward compatibility for existing materials
+
+### 📋 Usage:
+Replace entire `purchase.py` file with this code to enable full subcategory support.
