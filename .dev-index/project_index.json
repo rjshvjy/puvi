@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-17T17:47:48.825Z",
+  "generatedAt": "2025-08-17T17:48:53.658Z",
   "filesScanned": 56,
   "jsFilesScanned": 34,
   "pyFilesScanned": 22,
@@ -1028,6 +1028,12 @@
       ]
     },
     {
+      "from": "./OpeningBalanceModule.css",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/modules/OpeningBalanceModule/index.js"
+      ]
+    },
+    {
       "from": "./Purchase.css",
       "usedIn": [
         "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js"
@@ -1428,7 +1434,7 @@
     {
       "name": "OpeningBalanceModule",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/OpeningBalanceModule/index.js",
-      "line": 10,
+      "line": 11,
       "type": "const"
     },
     {
@@ -6722,7 +6728,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/OpeningBalanceModule/index.js",
-      "line": 10,
+      "line": 11,
       "name": "OpeningBalanceModule",
       "params": "",
       "type": "arrow",
@@ -6730,7 +6736,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/OpeningBalanceModule/index.js",
-      "line": 25,
+      "line": 26,
       "name": "checkSystemStatus",
       "params": "",
       "type": "arrow",
@@ -6738,7 +6744,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/OpeningBalanceModule/index.js",
-      "line": 44,
+      "line": 45,
       "name": "handleInitializationComplete",
       "params": "response",
       "type": "arrow",
@@ -6746,7 +6752,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/OpeningBalanceModule/index.js",
-      "line": 57,
+      "line": 58,
       "name": "handleBalanceSave",
       "params": "response",
       "type": "arrow",
@@ -6754,7 +6760,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/OpeningBalanceModule/index.js",
-      "line": 83,
+      "line": 84,
       "name": "navigateToWizard",
       "params": "",
       "type": "arrow",
@@ -6762,7 +6768,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/OpeningBalanceModule/index.js",
-      "line": 93,
+      "line": 94,
       "name": "navigateToEntry",
       "params": "",
       "type": "arrow",
@@ -6770,7 +6776,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/OpeningBalanceModule/index.js",
-      "line": 97,
+      "line": 98,
       "name": "navigateToDashboard",
       "params": "",
       "type": "arrow",
@@ -6778,7 +6784,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/OpeningBalanceModule/index.js",
-      "line": 103,
+      "line": 104,
       "name": "renderBreadcrumb",
       "params": "",
       "type": "arrow",
@@ -6786,7 +6792,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/OpeningBalanceModule/index.js",
-      "line": 153,
+      "line": 150,
       "name": "renderContent",
       "params": "",
       "type": "arrow",
@@ -10911,7 +10917,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/OpeningBalanceModule/index.js",
-      "line": 12,
+      "line": 13,
       "type": "useState",
       "name": "currentView",
       "setter": "setCurrentView",
@@ -10919,13 +10925,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/OpeningBalanceModule/index.js",
-      "line": 12,
+      "line": 13,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/OpeningBalanceModule/index.js",
-      "line": 13,
+      "line": 14,
       "type": "useState",
       "name": "systemInitialized",
       "setter": "setSystemInitialized",
@@ -10933,13 +10939,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/OpeningBalanceModule/index.js",
-      "line": 13,
+      "line": 14,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/OpeningBalanceModule/index.js",
-      "line": 14,
+      "line": 15,
       "type": "useState",
       "name": "refreshTrigger",
       "setter": "setRefreshTrigger",
@@ -10947,13 +10953,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/OpeningBalanceModule/index.js",
-      "line": 14,
+      "line": 15,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/OpeningBalanceModule/index.js",
-      "line": 17,
+      "line": 18,
       "type": "useState",
       "name": "notification",
       "setter": "setNotification",
@@ -10961,19 +10967,19 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/OpeningBalanceModule/index.js",
-      "line": 17,
+      "line": 18,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/OpeningBalanceModule/index.js",
-      "line": 20,
+      "line": 21,
       "type": "useEffect",
       "hook": "useEffect"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/OpeningBalanceModule/index.js",
-      "line": 73,
+      "line": 74,
       "type": "useEffect",
       "hook": "useEffect"
     },
@@ -14542,13 +14548,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/OpeningBalanceModule/index.js",
-      "line": 26,
+      "line": 27,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/OpeningBalanceModule/index.js",
-      "line": 38,
+      "line": 39,
       "type": "catch",
       "code": "} catch (error) {"
     },
@@ -16852,7 +16858,7 @@
     "components": 37,
     "routes": 90,
     "exports": 43,
-    "imports": 46,
+    "imports": 47,
     "hardcodedValues": 22,
     "databaseQueries": 276,
     "databaseTables": 45,
