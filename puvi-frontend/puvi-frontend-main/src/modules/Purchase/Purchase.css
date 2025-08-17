@@ -885,3 +885,51 @@ select.form-control {
 .history-table-container::-webkit-scrollbar-thumb:hover {
   background: var(--gray-500);
 }
+
+/* ============================================ */
+/* CATEGORY/SUBCATEGORY ENHANCEMENTS - Added for Oil Types */
+/* ============================================ */
+
+/* Material Form Styles */
+.material-form {
+  margin-bottom: 1.5rem;
+  background: #f8f9fa;
+  border: 2px dashed #dee2e6;
+}
+
+.material-creation-form .form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.header-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Highlight oil type in material dropdown */
+.material-select option {
+  padding: 0.25rem;
+}
+/* ============================================ */
+/* END OF CATEGORY/SUBCATEGORY ENHANCEMENTS */
+/* ============================================ */
