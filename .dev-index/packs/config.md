@@ -1,5 +1,5 @@
 # Feature Pack: CONFIG
-Generated: 2025-08-17T00:34:30.666Z
+Generated: 2025-08-17T00:43:29.401Z
 Routes: 1 | Tables: 4 | Files: 1
 
 ## Table of Contents
@@ -21,7 +21,7 @@ GET    /api/config/<config_type>
 |-------|-------------|------|--------|
 | cost_elements_master | cost-management, sku-management, sku-production | 🔴 HIGH | Changes affect 4 other modules |
 | materials | batch-production, blending, material-writeoff | 🔴 HIGH | Changes affect 9 other modules |
-| sku_master | sku-management, sku-production, system-config | 🔴 HIGH | Changes affect 4 other modules |
+| sku_master | batch-production, sku-management, sku-production | 🔴 HIGH | Changes affect 5 other modules |
 | suppliers | opening-balance, purchase, system-config | 🔴 HIGH | Changes affect 4 other modules |
 
 ### ⚠️ Hardcoded Values Detected

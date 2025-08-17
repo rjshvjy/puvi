@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "generatedAt": "2025-08-17T00:34:30.606Z",
+  "generatedAt": "2025-08-17T00:43:29.340Z",
   "summary": {
     "totalTables": 41,
     "sharedTables": 17,
@@ -263,6 +263,48 @@
         "unknown": {
           "files": [
             "puvi-backend/puvi-backend-main/utils/traceability.py",
+            "puvi-backend/puvi-backend-main/app.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "sku_master": {
+      "usedBy": [
+        "batch-production",
+        "sku-management",
+        "sku-production",
+        "system-config",
+        "unknown"
+      ],
+      "fileCount": 5,
+      "operations": {
+        "batch-production": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/batch_production.py"
+          ],
+          "queryCount": 0
+        },
+        "sku-management": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_management.py"
+          ],
+          "queryCount": 0
+        },
+        "sku-production": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_production.py"
+          ],
+          "queryCount": 0
+        },
+        "system-config": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/system_config.py"
+          ],
+          "queryCount": 0
+        },
+        "unknown": {
+          "files": [
             "puvi-backend/puvi-backend-main/app.py"
           ],
           "queryCount": 0
@@ -641,41 +683,6 @@
         }
       }
     },
-    "sku_master": {
-      "usedBy": [
-        "sku-management",
-        "sku-production",
-        "system-config",
-        "unknown"
-      ],
-      "fileCount": 4,
-      "operations": {
-        "sku-management": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/sku_management.py"
-          ],
-          "queryCount": 0
-        },
-        "sku-production": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/sku_production.py"
-          ],
-          "queryCount": 0
-        },
-        "system-config": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/system_config.py"
-          ],
-          "queryCount": 0
-        },
-        "unknown": {
-          "files": [
-            "puvi-backend/puvi-backend-main/app.py"
-          ],
-          "queryCount": 0
-        }
-      }
-    },
     "sku_bom_master": {
       "usedBy": [
         "sku-management",
@@ -955,6 +962,20 @@
       "recommendation": "⚠️ CRITICAL: Changes require coordination across 7 modules"
     },
     {
+      "table": "sku_master",
+      "sharedBy": [
+        "batch-production",
+        "sku-management",
+        "sku-production",
+        "system-config",
+        "unknown"
+      ],
+      "moduleCount": 5,
+      "fileCount": 5,
+      "risk": "HIGH",
+      "recommendation": "⚠️ CRITICAL: Changes require coordination across 5 modules"
+    },
+    {
       "table": "cost_elements_master",
       "sharedBy": [
         "cost-management",
@@ -977,19 +998,6 @@
       ],
       "moduleCount": 4,
       "fileCount": 5,
-      "risk": "HIGH",
-      "recommendation": "⚠️ CRITICAL: Changes require coordination across 4 modules"
-    },
-    {
-      "table": "sku_master",
-      "sharedBy": [
-        "sku-management",
-        "sku-production",
-        "system-config",
-        "unknown"
-      ],
-      "moduleCount": 4,
-      "fileCount": 4,
       "risk": "HIGH",
       "recommendation": "⚠️ CRITICAL: Changes require coordination across 4 modules"
     },
