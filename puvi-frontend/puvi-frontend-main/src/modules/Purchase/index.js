@@ -1,6 +1,9 @@
+# Complete Frontend Purchase Module with Category/Subcategory Support
+
+```javascript
 // File Path: puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js
-// Purchase Module with Cost Management Integration - Fixed UI Version
-// Session 3: UI issues resolved with CostElementRow component
+// Purchase Module with Category/Subcategory Support for Dynamic Oil Types
+// Enhanced with material creation form and category validation
 
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
@@ -9,9 +12,26 @@ import './Purchase.css';
 const Purchase = () => {
   const [suppliers, setSuppliers] = useState([]);
   const [materials, setMaterials] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [subcategories, setSubcategories] = useState([]);
   const [selectedSupplier, setSelectedSupplier] = useState('');
   const [showHistory, setShowHistory] = useState(false);
+  const [showMaterialForm, setShowMaterialForm] = useState(false);
   const [purchaseHistory, setPurchaseHistory] = useState([]);
+  
+  // NEW: Material creation form state
+  const [newMaterial, setNewMaterial] = useState({
+    material_name: '',
+    supplier_id: '',
+    category: '',
+    subcategory_id: null,
+    unit: 'kg',
+    current_cost: '',
+    gst_rate: '5',
+    density: '0.91',
+    short_code: ''
+  });
+  
   const [invoiceData, setInvoiceData] = useState({
     supplier_id: '',
     invoice_ref: '',
@@ -40,10 +60,34 @@ const Purchase = () => {
 
   useEffect(() => {
     fetchSuppliers();
+    fetchCategories(); // NEW: Fetch categories on load
   }, []);
 
-  // REMOVED THE PROBLEMATIC useEffect that was causing infinite loop
-  // Will call allocateCharges() manually when needed instead
+  // NEW: Fetch categories from API
+  const fetchCategories = async () => {
+    try {
+      const response = await fetch('/api/categories');
+      const data = await response.json();
+      if (data.success) {
+        setCategories(data.categories || []);
+      }
+    } catch (error) {
+      console.error('Error loading categories:', error);
+    }
+  };
+
+  // NEW: Fetch subcategories for a specific category
+  const fetchSubcategories = async (categoryId) => {
+    try {
+      const response = await fetch(`/api/subcategories?category_id=${categoryId}`);
+      const data = await response.json();
+      if (data.success) {
+        setSubcategories(data.subcategories || []);
+      }
+    } catch (error) {
+      console.error('Error loading subcategories:', error);
+    }
+  };
 
   const fetchSuppliers = async () => {
     try {
@@ -77,6 +121,9 @@ const Purchase = () => {
     setSelectedSupplier(supplierId);
     setInvoiceData({ ...invoiceData, supplier_id: supplierId });
     
+    // Update new material form supplier too
+    setNewMaterial({ ...newMaterial, supplier_id: supplierId });
+    
     // Reset items when supplier changes
     setItems([{
       material_id: '',
@@ -92,6 +139,78 @@ const Purchase = () => {
     
     if (supplierId) {
       fetchMaterialsForSupplier(supplierId);
+    }
+  };
+
+  // NEW: Handle category change in material form
+  const handleCategoryChange = async (categoryName) => {
+    setNewMaterial({ 
+      ...newMaterial, 
+      category: categoryName,
+      subcategory_id: null // Reset subcategory when category changes
+    });
+    
+    // Check if this category requires subcategory
+    const category = categories.find(c => c.category_name === categoryName);
+    if (category && category.requires_subcategory) {
+      await fetchSubcategories(category.category_id);
+    } else {
+      setSubcategories([]); // Clear subcategories if not required
+    }
+  };
+
+  // NEW: Create new material
+  const handleCreateMaterial = async (e) => {
+    e.preventDefault();
+    
+    // Validation
+    const category = categories.find(c => c.category_name === newMaterial.category);
+    if (category && category.requires_subcategory && !newMaterial.subcategory_id) {
+      setMessage(`❌ Category "${newMaterial.category}" requires a subcategory selection`);
+      return;
+    }
+    
+    setLoading(true);
+    setMessage('');
+    
+    try {
+      const response = await fetch('/api/materials', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newMaterial)
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        setMessage(`✅ Material "${newMaterial.material_name}" created successfully!`);
+        
+        // Refresh materials list
+        if (selectedSupplier) {
+          await fetchMaterialsForSupplier(selectedSupplier);
+        }
+        
+        // Reset form
+        setNewMaterial({
+          material_name: '',
+          supplier_id: selectedSupplier,
+          category: '',
+          subcategory_id: null,
+          unit: 'kg',
+          current_cost: '',
+          gst_rate: '5',
+          density: '0.91',
+          short_code: ''
+        });
+        setSubcategories([]);
+        setShowMaterialForm(false);
+      } else {
+        setMessage(`❌ Error: ${data.error}`);
+      }
+    } catch (error) {
+      setMessage(`❌ Error creating material: ${error.message}`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -149,6 +268,19 @@ const Purchase = () => {
   const getMaterialUnit = (materialId) => {
     const material = materials.find(m => m.material_id === parseInt(materialId));
     return material ? material.unit : '';
+  };
+
+  // ENHANCED: Get material display with oil type
+  const getMaterialDisplay = (material) => {
+    let display = material.material_name;
+    if (material.short_code) {
+      display += ` (${material.short_code})`;
+    }
+    // Show oil type for Oil category materials
+    if (material.oil_type) {
+      display += ` [${material.oil_type}]`;
+    }
+    return display;
   };
 
   const allocateCharges = () => {
@@ -349,26 +481,184 @@ Items: ${response.items_count}`);
     return date.toLocaleDateString('en-GB'); // DD/MM/YYYY format
   };
 
+  // Check if current category requires subcategory
+  const currentCategoryRequiresSubcategory = () => {
+    const category = categories.find(c => c.category_name === newMaterial.category);
+    return category && category.requires_subcategory;
+  };
+
   return (
     <div className="purchase-module">
       <div className="module-header">
         <h2 className="module-title">Purchase Entry – Multi Item</h2>
-        <button 
-          className="btn-secondary"
-          onClick={() => {
-            setShowHistory(!showHistory);
-            if (!showHistory && purchaseHistory.length === 0) {
-              fetchPurchaseHistory();
-            }
-          }}
-        >
-          {showHistory ? 'Hide History' : 'View History'}
-        </button>
+        <div className="header-actions">
+          <button 
+            className="btn-secondary"
+            onClick={() => setShowMaterialForm(!showMaterialForm)}
+            disabled={!selectedSupplier}
+            title={!selectedSupplier ? "Select a supplier first" : "Create new material"}
+          >
+            {showMaterialForm ? 'Hide Material Form' : '+ New Material'}
+          </button>
+          <button 
+            className="btn-secondary"
+            onClick={() => {
+              setShowHistory(!showHistory);
+              if (!showHistory && purchaseHistory.length === 0) {
+                fetchPurchaseHistory();
+              }
+            }}
+          >
+            {showHistory ? 'Hide History' : 'View History'}
+          </button>
+        </div>
       </div>
 
       {message && (
         <div className={`message ${message.includes('✅') ? 'success' : 'error'}`}>
           {message}
+        </div>
+      )}
+
+      {/* NEW: Material Creation Form */}
+      {showMaterialForm && selectedSupplier && (
+        <div className="form-card material-form">
+          <h3 className="section-title">Create New Material</h3>
+          <form onSubmit={handleCreateMaterial} className="material-creation-form">
+            <div className="form-grid">
+              <div className="form-group">
+                <label className="form-label">Material Name *</label>
+                <input
+                  type="text"
+                  value={newMaterial.material_name}
+                  onChange={(e) => setNewMaterial({...newMaterial, material_name: e.target.value})}
+                  required
+                  className="form-control"
+                  placeholder="e.g., Groundnut Oil Premium"
+                />
+              </div>
+              
+              <div className="form-group">
+                <label className="form-label">Category *</label>
+                <select
+                  value={newMaterial.category}
+                  onChange={(e) => handleCategoryChange(e.target.value)}
+                  required
+                  className="form-control"
+                >
+                  <option value="">Select Category</option>
+                  {categories.map(cat => (
+                    <option key={cat.category_id} value={cat.category_name}>
+                      {cat.category_name}
+                      {cat.requires_subcategory && ' (requires subcategory)'}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              
+              {/* Show subcategory dropdown if category requires it */}
+              {currentCategoryRequiresSubcategory() && (
+                <div className="form-group">
+                  <label className="form-label">Subcategory *</label>
+                  <select
+                    value={newMaterial.subcategory_id || ''}
+                    onChange={(e) => setNewMaterial({...newMaterial, subcategory_id: parseInt(e.target.value)})}
+                    required
+                    className="form-control"
+                  >
+                    <option value="">Select Subcategory</option>
+                    {subcategories.map(subcat => (
+                      <option key={subcat.subcategory_id} value={subcat.subcategory_id}>
+                        {subcat.subcategory_name}
+                        {subcat.oil_type && ` (Oil Type: ${subcat.oil_type})`}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+              
+              <div className="form-group">
+                <label className="form-label">Unit *</label>
+                <select
+                  value={newMaterial.unit}
+                  onChange={(e) => setNewMaterial({...newMaterial, unit: e.target.value})}
+                  required
+                  className="form-control"
+                >
+                  <option value="kg">kg</option>
+                  <option value="L">L</option>
+                  <option value="Nos">Nos</option>
+                  <option value="Pcs">Pcs</option>
+                </select>
+              </div>
+              
+              <div className="form-group">
+                <label className="form-label">Current Cost (₹) *</label>
+                <input
+                  type="number"
+                  value={newMaterial.current_cost}
+                  onChange={(e) => setNewMaterial({...newMaterial, current_cost: e.target.value})}
+                  required
+                  step="0.01"
+                  className="form-control"
+                  placeholder="0.00"
+                />
+              </div>
+              
+              <div className="form-group">
+                <label className="form-label">GST Rate (%) *</label>
+                <select
+                  value={newMaterial.gst_rate}
+                  onChange={(e) => setNewMaterial({...newMaterial, gst_rate: e.target.value})}
+                  required
+                  className="form-control"
+                >
+                  <option value="0">0%</option>
+                  <option value="5">5%</option>
+                  <option value="12">12%</option>
+                  <option value="18">18%</option>
+                  <option value="28">28%</option>
+                </select>
+              </div>
+              
+              <div className="form-group">
+                <label className="form-label">Density</label>
+                <input
+                  type="number"
+                  value={newMaterial.density}
+                  onChange={(e) => setNewMaterial({...newMaterial, density: e.target.value})}
+                  step="0.01"
+                  className="form-control"
+                  placeholder="0.91"
+                />
+              </div>
+              
+              <div className="form-group">
+                <label className="form-label">Short Code</label>
+                <input
+                  type="text"
+                  value={newMaterial.short_code}
+                  onChange={(e) => setNewMaterial({...newMaterial, short_code: e.target.value})}
+                  maxLength="6"
+                  className="form-control"
+                  placeholder="Auto-generated if empty"
+                />
+              </div>
+            </div>
+            
+            <div className="form-actions">
+              <button type="submit" className="btn-primary" disabled={loading}>
+                {loading ? 'Creating...' : 'Create Material'}
+              </button>
+              <button 
+                type="button" 
+                className="btn-secondary"
+                onClick={() => setShowMaterialForm(false)}
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
         </div>
       )}
 
@@ -471,8 +761,7 @@ Items: ${response.items_count}`);
                             <option value="">Select Material</option>
                             {materials.map(material => (
                               <option key={material.material_id} value={material.material_id} title={material.material_name}>
-                                {material.material_name}
-                                {material.short_code && ` (${material.short_code})`}
+                                {getMaterialDisplay(material)}
                               </option>
                             ))}
                           </select>
@@ -780,3 +1069,65 @@ Items: ${response.items_count}`);
 };
 
 export default Purchase;
+```
+
+## CSS Additions (add to Purchase.css)
+
+```css
+/* Material Form Styles */
+.material-form {
+  margin-bottom: 1.5rem;
+  background: #f8f9fa;
+  border: 2px dashed #dee2e6;
+}
+
+.material-creation-form .form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.header-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Highlight oil type in material dropdown */
+.material-select option {
+  padding: 0.25rem;
+}
+```
+
+## Key Changes Summary
+
+### ✨ New Features:
+1. **Material Creation Form** - Complete form with category/subcategory validation
+2. **Category Management** - Fetches categories from API, shows subcategory when required
+3. **Oil Type Display** - Shows `[Oil Type]` in material dropdown for clarity
+4. **Validation** - Ensures Seeds/Oil categories have subcategory selected
+
+### 🔄 Enhanced:
+- Material dropdown shows oil type for Oil materials
+- "+ New Material" button only enabled when supplier selected
+- Clear validation messages for subcategory requirements
+
+### 🎯 Critical Logic:
+- Categories "Seeds" and "Oil" REQUIRE subcategor
