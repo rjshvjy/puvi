@@ -1,6 +1,8 @@
-// File Path: puvi-frontend/src/modules/SKUManagement/components/SKUMaster.js
+// File Path: puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js
+// ROBUST VERSION - Uses API service for all calls, ready for category/subcategory migration
 
 import React, { useState, useEffect } from 'react';
+import api, { skuAPI } from '../../../services/api';
 import './SKUMaster.css';
 
 const SKUMaster = () => {
@@ -19,8 +21,8 @@ const SKUMaster = () => {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState(null);
   
-  // Oil types and package sizes
-  const [oilTypes, setOilTypes] = useState(['Groundnut Oil', 'Coconut Oil', 'Sesame Oil']);
+  // Oil types and package sizes - NOW DYNAMIC
+  const [oilTypes, setOilTypes] = useState([]);
   const [packageSizes, setPackageSizes] = useState(['500ml', '1L', '5L', '15L']);
   
   // Form states
@@ -49,9 +51,10 @@ const SKUMaster = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
 
-  // Fetch SKUs on component mount
+  // Fetch data on component mount
   useEffect(() => {
     fetchSKUs();
+    fetchOilTypes(); // NEW: Fetch oil types from API
   }, []);
 
   // Apply filters whenever filter values or SKU list changes
@@ -59,17 +62,56 @@ const SKUMaster = () => {
     applyFilters();
   }, [searchTerm, filterOilType, filterPackageSize, filterActive, skuList]);
 
-  // Fetch SKUs from API
+  // NEW: Fetch oil types from API - NO HARDCODED FALLBACKS
+  const fetchOilTypes = async () => {
+    try {
+      // Use the API service for clean architecture
+      const response = await api.batch.getOilTypes();
+      
+      if (response.success && response.oil_types && response.oil_types.length > 0) {
+        // Transform backend oil types to frontend format
+        // Backend returns: ["Groundnut", "Sesame", "Coconut", "Mustard"]
+        // Frontend needs: ["Groundnut Oil", "Coconut Oil", "Sesame Oil", "Mustard Oil"]
+        const formattedOilTypes = response.oil_types.map(type => `${type} Oil`);
+        setOilTypes(formattedOilTypes);
+        
+        // Store raw oil types for backend communication
+        window.rawOilTypes = response.oil_types;
+      } else {
+        // NO FALLBACK - If no oil types exist, show empty
+        console.warn('No oil types available in database');
+        setOilTypes([]);
+        window.rawOilTypes = [];
+      }
+    } catch (error) {
+      console.error('Error fetching oil types:', error);
+      // NO FALLBACK - On error, show empty
+      setOilTypes([]);
+      window.rawOilTypes = [];
+      setMessage({ 
+        type: 'warning', 
+        text: 'Could not load oil types. Please ensure oil types are configured in the system.' 
+      });
+    }
+  };
+
+  // Fetch SKUs from API - UPDATED to use API service
   const fetchSKUs = async () => {
     setLoading(true);
     try {
-      const response = await fetch('https://puvi-backend.onrender.com/api/sku/master');
-      const data = await response.json();
+      const response = await skuAPI.getSKUs();
       
-      if (response.ok && data.success) {
-        setSKUList(data.skus || []);
+      if (response.success) {
+        // Transform SKU oil types to display format
+        const skusWithFormattedOilTypes = (response.skus || []).map(sku => ({
+          ...sku,
+          oil_type: sku.oil_type && !sku.oil_type.includes(' Oil') 
+            ? `${sku.oil_type} Oil` 
+            : sku.oil_type
+        }));
+        setSKUList(skusWithFormattedOilTypes);
       } else {
-        throw new Error(data.error || 'Failed to fetch SKUs');
+        throw new Error(response.error || 'Failed to fetch SKUs');
       }
     } catch (error) {
       console.error('Error fetching SKUs:', error);
@@ -143,6 +185,20 @@ const SKUMaster = () => {
     }
   };
 
+  // Helper function to convert display oil type to backend format
+  const toBackendOilType = (displayOilType) => {
+    // Remove " Oil" suffix for backend
+    return displayOilType ? displayOilType.replace(' Oil', '') : '';
+  };
+
+  // Helper function to convert backend oil type to display format
+  const toDisplayOilType = (backendOilType) => {
+    // Add " Oil" suffix for display
+    return backendOilType && !backendOilType.includes(' Oil') 
+      ? `${backendOilType} Oil` 
+      : backendOilType;
+  };
+
   // Handle modal open
   const handleOpenModal = (mode, sku = null) => {
     setModalMode(mode);
@@ -152,7 +208,7 @@ const SKUMaster = () => {
       setFormData({
         sku_code: sku.sku_code,
         product_name: sku.product_name,
-        oil_type: sku.oil_type,
+        oil_type: sku.oil_type, // Already in display format
         package_size: sku.package_size,
         density: sku.density || 0.91,
         mrp_current: sku.mrp_current || '',
@@ -230,7 +286,7 @@ const SKUMaster = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  // Handle form submit
+  // Handle form submit - UPDATED to use API service
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -238,21 +294,20 @@ const SKUMaster = () => {
     
     setLoading(true);
     try {
-      const url = modalMode === 'add'
-        ? 'https://puvi-backend.onrender.com/api/sku/master'
-        : `https://puvi-backend.onrender.com/api/sku/master/${selectedSKU.sku_id}`;
+      // Prepare data with backend oil type format
+      const submitData = {
+        ...formData,
+        oil_type: toBackendOilType(formData.oil_type) // Convert to backend format
+      };
       
-      const method = modalMode === 'add' ? 'POST' : 'PUT';
+      let response;
+      if (modalMode === 'add') {
+        response = await skuAPI.createSKU(submitData);
+      } else {
+        response = await skuAPI.updateSKU(selectedSKU.sku_id, submitData);
+      }
       
-      const response = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      });
-      
-      const data = await response.json();
-      
-      if (response.ok && data.success) {
+      if (response.success) {
         setMessage({
           type: 'success',
           text: modalMode === 'add' 
@@ -262,7 +317,7 @@ const SKUMaster = () => {
         handleCloseModal();
         fetchSKUs(); // Refresh the list
       } else {
-        throw new Error(data.error || 'Failed to save SKU');
+        throw new Error(response.error || 'Failed to save SKU');
       }
     } catch (error) {
       console.error('Error saving SKU:', error);
@@ -272,35 +327,32 @@ const SKUMaster = () => {
     }
   };
 
-  // Handle delete
+  // Handle delete - UPDATED to use API service
   const handleDelete = (sku) => {
     setDeleteTarget(sku);
     setShowDeleteConfirm(true);
   };
 
-  // Confirm delete
+  // Confirm delete - UPDATED to use API service
   const confirmDelete = async () => {
     if (!deleteTarget) return;
     
     setLoading(true);
     try {
       // Deactivate instead of hard delete
-      const response = await fetch(
-        `https://puvi-backend.onrender.com/api/sku/master/${deleteTarget.sku_id}`,
-        {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...deleteTarget, is_active: false })
-        }
-      );
+      const submitData = {
+        ...deleteTarget,
+        oil_type: toBackendOilType(deleteTarget.oil_type), // Convert to backend format
+        is_active: false
+      };
       
-      const data = await response.json();
+      const response = await skuAPI.updateSKU(deleteTarget.sku_id, submitData);
       
-      if (response.ok && data.success) {
+      if (response.success) {
         setMessage({ type: 'success', text: 'SKU deactivated successfully' });
         fetchSKUs();
       } else {
-        throw new Error(data.error || 'Failed to deactivate SKU');
+        throw new Error(response.error || 'Failed to deactivate SKU');
       }
     } catch (error) {
       console.error('Error deactivating SKU:', error);
@@ -358,8 +410,11 @@ const SKUMaster = () => {
             <select
               value={filterOilType}
               onChange={(e) => setFilterOilType(e.target.value)}
+              disabled={oilTypes.length === 0}
             >
-              <option value="">All Oil Types</option>
+              <option value="">
+                {oilTypes.length === 0 ? 'No Oil Types' : 'All Oil Types'}
+              </option>
               {oilTypes.map(type => (
                 <option key={type} value={type}>{type}</option>
               ))}
@@ -542,8 +597,11 @@ const SKUMaster = () => {
                     value={formData.oil_type}
                     onChange={handleInputChange}
                     className={errors.oil_type ? 'error' : ''}
+                    disabled={oilTypes.length === 0}
                   >
-                    <option value="">Select Oil Type</option>
+                    <option value="">
+                      {oilTypes.length === 0 ? 'No oil types configured' : 'Select Oil Type'}
+                    </option>
                     {oilTypes.map(type => (
                       <option key={type} value={type}>{type}</option>
                     ))}
