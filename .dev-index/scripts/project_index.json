@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-16T07:37:28.881Z",
+  "generatedAt": "2025-08-17T00:05:54.099Z",
   "filesScanned": 56,
   "jsFilesScanned": 34,
   "pyFilesScanned": 22,
@@ -41,10 +41,19 @@
       "source": "backend"
     },
     {
+      "method": "GET",
+      "path": "/api/oil_types",
+      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
+      "line": 230,
+      "blueprint": "batch_bp",
+      "function": "get_oil_types",
+      "source": "backend"
+    },
+    {
       "method": "POST",
       "path": "/api/add_batch",
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 232,
+      "line": 300,
       "blueprint": "batch_bp",
       "function": "add_batch",
       "source": "backend"
@@ -53,7 +62,7 @@
       "method": "GET",
       "path": "/api/batch_history",
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 580,
+      "line": 648,
       "blueprint": "batch_bp",
       "function": "get_batch_history",
       "source": "backend"
@@ -1669,47 +1678,8 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 271,
+      "line": 244,
       "type": "SELECT",
-      "tables": [
-        "inventory",
-        "materials",
-        "purchases",
-        "purchase_items",
-        "oil_cake_rate_master"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 329,
-      "type": "SELECT",
-      "tables": [
-        "inventory",
-        "materials",
-        "purchases",
-        "purchase_items",
-        "oil_cake_rate_master"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 350,
-      "type": "OTHER",
-      "tables": [
-        "inventory",
-        "materials",
-        "purchases",
-        "purchase_items",
-        "oil_cake_rate_master"
-      ],
-      "preview": "cur.execute(\"BEGIN\")"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 353,
-      "type": "INSERT",
       "tables": [
         "inventory",
         "materials",
@@ -1722,7 +1692,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 404,
+      "line": 260,
       "type": "SELECT",
       "tables": [
         "inventory",
@@ -1731,73 +1701,13 @@
         "purchase_items",
         "oil_cake_rate_master",
         "batch",
-        "batch_extended_costs"
+        "sku_master"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 413,
-      "type": "UPDATE",
-      "tables": [
-        "inventory",
-        "materials",
-        "purchases",
-        "purchase_items",
-        "oil_cake_rate_master",
-        "batch",
-        "batch_extended_costs"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 431,
-      "type": "INSERT",
-      "tables": [
-        "inventory",
-        "materials",
-        "purchases",
-        "purchase_items",
-        "oil_cake_rate_master",
-        "batch",
-        "batch_extended_costs"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 457,
-      "type": "UPDATE",
-      "tables": [
-        "inventory",
-        "materials",
-        "purchases",
-        "purchase_items",
-        "oil_cake_rate_master",
-        "batch",
-        "batch_extended_costs"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 476,
-      "type": "UPDATE",
-      "tables": [
-        "inventory",
-        "materials",
-        "purchases",
-        "purchase_items",
-        "oil_cake_rate_master",
-        "batch",
-        "batch_extended_costs"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 491,
+      "line": 339,
       "type": "SELECT",
       "tables": [
         "inventory",
@@ -1806,14 +1716,14 @@
         "purchase_items",
         "oil_cake_rate_master",
         "batch",
-        "batch_extended_costs"
+        "sku_master"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 515,
-      "type": "UPDATE",
+      "line": 397,
+      "type": "SELECT",
       "tables": [
         "inventory",
         "materials",
@@ -1821,44 +1731,13 @@
         "purchase_items",
         "oil_cake_rate_master",
         "batch",
-        "batch_extended_costs"
+        "sku_master"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 524,
-      "type": "INSERT",
-      "tables": [
-        "inventory",
-        "materials",
-        "purchases",
-        "purchase_items",
-        "oil_cake_rate_master",
-        "batch",
-        "batch_extended_costs"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 542,
-      "type": "INSERT",
-      "tables": [
-        "inventory",
-        "materials",
-        "purchases",
-        "purchase_items",
-        "oil_cake_rate_master",
-        "batch",
-        "batch_extended_costs",
-        "oil_cake_inventory"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 638,
+      "line": 418,
       "type": "OTHER",
       "tables": [
         "inventory",
@@ -1867,6 +1746,182 @@
         "purchase_items",
         "oil_cake_rate_master",
         "batch",
+        "sku_master"
+      ],
+      "preview": "cur.execute(\"BEGIN\")"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
+      "line": 421,
+      "type": "INSERT",
+      "tables": [
+        "inventory",
+        "materials",
+        "purchases",
+        "purchase_items",
+        "oil_cake_rate_master",
+        "batch",
+        "sku_master"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
+      "line": 472,
+      "type": "SELECT",
+      "tables": [
+        "inventory",
+        "materials",
+        "purchases",
+        "purchase_items",
+        "oil_cake_rate_master",
+        "batch",
+        "sku_master",
+        "batch_extended_costs"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
+      "line": 481,
+      "type": "UPDATE",
+      "tables": [
+        "inventory",
+        "materials",
+        "purchases",
+        "purchase_items",
+        "oil_cake_rate_master",
+        "batch",
+        "sku_master",
+        "batch_extended_costs"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
+      "line": 499,
+      "type": "INSERT",
+      "tables": [
+        "inventory",
+        "materials",
+        "purchases",
+        "purchase_items",
+        "oil_cake_rate_master",
+        "batch",
+        "sku_master",
+        "batch_extended_costs"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
+      "line": 525,
+      "type": "UPDATE",
+      "tables": [
+        "inventory",
+        "materials",
+        "purchases",
+        "purchase_items",
+        "oil_cake_rate_master",
+        "batch",
+        "sku_master",
+        "batch_extended_costs"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
+      "line": 544,
+      "type": "UPDATE",
+      "tables": [
+        "inventory",
+        "materials",
+        "purchases",
+        "purchase_items",
+        "oil_cake_rate_master",
+        "batch",
+        "sku_master",
+        "batch_extended_costs"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
+      "line": 559,
+      "type": "SELECT",
+      "tables": [
+        "inventory",
+        "materials",
+        "purchases",
+        "purchase_items",
+        "oil_cake_rate_master",
+        "batch",
+        "sku_master",
+        "batch_extended_costs"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
+      "line": 583,
+      "type": "UPDATE",
+      "tables": [
+        "inventory",
+        "materials",
+        "purchases",
+        "purchase_items",
+        "oil_cake_rate_master",
+        "batch",
+        "sku_master",
+        "batch_extended_costs"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
+      "line": 592,
+      "type": "INSERT",
+      "tables": [
+        "inventory",
+        "materials",
+        "purchases",
+        "purchase_items",
+        "oil_cake_rate_master",
+        "batch",
+        "sku_master",
+        "batch_extended_costs"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
+      "line": 610,
+      "type": "INSERT",
+      "tables": [
+        "inventory",
+        "materials",
+        "purchases",
+        "purchase_items",
+        "oil_cake_rate_master",
+        "batch",
+        "sku_master",
+        "batch_extended_costs",
+        "oil_cake_inventory"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
+      "line": 706,
+      "type": "OTHER",
+      "tables": [
+        "inventory",
+        "materials",
+        "purchases",
+        "purchase_items",
+        "oil_cake_rate_master",
+        "batch",
+        "sku_master",
         "batch_extended_costs",
         "oil_cake_inventory"
       ],
@@ -1874,7 +1929,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 690,
+      "line": 758,
       "type": "OTHER",
       "tables": [
         "inventory",
@@ -1883,6 +1938,7 @@
         "purchase_items",
         "oil_cake_rate_master",
         "batch",
+        "sku_master",
         "batch_extended_costs",
         "oil_cake_inventory"
       ],
@@ -1890,7 +1946,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 694,
+      "line": 762,
       "type": "SELECT",
       "tables": [
         "inventory",
@@ -1899,6 +1955,7 @@
         "purchase_items",
         "oil_cake_rate_master",
         "batch",
+        "sku_master",
         "batch_extended_costs",
         "oil_cake_inventory"
       ],
@@ -4840,6 +4897,16 @@
       ]
     },
     {
+      "name": "sku_master",
+      "files": [
+        "puvi-backend/puvi-backend-main/modules/batch_production.py",
+        "puvi-backend/puvi-backend-main/modules/sku_management.py",
+        "puvi-backend/puvi-backend-main/modules/sku_production.py",
+        "puvi-backend/puvi-backend-main/modules/system_config.py",
+        "puvi-backend/puvi-backend-main/app.py"
+      ]
+    },
+    {
       "name": "batch_extended_costs",
       "files": [
         "puvi-backend/puvi-backend-main/modules/batch_production.py",
@@ -4971,15 +5038,6 @@
       "name": "tags",
       "files": [
         "puvi-backend/puvi-backend-main/modules/purchase.py"
-      ]
-    },
-    {
-      "name": "sku_master",
-      "files": [
-        "puvi-backend/puvi-backend-main/modules/sku_management.py",
-        "puvi-backend/puvi-backend-main/modules/sku_production.py",
-        "puvi-backend/puvi-backend-main/modules/system_config.py",
-        "puvi-backend/puvi-backend-main/app.py"
       ]
     },
     {
@@ -7633,7 +7691,15 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 233,
+      "line": 231,
+      "name": "get_oil_types",
+      "params": "",
+      "type": "python",
+      "isRoute": true
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
+      "line": 301,
       "name": "add_batch",
       "params": "",
       "type": "python",
@@ -7641,7 +7707,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 581,
+      "line": 649,
       "name": "get_batch_history",
       "params": "",
       "type": "python",
@@ -12366,17 +12432,24 @@
         "function": "get_oil_cake_rates"
       },
       {
+        "method": "GET",
+        "path": "/api/oil_types",
+        "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
+        "line": 230,
+        "function": "get_oil_types"
+      },
+      {
         "method": "POST",
         "path": "/api/add_batch",
         "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-        "line": 232,
+        "line": 300,
         "function": "add_batch"
       },
       {
         "method": "GET",
         "path": "/api/batch_history",
         "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-        "line": 580,
+        "line": 648,
         "function": "get_batch_history"
       }
     ],
@@ -14264,39 +14337,78 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 238,
+      "line": 239,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 291,
+      "line": 243,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 298,
+      "line": 254,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 570,
+      "line": 259,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
+      "line": 270,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 586,
+      "line": 288,
+      "type": "except",
+      "exception": "Exception",
+      "code": "except Exception as e:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
+      "line": 306,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 734,
+      "line": 359,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
+      "line": 366,
+      "type": "except",
+      "exception": "Exception",
+      "code": "except Exception as e:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
+      "line": 638,
+      "type": "except",
+      "exception": "Exception",
+      "code": "except Exception as e:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
+      "line": 654,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
+      "line": 802,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
@@ -15555,15 +15667,15 @@
     "jsFiles": 34,
     "pyFiles": 22,
     "components": 37,
-    "routes": 77,
+    "routes": 78,
     "exports": 41,
     "imports": 45,
     "hardcodedValues": 18,
-    "databaseQueries": 249,
+    "databaseQueries": 251,
     "databaseTables": 41,
-    "functions": 447,
+    "functions": 448,
     "stateHooks": 532,
     "missingEndpoints": 1,
-    "errorHandlers": 425
+    "errorHandlers": 431
   }
 }
