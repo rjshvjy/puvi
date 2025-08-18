@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-18T14:42:06.847Z",
+  "generatedAt": "2025-08-18T15:01:01.626Z",
   "filesScanned": 56,
   "jsFilesScanned": 34,
   "pyFilesScanned": 22,
@@ -5378,14 +5378,14 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
-      "line": 167,
+      "line": 168,
       "type": "OTHER",
       "tables": [],
       "preview": "cursor.execute(query, (days_threshold,))"
     },
     {
       "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
-      "line": 206,
+      "line": 207,
       "type": "OTHER",
       "tables": [
         "existing"
@@ -5394,7 +5394,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
-      "line": 222,
+      "line": 223,
       "type": "OTHER",
       "tables": [
         "existing"
@@ -5403,7 +5403,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
-      "line": 239,
+      "line": 240,
       "type": "OTHER",
       "tables": [
         "existing"
@@ -5412,7 +5412,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
-      "line": 294,
+      "line": 295,
       "type": "OTHER",
       "tables": [
         "existing",
@@ -5422,7 +5422,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
-      "line": 399,
+      "line": 403,
       "type": "OTHER",
       "tables": [
         "existing",
@@ -9534,7 +9534,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
-      "line": 13,
+      "line": 14,
       "name": "calculate_expiry_date",
       "params": "production_date_int, shelf_life_months",
       "type": "python",
@@ -9542,7 +9542,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
-      "line": 46,
+      "line": 47,
       "name": "get_days_to_expiry",
       "params": "expiry_date_int",
       "type": "python",
@@ -9550,7 +9550,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
-      "line": 75,
+      "line": 76,
       "name": "get_expiry_status",
       "params": "expiry_date_int",
       "type": "python",
@@ -9558,7 +9558,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
-      "line": 108,
+      "line": 109,
       "name": "validate_shelf_life",
       "params": "shelf_life_months",
       "type": "python",
@@ -9566,7 +9566,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
-      "line": 135,
+      "line": 136,
       "name": "check_near_expiry_items",
       "params": "connection, days_threshold=30",
       "type": "python",
@@ -9574,7 +9574,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
-      "line": 262,
+      "line": 263,
       "name": "get_fefo_allocation",
       "params": "connection, sku_id, quantity_needed",
       "type": "python",
@@ -9582,7 +9582,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
-      "line": 349,
+      "line": 350,
       "name": "format_expiry_date_display",
       "params": "expiry_date_int",
       "type": "python",
@@ -9590,7 +9590,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
-      "line": 371,
+      "line": 372,
       "name": "get_expiry_alert_summary",
       "params": "connection",
       "type": "python",
@@ -17060,116 +17060,116 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
-      "line": 25,
+      "line": 26,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
-      "line": 41,
+      "line": 42,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
-      "line": 56,
+      "line": 57,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
-      "line": 70,
+      "line": 71,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
-      "line": 86,
+      "line": 87,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
-      "line": 103,
+      "line": 104,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
-      "line": 118,
+      "line": 119,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
-      "line": 131,
+      "line": 132,
       "type": "except",
       "code": "except (ValueError, TypeError):"
     },
     {
       "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
-      "line": 146,
+      "line": 147,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
-      "line": 177,
+      "line": 178,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
-      "line": 198,
+      "line": 199,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
-      "line": 255,
+      "line": 256,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
-      "line": 274,
+      "line": 275,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
-      "line": 339,
+      "line": 340,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
-      "line": 359,
+      "line": 360,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
-      "line": 366,
+      "line": 367,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
-      "line": 381,
+      "line": 383,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
-      "line": 419,
+      "line": 423,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
