@@ -257,11 +257,44 @@ const api = {
     }
   },
 
+  // Configuration Management module
+  config: {
+    getConfig: async () => {
+      return apiCall('/api/config');
+    },
+    updateConfig: async (config) => {
+      return post('/api/config', config);
+    },
+    getSystemSettings: async () => {
+      return apiCall('/api/config/system');
+    }
+  },
+
   // Blending module (for oil sources)
   blending: {
     getBatchesForOilType: async (oilType) => {
       return apiCall(`/api/blending/batches/${oilType}`);
     }
+  },
+
+  // Masters module (for master data)
+  masters: {
+    getSuppliers: async () => apiCall('/api/masters/suppliers'),
+    getMaterials: async () => apiCall('/api/masters/materials'),
+    getCategories: async () => apiCall('/api/categories'),
+    getSubcategories: async (categoryId) => apiCall(`/api/subcategories?category_id=${categoryId}`)
+  },
+
+  // Inventory module
+  inventory: {
+    getStock: async () => apiCall('/api/inventory/stock'),
+    updateStock: async (data) => post('/api/inventory/update', data)
+  },
+
+  // Reports module
+  reports: {
+    getProductionReport: async (params) => apiCall('/api/reports/production', params),
+    getCostReport: async (params) => apiCall('/api/reports/cost', params)
   }
 };
 
@@ -497,6 +530,16 @@ export const validationUtils = {
 
 // Export the entire SKU API as skuAPI for backward compatibility
 export const skuAPI = api.sku;
+
+// Export config API for configuration management
+export const configAPI = api.config;
+
+// Export other module APIs
+export const mastersAPI = api.masters;
+export const inventoryAPI = api.inventory;
+export const reportsAPI = api.reports;
+export const purchaseAPI = api.purchase;
+export const blendingAPI = api.blending;
 
 // Export the default skuService object for legacy imports
 export const skuService = {
