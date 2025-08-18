@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-18T02:59:08.278Z",
+  "generatedAt": "2025-08-18T09:35:36.132Z",
   "filesScanned": 57,
   "jsFilesScanned": 35,
   "pyFilesScanned": 22,
@@ -1470,7 +1470,7 @@
     {
       "name": "MRPHistory",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 7,
+      "line": 43,
       "type": "const"
     },
     {
@@ -7198,7 +7198,15 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 7,
+      "line": 8,
+      "name": "formatDateForDisplay",
+      "params": "dateValue",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
+      "line": 43,
       "name": "MRPHistory",
       "params": "",
       "type": "arrow",
@@ -7206,7 +7214,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 44,
+      "line": 80,
       "name": "fetchSKUs",
       "params": "",
       "type": "arrow",
@@ -7214,7 +7222,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 64,
+      "line": 100,
       "name": "fetchMRPHistory",
       "params": "skuId",
       "type": "arrow",
@@ -7222,7 +7230,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 89,
+      "line": 125,
       "name": "fetchCurrentMRP",
       "params": "skuId",
       "type": "arrow",
@@ -7230,7 +7238,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 104,
+      "line": 140,
       "name": "handleSKUChange",
       "params": "e",
       "type": "arrow",
@@ -7238,7 +7246,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 119,
+      "line": 155,
       "name": "handleOpenAddModal",
       "params": "",
       "type": "arrow",
@@ -7246,7 +7254,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 136,
+      "line": 172,
       "name": "handleCloseModal",
       "params": "",
       "type": "arrow",
@@ -7254,7 +7262,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 147,
+      "line": 183,
       "name": "validateNewMRP",
       "params": "",
       "type": "arrow",
@@ -7262,7 +7270,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 194,
+      "line": 230,
       "name": "handleInputChange",
       "params": "e",
       "type": "arrow",
@@ -7270,7 +7278,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 204,
+      "line": 240,
       "name": "handleSubmitNewMRP",
       "params": "e",
       "type": "arrow",
@@ -7278,7 +7286,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 246,
+      "line": 282,
       "name": "calculateChangePercentage",
       "params": "newAmount, oldAmount",
       "type": "arrow",
@@ -7286,7 +7294,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 253,
+      "line": 289,
       "name": "getTimelineColor",
       "params": "item",
       "type": "arrow",
@@ -11588,7 +11596,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 9,
+      "line": 45,
       "type": "useState",
       "name": "skuList",
       "setter": "setSKUList",
@@ -11596,13 +11604,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 9,
+      "line": 45,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 10,
+      "line": 46,
       "type": "useState",
       "name": "selectedSKU",
       "setter": "setSelectedSKU",
@@ -11610,13 +11618,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 10,
+      "line": 46,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 11,
+      "line": 47,
       "type": "useState",
       "name": "selectedSKUData",
       "setter": "setSelectedSKUData",
@@ -11624,13 +11632,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 11,
+      "line": 47,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 12,
+      "line": 48,
       "type": "useState",
       "name": "mrpHistory",
       "setter": "setMrpHistory",
@@ -11638,13 +11646,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 12,
+      "line": 48,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 13,
+      "line": 49,
       "type": "useState",
       "name": "currentMRP",
       "setter": "setCurrentMRP",
@@ -11652,13 +11660,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 13,
+      "line": 49,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 14,
+      "line": 50,
       "type": "useState",
       "name": "loading",
       "setter": "setLoading",
@@ -11666,13 +11674,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 14,
+      "line": 50,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 15,
+      "line": 51,
       "type": "useState",
       "name": "loadingHistory",
       "setter": "setLoadingHistory",
@@ -11680,13 +11688,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 15,
+      "line": 51,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 16,
+      "line": 52,
       "type": "useState",
       "name": "message",
       "setter": "setMessage",
@@ -11694,13 +11702,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 16,
+      "line": 52,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 19,
+      "line": 55,
       "type": "useState",
       "name": "showAddModal",
       "setter": "setShowAddModal",
@@ -11708,13 +11716,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 19,
+      "line": 55,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 20,
+      "line": 56,
       "type": "useState",
       "name": "newMRP",
       "setter": "setNewMRP",
@@ -11722,13 +11730,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 20,
+      "line": 56,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 26,
+      "line": 62,
       "type": "useState",
       "name": "errors",
       "setter": "setErrors",
@@ -11736,19 +11744,19 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 26,
+      "line": 62,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 29,
+      "line": 65,
       "type": "useEffect",
       "hook": "useEffect"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 34,
+      "line": 70,
       "type": "useEffect",
       "hook": "useEffect"
     },
@@ -14778,49 +14786,49 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 45,
+      "line": 81,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 57,
+      "line": 93,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 66,
+      "line": 102,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 80,
+      "line": 116,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 90,
+      "line": 126,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 98,
+      "line": 134,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 212,
+      "line": 248,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
-      "line": 237,
+      "line": 273,
       "type": "catch",
       "code": "} catch (error) {"
     },
@@ -16876,7 +16884,7 @@
     "hardcodedValues": 22,
     "databaseQueries": 276,
     "databaseTables": 45,
-    "functions": 472,
+    "functions": 473,
     "stateHooks": 554,
     "missingEndpoints": 1,
     "errorHandlers": 465
