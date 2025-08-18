@@ -1,8 +1,9 @@
-# File Path: puvi-backend/modules/sku_management.py
+# File Path: puvi-backend/puvi-backend-main/modules/sku_management.py
 """
 SKU Management Module for PUVI Oil Manufacturing System
 Handles SKU master data, BOM configuration, and version management
 Version: 1.1 (Simplified - No cartons in production)
+FIXED: Changed 'active' to 'is_active' for cost_elements_master table
 """
 
 from flask import Blueprint, request, jsonify
@@ -238,12 +239,12 @@ def get_sku_bom(sku_id):
                     'notes': detail[10]
                 })
         
-        # Get labor cost for this package size
+        # Get labor cost for this package size - FIXED: Changed 'active' to 'is_active'
         cur.execute("""
             SELECT element_id, element_name, default_rate
             FROM cost_elements_master
             WHERE element_name LIKE %s
-            AND active = true
+            AND is_active = true
         """, (f'Packing Labour {sku_data[3]}%',))
         
         labor_data = cur.fetchone()
@@ -519,12 +520,12 @@ def get_cost_preview():
         material_cost_per_unit = cur.fetchone()[0] or 0
         material_cost = float(material_cost_per_unit) * quantity
         
-        # Get labor cost
+        # Get labor cost - FIXED: Changed 'active' to 'is_active'
         cur.execute("""
             SELECT default_rate
             FROM cost_elements_master
             WHERE element_name LIKE %s
-            AND active = true
+            AND is_active = true
         """, (f'Packing Labour {package_size}%',))
         
         labor_rate = cur.fetchone()
