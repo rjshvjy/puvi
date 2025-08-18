@@ -505,13 +505,14 @@ def get_production_history():
 
 
 # ============================================
-# EXPIRY MANAGEMENT
+# EXPIRY MANAGEMENT - FIXED CURSOR ISSUES
 # ============================================
 
 @sku_production_bp.route('/api/sku/expiry-alerts', methods=['GET'])
 def get_expiry_alerts():
     """Get items nearing expiry with configurable threshold"""
     conn = get_db_connection()
+    cur = conn.cursor()  # FIX: Added cursor creation
     
     try:
         days_threshold = int(request.args.get('days', 30))
@@ -532,13 +533,14 @@ def get_expiry_alerts():
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
     finally:
-        close_connection(conn)
+        close_connection(conn, cur)  # FIX: Added cur parameter
 
 
 @sku_production_bp.route('/api/sku/expiry-summary', methods=['GET'])
 def get_expiry_summary():
     """Get summary of items by expiry status for dashboard"""
     conn = get_db_connection()
+    cur = conn.cursor()  # FIX: Added cursor creation
     
     try:
         summary = get_expiry_alert_summary(conn)
@@ -558,13 +560,14 @@ def get_expiry_summary():
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
     finally:
-        close_connection(conn)
+        close_connection(conn, cur)  # FIX: Added cur parameter
 
 
 @sku_production_bp.route('/api/sku/fefo-allocation/<int:sku_id>', methods=['POST'])
 def get_fefo_allocation_for_sku(sku_id):
     """Get FEFO (First Expiry First Out) allocation for SKU sales"""
     conn = get_db_connection()
+    cur = conn.cursor()  # FIX: Added cursor creation
     
     try:
         data = request.json
@@ -587,7 +590,7 @@ def get_fefo_allocation_for_sku(sku_id):
     except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
     finally:
-        close_connection(conn)
+        close_connection(conn, cur)  # FIX: Added cur parameter
 
 
 # ============================================
