@@ -1,8 +1,8 @@
-# File Path: puvi-backend/modules/sku_production.py
 """
+FIle path: puvi-backend/puvi-backend-main/modules/sku_production.py
 SKU Production Module for PUVI Oil Manufacturing System
 Enhanced with MRP and Expiry Date Management
-Version: 2.0 - Includes MRP tracking, expiry calculations, and production reports
+Version: 2.1 - Fixed route collisions and database column references
 """
 
 from flask import Blueprint, request, jsonify
@@ -25,308 +25,6 @@ from utils.expiry_utils import (
 
 # Create Blueprint
 sku_production_bp = Blueprint('sku_production', __name__)
-
-# ============================================
-# SKU MASTER MANAGEMENT WITH MRP & SHELF LIFE
-# ============================================
-
-@sku_production_bp.route('/api/sku/master', methods=['GET'])
-def get_sku_master_list():
-    """Get list of all SKUs with MRP and shelf life"""
-    conn = get_db_connection()
-    cur = conn.cursor()
-    
-    try:
-        query = """
-            SELECT 
-                s.sku_id,
-                s.sku_code,
-                s.product_name,
-                s.oil_type,
-                s.package_size,
-                s.density,
-                s.mrp_current,
-                s.shelf_life_months,
-                s.mrp_effective_date,
-                s.is_active,
-                s.created_at,
-                h.mrp_amount as latest_mrp,
-                h.effective_from,
-                h.changed_by
-            FROM sku_master s
-            LEFT JOIN sku_mrp_history h ON s.sku_id = h.sku_id AND h.is_current = true
-            WHERE s.is_active = true
-            ORDER BY s.sku_code
-        """
-        
-        cur.execute(query)
-        
-        skus = []
-        for row in cur.fetchall():
-            skus.append({
-                'sku_id': row[0],
-                'sku_code': row[1],
-                'product_name': row[2],
-                'oil_type': row[3],
-                'package_size': row[4],
-                'density': float(row[5]) if row[5] else 1.0,
-                'mrp_current': float(row[6]) if row[6] else 0,
-                'shelf_life_months': row[7],
-                'mrp_effective_date': integer_to_date(row[8]) if row[8] else None,
-                'is_active': row[9],
-                'created_at': row[10].isoformat() if row[10] else None,
-                'latest_mrp': float(row[11]) if row[11] else None,
-                'mrp_effective_from': integer_to_date(row[12]) if row[12] else None,
-                'mrp_changed_by': row[13]
-            })
-        
-        return jsonify({
-            'success': True,
-            'skus': skus,
-            'count': len(skus)
-        })
-        
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)}), 500
-    finally:
-        close_connection(conn, cur)
-
-
-@sku_production_bp.route('/api/sku/master/<int:sku_id>', methods=['GET'])
-def get_sku_master_details(sku_id):
-    """Get specific SKU details with MRP and shelf life"""
-    conn = get_db_connection()
-    cur = conn.cursor()
-    
-    try:
-        cur.execute("""
-            SELECT 
-                s.sku_id,
-                s.sku_code,
-                s.product_name,
-                s.oil_type,
-                s.package_size,
-                s.density,
-                s.mrp_current,
-                s.shelf_life_months,
-                s.mrp_effective_date,
-                s.is_active,
-                s.created_at,
-                s.updated_at
-            FROM sku_master s
-            WHERE s.sku_id = %s
-        """, (sku_id,))
-        
-        row = cur.fetchone()
-        if not row:
-            return jsonify({'success': False, 'error': 'SKU not found'}), 404
-        
-        sku_details = {
-            'sku_id': row[0],
-            'sku_code': row[1],
-            'product_name': row[2],
-            'oil_type': row[3],
-            'package_size': row[4],
-            'density': float(row[5]) if row[5] else 1.0,
-            'mrp_current': float(row[6]) if row[6] else 0,
-            'shelf_life_months': row[7],
-            'mrp_effective_date': integer_to_date(row[8]) if row[8] else None,
-            'is_active': row[9],
-            'created_at': row[10].isoformat() if row[10] else None,
-            'updated_at': row[11].isoformat() if row[11] else None
-        }
-        
-        return jsonify({
-            'success': True,
-            'sku': sku_details
-        })
-        
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)}), 500
-    finally:
-        close_connection(conn, cur)
-
-
-@sku_production_bp.route('/api/sku/master', methods=['POST'])
-def create_sku_master():
-    """Create new SKU with MRP and shelf life"""
-    conn = get_db_connection()
-    cur = conn.cursor()
-    
-    try:
-        data = request.json
-        
-        required_fields = ['sku_code', 'product_name', 'oil_type', 'package_size', 
-                          'mrp_current', 'shelf_life_months']
-        is_valid, missing_fields = validate_required_fields(data, required_fields)
-        
-        if not is_valid:
-            return jsonify({
-                'success': False,
-                'error': f'Missing required fields: {", ".join(missing_fields)}'
-            }), 400
-        
-        # Validate shelf life
-        is_valid_shelf, error_msg = validate_shelf_life(data['shelf_life_months'])
-        if not is_valid_shelf:
-            return jsonify({'success': False, 'error': error_msg}), 400
-        
-        cur.execute("BEGIN")
-        
-        # Insert SKU master
-        cur.execute("""
-            INSERT INTO sku_master (
-                sku_code, product_name, oil_type, package_size,
-                density, mrp_current, shelf_life_months,
-                mrp_effective_date, is_active
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-            RETURNING sku_id
-        """, (
-            data['sku_code'],
-            data['product_name'],
-            data['oil_type'],
-            data['package_size'],
-            data.get('density', 1.0),
-            data['mrp_current'],
-            data['shelf_life_months'],
-            parse_date(data.get('mrp_effective_date', datetime.now())),
-            data.get('is_active', True)
-        ))
-        
-        sku_id = cur.fetchone()[0]
-        
-        # Create initial MRP history entry
-        cur.execute("""
-            INSERT INTO sku_mrp_history (
-                sku_id, mrp_amount, effective_from,
-                changed_by, change_reason, is_current
-            ) VALUES (%s, %s, %s, %s, %s, true)
-        """, (
-            sku_id,
-            data['mrp_current'],
-            parse_date(data.get('mrp_effective_date', datetime.now())),
-            data.get('created_by', 'System'),
-            'Initial MRP setup'
-        ))
-        
-        conn.commit()
-        
-        return jsonify({
-            'success': True,
-            'sku_id': sku_id,
-            'message': 'SKU created successfully with MRP and shelf life'
-        }), 201
-        
-    except Exception as e:
-        conn.rollback()
-        return jsonify({'success': False, 'error': str(e)}), 500
-    finally:
-        close_connection(conn, cur)
-
-
-@sku_production_bp.route('/api/sku/master/<int:sku_id>', methods=['PUT'])
-def update_sku_master(sku_id):
-    """Update SKU master including MRP changes"""
-    conn = get_db_connection()
-    cur = conn.cursor()
-    
-    try:
-        data = request.json
-        
-        cur.execute("BEGIN")
-        
-        # Get current MRP for comparison
-        cur.execute("""
-            SELECT mrp_current, shelf_life_months
-            FROM sku_master
-            WHERE sku_id = %s
-        """, (sku_id,))
-        
-        current_data = cur.fetchone()
-        if not current_data:
-            return jsonify({'success': False, 'error': 'SKU not found'}), 404
-        
-        current_mrp = float(current_data[0]) if current_data[0] else 0
-        new_mrp = data.get('mrp_current')
-        
-        # Update SKU master
-        update_fields = []
-        update_values = []
-        
-        if 'product_name' in data:
-            update_fields.append("product_name = %s")
-            update_values.append(data['product_name'])
-        
-        if 'shelf_life_months' in data:
-            is_valid_shelf, error_msg = validate_shelf_life(data['shelf_life_months'])
-            if not is_valid_shelf:
-                return jsonify({'success': False, 'error': error_msg}), 400
-            update_fields.append("shelf_life_months = %s")
-            update_values.append(data['shelf_life_months'])
-        
-        if new_mrp is not None and new_mrp != current_mrp:
-            update_fields.append("mrp_current = %s")
-            update_values.append(new_mrp)
-            
-            if 'mrp_effective_date' in data:
-                update_fields.append("mrp_effective_date = %s")
-                update_values.append(parse_date(data['mrp_effective_date']))
-        
-        if 'is_active' in data:
-            update_fields.append("is_active = %s")
-            update_values.append(data['is_active'])
-        
-        update_fields.append("updated_at = CURRENT_TIMESTAMP")
-        update_values.append(sku_id)
-        
-        query = f"""
-            UPDATE sku_master
-            SET {', '.join(update_fields)}
-            WHERE sku_id = %s
-        """
-        
-        cur.execute(query, update_values)
-        
-        # If MRP changed, create history entry
-        if new_mrp is not None and new_mrp != current_mrp:
-            # Mark previous MRP as not current
-            cur.execute("""
-                UPDATE sku_mrp_history
-                SET is_current = false,
-                    effective_to = %s
-                WHERE sku_id = %s AND is_current = true
-            """, (
-                parse_date(data.get('mrp_effective_date', datetime.now())) - 1,
-                sku_id
-            ))
-            
-            # Insert new MRP history
-            cur.execute("""
-                INSERT INTO sku_mrp_history (
-                    sku_id, mrp_amount, effective_from,
-                    changed_by, change_reason, is_current
-                ) VALUES (%s, %s, %s, %s, %s, true)
-            """, (
-                sku_id,
-                new_mrp,
-                parse_date(data.get('mrp_effective_date', datetime.now())),
-                data.get('changed_by', 'System'),
-                data.get('change_reason', 'MRP Update')
-            ))
-        
-        conn.commit()
-        
-        return jsonify({
-            'success': True,
-            'message': 'SKU updated successfully'
-        })
-        
-    except Exception as e:
-        conn.rollback()
-        return jsonify({'success': False, 'error': str(e)}), 500
-    finally:
-        close_connection(conn, cur)
-
 
 # ============================================
 # MRP HISTORY MANAGEMENT
@@ -557,12 +255,12 @@ def create_sku_production():
                 'total_cost': cost
             })
         
-        # Get labor cost
+        # Get labor cost - FIXED: Changed 'active' to 'is_active'
         cur.execute("""
             SELECT default_rate
             FROM cost_elements_master
             WHERE element_name LIKE %s
-            AND active = true
+            AND is_active = true
         """, (f'Packing Labour {sku_data[0]}%',))
         
         labor_rate = cur.fetchone()
@@ -1076,7 +774,7 @@ def get_production_summary_report(production_id):
 
 
 # ============================================
-# PRODUCTION PLANNING (EXISTING)
+# PRODUCTION PLANNING
 # ============================================
 
 @sku_production_bp.route('/api/sku/production/plan', methods=['POST'])
@@ -1141,7 +839,7 @@ def create_production_plan():
         oil_per_bottle = size_in_liters * float(sku_data[4])  # kg
         total_oil_required = oil_per_bottle * bottles_planned
         
-        # Check oil availability (existing logic)
+        # Check oil availability
         oil_type = sku_data[2]
         
         cur.execute("""
@@ -1265,7 +963,7 @@ def create_production_plan():
 
 
 # ============================================
-# OIL ALLOCATION (EXISTING - NO CHANGES)
+# OIL ALLOCATION
 # ============================================
 
 @sku_production_bp.route('/api/sku/production/allocate-oil', methods=['POST'])
