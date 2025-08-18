@@ -1,4 +1,4 @@
-// File Path: puvi-frontend/src/services/skuService.js
+// File Path: puvi-frontend/puvi-frontend-main/src/services/skuService.js
 // SKU Service - Comprehensive API service for SKU Management with MRP and Expiry
 // Connects to backend v2.0 with enhanced endpoints
 
