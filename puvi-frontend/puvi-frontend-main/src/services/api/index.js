@@ -79,7 +79,9 @@ const api = {
     getBatchHistory: (params) => api.get('/api/batch_history', params),
     // FIXED: Add missing batch cost endpoints
     calculateBatchCosts: (batchId) => api.post('/api/cost_elements/calculate', { batch_id: batchId }),
-    getBatchCostSummary: (batchId) => api.get(`/api/cost_elements/batch_summary/${batchId}`)
+    getBatchCostSummary: (batchId) => api.get(`/api/cost_elements/batch_summary/${batchId}`),
+    // FIX ADDED: Missing getOilTypes function
+    getOilTypes: () => api.get('/api/oil_types')
   },
   
   sku: {
@@ -92,8 +94,10 @@ const api = {
     getAllocateOil: (data) => api.post('/api/sku/allocate_oil', data),
     getMaterials: () => api.get('/api/sku/materials_for_sku'),
     createProduction: (data) => api.post('/api/sku/production', data),
-    getProductionHistory: (params) => api.get('/api/sku/production_history', params),
-    getProductionSummary: (id) => api.get(`/api/sku/production_summary/${id}`)
+    getProductionHistory: (params) => api.get('/api/sku/production/history', params), // FIXED: Added /history
+    getProductionSummary: (id) => api.get(`/api/sku/production_summary/${id}`),
+    // FIX ADDED: Missing getSKUDetails function
+    getSKUDetails: (skuId) => api.get(`/api/sku/master/${skuId}`)
   },
   
   sales: {
@@ -120,7 +124,12 @@ const api = {
   blending: {
     getAvailableOils: () => api.get('/api/available_oils_for_blend'),
     createBlend: (data) => api.post('/api/oil_blending', data),
-    getHistory: () => api.get('/api/blending_history')
+    getHistory: () => api.get('/api/blending_history'),
+    // FIX ADDED: Missing getBatchesForOilType function
+    getBatchesForOilType: (oilType) => {
+      const params = oilType ? { oil_type: oilType } : {};
+      return api.get('/api/available_oils_for_blend', params);
+    }
   },
   
   costManagement: {
@@ -330,7 +339,7 @@ export const skuAPI = {
   
   // Production
   createProduction: (data) => api.post('/api/sku/production', data),
-  getProductionHistory: () => api.get('/api/sku/production_history'),
+  getProductionHistory: () => api.get('/api/sku/production/history'),  // FIXED: Added /history
   getProductionDetails: (id) => api.get(`/api/sku/production/${id}`),
   
   // Oil allocation
