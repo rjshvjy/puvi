@@ -2,6 +2,7 @@
 # PUVI System - Expiry Management Utilities
 # File: puvi-backend/utils/expiry_utils.py
 # Purpose: Handle expiry date calculations and status checks
+# Version: Fixed - GROUP BY error resolved
 # =====================================================
 
 from datetime import datetime, timedelta
@@ -371,6 +372,7 @@ def format_expiry_date_display(expiry_date_int):
 def get_expiry_alert_summary(connection):
     """
     Get summary of items by expiry status for dashboard.
+    FIXED: GROUP BY clause error resolved
     
     Args:
         connection: Database connection
@@ -381,6 +383,8 @@ def get_expiry_alert_summary(connection):
     try:
         cursor = connection.cursor()
         
+        # FIX: Use GROUP BY 1 to group by the first column (the CASE expression)
+        # This avoids the PostgreSQL error about grouping by the alias
         query = """
             SELECT 
                 CASE 
@@ -394,7 +398,7 @@ def get_expiry_alert_summary(connection):
                 SUM(quantity_remaining) as total_quantity
             FROM sku_expiry_tracking
             WHERE quantity_remaining > 0
-            GROUP BY status
+            GROUP BY 1
         """
         cursor.execute(query)
         
