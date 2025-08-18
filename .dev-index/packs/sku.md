@@ -1,6 +1,6 @@
 # Feature Pack: SKU
-Generated: 2025-08-18T13:07:12.293Z
-Routes: 21 | Tables: 16 | Files: 10
+Generated: 2025-08-18T13:09:17.631Z
+Routes: 17 | Tables: 16 | Files: 10
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -14,7 +14,6 @@ Routes: 21 | Tables: 16 | Files: 10
 ```
 # get_sku_master_list
 GET    /api/sku/master
-GET    /api/sku/master
 # create_sku
 POST   /api/sku/master
 # get_sku_bom
@@ -27,12 +26,6 @@ GET    /api/sku/materials
 POST   /api/sku/cost-preview
 # get_bom_history
 GET    /api/sku/bom-history/<int:sku_id>
-# get_sku_master_details
-GET    /api/sku/master/<int:sku_id>
-# create_sku_master
-POST   /api/sku/master
-# update_sku_master
-PUT    /api/sku/master/<int:sku_id>
 # get_mrp_history
 GET    /api/sku/mrp-history/<int:sku_id>
 # get_current_mrp
