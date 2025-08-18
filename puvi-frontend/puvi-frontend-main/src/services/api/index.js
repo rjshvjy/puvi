@@ -260,7 +260,7 @@ const api = {
     getCostElementsMaster: async () => apiCall('/api/cost_elements_for_batch')
   },
 
-  // Configuration Management module
+  // Configuration Management module - FIXED: Added all missing methods
   config: {
     getConfig: async () => {
       return apiCall('/api/config');
@@ -270,24 +270,79 @@ const api = {
     },
     getSystemSettings: async () => {
       return apiCall('/api/config/system');
+    },
+    // NEW METHODS ADDED TO FIX THE ERROR:
+    getPackageSizes: async () => {
+      return apiCall('/api/config/package_sizes');
+    },
+    getOilTypes: async () => {
+      return apiCall('/api/config/oil_types');
+    },
+    getGSTRates: async () => {
+      return apiCall('/api/config/gst_rates');
+    },
+    getMaterialCategories: async () => {
+      return apiCall('/api/config/material_categories');
+    },
+    getWriteoffReasons: async () => {
+      return apiCall('/api/config/writeoff_reasons');
+    },
+    getCostElements: async () => {
+      return apiCall('/api/config/cost_elements');
+    },
+    getSuppliers: async () => {
+      return apiCall('/api/config/suppliers');
+    },
+    getLaborRates: async () => {
+      return apiCall('/api/config/labor_rates');
+    },
+    getBOMCategories: async () => {
+      return apiCall('/api/config/bom_categories');
+    },
+    getBOMMaterials: async (params = {}) => {
+      const queryParams = new URLSearchParams();
+      if (params.bom_category) queryParams.append('bom_category', params.bom_category);
+      const queryString = queryParams.toString();
+      return apiCall(`/api/config/bom_materials${queryString ? `?${queryString}` : ''}`);
     }
   },
 
-  // Blending module (for oil sources)
+  // Blending module - FIXED: Updated to use correct endpoint format
   blending: {
     getBatchesForOilType: async (oilType) => {
       try {
-        // Try the correct endpoint
-        return await apiCall(`/api/batches/by-oil-type/${oilType}`);
-      } catch (e) {
-        // Fallback with empty batches if endpoint doesn't exist
-        console.warn('Batches endpoint not found, returning empty list');
+        // FIXED: Use query parameter format to match backend
+        return await apiCall(`/api/batches_for_oil_type?oil_type=${encodeURIComponent(oilType)}`);
+      } catch (error) {
+        console.error('Error fetching batches:', error);
+        // Return empty result on error
         return {
           success: true,
           batches: [],
+          grouped_batches: {
+            extraction: [],
+            blended: [],
+            outsourced: []
+          },
+          total_count: 0,
           message: 'No batches available for ' + oilType
         };
       }
+    },
+    getOilTypesForBlending: async () => {
+      return apiCall('/api/oil_types_for_blending');
+    },
+    createBlend: async (blendData) => {
+      return post('/api/create_blend', blendData);
+    },
+    getBlendHistory: async (params = {}) => {
+      const queryParams = new URLSearchParams();
+      if (params.limit) queryParams.append('limit', params.limit);
+      if (params.oil_type) queryParams.append('oil_type', params.oil_type);
+      if (params.start_date) queryParams.append('start_date', params.start_date);
+      if (params.end_date) queryParams.append('end_date', params.end_date);
+      const queryString = queryParams.toString();
+      return apiCall(`/api/blend_history${queryString ? `?${queryString}` : ''}`);
     }
   },
 
