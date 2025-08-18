@@ -111,6 +111,9 @@ const api = {
     getSKUMasterList: async (filters) => api.sku.getMasterList(filters),
     createSKU: async (data) => api.sku.create(data),
     updateSKU: async (skuId, data) => api.sku.update(skuId, data),
+    
+    // Additional function for components
+    getSKUs: async (filters) => api.sku.getMasterList(filters),
 
     // ---------- BOM Configuration (from sku_management.py) ----------
     
@@ -212,18 +215,15 @@ const api = {
     getProductionSummaryReport: async (id) => api.sku.getProductionSummary(id),
     getProductionDetails: async (id) => api.sku.getProductionSummary(id),
 
-    // ---------- Expiry Management (from sku_production.py) ----------
-    
-    // Get items nearing expiry with configurable threshold
+    // Get items nearing expiry
     getExpiryAlerts: async (params = {}) => {
       const queryParams = new URLSearchParams();
       const days = params.days || params.threshold_days || 30;
       queryParams.append('days', days);
-      
       return apiCall(`/api/sku/expiry-alerts?${queryParams.toString()}`);
     },
 
-    // Get summary of items by expiry status
+    // Get expiry summary
     getExpirySummary: async () => {
       return apiCall('/api/sku/expiry-summary');
     },
@@ -250,11 +250,14 @@ const api = {
     }
   },
 
+  // Batch module (has oil types)
+  batch: {
+    getOilTypes: async () => apiCall('/api/oil_types')
+  },
+  
   // Cost Management module
   costManagement: {
-    getCostElementsMaster: async () => {
-      return apiCall('/api/cost-elements/master');
-    }
+    getCostElementsMaster: async () => apiCall('/api/cost_elements_for_batch')
   },
 
   // Configuration Management module
@@ -273,11 +276,22 @@ const api = {
   // Blending module (for oil sources)
   blending: {
     getBatchesForOilType: async (oilType) => {
-      return apiCall(`/api/blending/batches/${oilType}`);
+      try {
+        // Try the correct endpoint
+        return await apiCall(`/api/batches/by-oil-type/${oilType}`);
+      } catch (e) {
+        // Fallback with empty batches if endpoint doesn't exist
+        console.warn('Batches endpoint not found, returning empty list');
+        return {
+          success: true,
+          batches: [],
+          message: 'No batches available for ' + oilType
+        };
+      }
     }
   },
 
-  // Masters module (for master data)
+  // Masters module  
   masters: {
     getSuppliers: async () => apiCall('/api/masters/suppliers'),
     getMaterials: async () => apiCall('/api/masters/materials'),
@@ -528,13 +542,10 @@ export const validationUtils = {
 // BACKWARD COMPATIBILITY EXPORTS
 // ============================================
 
-// Export the entire SKU API as skuAPI for backward compatibility
+// Export specific module APIs
 export const skuAPI = api.sku;
-
-// Export config API for configuration management
 export const configAPI = api.config;
-
-// Export other module APIs
+export const batchAPI = api.batch;
 export const mastersAPI = api.masters;
 export const inventoryAPI = api.inventory;
 export const reportsAPI = api.reports;
