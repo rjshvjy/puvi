@@ -1,8 +1,8 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-18T14:30:41.908Z",
-  "filesScanned": 57,
-  "jsFilesScanned": 35,
+  "generatedAt": "2025-08-18T14:42:06.847Z",
+  "filesScanned": 56,
+  "jsFilesScanned": 34,
   "pyFilesScanned": 22,
   "routes": [
     {
@@ -8629,14 +8629,6 @@
       "isAsync": true
     },
     {
-      "file": "puvi-frontend/puvi-frontend-main/src/services/skuService.js",
-      "line": 8,
-      "name": "apiCall",
-      "params": "url, options = {}",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
       "line": 13,
       "name": "apiCall",
@@ -15701,18 +15693,6 @@
       "code": "} catch (error) {"
     },
     {
-      "file": "puvi-frontend/puvi-frontend-main/src/services/skuService.js",
-      "line": 9,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/services/skuService.js",
-      "line": 25,
-      "type": "catch",
-      "code": "} catch (error) {"
-    },
-    {
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
       "line": 14,
       "type": "try-catch",
@@ -17283,8 +17263,8 @@
   ],
   "lineNumbers": {},
   "summary": {
-    "totalFiles": 57,
-    "jsFiles": 35,
+    "totalFiles": 56,
+    "jsFiles": 34,
     "pyFiles": 22,
     "components": 38,
     "routes": 92,
@@ -17293,9 +17273,9 @@
     "hardcodedValues": 23,
     "databaseQueries": 289,
     "databaseTables": 47,
-    "functions": 479,
+    "functions": 478,
     "stateHooks": 554,
     "missingEndpoints": 1,
-    "errorHandlers": 473
+    "errorHandlers": 471
   }
 }
