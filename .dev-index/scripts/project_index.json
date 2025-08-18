@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-18T09:49:28.391Z",
+  "generatedAt": "2025-08-18T10:08:40.733Z",
   "filesScanned": 57,
   "jsFilesScanned": 35,
   "pyFilesScanned": 22,
@@ -1254,87 +1254,97 @@
     {
       "name": "mastersAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 230
+      "line": 236
     },
     {
       "name": "purchaseAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 283
+      "line": 289
     },
     {
       "name": "batchAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 307
+      "line": 313
     },
     {
       "name": "skuAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 328
+      "line": 334
     },
     {
       "name": "writeoffAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 353
+      "line": 363
     },
     {
       "name": "blendingAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 372
+      "line": 382
     },
     {
       "name": "openingBalanceAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 384
+      "line": 400
     },
     {
       "name": "salesAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 405
+      "line": 421
     },
     {
       "name": "costAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 430
+      "line": 446
     },
     {
       "name": "categoryAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 456
+      "line": 472
     },
     {
       "name": "configAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 473
+      "line": 489
     },
     {
       "name": "API_URL",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 527
+      "line": 543
     },
     {
       "name": "skuDateUtils",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 530
+      "line": 546
     },
     {
       "name": "expiryUtils",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 530
+      "line": 546
     },
     {
       "name": "formatUtils",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 530
+      "line": 546
+    },
+    {
+      "name": "dateUtils",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "line": 546
+    },
+    {
+      "name": "formatDateForDisplay",
+      "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
+      "line": 555
     },
     {
       "name": "apiCall",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 536
+      "line": 561
     },
     {
       "name": "API_BASE_URL",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 536
+      "line": 561
     },
     {
       "name": "skuDateUtils",
@@ -8342,7 +8352,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 12,
+      "line": 15,
       "name": "apiCall",
       "params": "url, options = {}",
       "type": "arrow",
@@ -15356,13 +15366,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 13,
+      "line": 16,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 29,
+      "line": 32,
       "type": "catch",
       "code": "} catch (error) {"
     },
@@ -16879,7 +16889,7 @@
     "pyFiles": 22,
     "components": 38,
     "routes": 90,
-    "exports": 43,
+    "exports": 45,
     "imports": 47,
     "hardcodedValues": 22,
     "databaseQueries": 276,
