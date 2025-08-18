@@ -1,6 +1,6 @@
 # Feature Pack: SKU
-Generated: 2025-08-18T13:09:17.631Z
-Routes: 17 | Tables: 16 | Files: 10
+Generated: 2025-08-18T14:03:18.623Z
+Routes: 23 | Tables: 18 | Files: 10
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -14,8 +14,14 @@ Routes: 17 | Tables: 16 | Files: 10
 ```
 # get_sku_master_list
 GET    /api/sku/master
+# get_single_sku
+GET    /api/sku/master/<int:sku_id>
 # create_sku
 POST   /api/sku/master
+# update_sku
+PUT    /api/sku/master/<int:sku_id>
+# delete_sku
+DELETE /api/sku/master/<int:sku_id>
 # get_sku_bom
 GET    /api/sku/bom/<int:sku_id>
 # create_or_update_bom
@@ -26,6 +32,12 @@ GET    /api/sku/materials
 POST   /api/sku/cost-preview
 # get_bom_history
 GET    /api/sku/bom-history/<int:sku_id>
+# activate_sku
+POST   /api/sku/master/activate/<int:sku_id>
+# bulk_update_skus
+POST   /api/sku/master/bulk-update
+# export_skus
+GET    /api/sku/master/export
 # get_mrp_history
 GET    /api/sku/mrp-history/<int:sku_id>
 # get_current_mrp
@@ -56,17 +68,19 @@ POST   /api/sku/production/allocate-oil
 | DESC | sku-production | 🟡 MEDIUM | Changes affect 1 other modules |
 | batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 7 other modules |
 | blend_batches | blending, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
+| completed | sku-management | 🟡 MEDIUM | Changes affect 1 other modules |
 | cost_elements_master | cost-management, sku-management, sku-production | 🔴 HIGH | Changes affect 4 other modules |
 | created_at | sku-production | 🟡 MEDIUM | Changes affect 1 other modules |
 | inventory | batch-production, blending, material-writeoff | 🔴 HIGH | Changes affect 7 other modules |
 | materials | batch-production, blending, material-writeoff | 🔴 HIGH | Changes affect 9 other modules |
+| query | sku-management | 🟡 MEDIUM | Changes affect 1 other modules |
 | sku_bom_details | sku-management, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
 | sku_bom_master | sku-management, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
 | sku_master | sku-management, sku-production, system-config | 🔴 HIGH | Changes affect 4 other modules |
 | sku_material_consumption | sku-production | 🟡 MEDIUM | Changes affect 1 other modules |
-| sku_mrp_history | sku-production | 🟡 MEDIUM | Changes affect 1 other modules |
+| sku_mrp_history | sku-management, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
 | sku_oil_allocation | sku-production | 🟡 MEDIUM | Changes affect 1 other modules |
-| sku_production | sku-production | 🟡 MEDIUM | Changes affect 1 other modules |
+| sku_production | sku-management, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
 
 ### ⚠️ Hardcoded Values Detected
 - `ProductionSummaryReport.js:185` - object

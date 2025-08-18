@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-18T13:09:16.795Z",
+  "generatedAt": "2025-08-18T14:03:17.780Z",
   "filesScanned": 57,
   "jsFilesScanned": 35,
   "pyFilesScanned": 22,
@@ -535,25 +535,52 @@
       "method": "GET",
       "path": "/api/sku/master",
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 24,
+      "line": 23,
       "blueprint": "sku_management_bp",
       "function": "get_sku_master_list",
+      "source": "backend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sku/master/<int:sku_id>",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 164,
+      "blueprint": "sku_management_bp",
+      "function": "get_single_sku",
       "source": "backend"
     },
     {
       "method": "POST",
       "path": "/api/sku/master",
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 104,
+      "line": 252,
       "blueprint": "sku_management_bp",
       "function": "create_sku",
+      "source": "backend"
+    },
+    {
+      "method": "PUT",
+      "path": "/api/sku/master/<int:sku_id>",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 331,
+      "blueprint": "sku_management_bp",
+      "function": "update_sku",
+      "source": "backend"
+    },
+    {
+      "method": "DELETE",
+      "path": "/api/sku/master/<int:sku_id>",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 443,
+      "blueprint": "sku_management_bp",
+      "function": "delete_sku",
       "source": "backend"
     },
     {
       "method": "GET",
       "path": "/api/sku/bom/<int:sku_id>",
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 166,
+      "line": 509,
       "blueprint": "sku_management_bp",
       "function": "get_sku_bom",
       "source": "backend"
@@ -562,7 +589,7 @@
       "method": "POST",
       "path": "/api/sku/bom",
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 284,
+      "line": 627,
       "blueprint": "sku_management_bp",
       "function": "create_or_update_bom",
       "source": "backend"
@@ -571,7 +598,7 @@
       "method": "GET",
       "path": "/api/sku/materials",
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 397,
+      "line": 741,
       "blueprint": "sku_management_bp",
       "function": "get_materials_for_bom",
       "source": "backend"
@@ -580,7 +607,7 @@
       "method": "POST",
       "path": "/api/sku/cost-preview",
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 474,
+      "line": 818,
       "blueprint": "sku_management_bp",
       "function": "get_cost_preview",
       "source": "backend"
@@ -589,9 +616,36 @@
       "method": "GET",
       "path": "/api/sku/bom-history/<int:sku_id>",
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 574,
+      "line": 918,
       "blueprint": "sku_management_bp",
       "function": "get_bom_history",
+      "source": "backend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/sku/master/activate/<int:sku_id>",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 969,
+      "blueprint": "sku_management_bp",
+      "function": "activate_sku",
+      "source": "backend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/sku/master/bulk-update",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 1002,
+      "blueprint": "sku_management_bp",
+      "function": "bulk_update_skus",
+      "source": "backend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sku/master/export",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 1094,
+      "blueprint": "sku_management_bp",
+      "function": "export_skus",
       "source": "backend"
     },
     {
@@ -802,10 +856,10 @@
         "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
         "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
         "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
-        "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-        "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
         "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-        "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx"
+        "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+        "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+        "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx"
       ]
     },
     {
@@ -1478,18 +1532,6 @@
       "type": "const"
     },
     {
-      "name": "OpeningBalanceEntry",
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 34,
-      "type": "const"
-    },
-    {
-      "name": "SystemStatusDashboard",
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
-      "line": 34,
-      "type": "const"
-    },
-    {
       "name": "FormSection",
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
       "line": 39,
@@ -1553,6 +1595,18 @@
       "name": "MastersList",
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
       "line": 35,
+      "type": "const"
+    },
+    {
+      "name": "OpeningBalanceEntry",
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 34,
+      "type": "const"
+    },
+    {
+      "name": "SystemStatusDashboard",
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
+      "line": 34,
       "type": "const"
     }
   ],
@@ -4063,41 +4117,21 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 73,
+      "line": 97,
       "type": "OTHER",
       "tables": [],
       "preview": "cur.execute(query, params)"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 124,
-      "type": "SELECT",
-      "tables": [
-        "sku_master"
-      ],
-      "preview": "cur.execute(\"SELECT sku_id FROM sku_master WHERE sku_code = %s\", (data['sku_code'],))"
+      "line": 144,
+      "type": "OTHER",
+      "tables": [],
+      "preview": "cur.execute(count_query, count_params)"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 129,
-      "type": "INSERT",
-      "tables": [
-        "sku_master"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 174,
-      "type": "SELECT",
-      "tables": [
-        "sku_master"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 185,
+      "line": 172,
       "type": "SELECT",
       "tables": [
         "sku_master",
@@ -4107,11 +4141,247 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 204,
+      "line": 222,
       "type": "SELECT",
       "tables": [
         "sku_master",
         "sku_bom_master",
+        "sku_production"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 272,
+      "type": "SELECT",
+      "tables": [
+        "sku_master",
+        "sku_bom_master",
+        "sku_production"
+      ],
+      "preview": "cur.execute(\"SELECT sku_id FROM sku_master WHERE sku_code = %s\", (data['sku_code'],))"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 277,
+      "type": "INSERT",
+      "tables": [
+        "sku_master",
+        "sku_bom_master",
+        "sku_production"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 302,
+      "type": "INSERT",
+      "tables": [
+        "sku_master",
+        "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 341,
+      "type": "SELECT",
+      "tables": [
+        "sku_master",
+        "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query"
+      ],
+      "preview": "cur.execute(\"SELECT sku_code, mrp_current FROM sku_master WHERE sku_id = %s\", (sku_id,))"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 350,
+      "type": "SELECT",
+      "tables": [
+        "sku_master",
+        "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query"
+      ],
+      "preview": "cur.execute("
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 402,
+      "type": "OTHER",
+      "tables": [
+        "sku_master",
+        "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query"
+      ],
+      "preview": "cur.execute(query, values)"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 407,
+      "type": "UPDATE",
+      "tables": [
+        "sku_master",
+        "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 415,
+      "type": "INSERT",
+      "tables": [
+        "sku_master",
+        "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 451,
+      "type": "SELECT",
+      "tables": [
+        "sku_master",
+        "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query"
+      ],
+      "preview": "cur.execute(\"SELECT sku_code, is_active FROM sku_master WHERE sku_id = %s\", (sku_id,))"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 457,
+      "type": "SELECT",
+      "tables": [
+        "sku_master",
+        "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 465,
+      "type": "UPDATE",
+      "tables": [
+        "sku_master",
+        "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 485,
+      "type": "SELECT",
+      "tables": [
+        "sku_master",
+        "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
+        "sku_bom_details"
+      ],
+      "preview": "cur.execute(\"DELETE FROM sku_mrp_history WHERE sku_id = %s\", (sku_id,))"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 486,
+      "type": "SELECT",
+      "tables": [
+        "sku_master",
+        "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
+        "sku_bom_details"
+      ],
+      "preview": "cur.execute(\"DELETE FROM sku_bom_details WHERE bom_id IN (SELECT bom_id FROM sku_bom_master WHERE sk"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 487,
+      "type": "DELETE",
+      "tables": [
+        "sku_master",
+        "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
+        "sku_bom_details"
+      ],
+      "preview": "cur.execute(\"DELETE FROM sku_bom_master WHERE sku_id = %s\", (sku_id,))"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 488,
+      "type": "DELETE",
+      "tables": [
+        "sku_master",
+        "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
+        "sku_bom_details"
+      ],
+      "preview": "cur.execute(\"DELETE FROM sku_master WHERE sku_id = %s\", (sku_id,))"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 517,
+      "type": "SELECT",
+      "tables": [
+        "sku_master",
+        "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
+        "sku_bom_details"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 528,
+      "type": "SELECT",
+      "tables": [
+        "sku_master",
+        "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
+        "sku_bom_details"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 547,
+      "type": "SELECT",
+      "tables": [
+        "sku_master",
+        "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
         "sku_bom_details",
         "materials"
       ],
@@ -4119,11 +4389,14 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 243,
+      "line": 586,
       "type": "SELECT",
       "tables": [
         "sku_master",
         "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
         "sku_bom_details",
         "materials",
         "cost_elements_master"
@@ -4132,11 +4405,14 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 307,
+      "line": 650,
       "type": "SELECT",
       "tables": [
         "sku_master",
         "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
         "sku_bom_details",
         "materials",
         "cost_elements_master"
@@ -4145,11 +4421,14 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 315,
+      "line": 658,
       "type": "OTHER",
       "tables": [
         "sku_master",
         "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
         "sku_bom_details",
         "materials",
         "cost_elements_master"
@@ -4158,11 +4437,14 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 322,
+      "line": 665,
       "type": "DELETE",
       "tables": [
         "sku_master",
         "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
         "sku_bom_details",
         "materials",
         "cost_elements_master",
@@ -4172,11 +4454,14 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 325,
+      "line": 668,
       "type": "UPDATE",
       "tables": [
         "sku_master",
         "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
         "sku_bom_details",
         "materials",
         "cost_elements_master",
@@ -4186,11 +4471,14 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 336,
+      "line": 680,
       "type": "UPDATE",
       "tables": [
         "sku_master",
         "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
         "sku_bom_details",
         "materials",
         "cost_elements_master",
@@ -4200,11 +4488,14 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 344,
+      "line": 688,
       "type": "INSERT",
       "tables": [
         "sku_master",
         "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
         "sku_bom_details",
         "materials",
         "cost_elements_master",
@@ -4214,11 +4505,14 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 363,
+      "line": 707,
       "type": "INSERT",
       "tables": [
         "sku_master",
         "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
         "sku_bom_details",
         "materials",
         "cost_elements_master",
@@ -4228,11 +4522,14 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 434,
+      "line": 778,
       "type": "OTHER",
       "tables": [
         "sku_master",
         "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
         "sku_bom_details",
         "materials",
         "cost_elements_master",
@@ -4242,11 +4539,14 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 448,
+      "line": 792,
       "type": "SELECT",
       "tables": [
         "sku_master",
         "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
         "sku_bom_details",
         "materials",
         "cost_elements_master",
@@ -4256,11 +4556,14 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 488,
+      "line": 832,
       "type": "SELECT",
       "tables": [
         "sku_master",
         "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
         "sku_bom_details",
         "materials",
         "cost_elements_master",
@@ -4270,11 +4573,14 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 511,
+      "line": 855,
       "type": "SELECT",
       "tables": [
         "sku_master",
         "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
         "sku_bom_details",
         "materials",
         "cost_elements_master",
@@ -4284,11 +4590,14 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 524,
+      "line": 868,
       "type": "SELECT",
       "tables": [
         "sku_master",
         "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
         "sku_bom_details",
         "materials",
         "cost_elements_master",
@@ -4298,15 +4607,139 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 581,
+      "line": 925,
       "type": "SELECT",
       "tables": [
         "sku_master",
         "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
         "sku_bom_details",
         "materials",
         "cost_elements_master",
         "BOM"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 976,
+      "type": "UPDATE",
+      "tables": [
+        "sku_master",
+        "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
+        "sku_bom_details",
+        "materials",
+        "cost_elements_master",
+        "BOM"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 1022,
+      "type": "OTHER",
+      "tables": [
+        "sku_master",
+        "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
+        "sku_bom_details",
+        "materials",
+        "cost_elements_master",
+        "BOM"
+      ],
+      "preview": "cur.execute(\"BEGIN\")"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 1031,
+      "type": "UPDATE",
+      "tables": [
+        "sku_master",
+        "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
+        "sku_bom_details",
+        "materials",
+        "cost_elements_master",
+        "BOM"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 1040,
+      "type": "UPDATE",
+      "tables": [
+        "sku_master",
+        "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
+        "sku_bom_details",
+        "materials",
+        "cost_elements_master",
+        "BOM"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 1047,
+      "type": "INSERT",
+      "tables": [
+        "sku_master",
+        "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
+        "sku_bom_details",
+        "materials",
+        "cost_elements_master",
+        "BOM"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 1068,
+      "type": "OTHER",
+      "tables": [
+        "sku_master",
+        "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
+        "sku_bom_details",
+        "materials",
+        "cost_elements_master",
+        "BOM",
+        "completed"
+      ],
+      "preview": "cur.execute(query, (value, sku_id))"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 1103,
+      "type": "SELECT",
+      "tables": [
+        "sku_master",
+        "sku_bom_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
+        "sku_bom_details",
+        "materials",
+        "cost_elements_master",
+        "BOM",
+        "completed"
       ],
       "preview": "cur.execute(\"\"\""
     },
@@ -5484,6 +5917,26 @@
       ]
     },
     {
+      "name": "sku_production",
+      "files": [
+        "puvi-backend/puvi-backend-main/modules/sku_management.py",
+        "puvi-backend/puvi-backend-main/modules/sku_production.py"
+      ]
+    },
+    {
+      "name": "sku_mrp_history",
+      "files": [
+        "puvi-backend/puvi-backend-main/modules/sku_management.py",
+        "puvi-backend/puvi-backend-main/modules/sku_production.py"
+      ]
+    },
+    {
+      "name": "query",
+      "files": [
+        "puvi-backend/puvi-backend-main/modules/sku_management.py"
+      ]
+    },
+    {
       "name": "sku_bom_details",
       "files": [
         "puvi-backend/puvi-backend-main/modules/sku_management.py",
@@ -5497,19 +5950,13 @@
       ]
     },
     {
-      "name": "sku_mrp_history",
+      "name": "completed",
       "files": [
-        "puvi-backend/puvi-backend-main/modules/sku_production.py"
+        "puvi-backend/puvi-backend-main/modules/sku_management.py"
       ]
     },
     {
       "name": "DESC",
-      "files": [
-        "puvi-backend/puvi-backend-main/modules/sku_production.py"
-      ]
-    },
-    {
-      "name": "sku_production",
       "files": [
         "puvi-backend/puvi-backend-main/modules/sku_production.py"
       ]
@@ -7620,198 +8067,6 @@
       "isAsync": false
     },
     {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 11,
-      "name": "apiCall",
-      "params": "url, options = {}",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 34,
-      "name": "OpeningBalanceEntry",
-      "params": "{ readOnly = false, onSave, onCancel }",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 82,
-      "name": "loadSystemStatus",
-      "params": "",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 99,
-      "name": "loadMaterials",
-      "params": "",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 130,
-      "name": "calculateFinancialYear",
-      "params": "dateStr",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 143,
-      "name": "calculateSummary",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 170,
-      "name": "handleBalanceChange",
-      "params": "materialId, field, value",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 185,
-      "name": "handleSelectMaterial",
-      "params": "materialId",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 198,
-      "name": "handleSelectAll",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 208,
-      "name": "applyBulkRate",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 233,
-      "name": "clearAllBalances",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 241,
-      "name": "resetToOriginal",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 277,
-      "name": "getCategories",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 283,
-      "name": "saveOpeningBalances",
-      "params": "",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 328,
-      "name": "downloadTemplate",
-      "params": "",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 353,
-      "name": "handleCSVImport",
-      "params": "event",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 396,
-      "name": "exportBalances",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 431,
-      "name": "quickFillFromCurrentCost",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
-      "line": 11,
-      "name": "apiCall",
-      "params": "url, options = {}",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
-      "line": 34,
-      "name": "SystemStatusDashboard",
-      "params": "{ onInitialize, onManageBalances }",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
-      "line": 57,
-      "name": "loadSystemStatus",
-      "params": "silent = false",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
-      "line": 79,
-      "name": "getDaysSinceCutoff",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
-      "line": 89,
-      "name": "getStatusColor",
-      "params": "status",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
-      "line": 96,
-      "name": "formatCurrency",
-      "params": "amount",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
       "line": 13,
       "name": "apiCall",
@@ -8120,6 +8375,198 @@
       "line": 349,
       "name": "getColumnLabel",
       "params": "columnKey",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 11,
+      "name": "apiCall",
+      "params": "url, options = {}",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 34,
+      "name": "OpeningBalanceEntry",
+      "params": "{ readOnly = false, onSave, onCancel }",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 82,
+      "name": "loadSystemStatus",
+      "params": "",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 99,
+      "name": "loadMaterials",
+      "params": "",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 130,
+      "name": "calculateFinancialYear",
+      "params": "dateStr",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 143,
+      "name": "calculateSummary",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 170,
+      "name": "handleBalanceChange",
+      "params": "materialId, field, value",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 185,
+      "name": "handleSelectMaterial",
+      "params": "materialId",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 198,
+      "name": "handleSelectAll",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 208,
+      "name": "applyBulkRate",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 233,
+      "name": "clearAllBalances",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 241,
+      "name": "resetToOriginal",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 277,
+      "name": "getCategories",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 283,
+      "name": "saveOpeningBalances",
+      "params": "",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 328,
+      "name": "downloadTemplate",
+      "params": "",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 353,
+      "name": "handleCSVImport",
+      "params": "event",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 396,
+      "name": "exportBalances",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 431,
+      "name": "quickFillFromCurrentCost",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
+      "line": 11,
+      "name": "apiCall",
+      "params": "url, options = {}",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
+      "line": 34,
+      "name": "SystemStatusDashboard",
+      "params": "{ onInitialize, onManageBalances }",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
+      "line": 57,
+      "name": "loadSystemStatus",
+      "params": "silent = false",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
+      "line": 79,
+      "name": "getDaysSinceCutoff",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
+      "line": 89,
+      "name": "getStatusColor",
+      "params": "status",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
+      "line": 96,
+      "name": "formatCurrency",
+      "params": "amount",
       "type": "arrow",
       "isAsync": false
     },
@@ -8781,7 +9228,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 25,
+      "line": 24,
       "name": "get_sku_master_list",
       "params": "",
       "type": "python",
@@ -8789,7 +9236,15 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 105,
+      "line": 165,
+      "name": "get_single_sku",
+      "params": "sku_id",
+      "type": "python",
+      "isRoute": true
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 253,
       "name": "create_sku",
       "params": "",
       "type": "python",
@@ -8797,7 +9252,23 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 167,
+      "line": 332,
+      "name": "update_sku",
+      "params": "sku_id",
+      "type": "python",
+      "isRoute": true
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 444,
+      "name": "delete_sku",
+      "params": "sku_id",
+      "type": "python",
+      "isRoute": true
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 510,
       "name": "get_sku_bom",
       "params": "sku_id",
       "type": "python",
@@ -8805,7 +9276,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 285,
+      "line": 628,
       "name": "create_or_update_bom",
       "params": "",
       "type": "python",
@@ -8813,7 +9284,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 398,
+      "line": 742,
       "name": "get_materials_for_bom",
       "params": "",
       "type": "python",
@@ -8821,7 +9292,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 475,
+      "line": 819,
       "name": "get_cost_preview",
       "params": "",
       "type": "python",
@@ -8829,9 +9300,33 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 575,
+      "line": 919,
       "name": "get_bom_history",
       "params": "sku_id",
+      "type": "python",
+      "isRoute": true
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 970,
+      "name": "activate_sku",
+      "params": "sku_id",
+      "type": "python",
+      "isRoute": true
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 1003,
+      "name": "bulk_update_skus",
+      "params": "",
+      "type": "python",
+      "isRoute": true
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 1095,
+      "name": "export_skus",
+      "params": "",
       "type": "python",
       "isRoute": true
     },
@@ -12463,6 +12958,336 @@
       "hook": "useEffect"
     },
     {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 245,
+      "type": "useState",
+      "name": "filter",
+      "setter": "setFilter",
+      "initial": ""
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 245,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 428,
+      "type": "useState",
+      "name": "formData",
+      "setter": "setFormData",
+      "initial": "{}"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 428,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 429,
+      "type": "useState",
+      "name": "schema",
+      "setter": "setSchema",
+      "initial": null
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 429,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 430,
+      "type": "useState",
+      "name": "errors",
+      "setter": "setErrors",
+      "initial": "{}"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 430,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 431,
+      "type": "useState",
+      "name": "touchedFields",
+      "setter": "setTouchedFields",
+      "initial": "{}"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 431,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 432,
+      "type": "useState",
+      "name": "loadingSchema",
+      "setter": "setLoadingSchema",
+      "initial": null
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 432,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 433,
+      "type": "useState",
+      "name": "saving",
+      "setter": "setSaving",
+      "initial": null
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 433,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 434,
+      "type": "useState",
+      "name": "suppliers",
+      "setter": "setSuppliers",
+      "initial": "[]"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 434,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 435,
+      "type": "useState",
+      "name": "alert",
+      "setter": "setAlert",
+      "initial": null
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 435,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 436,
+      "type": "useState",
+      "name": "expandedGuidelines",
+      "setter": "setExpandedGuidelines",
+      "initial": "{}"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 436,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 443,
+      "type": "useState",
+      "name": "dynamicOptions",
+      "setter": "setDynamicOptions",
+      "initial": "{}"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 443,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 444,
+      "type": "useState",
+      "name": "loadingDynamicOptions",
+      "setter": "setLoadingDynamicOptions",
+      "initial": "{}"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 444,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 447,
+      "type": "useRef",
+      "hook": "useRef"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 448,
+      "type": "useRef",
+      "hook": "useRef"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 462,
+      "type": "useEffect",
+      "hook": "useEffect"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 480,
+      "type": "useEffect",
+      "hook": "useEffect"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 42,
+      "type": "useState",
+      "name": "records",
+      "setter": "setRecords",
+      "initial": "[]"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 42,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 43,
+      "type": "useState",
+      "name": "loading",
+      "setter": "setLoading",
+      "initial": null
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 43,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 44,
+      "type": "useState",
+      "name": "schema",
+      "setter": "setSchema",
+      "initial": null
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 44,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 45,
+      "type": "useState",
+      "name": "searchTerm",
+      "setter": "setSearchTerm",
+      "initial": ""
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 45,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 46,
+      "type": "useState",
+      "name": "sortConfig",
+      "setter": "setSortConfig",
+      "initial": "{}"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 46,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 47,
+      "type": "useState",
+      "name": "includeInactive",
+      "setter": "setIncludeInactive",
+      "initial": null
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 47,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 50,
+      "type": "useState",
+      "name": "pagination",
+      "setter": "setPagination",
+      "initial": "{}"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 50,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 60,
+      "type": "useState",
+      "name": "deleteModal",
+      "setter": "setDeleteModal",
+      "initial": "{}"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 60,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 68,
+      "type": "useState",
+      "name": "message",
+      "setter": "setMessage",
+      "initial": "{}"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 68,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 100,
+      "type": "useEffect",
+      "hook": "useEffect"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 108,
+      "type": "useEffect",
+      "hook": "useEffect"
+    },
+    {
       "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
       "line": 36,
       "type": "useState",
@@ -12819,336 +13644,6 @@
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
       "line": 44,
-      "type": "useEffect",
-      "hook": "useEffect"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 245,
-      "type": "useState",
-      "name": "filter",
-      "setter": "setFilter",
-      "initial": ""
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 245,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 428,
-      "type": "useState",
-      "name": "formData",
-      "setter": "setFormData",
-      "initial": "{}"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 428,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 429,
-      "type": "useState",
-      "name": "schema",
-      "setter": "setSchema",
-      "initial": null
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 429,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 430,
-      "type": "useState",
-      "name": "errors",
-      "setter": "setErrors",
-      "initial": "{}"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 430,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 431,
-      "type": "useState",
-      "name": "touchedFields",
-      "setter": "setTouchedFields",
-      "initial": "{}"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 431,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 432,
-      "type": "useState",
-      "name": "loadingSchema",
-      "setter": "setLoadingSchema",
-      "initial": null
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 432,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 433,
-      "type": "useState",
-      "name": "saving",
-      "setter": "setSaving",
-      "initial": null
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 433,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 434,
-      "type": "useState",
-      "name": "suppliers",
-      "setter": "setSuppliers",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 434,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 435,
-      "type": "useState",
-      "name": "alert",
-      "setter": "setAlert",
-      "initial": null
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 435,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 436,
-      "type": "useState",
-      "name": "expandedGuidelines",
-      "setter": "setExpandedGuidelines",
-      "initial": "{}"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 436,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 443,
-      "type": "useState",
-      "name": "dynamicOptions",
-      "setter": "setDynamicOptions",
-      "initial": "{}"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 443,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 444,
-      "type": "useState",
-      "name": "loadingDynamicOptions",
-      "setter": "setLoadingDynamicOptions",
-      "initial": "{}"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 444,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 447,
-      "type": "useRef",
-      "hook": "useRef"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 448,
-      "type": "useRef",
-      "hook": "useRef"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 462,
-      "type": "useEffect",
-      "hook": "useEffect"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 480,
-      "type": "useEffect",
-      "hook": "useEffect"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 42,
-      "type": "useState",
-      "name": "records",
-      "setter": "setRecords",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 42,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 43,
-      "type": "useState",
-      "name": "loading",
-      "setter": "setLoading",
-      "initial": null
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 43,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 44,
-      "type": "useState",
-      "name": "schema",
-      "setter": "setSchema",
-      "initial": null
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 44,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 45,
-      "type": "useState",
-      "name": "searchTerm",
-      "setter": "setSearchTerm",
-      "initial": ""
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 45,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 46,
-      "type": "useState",
-      "name": "sortConfig",
-      "setter": "setSortConfig",
-      "initial": "{}"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 46,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 47,
-      "type": "useState",
-      "name": "includeInactive",
-      "setter": "setIncludeInactive",
-      "initial": null
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 47,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 50,
-      "type": "useState",
-      "name": "pagination",
-      "setter": "setPagination",
-      "initial": "{}"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 50,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 60,
-      "type": "useState",
-      "name": "deleteModal",
-      "setter": "setDeleteModal",
-      "initial": "{}"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 60,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 68,
-      "type": "useState",
-      "name": "message",
-      "setter": "setMessage",
-      "initial": "{}"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 68,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 100,
-      "type": "useEffect",
-      "hook": "useEffect"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
-      "line": 108,
       "type": "useEffect",
       "hook": "useEffect"
     }
@@ -13598,50 +14093,92 @@
         "method": "GET",
         "path": "/api/sku/master",
         "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-        "line": 24,
+        "line": 23,
         "function": "get_sku_master_list"
+      },
+      {
+        "method": "GET",
+        "path": "/api/sku/master/<int:sku_id>",
+        "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+        "line": 164,
+        "function": "get_single_sku"
       },
       {
         "method": "POST",
         "path": "/api/sku/master",
         "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-        "line": 104,
+        "line": 252,
         "function": "create_sku"
+      },
+      {
+        "method": "PUT",
+        "path": "/api/sku/master/<int:sku_id>",
+        "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+        "line": 331,
+        "function": "update_sku"
+      },
+      {
+        "method": "DELETE",
+        "path": "/api/sku/master/<int:sku_id>",
+        "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+        "line": 443,
+        "function": "delete_sku"
       },
       {
         "method": "GET",
         "path": "/api/sku/bom/<int:sku_id>",
         "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-        "line": 166,
+        "line": 509,
         "function": "get_sku_bom"
       },
       {
         "method": "POST",
         "path": "/api/sku/bom",
         "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-        "line": 284,
+        "line": 627,
         "function": "create_or_update_bom"
       },
       {
         "method": "GET",
         "path": "/api/sku/materials",
         "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-        "line": 397,
+        "line": 741,
         "function": "get_materials_for_bom"
       },
       {
         "method": "POST",
         "path": "/api/sku/cost-preview",
         "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-        "line": 474,
+        "line": 818,
         "function": "get_cost_preview"
       },
       {
         "method": "GET",
         "path": "/api/sku/bom-history/<int:sku_id>",
         "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-        "line": 574,
+        "line": 918,
         "function": "get_bom_history"
+      },
+      {
+        "method": "POST",
+        "path": "/api/sku/master/activate/<int:sku_id>",
+        "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+        "line": 969,
+        "function": "activate_sku"
+      },
+      {
+        "method": "POST",
+        "path": "/api/sku/master/bulk-update",
+        "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+        "line": 1002,
+        "function": "bulk_update_skus"
+      },
+      {
+        "method": "GET",
+        "path": "/api/sku/master/export",
+        "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+        "line": 1094,
+        "function": "export_skus"
       }
     ],
     "sku_production_bp": [
@@ -14880,102 +15417,6 @@
       "code": "} catch (error) {"
     },
     {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 12,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 28,
-      "type": "catch",
-      "code": "} catch (error) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 83,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 93,
-      "type": "catch",
-      "code": "} catch (err) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 101,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 122,
-      "type": "catch",
-      "code": "} catch (err) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 287,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 320,
-      "type": "catch",
-      "code": "} catch (err) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 329,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 347,
-      "type": "catch",
-      "code": "} catch (err) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 364,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-      "line": 388,
-      "type": "catch",
-      "code": "} catch (err) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
-      "line": 12,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
-      "line": 28,
-      "type": "catch",
-      "code": "} catch (error) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
-      "line": 61,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
-      "line": 70,
-      "type": "catch",
-      "code": "} catch (err) {"
-    },
-    {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
       "line": 14,
       "type": "try-catch",
@@ -15136,6 +15577,102 @@
       "line": 286,
       "type": "catch",
       "code": "} catch (error) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 12,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 28,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 83,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 93,
+      "type": "catch",
+      "code": "} catch (err) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 101,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 122,
+      "type": "catch",
+      "code": "} catch (err) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 287,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 320,
+      "type": "catch",
+      "code": "} catch (err) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 329,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 347,
+      "type": "catch",
+      "code": "} catch (err) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 364,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
+      "line": 388,
+      "type": "catch",
+      "code": "} catch (err) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
+      "line": 12,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
+      "line": 28,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
+      "line": 61,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
+      "line": 70,
+      "type": "catch",
+      "code": "} catch (err) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/services/configService.js",
@@ -16049,91 +16586,182 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 30,
+      "line": 29,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 98,
+      "line": 158,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 110,
+      "line": 170,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 155,
+      "line": 246,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 172,
+      "line": 258,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 278,
+      "line": 324,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 290,
+      "line": 337,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 386,
+      "line": 436,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 403,
+      "line": 449,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 464,
+      "line": 498,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 480,
+      "line": 515,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 564,
+      "line": 621,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 580,
+      "line": 633,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 615,
+      "line": 730,
+      "type": "except",
+      "exception": "Exception",
+      "code": "except Exception as e:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 747,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 808,
+      "type": "except",
+      "exception": "Exception",
+      "code": "except Exception as e:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 824,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 908,
+      "type": "except",
+      "exception": "Exception",
+      "code": "except Exception as e:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 924,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 959,
+      "type": "except",
+      "exception": "Exception",
+      "code": "except Exception as e:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 975,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 995,
+      "type": "except",
+      "exception": "Exception",
+      "code": "except Exception as e:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 1008,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 1025,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 1072,
+      "type": "except",
+      "exception": "Exception",
+      "code": "except Exception as e:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 1087,
+      "type": "except",
+      "exception": "Exception",
+      "code": "except Exception as e:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 1100,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 1147,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
@@ -16645,15 +17273,15 @@
     "jsFiles": 35,
     "pyFiles": 22,
     "components": 38,
-    "routes": 86,
+    "routes": 92,
     "exports": 45,
     "imports": 47,
     "hardcodedValues": 22,
-    "databaseQueries": 266,
-    "databaseTables": 45,
-    "functions": 469,
+    "databaseQueries": 289,
+    "databaseTables": 47,
+    "functions": 475,
     "stateHooks": 554,
     "missingEndpoints": 1,
-    "errorHandlers": 457
+    "errorHandlers": 471
   }
 }

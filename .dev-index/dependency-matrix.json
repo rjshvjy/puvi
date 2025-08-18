@@ -1,9 +1,9 @@
 {
   "version": "1.0",
-  "generatedAt": "2025-08-18T13:09:17.569Z",
+  "generatedAt": "2025-08-18T14:03:18.559Z",
   "summary": {
-    "totalTables": 45,
-    "sharedTables": 21,
+    "totalTables": 47,
+    "sharedTables": 23,
     "hardcodedCategories": 0,
     "migrationOpportunities": 0
   },
@@ -767,6 +767,62 @@
         }
       }
     },
+    "sku_production": {
+      "usedBy": [
+        "sku-management",
+        "sku-production"
+      ],
+      "fileCount": 2,
+      "operations": {
+        "sku-management": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_management.py"
+          ],
+          "queryCount": 0
+        },
+        "sku-production": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_production.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "sku_mrp_history": {
+      "usedBy": [
+        "sku-management",
+        "sku-production"
+      ],
+      "fileCount": 2,
+      "operations": {
+        "sku-management": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_management.py"
+          ],
+          "queryCount": 0
+        },
+        "sku-production": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_production.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "query": {
+      "usedBy": [
+        "sku-management"
+      ],
+      "fileCount": 1,
+      "operations": {
+        "sku-management": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_management.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
     "sku_bom_details": {
       "usedBy": [
         "sku-management",
@@ -802,35 +858,21 @@
         }
       }
     },
-    "sku_mrp_history": {
+    "completed": {
       "usedBy": [
-        "sku-production"
+        "sku-management"
       ],
       "fileCount": 1,
       "operations": {
-        "sku-production": {
+        "sku-management": {
           "files": [
-            "puvi-backend/puvi-backend-main/modules/sku_production.py"
+            "puvi-backend/puvi-backend-main/modules/sku_management.py"
           ],
           "queryCount": 0
         }
       }
     },
     "DESC": {
-      "usedBy": [
-        "sku-production"
-      ],
-      "fileCount": 1,
-      "operations": {
-        "sku-production": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/sku_production.py"
-          ],
-          "queryCount": 0
-        }
-      }
-    },
-    "sku_production": {
       "usedBy": [
         "sku-production"
       ],
@@ -1211,6 +1253,28 @@
     },
     {
       "table": "sku_bom_master",
+      "sharedBy": [
+        "sku-management",
+        "sku-production"
+      ],
+      "moduleCount": 2,
+      "fileCount": 2,
+      "risk": "LOW",
+      "recommendation": "Changes will affect sku-management, sku-production"
+    },
+    {
+      "table": "sku_production",
+      "sharedBy": [
+        "sku-management",
+        "sku-production"
+      ],
+      "moduleCount": 2,
+      "fileCount": 2,
+      "risk": "LOW",
+      "recommendation": "Changes will affect sku-management, sku-production"
+    },
+    {
+      "table": "sku_mrp_history",
       "sharedBy": [
         "sku-management",
         "sku-production"
