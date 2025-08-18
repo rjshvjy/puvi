@@ -1,8 +1,11 @@
 // Production Entry Component for SKU Management with MRP and Expiry
-// File Path: puvi-frontend/src/modules/SKUManagement/components/ProductionEntry.js
+// File Path: puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js
 
 import React, { useState, useEffect } from 'react';
 import api, { skuDateUtils, expiryUtils, formatUtils } from '../../../services/api';
+
+// Add the formatDateForDisplay function as an alias
+const formatDateForDisplay = skuDateUtils.formatForDisplay;
 
 const ProductionEntry = () => {
   const [step, setStep] = useState(1);
@@ -440,7 +443,7 @@ const ProductionEntry = () => {
           type: 'success', 
           text: `Production saved successfully! Code: ${response.production_code}. 
                  MRP: ₹${response.mrp_at_production}, 
-                 Expiry: ${skuDateUtils.formatDateForDisplay(response.expiry_date)}` 
+                 Expiry: ${formatDateForDisplay(response.expiry_date)}` 
         });
         
         // Reset form after 3 seconds
@@ -571,7 +574,7 @@ const ProductionEntry = () => {
               <div className="detail-row">
                 <label>Expiry Date:</label>
                 <span className="value">
-                  {skuDateUtils.formatDateForDisplay(expiryDate)}
+                  {formatDateForDisplay(expiryDate)}
                 </span>
               </div>
               <div className="detail-row">
@@ -631,7 +634,7 @@ const ProductionEntry = () => {
             <p><strong>Oil Required:</strong> {productionData.oil_required.toFixed(2)} kg</p>
             <p><strong>Bottles Planned:</strong> {productionData.bottles_planned}</p>
             <p><strong>MRP:</strong> {formatUtils.currency(currentMRP)}</p>
-            <p><strong>Expiry Date:</strong> {skuDateUtils.formatDateForDisplay(expiryDate)}</p>
+            <p><strong>Expiry Date:</strong> {formatDateForDisplay(expiryDate)}</p>
           </div>
           
           <h4>Oil Sources Allocation</h4>
@@ -731,7 +734,7 @@ const ProductionEntry = () => {
               </div>
               <div className="info-item">
                 <label>Expiry Date:</label>
-                <span className="value">{skuDateUtils.formatDateForDisplay(expiryDate)}</span>
+                <span className="value">{formatDateForDisplay(expiryDate)}</span>
               </div>
               <div className="info-item">
                 <label>Days to Expiry:</label>
