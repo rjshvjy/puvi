@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-17T18:02:23.142Z",
+  "generatedAt": "2025-08-18T02:59:08.278Z",
   "filesScanned": 57,
   "jsFilesScanned": 35,
   "pyFilesScanned": 22,
@@ -1254,87 +1254,87 @@
     {
       "name": "mastersAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 221
+      "line": 230
     },
     {
       "name": "purchaseAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 274
+      "line": 283
     },
     {
       "name": "batchAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 298
+      "line": 307
     },
     {
       "name": "skuAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 319
+      "line": 328
     },
     {
       "name": "writeoffAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 344
+      "line": 353
     },
     {
       "name": "blendingAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 363
+      "line": 372
     },
     {
       "name": "openingBalanceAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 375
+      "line": 384
     },
     {
       "name": "salesAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 396
+      "line": 405
     },
     {
       "name": "costAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 421
+      "line": 430
     },
     {
       "name": "categoryAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 447
+      "line": 456
     },
     {
       "name": "configAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 464
+      "line": 473
     },
     {
       "name": "API_URL",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 518
+      "line": 527
     },
     {
       "name": "skuDateUtils",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 521
+      "line": 530
     },
     {
       "name": "expiryUtils",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 521
+      "line": 530
     },
     {
       "name": "formatUtils",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 521
+      "line": 530
     },
     {
       "name": "apiCall",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 527
+      "line": 536
     },
     {
       "name": "API_BASE_URL",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 527
+      "line": 536
     },
     {
       "name": "skuDateUtils",
