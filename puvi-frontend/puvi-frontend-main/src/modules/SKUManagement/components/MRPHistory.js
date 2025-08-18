@@ -4,6 +4,42 @@
 import React, { useState, useEffect } from 'react';
 import api, { skuDateUtils, formatUtils } from '../../../services/api';
 
+// Add local date formatting function as fallback
+const formatDateForDisplay = (dateValue) => {
+  // Use skuDateUtils.formatForDisplay if available, otherwise use local implementation
+  if (skuDateUtils && skuDateUtils.formatForDisplay) {
+    return skuDateUtils.formatForDisplay(dateValue);
+  }
+  
+  // Fallback implementation matching the expected format
+  if (!dateValue) return 'N/A';
+  
+  let date;
+  
+  // Handle integer days since epoch
+  if (typeof dateValue === 'number') {
+    const epoch = new Date('1970-01-01');
+    epoch.setDate(epoch.getDate() + dateValue);
+    date = epoch;
+  } else if (typeof dateValue === 'string' && dateValue.length === 8 && !isNaN(dateValue)) {
+    // Handle YYYYMMDD format
+    const year = dateValue.substring(0, 4);
+    const month = dateValue.substring(4, 6);
+    const day = dateValue.substring(6, 8);
+    return `${day}-${month}-${year}`;
+  } else {
+    date = new Date(dateValue);
+  }
+  
+  if (isNaN(date.getTime())) return 'N/A';
+  
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+  
+  return `${day}-${month}-${year}`;
+};
+
 const MRPHistory = () => {
   // State management
   const [skuList, setSKUList] = useState([]);
@@ -303,7 +339,7 @@ const MRPHistory = () => {
               </div>
               <div className="info-item">
                 <label>Effective Date:</label>
-                <span>{skuDateUtils.formatDateForDisplay(selectedSKUData.mrp_effective_date)}</span>
+                <span>{formatDateForDisplay(selectedSKUData.mrp_effective_date)}</span>
               </div>
               <div className="info-item">
                 <label>Shelf Life:</label>
@@ -354,7 +390,7 @@ const MRPHistory = () => {
                           {item.is_current && <span className="current-badge">CURRENT</span>}
                         </div>
                         <div className="timeline-date">
-                          {skuDateUtils.formatDateForDisplay(item.effective_from)}
+                          {formatDateForDisplay(item.effective_from)}
                         </div>
                       </div>
                       
@@ -364,7 +400,7 @@ const MRPHistory = () => {
                           <span className="changed-by">Changed by: {item.changed_by || 'System'}</span>
                           {item.effective_to && (
                             <span className="effective-to">
-                              Valid until: {skuDateUtils.formatDateForDisplay(item.effective_to)}
+                              Valid until: {formatDateForDisplay(item.effective_to)}
                             </span>
                           )}
                         </div>
