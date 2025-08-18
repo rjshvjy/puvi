@@ -1,5 +1,5 @@
 # Feature Pack: MASTERS
-Generated: 2025-08-18T10:23:41.433Z
+Generated: 2025-08-18T13:07:12.289Z
 Routes: 11 | Tables: 2 | Files: 2
 
 ## Table of Contents
