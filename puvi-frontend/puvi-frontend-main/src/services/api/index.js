@@ -1,12 +1,15 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/services/api/index.js
 // Main API Service Module - COMPLETE with Category Management APIs
-// Version: FINAL - Includes all endpoints for oil types management
+// Version: FINAL FIXED - All SKU module errors resolved
 
 // Import utilities
 import { skuDateUtils, expiryUtils, formatUtils } from './skuUtilities';
 
 // API configuration
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://puvi-backend.onrender.com';
+
+console.log('API Base URL:', API_BASE_URL);
+console.log('Environment:', process.env.NODE_ENV);
 
 // Base API helper
 const apiCall = async (url, options = {}) => {
@@ -97,7 +100,10 @@ const api = {
     getProductionHistory: (params) => api.get('/api/sku/production/history', params), // FIXED: Added /history
     getProductionSummary: (id) => api.get(`/api/sku/production_summary/${id}`),
     // FIX ADDED: Missing getSKUDetails function
-    getSKUDetails: (skuId) => api.get(`/api/sku/master/${skuId}`)
+    getSKUDetails: (skuId) => api.get(`/api/sku/master/${skuId}`),
+    // FIX ADDED: Missing MRP functions that ProductionEntry.js needs
+    getCurrentMRP: (skuId) => api.get(`/api/sku/current-mrp/${skuId}`),
+    getMRPHistory: (skuId) => api.get(`/api/sku/mrp-history/${skuId}`)
   },
   
   sales: {
@@ -122,13 +128,13 @@ const api = {
   },
   
   blending: {
-    getAvailableOils: () => api.get('/api/available_oils_for_blend'),
-    createBlend: (data) => api.post('/api/oil_blending', data),
-    getHistory: () => api.get('/api/blending_history'),
-    // FIX ADDED: Missing getBatchesForOilType function
+    getAvailableOils: () => api.get('/api/oil_types_for_blending'),  // Changed to match backend
+    createBlend: (data) => api.post('/api/create_blend', data),  // Changed to match backend
+    getHistory: () => api.get('/api/blend_history'),  // Changed to match backend
+    // FIX CRITICAL: Corrected endpoint name to match backend
     getBatchesForOilType: (oilType) => {
       const params = oilType ? { oil_type: oilType } : {};
-      return api.get('/api/available_oils_for_blend', params);
+      return api.get('/api/batches_for_oil_type', params);  // FIXED: Was /api/available_oils_for_blend
     }
   },
   
@@ -347,6 +353,10 @@ export const skuAPI = {
   
   // Materials
   getMaterialsForSKU: () => api.get('/api/sku/materials_for_sku'),
+  
+  // FIX ADDED: MRP endpoints for backward compatibility
+  getCurrentMRP: (skuId) => api.get(`/api/sku/current-mrp/${skuId}`),
+  getMRPHistory: (skuId) => api.get(`/api/sku/mrp-history/${skuId}`)
 };
 
 // Material Writeoff API endpoints
@@ -370,14 +380,20 @@ export const writeoffAPI = {
 
 // Oil Blending API endpoints
 export const blendingAPI = {
-  // Get available oils
-  getOils: () => api.get('/api/available_oils_for_blend'),
+  // Get available oils - FIXED to match backend
+  getOils: () => api.get('/api/oil_types_for_blending'),
   
-  // Create blend
-  create: (data) => api.post('/api/oil_blending', data),
+  // Create blend - FIXED to match backend
+  create: (data) => api.post('/api/create_blend', data),
   
-  // Get blending history
-  getHistory: () => api.get('/api/blending_history'),
+  // Get blending history - FIXED to match backend
+  getHistory: () => api.get('/api/blend_history'),
+  
+  // Get batches for oil type - FIXED to match backend
+  getBatchesForOilType: (oilType) => {
+    const params = oilType ? { oil_type: oilType } : {};
+    return api.get('/api/batches_for_oil_type', params);
+  }
 };
 
 // Opening Balance API endpoints
@@ -526,8 +542,17 @@ export const configAPI = {
 // Export the API base URL for components that need it directly
 export const API_URL = API_BASE_URL;
 
-// Export the SKU utilities
-export { skuDateUtils, expiryUtils, formatUtils };
+// Export the SKU utilities - including formatDateForDisplay for ProductionEntry
+export { 
+  skuDateUtils, 
+  expiryUtils, 
+  formatUtils,
+  // Add alias for components expecting formatDateForDisplay
+  skuDateUtils as dateUtils
+};
+
+// Create a formatDateForDisplay alias for backward compatibility
+export const formatDateForDisplay = skuDateUtils.formatForDisplay;
 
 // Default export - THIS IS CRITICAL FOR THE PURCHASE MODULE TO WORK
 export default api;
