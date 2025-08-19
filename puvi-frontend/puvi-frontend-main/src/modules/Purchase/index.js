@@ -63,8 +63,7 @@ const Purchase = () => {
   // NEW: Fetch categories from API
   const fetchCategories = async () => {
     try {
-      const response = await fetch('/api/categories');
-      const data = await response.json();
+      const data = await api.get('/api/categories');
       if (data.success) {
         setCategories(data.categories || []);
       }
@@ -76,8 +75,7 @@ const Purchase = () => {
   // NEW: Fetch subcategories for a specific category
   const fetchSubcategories = async (categoryId) => {
     try {
-      const response = await fetch(`/api/subcategories?category_id=${categoryId}`);
-      const data = await response.json();
+      const data = await api.get(`/api/subcategories?category_id=${categoryId}`);
       if (data.success) {
         setSubcategories(data.subcategories || []);
       }
@@ -171,13 +169,7 @@ const Purchase = () => {
     setMessage('');
     
     try {
-      const response = await fetch('/api/materials', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newMaterial)
-      });
-      
-      const data = await response.json();
+      const data = await api.post('/api/materials', newMaterial);
       
       if (data.success) {
         setMessage(`✅ Material "${newMaterial.material_name}" created successfully!`);
