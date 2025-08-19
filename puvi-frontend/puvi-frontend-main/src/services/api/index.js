@@ -237,7 +237,7 @@ const api = {
   },
 
   // ============================================
-  // OTHER MODULES (Placeholders for existing modules)
+  // OTHER MODULES
   // ============================================
   
   // Purchase module
@@ -250,14 +250,111 @@ const api = {
     }
   },
 
-  // Batch module (has oil types)
+  // Batch module - COMPLETE FIX WITH ALL METHODS
   batch: {
-    getOilTypes: async () => apiCall('/api/oil_types')
+    // Get available oil types
+    getOilTypes: async () => apiCall('/api/oil_types'),
+    
+    // Get available seeds for batch production
+    getSeedsForBatch: async () => apiCall('/api/seeds_for_batch'),
+    
+    // Get cost elements specific to batch (from batch module, not cost management)
+    getCostElementsForBatch: async (stage = null) => {
+      const params = stage ? `?stage=${stage}` : '';
+      return apiCall(`/api/cost_elements_for_batch${params}`);
+    },
+    
+    // Get oil cake rates
+    getOilCakeRates: async () => apiCall('/api/oil_cake_rates'),
+    
+    // Create new batch
+    addBatch: async (batchData) => {
+      return post('/api/add_batch', batchData);
+    },
+    
+    // Get batch production history - THIS WAS MISSING!
+    getBatchHistory: async (params = {}) => {
+      const queryParams = new URLSearchParams();
+      if (params.limit) queryParams.append('limit', params.limit);
+      if (params.oil_type) queryParams.append('oil_type', params.oil_type);
+      if (params.start_date) queryParams.append('start_date', params.start_date);
+      if (params.end_date) queryParams.append('end_date', params.end_date);
+      const queryString = queryParams.toString();
+      return apiCall(`/api/batch_history${queryString ? `?${queryString}` : ''}`);
+    },
+    
+    // Additional methods that might be needed
+    getBatchById: async (batchId) => {
+      return apiCall(`/api/batch/${batchId}`);
+    },
+    
+    updateBatch: async (batchId, data) => {
+      return put(`/api/batch/${batchId}`, data);
+    }
   },
   
-  // Cost Management module
+  // Cost Management module - COMPLETE FIX WITH ALL ENDPOINTS
   costManagement: {
-    getCostElementsMaster: async () => apiCall('/api/cost_elements_for_batch')
+    // Master data endpoint - FIXED to use correct endpoint
+    getCostElementsMaster: async (params = {}) => {
+      const queryParams = new URLSearchParams();
+      if (params.applicable_to) queryParams.append('applicable_to', params.applicable_to);
+      const queryString = queryParams.toString();
+      return apiCall(`/api/cost_elements/master${queryString ? `?${queryString}` : ''}`);
+    },
+    
+    // Get cost elements by stage (drying, crushing, filtering, batch, sales)
+    getCostElementsByStage: async (stage) => {
+      return apiCall(`/api/cost_elements/by_stage?stage=${stage}`);
+    },
+    
+    // Get cost elements by activity and module
+    getCostElementsByActivity: async (activity, module, includeCommon = true) => {
+      const params = new URLSearchParams();
+      params.append('activity', activity);
+      params.append('module', module);
+      params.append('include_common', includeCommon);
+      return apiCall(`/api/cost_elements/by_activity?${params.toString()}`);
+    },
+    
+    // Get validation report for batches with missing costs
+    getValidationReport: async (params = {}) => {
+      const queryParams = new URLSearchParams();
+      if (params.days) queryParams.append('days', params.days);
+      const queryString = queryParams.toString();
+      return apiCall(`/api/cost_elements/validation_report${queryString ? `?${queryString}` : ''}`);
+    },
+    
+    // Get complete cost summary for a batch
+    getBatchSummary: async (batchId) => {
+      return apiCall(`/api/cost_elements/batch_summary/${batchId}`);
+    },
+    
+    // Save time tracking data
+    saveTimeTracking: async (data) => {
+      return post('/api/cost_elements/time_tracking', data);
+    },
+    
+    // Calculate all costs for a batch
+    calculateBatchCosts: async (data) => {
+      return post('/api/cost_elements/calculate', data);
+    },
+    
+    // Save extended costs for a batch
+    saveBatchCosts: async (data) => {
+      return post('/api/cost_elements/save_batch_costs', data);
+    },
+    
+    // One-time endpoint to populate activity field
+    populateActivities: async () => {
+      return post('/api/cost_elements/populate_activities', {});
+    },
+    
+    // Legacy naming support for backward compatibility
+    getCostElementsForBatch: async (params) => {
+      // This redirects to the batch module's endpoint for backward compatibility
+      return apiCall('/api/cost_elements_for_batch');
+    }
   },
 
   // Configuration Management module - FIXED: Added all missing methods
