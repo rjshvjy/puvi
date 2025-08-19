@@ -1,6 +1,6 @@
 # Feature Pack: COST-ELEMENTS
-Generated: 2025-08-19T01:15:33.776Z
-Routes: 9 | Tables: 5 | Files: 1
+Generated: 2025-08-19T02:04:05.031Z
+Routes: 12 | Tables: 7 | Files: 1
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -30,6 +30,12 @@ POST   /api/cost_elements/save_batch_costs
 GET    /api/cost_elements/validation_report
 # get_batch_cost_summary
 GET    /api/cost_elements/batch_summary/<int:batch_id>
+# get_usage_stats
+GET    /api/cost_elements/usage_stats
+# bulk_update_cost_elements
+POST   /api/cost_elements/bulk_update
+# get_rate_history
+GET    /api/cost_elements/<int:element_id>/rate_history
 ```
 
 ## Database Dependencies
@@ -38,6 +44,8 @@ GET    /api/cost_elements/batch_summary/<int:batch_id>
 | batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 7 other modules |
 | batch_extended_costs | batch-production, cost-management | 🟡 MEDIUM | Changes affect 2 other modules |
 | batch_time_tracking | cost-management | 🟡 MEDIUM | Changes affect 1 other modules |
+| cost_element_rate_history | cost-management | 🟡 MEDIUM | Changes affect 1 other modules |
+| cost_element_usage_stats | cost-management | 🟡 MEDIUM | Changes affect 1 other modules |
 | cost_elements_master | cost-management, sku-management, sku-production | 🔴 HIGH | Changes affect 4 other modules |
 | cost_override_log | cost-management | 🟡 MEDIUM | Changes affect 1 other modules |
 

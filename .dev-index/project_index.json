@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-19T01:15:32.861Z",
+  "generatedAt": "2025-08-19T02:04:04.171Z",
   "filesScanned": 56,
   "jsFilesScanned": 34,
   "pyFilesScanned": 22,
@@ -196,6 +196,33 @@
       "line": 820,
       "blueprint": "cost_management_bp",
       "function": "get_batch_cost_summary",
+      "source": "backend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/cost_elements/usage_stats",
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
+      "line": 958,
+      "blueprint": "cost_management_bp",
+      "function": "get_usage_stats",
+      "source": "backend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/cost_elements/bulk_update",
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
+      "line": 1041,
+      "blueprint": "cost_management_bp",
+      "function": "bulk_update_cost_elements",
+      "source": "backend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/cost_elements/<int:element_id>/rate_history",
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
+      "line": 1165,
+      "blueprint": "cost_management_bp",
+      "function": "get_rate_history",
       "source": "backend"
     },
     {
@@ -2591,14 +2618,146 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 957,
+      "line": 966,
       "type": "SELECT",
       "tables": [
         "cost_elements_master",
         "batch_time_tracking",
         "batch_extended_costs",
         "batch",
-        "cost_override_log"
+        "cost_override_log",
+        "cost_element_usage_stats"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
+      "line": 1003,
+      "type": "SELECT",
+      "tables": [
+        "cost_elements_master",
+        "batch_time_tracking",
+        "batch_extended_costs",
+        "batch",
+        "cost_override_log",
+        "cost_element_usage_stats"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
+      "line": 1067,
+      "type": "OTHER",
+      "tables": [
+        "cost_elements_master",
+        "batch_time_tracking",
+        "batch_extended_costs",
+        "batch",
+        "cost_override_log",
+        "cost_element_usage_stats"
+      ],
+      "preview": "cur.execute(\"BEGIN\")"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
+      "line": 1085,
+      "type": "SELECT",
+      "tables": [
+        "cost_elements_master",
+        "batch_time_tracking",
+        "batch_extended_costs",
+        "batch",
+        "cost_override_log",
+        "cost_element_usage_stats"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
+      "line": 1106,
+      "type": "UPDATE",
+      "tables": [
+        "cost_elements_master",
+        "batch_time_tracking",
+        "batch_extended_costs",
+        "batch",
+        "cost_override_log",
+        "cost_element_usage_stats"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
+      "line": 1115,
+      "type": "INSERT",
+      "tables": [
+        "cost_elements_master",
+        "batch_time_tracking",
+        "batch_extended_costs",
+        "batch",
+        "cost_override_log",
+        "cost_element_usage_stats",
+        "cost_element_rate_history"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
+      "line": 1173,
+      "type": "SELECT",
+      "tables": [
+        "cost_elements_master",
+        "batch_time_tracking",
+        "batch_extended_costs",
+        "batch",
+        "cost_override_log",
+        "cost_element_usage_stats",
+        "cost_element_rate_history"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
+      "line": 1192,
+      "type": "SELECT",
+      "tables": [
+        "cost_elements_master",
+        "batch_time_tracking",
+        "batch_extended_costs",
+        "batch",
+        "cost_override_log",
+        "cost_element_usage_stats",
+        "cost_element_rate_history"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
+      "line": 1225,
+      "type": "SELECT",
+      "tables": [
+        "cost_elements_master",
+        "batch_time_tracking",
+        "batch_extended_costs",
+        "batch",
+        "cost_override_log",
+        "cost_element_usage_stats",
+        "cost_element_rate_history"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
+      "line": 1263,
+      "type": "SELECT",
+      "tables": [
+        "cost_elements_master",
+        "batch_time_tracking",
+        "batch_extended_costs",
+        "batch",
+        "cost_override_log",
+        "cost_element_usage_stats",
+        "cost_element_rate_history"
       ],
       "preview": "cur.execute(\"\"\""
     },
@@ -5770,6 +5929,18 @@
       ]
     },
     {
+      "name": "cost_element_usage_stats",
+      "files": [
+        "puvi-backend/puvi-backend-main/modules/cost_management.py"
+      ]
+    },
+    {
+      "name": "cost_element_rate_history",
+      "files": [
+        "puvi-backend/puvi-backend-main/modules/cost_management.py"
+      ]
+    },
+    {
       "name": "masters_audit_log",
       "files": [
         "puvi-backend/puvi-backend-main/modules/masters_common.py",
@@ -8822,7 +8993,31 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 955,
+      "line": 959,
+      "name": "get_usage_stats",
+      "params": "",
+      "type": "python",
+      "isRoute": true
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
+      "line": 1042,
+      "name": "bulk_update_cost_elements",
+      "params": "",
+      "type": "python",
+      "isRoute": true
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
+      "line": 1166,
+      "name": "get_rate_history",
+      "params": "element_id",
+      "type": "python",
+      "isRoute": true
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
+      "line": 1261,
       "name": "calculate_time_based_costs",
       "params": "cur, hours",
       "type": "python",
@@ -13811,6 +14006,27 @@
         "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
         "line": 820,
         "function": "get_batch_cost_summary"
+      },
+      {
+        "method": "GET",
+        "path": "/api/cost_elements/usage_stats",
+        "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
+        "line": 958,
+        "function": "get_usage_stats"
+      },
+      {
+        "method": "POST",
+        "path": "/api/cost_elements/bulk_update",
+        "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
+        "line": 1041,
+        "function": "bulk_update_cost_elements"
+      },
+      {
+        "method": "GET",
+        "path": "/api/cost_elements/<int:element_id>/rate_history",
+        "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
+        "line": 1165,
+        "function": "get_rate_history"
       }
     ],
     "masters_crud_bp": [
@@ -16014,6 +16230,71 @@
       "code": "except Exception as e:"
     },
     {
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
+      "line": 964,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
+      "line": 1035,
+      "type": "except",
+      "exception": "Exception",
+      "code": "except Exception as e:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
+      "line": 1047,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
+      "line": 1059,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
+      "line": 1061,
+      "type": "except",
+      "exception": "generic",
+      "code": "except:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
+      "line": 1083,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
+      "line": 1137,
+      "type": "except",
+      "exception": "Exception",
+      "code": "except Exception as e:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
+      "line": 1158,
+      "type": "except",
+      "exception": "Exception",
+      "code": "except Exception as e:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
+      "line": 1171,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
+      "line": 1251,
+      "type": "except",
+      "exception": "Exception",
+      "code": "except Exception as e:"
+    },
+    {
       "file": "puvi-backend/puvi-backend-main/modules/masters_common.py",
       "line": 510,
       "type": "try-catch",
@@ -17267,15 +17548,15 @@
     "jsFiles": 34,
     "pyFiles": 22,
     "components": 38,
-    "routes": 92,
+    "routes": 95,
     "exports": 39,
     "imports": 46,
     "hardcodedValues": 23,
-    "databaseQueries": 289,
-    "databaseTables": 47,
-    "functions": 478,
+    "databaseQueries": 298,
+    "databaseTables": 49,
+    "functions": 481,
     "stateHooks": 554,
     "missingEndpoints": 1,
-    "errorHandlers": 471
+    "errorHandlers": 481
   }
 }

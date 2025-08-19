@@ -1,8 +1,8 @@
 {
   "version": "1.0",
-  "generatedAt": "2025-08-19T01:15:33.713Z",
+  "generatedAt": "2025-08-19T02:04:04.973Z",
   "summary": {
-    "totalTables": 47,
+    "totalTables": 49,
     "sharedTables": 23,
     "hardcodedCategories": 0,
     "migrationOpportunities": 0
@@ -417,6 +417,34 @@
       }
     },
     "cost_override_log": {
+      "usedBy": [
+        "cost-management"
+      ],
+      "fileCount": 1,
+      "operations": {
+        "cost-management": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/cost_management.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "cost_element_usage_stats": {
+      "usedBy": [
+        "cost-management"
+      ],
+      "fileCount": 1,
+      "operations": {
+        "cost-management": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/cost_management.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "cost_element_rate_history": {
       "usedBy": [
         "cost-management"
       ],
