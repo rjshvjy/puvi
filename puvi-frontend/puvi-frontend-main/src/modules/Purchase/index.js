@@ -88,7 +88,7 @@ const Purchase = () => {
 
   const fetchSuppliers = async () => {
     try {
-      const response = await api.purchase.getSuppliers();
+      const response = await api.purchaseAPI.getSuppliers();
       setSuppliers(response.suppliers || []);
     } catch (error) {
       setMessage(`Error loading suppliers: ${error.message}`);
@@ -97,7 +97,7 @@ const Purchase = () => {
 
   const fetchMaterialsForSupplier = async (supplierId) => {
     try {
-      const response = await api.purchase.getMaterials({ supplier_id: supplierId });
+      const response = await api.purchaseAPI.getMaterials({ supplier_id: supplierId });
       setMaterials(response.materials || []);
     } catch (error) {
       setMessage(`Error loading materials: ${error.message}`);
@@ -106,7 +106,7 @@ const Purchase = () => {
 
   const fetchPurchaseHistory = async () => {
     try {
-      const response = await api.purchase.getPurchaseHistory({ limit: 20 });
+      const response = await api.purchaseAPI.getPurchaseHistory({ limit: 20 });
       setPurchaseHistory(response.purchases || []);
     } catch (error) {
       setMessage(`Error loading purchase history: ${error.message}`);
@@ -428,7 +428,7 @@ Please ensure UOM allocation totals 100% and all items have proper units.`);
         }))
       };
 
-      const response = await api.purchase.addPurchase(payload);
+      const response = await api.purchaseAPI.addPurchase(payload);
       
       if (response.traceable_codes) {
         setMessage(`✅ Purchase recorded successfully! 
