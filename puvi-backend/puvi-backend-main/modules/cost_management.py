@@ -585,12 +585,35 @@ def calculate_batch_costs():
         
         common_costs_result = cur.fetchone()
         if not common_costs_result or not common_costs_result[0]:
-            # Common costs not allocated
-            expected_common = float(batch_data['oil_yield']) * 2.0  # ₹2/kg
-            validator.add_warning(
-                f"Common Costs: Not allocated to this batch (₹{expected_common:.2f} @ ₹2/kg)",
-                expected_common
-            )
+            # Get Common Costs rate from database instead of hardcoding
+            cur.execute("""
+                SELECT default_rate, calculation_method, unit_type
+                FROM cost_elements_master
+                WHERE element_name = 'Common Costs' 
+                    AND is_active = true
+            """)
+            
+            common_cost_config = cur.fetchone()
+            if common_cost_config:
+                common_rate = float(common_cost_config[0])
+                calc_method = common_cost_config[1]
+                unit_type = common_cost_config[2]
+                
+                # Calculate expected cost based on calculation method
+                if calc_method == 'per_kg':
+                    expected_common = float(batch_data['oil_yield']) * common_rate
+                    validator.add_warning(
+                        f"Common Costs: Not allocated to this batch (₹{expected_common:.2f} @ ₹{common_rate}/{unit_type})",
+                        expected_common
+                    )
+                elif calc_method == 'fixed':
+                    expected_common = common_rate
+                    validator.add_warning(
+                        f"Common Costs: Not allocated to this batch (₹{expected_common:.2f} - fixed cost)",
+                        expected_common
+                    )
+                else:
+                    validator.add_warning("Common Costs: Not allocated to this batch")
         
         # Calculate total costs
         total_costs = batch_data['base_production_cost'] + float(total_extended_costs)
