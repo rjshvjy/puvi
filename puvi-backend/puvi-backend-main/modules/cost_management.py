@@ -951,7 +951,313 @@ def get_batch_cost_summary(batch_id):
         close_connection(conn, cur)
 
 
+# =====================================================
+# NEW ENDPOINTS - Added to fix CostElementsManager.js 404 errors
+# =====================================================
+
+@cost_management_bp.route('/api/cost_elements/usage_stats', methods=['GET'])
+def get_usage_stats():
+    """Get usage statistics for all cost elements from the view"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        # Query the usage stats view
+        cur.execute("""
+            SELECT 
+                element_id,
+                element_name,
+                category,
+                default_rate,
+                times_used,
+                avg_rate_used,
+                total_cost_incurred,
+                override_count
+            FROM cost_element_usage_stats
+            ORDER BY times_used DESC, element_name
+        """)
+        
+        stats = []
+        total_cost_all = Decimal('0')
+        total_overrides = 0
+        
+        for row in cur.fetchall():
+            times_used = row[4] if row[4] else 0
+            override_count = row[7] if row[7] else 0
+            total_cost_all += Decimal(str(row[6] if row[6] else 0))
+            total_overrides += override_count
+            
+            stats.append({
+                'element_id': row[0],
+                'element_name': row[1],
+                'category': row[2],
+                'default_rate': float(row[3]) if row[3] else 0,
+                'times_used': times_used,
+                'avg_rate_used': float(row[5]) if row[5] else 0,
+                'total_cost_incurred': float(row[6]) if row[6] else 0,
+                'override_count': override_count,
+                'override_percentage': round((override_count / times_used * 100) if times_used > 0 else 0, 1)
+            })
+        
+        # Get category summary
+        cur.execute("""
+            SELECT 
+                category,
+                COUNT(*) as element_count,
+                SUM(times_used) as total_uses,
+                SUM(total_cost_incurred) as category_cost
+            FROM cost_element_usage_stats
+            GROUP BY category
+            ORDER BY category_cost DESC
+        """)
+        
+        category_summary = []
+        for row in cur.fetchall():
+            category_summary.append({
+                'category': row[0],
+                'element_count': row[1],
+                'total_uses': row[2] if row[2] else 0,
+                'total_cost': float(row[3]) if row[3] else 0
+            })
+        
+        return jsonify({
+            'success': True,
+            'usage_stats': stats,
+            'summary': {
+                'total_elements': len(stats),
+                'total_cost_incurred': float(total_cost_all),
+                'total_overrides': total_overrides,
+                'elements_never_used': len([s for s in stats if s['times_used'] == 0])
+            },
+            'category_summary': category_summary
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+@cost_management_bp.route('/api/cost_elements/bulk_update', methods=['POST'])
+def bulk_update_cost_elements():
+    """Bulk update cost element rates with history tracking"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        data = request.json
+        updates = data.get('updates', [])
+        reason = data.get('reason', 'Periodic rate revision')
+        changed_by = data.get('changed_by', 'System')
+        effective_from = data.get('effective_from')
+        
+        if not updates:
+            return jsonify({'success': False, 'error': 'No updates provided'}), 400
+        
+        # Parse effective_from date if provided
+        if effective_from:
+            try:
+                effective_from = datetime.strptime(effective_from, '%Y-%m-%d').date()
+            except:
+                effective_from = datetime.now().date()
+        else:
+            effective_from = datetime.now().date()
+        
+        # Begin transaction
+        cur.execute("BEGIN")
+        
+        successful_updates = []
+        failed_updates = []
+        
+        for update in updates:
+            element_id = update.get('element_id')
+            new_rate = safe_decimal(update.get('new_rate'))
+            
+            if not element_id or new_rate is None:
+                failed_updates.append({
+                    'element_id': element_id,
+                    'error': 'Missing element_id or new_rate'
+                })
+                continue
+            
+            try:
+                # Get current rate
+                cur.execute("""
+                    SELECT element_name, default_rate 
+                    FROM cost_elements_master 
+                    WHERE element_id = %s AND is_active = true
+                """, (element_id,))
+                
+                result = cur.fetchone()
+                if not result:
+                    failed_updates.append({
+                        'element_id': element_id,
+                        'error': 'Element not found or inactive'
+                    })
+                    continue
+                
+                element_name, old_rate = result
+                
+                # Skip if rate hasn't changed
+                if float(old_rate) == float(new_rate):
+                    continue
+                
+                # Update the master table
+                cur.execute("""
+                    UPDATE cost_elements_master
+                    SET default_rate = %s,
+                        updated_at = CURRENT_TIMESTAMP,
+                        created_by = %s
+                    WHERE element_id = %s
+                """, (float(new_rate), changed_by, element_id))
+                
+                # Add to rate history
+                cur.execute("""
+                    INSERT INTO cost_element_rate_history (
+                        element_id, old_rate, new_rate,
+                        effective_from, changed_by, change_reason
+                    ) VALUES (%s, %s, %s, %s, %s, %s)
+                """, (
+                    element_id,
+                    float(old_rate),
+                    float(new_rate),
+                    effective_from,
+                    changed_by,
+                    reason
+                ))
+                
+                successful_updates.append({
+                    'element_id': element_id,
+                    'element_name': element_name,
+                    'old_rate': float(old_rate),
+                    'new_rate': float(new_rate),
+                    'percentage_change': round(((float(new_rate) - float(old_rate)) / float(old_rate) * 100) if float(old_rate) > 0 else 0, 2)
+                })
+                
+            except Exception as e:
+                failed_updates.append({
+                    'element_id': element_id,
+                    'error': str(e)
+                })
+        
+        # Commit transaction
+        conn.commit()
+        
+        return jsonify({
+            'success': True,
+            'successful_updates': successful_updates,
+            'failed_updates': failed_updates,
+            'summary': {
+                'total_attempted': len(updates),
+                'successful': len(successful_updates),
+                'failed': len(failed_updates)
+            },
+            'message': f'Successfully updated {len(successful_updates)} cost elements'
+        })
+        
+    except Exception as e:
+        conn.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+@cost_management_bp.route('/api/cost_elements/<int:element_id>/rate_history', methods=['GET'])
+def get_rate_history(element_id):
+    """Get rate change history for a specific cost element"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        # Get element details
+        cur.execute("""
+            SELECT element_name, category, default_rate, activity
+            FROM cost_elements_master
+            WHERE element_id = %s
+        """, (element_id,))
+        
+        element = cur.fetchone()
+        if not element:
+            return jsonify({'success': False, 'error': 'Cost element not found'}), 404
+        
+        element_info = {
+            'element_id': element_id,
+            'element_name': element[0],
+            'category': element[1],
+            'current_rate': float(element[2]),
+            'activity': element[3] if element[3] else 'General'
+        }
+        
+        # Get rate history
+        cur.execute("""
+            SELECT 
+                history_id,
+                old_rate,
+                new_rate,
+                effective_from,
+                effective_to,
+                changed_by,
+                change_reason,
+                created_at
+            FROM cost_element_rate_history
+            WHERE element_id = %s
+            ORDER BY created_at DESC
+        """, (element_id,))
+        
+        history = []
+        for row in cur.fetchall():
+            old_rate = float(row[1]) if row[1] else 0
+            new_rate = float(row[2]) if row[2] else 0
+            
+            history.append({
+                'history_id': row[0],
+                'old_rate': old_rate,
+                'new_rate': new_rate,
+                'effective_from': row[3].strftime('%Y-%m-%d') if row[3] else None,
+                'effective_to': row[4].strftime('%Y-%m-%d') if row[4] else None,
+                'changed_by': row[5],
+                'change_reason': row[6],
+                'change_date': row[7].strftime('%Y-%m-%d %H:%M') if row[7] else None,
+                'percentage_change': round(((new_rate - old_rate) / old_rate * 100) if old_rate > 0 else 0, 2)
+            })
+        
+        # Get usage summary for context
+        cur.execute("""
+            SELECT 
+                COUNT(*) as times_used,
+                AVG(rate_used) as avg_rate_used,
+                MIN(rate_used) as min_rate,
+                MAX(rate_used) as max_rate
+            FROM batch_extended_costs
+            WHERE element_id = %s
+        """, (element_id,))
+        
+        usage = cur.fetchone()
+        usage_summary = {
+            'times_used': usage[0] if usage[0] else 0,
+            'avg_rate_used': float(usage[1]) if usage[1] else 0,
+            'min_rate': float(usage[2]) if usage[2] else 0,
+            'max_rate': float(usage[3]) if usage[3] else 0
+        }
+        
+        return jsonify({
+            'success': True,
+            'element': element_info,
+            'history': history,
+            'usage_summary': usage_summary,
+            'history_count': len(history)
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+# =====================================================
 # Helper Functions
+# =====================================================
+
 def calculate_time_based_costs(cur, hours):
     """Calculate costs for time-based elements"""
     cur.execute("""
