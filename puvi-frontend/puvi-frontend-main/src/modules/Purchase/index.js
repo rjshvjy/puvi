@@ -3,7 +3,7 @@
 // Enhanced with material creation form and category validation
 
 import React, { useState, useEffect } from 'react';
-import api from '../../services/api';
+import api, { API_URL } from '../../services/api';
 import './Purchase.css';
 
 const Purchase = () => {
@@ -63,7 +63,7 @@ const Purchase = () => {
   // NEW: Fetch categories from API
   const fetchCategories = async () => {
     try {
-      const response = await fetch('/api/categories');
+      const response = await fetch(`${API_URL}/api/categories`);
       const data = await response.json();
       if (data.success) {
         setCategories(data.categories || []);
@@ -76,7 +76,7 @@ const Purchase = () => {
   // NEW: Fetch subcategories for a specific category
   const fetchSubcategories = async (categoryId) => {
     try {
-      const response = await fetch(`/api/subcategories?category_id=${categoryId}`);
+      const response = await fetch(`${API_URL}/api/subcategories?category_id=${categoryId}`);
       const data = await response.json();
       if (data.success) {
         setSubcategories(data.subcategories || []);
@@ -171,7 +171,7 @@ const Purchase = () => {
     setMessage('');
     
     try {
-      const response = await fetch('/api/materials', {
+      const response = await fetch(`${API_URL}/api/materials`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newMaterial)
