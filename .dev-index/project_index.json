@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-19T23:40:17.038Z",
+  "generatedAt": "2025-08-19T23:50:34.991Z",
   "filesScanned": 56,
   "jsFilesScanned": 34,
   "pyFilesScanned": 22,
@@ -11,6 +11,20 @@
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialSales/index.js",
       "line": 62,
       "module": "costManagement",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/categories",
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
+      "line": 66,
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/materials",
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
+      "line": 174,
       "source": "frontend"
     },
     {
@@ -13853,6 +13867,20 @@
         "line": 62
       }
     ],
+    "unknown": [
+      {
+        "method": "GET",
+        "path": "/api/categories",
+        "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
+        "line": 66
+      },
+      {
+        "method": "GET",
+        "path": "/api/materials",
+        "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
+        "line": 174
+      }
+    ],
     "batch_bp": [
       {
         "method": "GET",
@@ -17532,7 +17560,7 @@
     "jsFiles": 34,
     "pyFiles": 22,
     "components": 38,
-    "routes": 93,
+    "routes": 95,
     "exports": 39,
     "imports": 46,
     "hardcodedValues": 23,
