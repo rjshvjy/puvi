@@ -1,5 +1,5 @@
 # Feature Pack: WRITEOFF-HISTORY
-Generated: 2025-08-19T23:31:25.125Z
+Generated: 2025-08-19T23:40:17.870Z
 Routes: 1 | Tables: 4 | Files: 1
 
 ## Table of Contents
