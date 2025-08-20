@@ -1,87 +1,89 @@
 /* File Path: puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.css */
-/* CostElementRow Component - Visual update to match Batch Production module */
+/* CostElementRow Component - Clean table design matching Batch Production */
 
 /* ==================== CSS Variables ==================== */
 :root {
-  /* Updated colors to match Batch Production */
-  --primary-green: #2f855a;
+  /* Colors matching Batch Production */
+  --primary: #2f855a;
   --primary-dark: #276749;
+  --primary-light: rgba(47, 133, 90, 0.1);
   --primary-blue: #2196F3;
-  --warning-yellow: #FFC107;
-  --danger-red: #f44336;
   --success-green: #28a745;
+  --warning: #ffc107;
+  --danger: #dc3545;
   
-  /* Grays from Batch Production */
-  --light-blue-bg: #E3F2FD;
-  --light-green-bg: #E8F5E9;
-  --light-yellow-bg: #FFF9C4;
-  --border-color: #e2e8f0;
-  --text-primary: #2d3748;
-  --text-secondary: #64748b;
+  /* Gray scale */
+  --gray-50: #fafafa;
+  --gray-100: #f7fafc;
+  --gray-200: #edf2f7;
+  --gray-300: #e2e8f0;
+  --gray-400: #cbd5e0;
+  --gray-500: #a0aec0;
+  --gray-600: #718096;
+  --gray-700: #4a5568;
+  --text-color: #2d3748;
+  --text-light: #64748b;
   
-  --checkbox-size: 18px;
-  --box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  --border-radius: 8px;
+  --checkbox-size: 16px;
 }
 
-/* ==================== Main Container ==================== */
+/* ==================== Main Container - Table Structure ==================== */
 .cost-element-row {
   background: white;
-  margin-bottom: 8px;
+  border-bottom: 1px solid var(--gray-200);
   transition: all 0.2s ease;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  box-shadow: var(--box-shadow);
 }
 
 .cost-element-row:hover {
-  background-color: #fafafa;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background-color: var(--gray-50);
 }
 
 .cost-element-row.disabled {
-  opacity: 1;
-  background: white;
+  opacity: 0.8;
 }
 
-/* ==================== Element Header (Main Row) ==================== */
+/* ==================== Table Row Layout ==================== */
 .cost-element-header {
-  display: grid;
-  grid-template-columns: 40px 1fr 120px 120px 120px 100px;
-  align-items: center;
-  padding: 12px 16px;
-  gap: 16px;
-  border-bottom: 1px solid var(--border-color);
+  display: table;
+  width: 100%;
+  table-layout: fixed;
 }
 
-.cost-element-row:last-child .cost-element-header {
-  border-bottom: none;
+.cost-element-header > * {
+  display: table-cell;
+  vertical-align: middle;
+  padding: 12px 8px;
 }
 
-/* ==================== CRITICAL: Checkbox Styling - Preserving click functionality ==================== */
+/* Column widths */
+.cost-element-header > *:nth-child(1) { width: 40px; }  /* Checkbox */
+.cost-element-header > *:nth-child(2) { width: auto; }   /* Name */
+.cost-element-header > *:nth-child(3) { width: 120px; }  /* Master Rate */
+.cost-element-header > *:nth-child(4) { width: 120px; }  /* Override Rate */
+.cost-element-header > *:nth-child(5) { width: 100px; }  /* Quantity */
+.cost-element-header > *:nth-child(6) { width: 100px; }  /* Total Cost */
+
+/* ==================== Checkbox Styling ==================== */
 .element-toggle {
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  padding: 0;
-  cursor: pointer;
+  display: inline-block;
   width: var(--checkbox-size);
   height: var(--checkbox-size);
+  cursor: pointer;
 }
 
-/* Hide native checkbox but KEEP IT FUNCTIONAL - DO NOT CHANGE */
 .cost-element-checkbox {
   position: absolute;
   opacity: 0;
-  cursor: pointer !important;
-  width: var(--checkbox-size) !important;
-  height: var(--checkbox-size) !important;
-  margin: 0;
+  width: var(--checkbox-size);
+  height: var(--checkbox-size);
+  cursor: pointer;
   z-index: 2;
-  pointer-events: auto !important;
+  margin: 0;
 }
 
-/* Custom checkbox visual */
+/* Checkbox visual */
 .element-toggle::before {
   content: '';
   position: absolute;
@@ -89,71 +91,52 @@
   left: 0;
   width: var(--checkbox-size);
   height: var(--checkbox-size);
-  border: 2px solid #9E9E9E;
+  border: 2px solid var(--gray-400);
   background: white;
-  border-radius: 4px;
+  border-radius: 3px;
   transition: all 0.2s ease;
-  pointer-events: none;
 }
 
-/* Checked state - green background to match Batch Production */
-input[type="checkbox"].cost-element-checkbox:checked + span.element-toggle::before,
-.cost-element-checkbox:checked + .element-toggle::before {
-  background-color: var(--primary-green);
-  border-color: var(--primary-green);
+/* Checked state */
+.cost-element-checkbox:checked + span::before,
+.cost-element-checkbox:checked ~ .element-toggle::before {
+  background-color: var(--primary);
+  border-color: var(--primary);
 }
 
-/* White checkmark when checked */
-input[type="checkbox"].cost-element-checkbox:checked + span.element-toggle::after,
-.cost-element-checkbox:checked + .element-toggle::after {
+/* Checkmark */
+.cost-element-checkbox:checked + span::after,
+.cost-element-checkbox:checked ~ .element-toggle::after {
   content: '';
   position: absolute;
-  left: 6px;
+  left: 5px;
   top: 2px;
-  width: 5px;
-  height: 10px;
+  width: 4px;
+  height: 8px;
   border: solid white;
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
-  pointer-events: none;
 }
 
-/* Hover effect */
-.element-toggle:hover::before {
-  border-color: var(--primary-green);
-  box-shadow: 0 0 0 2px rgba(47, 133, 90, 0.1);
-}
-
-/* Disabled state for checkbox - KEEP CLICKABLE */
-.cost-element-row.disabled .cost-element-checkbox {
-  pointer-events: auto !important;
-  cursor: pointer !important;
-}
-
-/* ==================== Element Name with Badge ==================== */
+/* ==================== Element Name ==================== */
 .element-info {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.element-icon {
-  display: none;
-}
-
 .element-name {
   font-size: 14px;
-  color: var(--text-primary);
+  color: var(--text-color);
   font-weight: 500;
 }
 
 .element-badge {
-  padding: 4px 10px;
+  padding: 2px 8px;
   border-radius: 12px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 600;
   text-transform: uppercase;
-  margin-left: 8px;
 }
 
 .badge-required {
@@ -173,259 +156,150 @@ input[type="checkbox"].cost-element-checkbox:checked + span.element-toggle::afte
 
 .unit-type {
   font-size: 12px;
-  color: var(--text-secondary);
+  color: var(--text-light);
   margin-left: 4px;
 }
 
-/* ==================== Rate Input Fields ==================== */
+/* ==================== Table Cell Styling ==================== */
 .rate-field {
-  display: flex;
-  align-items: center;
-  gap: 4px;
+  text-align: right;
 }
 
 .master-rate-display {
   font-size: 14px;
-  color: var(--text-primary);
-  min-width: 60px;
+  color: var(--text-light);
+  display: block;
   text-align: right;
 }
 
 .override-input {
-  width: 80px;
-  padding: 6px 10px;
-  border: 1px solid var(--border-color);
+  width: 90%;
+  max-width: 100px;
+  padding: 6px 8px;
+  border: 1px solid var(--gray-300);
   border-radius: 4px;
   font-size: 14px;
   text-align: right;
   transition: all 0.2s ease;
-  background: white;
 }
 
 .override-input:focus {
   outline: none;
-  border-color: var(--primary-green);
+  border-color: var(--primary);
   box-shadow: 0 0 0 2px rgba(47, 133, 90, 0.1);
 }
 
 .override-input:disabled {
-  background-color: #F5F5F5;
-  color: #9E9E9E;
-  cursor: not-allowed;
+  background-color: var(--gray-100);
+  color: var(--gray-500);
 }
 
 .override-input.has-override {
   background-color: #fffbf0;
-  border-color: var(--warning-yellow);
+  border-color: var(--warning);
 }
 
-/* ==================== Quantity Display ==================== */
 .quantity-display {
   font-size: 14px;
-  color: var(--text-primary);
+  color: var(--text-color);
   text-align: right;
-  min-width: 80px;
 }
 
 .quantity-unit {
   font-size: 12px;
-  color: var(--text-secondary);
+  color: var(--text-light);
   margin-left: 4px;
 }
 
-/* ==================== Total Cost Display ==================== */
 .total-cost-display {
   font-size: 15px;
   font-weight: 600;
   color: var(--primary-dark);
   text-align: right;
-  min-width: 80px;
 }
 
 .cost-element-row.disabled .total-cost-display {
-  color: var(--text-secondary);
+  color: var(--gray-500);
 }
 
-/* ==================== Element Body (Expanded Details) ==================== */
-.cost-element-body {
-  display: grid;
-  grid-template-columns: 40px 1fr 120px 120px 120px 100px;
-  align-items: center;
-  padding: 8px 16px;
-  gap: 16px;
-  background-color: #fafafa;
-  border-bottom: 1px solid var(--border-color);
-}
-
-/* ==================== Grid Layout for default variant ==================== */
-.cost-element-grid {
-  display: contents;
-}
-
-.grid-item {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.field-label {
-  font-size: 11px;
+/* ==================== Section Headers ==================== */
+.cost-section-header {
+  background: var(--gray-100);
+  padding: 10px 16px;
+  margin: 16px 0 8px 0;
   font-weight: 600;
-  color: var(--text-secondary);
+  font-size: 14px;
+  color: var(--text-color);
+  border-left: 4px solid var(--primary);
   text-transform: uppercase;
-  margin-bottom: 4px;
   letter-spacing: 0.5px;
 }
 
-.field-value {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-/* ==================== Section Headers (for grouping) ==================== */
-.cost-section-header {
-  background: #f7fafc;
-  padding: 12px 16px;
-  margin: 20px 0 12px 0;
-  border-left: 4px solid var(--primary-green);
-  font-weight: 600;
-  font-size: 16px;
-  color: var(--text-primary);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-radius: 8px;
-  box-shadow: var(--box-shadow);
-}
-
 .cost-section-header.labor {
-  background: linear-gradient(to right, #E8F5E9, #f7fafc);
   border-left-color: var(--success-green);
 }
 
 .cost-section-header.utilities {
-  background: linear-gradient(to right, #E3F2FD, #f7fafc);
   border-left-color: var(--primary-blue);
 }
 
 .cost-section-header.consumables {
-  background: linear-gradient(to right, #FFF9C4, #f7fafc);
-  border-left-color: var(--warning-yellow);
+  border-left-color: var(--warning);
 }
 
 .section-count {
+  float: right;
   background: white;
   padding: 2px 8px;
   border-radius: 12px;
+  font-size: 11px;
+  font-weight: normal;
+  text-transform: none;
+  letter-spacing: normal;
+}
+
+/* ==================== Table Header (if needed) ==================== */
+.cost-table-header {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+  background: var(--gray-100);
+  border-bottom: 2px solid var(--gray-300);
+  font-weight: 600;
   font-size: 12px;
-  color: var(--text-secondary);
+  text-transform: uppercase;
+  color: var(--text-color);
 }
 
-/* ==================== Override Info Banner ==================== */
-.override-info {
-  display: none;
+.cost-table-header > * {
+  display: table-cell;
+  vertical-align: middle;
+  padding: 10px 8px;
 }
 
-/* ==================== Compact Variant ==================== */
-.cost-element-row.compact .cost-element-header {
-  display: flex;
-  padding: 8px 12px;
-  gap: 12px;
-}
+/* Same column widths as rows */
+.cost-table-header > *:nth-child(1) { width: 40px; }
+.cost-table-header > *:nth-child(2) { width: auto; }
+.cost-table-header > *:nth-child(3) { width: 120px; text-align: right; }
+.cost-table-header > *:nth-child(4) { width: 120px; text-align: right; }
+.cost-table-header > *:nth-child(5) { width: 100px; text-align: right; }
+.cost-table-header > *:nth-child(6) { width: 100px; text-align: right; }
 
-.cost-element-row.compact .element-toggle {
-  flex-shrink: 0;
-}
-
-.cost-element-row.compact .element-info {
-  flex: 1;
-}
-
-.cost-element-row.compact .rate-field,
-.cost-element-row.compact .quantity-display,
-.cost-element-row.compact .total-cost-display {
-  flex-shrink: 0;
-}
-
-/* ==================== Inline Variant ==================== */
-.cost-element-row.inline {
-  display: flex;
-  align-items: center;
-  padding: 8px 16px;
-  gap: 16px;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.cost-element-row.inline .element-toggle {
-  flex-shrink: 0;
-}
-
-.cost-element-row.inline .element-info {
-  flex: 1;
-  min-width: 200px;
-}
-
-.cost-element-row.inline .rate-field {
-  min-width: 150px;
-}
-
-.cost-element-row.inline .quantity-display {
-  min-width: 100px;
-  text-align: right;
-}
-
-.cost-element-row.inline .total-cost-display {
-  min-width: 80px;
-  text-align: right;
-}
-
-/* ==================== Category Color Bars ==================== */
-.cost-element-row.category-labor {
-  border-left: 4px solid #4CAF50;
-}
-
-.cost-element-row.category-utilities {
-  border-left: 4px solid #2196F3;
-}
-
-.cost-element-row.category-consumables {
-  border-left: 4px solid #FF9800;
-}
-
-.cost-element-row.category-transport {
-  border-left: 4px solid #9C27B0;
-}
-
-.cost-element-row.category-quality {
-  border-left: 4px solid #00BCD4;
-}
-
-.cost-element-row.category-maintenance {
-  border-left: 4px solid #F44336;
-}
-
-.cost-element-row.category-general {
-  border-left: 4px solid #607D8B;
-}
-
-/* ==================== Summary Row Styling ==================== */
+/* ==================== Summary Row ==================== */
 .cost-summary-row {
-  background: #f7fafc;
+  background: var(--gray-100);
   padding: 16px;
   margin-top: 16px;
-  border: 2px solid var(--primary-green);
-  border-radius: 8px;
+  border-top: 2px solid var(--primary);
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-weight: 600;
-  box-shadow: var(--box-shadow);
 }
 
 .summary-label {
   font-size: 16px;
-  color: var(--text-primary);
+  color: var(--text-color);
 }
 
 .summary-value {
@@ -433,69 +307,68 @@ input[type="checkbox"].cost-element-checkbox:checked + span.element-toggle::afte
   color: var(--primary-dark);
 }
 
-/* ==================== Status Badge Styling ==================== */
-.status-badge {
-  display: inline-block;
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
+/* ==================== Container for the table ==================== */
+.cost-elements-table {
+  background: white;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
 }
 
-.status-badge.good {
-  background: #d4edda;
-  color: #155724;
+/* ==================== Expanded Details (if needed) ==================== */
+.cost-element-body {
+  display: none;
+  padding: 12px 16px 12px 56px;
+  background-color: var(--gray-50);
+  border-bottom: 1px solid var(--gray-200);
 }
 
-.status-badge.low {
-  background: #f8d7da;
-  color: #721c24;
+.cost-element-row.expanded .cost-element-body {
+  display: block;
 }
 
-.status-badge.normal {
-  background: #d1ecf1;
-  color: #0c5460;
+/* ==================== Category Indicators ==================== */
+.cost-element-row.category-labor {
+  border-left: 3px solid var(--success-green);
 }
 
-.status-badge.warning {
-  background: #fff3cd;
-  color: #856404;
+.cost-element-row.category-utilities {
+  border-left: 3px solid var(--primary-blue);
+}
+
+.cost-element-row.category-consumables {
+  border-left: 3px solid var(--warning);
+}
+
+.cost-element-row.category-transport {
+  border-left: 3px solid #9c27b0;
+}
+
+.cost-element-row.category-quality {
+  border-left: 3px solid #00bcd4;
+}
+
+.cost-element-row.category-maintenance {
+  border-left: 3px solid var(--danger);
 }
 
 /* ==================== Responsive Design ==================== */
 @media (max-width: 768px) {
   .cost-element-header {
-    grid-template-columns: 40px 1fr;
-    gap: 8px;
+    display: block;
+    padding: 12px;
+  }
+  
+  .cost-element-header > * {
+    display: block;
+    width: 100% !important;
+    padding: 4px 0;
   }
   
   .rate-field,
   .quantity-display,
   .total-cost-display {
-    display: none;
-  }
-  
-  .cost-element-body {
-    display: block;
-    padding: 12px 16px 12px 56px;
-  }
-  
-  .cost-element-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-  }
-}
-
-/* ==================== Print Styles ==================== */
-@media print {
-  .cost-element-row {
-    page-break-inside: avoid;
-  }
-  
-  .element-toggle::before,
-  .element-toggle::after {
-    print-color-adjust: exact;
-    -webkit-print-color-adjust: exact;
+    text-align: left;
   }
 }
