@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-20T00:44:40.152Z",
+  "generatedAt": "2025-08-20T00:53:39.069Z",
   "filesScanned": 56,
   "jsFilesScanned": 34,
   "pyFilesScanned": 22,
@@ -11,6 +11,38 @@
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialSales/index.js",
       "line": 62,
       "module": "costManagement",
+      "source": "frontend"
+    },
+    {
+      "method": "GETLIST",
+      "path": "categories",
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
+      "line": 74,
+      "module": "mastersAPI",
+      "source": "frontend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/categories",
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
+      "line": 80,
+      "module": "api",
+      "source": "frontend"
+    },
+    {
+      "method": "GETLIST",
+      "path": "subcategories",
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
+      "line": 100,
+      "module": "mastersAPI",
+      "source": "frontend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/materials",
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
+      "line": 228,
+      "module": "api",
       "source": "frontend"
     },
     {
@@ -848,9 +880,9 @@
       "usedIn": [
         "puvi-frontend/puvi-frontend-main/src/App.js",
         "puvi-frontend/puvi-frontend-main/src/index.js",
-        "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
         "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/BatchProductionReport.js",
         "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
         "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
         "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostElementsManager.js",
         "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
@@ -1371,12 +1403,6 @@
       "type": "default-export"
     },
     {
-      "name": "Blending",
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 3,
-      "type": "const"
-    },
-    {
       "name": "BatchProductionReport",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/BatchProductionReport.js",
       "line": 7,
@@ -1392,6 +1418,12 @@
       "name": "StepIndicator",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
       "line": 648,
+      "type": "const"
+    },
+    {
+      "name": "Blending",
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 3,
       "type": "const"
     },
     {
@@ -1451,7 +1483,7 @@
     {
       "name": "Purchase",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 22,
+      "line": 12,
       "type": "const"
     },
     {
@@ -6278,94 +6310,6 @@
       "isAsync": false
     },
     {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 3,
-      "name": "Blending",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 34,
-      "name": "fetchOilTypes",
-      "params": "",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 47,
-      "name": "fetchBatchesForOilType",
-      "params": "oilType, componentId",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 62,
-      "name": "fetchBlendHistory",
-      "params": "",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 74,
-      "name": "handleOilTypeChange",
-      "params": "componentId, oilType",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 94,
-      "name": "handleBatchChange",
-      "params": "componentId, batchId",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 117,
-      "name": "handlePercentageChange",
-      "params": "componentId, percentage",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 127,
-      "name": "addComponent",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 142,
-      "name": "removeComponent",
-      "params": "componentId",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 149,
-      "name": "calculateTotals",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 175,
-      "name": "handleSubmit",
-      "params": "",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/BatchProductionReport.js",
       "line": 7,
       "name": "BatchProductionReport",
@@ -6548,6 +6492,94 @@
       "params": "",
       "type": "arrow",
       "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 3,
+      "name": "Blending",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 34,
+      "name": "fetchOilTypes",
+      "params": "",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 47,
+      "name": "fetchBatchesForOilType",
+      "params": "oilType, componentId",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 62,
+      "name": "fetchBlendHistory",
+      "params": "",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 74,
+      "name": "handleOilTypeChange",
+      "params": "componentId, oilType",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 94,
+      "name": "handleBatchChange",
+      "params": "componentId, batchId",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 117,
+      "name": "handlePercentageChange",
+      "params": "componentId, percentage",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 127,
+      "name": "addComponent",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 142,
+      "name": "removeComponent",
+      "params": "componentId",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 149,
+      "name": "calculateTotals",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 175,
+      "name": "handleSubmit",
+      "params": "",
+      "type": "arrow",
+      "isAsync": true
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
@@ -7279,7 +7311,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 22,
+      "line": 12,
       "name": "Purchase",
       "params": "",
       "type": "arrow",
@@ -7287,7 +7319,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 77,
+      "line": 67,
       "name": "fetchCategories",
       "params": "",
       "type": "arrow",
@@ -7303,7 +7335,15 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 105,
+      "line": 116,
+      "name": "fetchSubcategories",
+      "params": "categoryId",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
+      "line": 127,
       "name": "fetchSuppliers",
       "params": "",
       "type": "arrow",
@@ -7311,7 +7351,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 114,
+      "line": 138,
       "name": "fetchMaterialsForSupplier",
       "params": "supplierId",
       "type": "arrow",
@@ -7319,7 +7359,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 125,
+      "line": 150,
       "name": "fetchPurchaseHistory",
       "params": "",
       "type": "arrow",
@@ -7327,7 +7367,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 134,
+      "line": 162,
       "name": "handleSupplierChange",
       "params": "e",
       "type": "arrow",
@@ -7335,7 +7375,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 161,
+      "line": 189,
       "name": "handleCategoryChange",
       "params": "categoryName",
       "type": "arrow",
@@ -7343,7 +7383,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 178,
+      "line": 206,
       "name": "handleCreateMaterial",
       "params": "e",
       "type": "arrow",
@@ -7351,7 +7391,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 226,
+      "line": 263,
       "name": "handleInvoiceChange",
       "params": "e",
       "type": "arrow",
@@ -7359,7 +7399,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 236,
+      "line": 273,
       "name": "handleItemChange",
       "params": "index, field, value",
       "type": "arrow",
@@ -7367,7 +7407,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 257,
+      "line": 294,
       "name": "addItem",
       "params": "",
       "type": "arrow",
@@ -7375,7 +7415,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 268,
+      "line": 305,
       "name": "removeItem",
       "params": "index",
       "type": "arrow",
@@ -7383,7 +7423,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 277,
+      "line": 314,
       "name": "getMaterialUnit",
       "params": "materialId",
       "type": "arrow",
@@ -7391,7 +7431,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 283,
+      "line": 320,
       "name": "getMaterialDisplay",
       "params": "material",
       "type": "arrow",
@@ -7399,7 +7439,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 295,
+      "line": 332,
       "name": "allocateCharges",
       "params": "",
       "type": "arrow",
@@ -7407,7 +7447,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 333,
+      "line": 370,
       "name": "handleGroupPercentageChange",
       "params": "group, value",
       "type": "arrow",
@@ -7415,7 +7455,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 348,
+      "line": 385,
       "name": "calculateTotals",
       "params": "",
       "type": "arrow",
@@ -7423,7 +7463,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 385,
+      "line": 422,
       "name": "handleSubmit",
       "params": "e",
       "type": "arrow",
@@ -7431,7 +7471,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 487,
+      "line": 526,
       "name": "formatDate",
       "params": "dateStr",
       "type": "arrow",
@@ -7439,7 +7479,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 494,
+      "line": 533,
       "name": "currentCategoryRequiresSubcategory",
       "params": "",
       "type": "arrow",
@@ -10076,124 +10116,6 @@
       "hook": "useEffect"
     },
     {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 4,
-      "type": "useState",
-      "name": "oilTypes",
-      "setter": "setOilTypes",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 4,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 5,
-      "type": "useState",
-      "name": "blendHistory",
-      "setter": "setBlendHistory",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 5,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 6,
-      "type": "useState",
-      "name": "showHistory",
-      "setter": "setShowHistory",
-      "initial": null
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 6,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 7,
-      "type": "useState",
-      "name": "loading",
-      "setter": "setLoading",
-      "initial": null
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 7,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 8,
-      "type": "useState",
-      "name": "message",
-      "setter": "setMessage",
-      "initial": ""
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 8,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 11,
-      "type": "useState",
-      "name": "blendData",
-      "setter": "setBlendData",
-      "initial": "{}"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 11,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 19,
-      "type": "useState",
-      "name": "components",
-      "setter": "setComponents",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 19,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 25,
-      "type": "useState",
-      "name": "batchesForComponents",
-      "setter": "setBatchesForComponents",
-      "initial": "{}"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 25,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 30,
-      "type": "useEffect",
-      "hook": "useEffect"
-    },
-    {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/BatchProductionReport.js",
       "line": 8,
       "type": "useRef",
@@ -10418,6 +10340,124 @@
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
       "line": 63,
+      "type": "useEffect",
+      "hook": "useEffect"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 4,
+      "type": "useState",
+      "name": "oilTypes",
+      "setter": "setOilTypes",
+      "initial": "[]"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 4,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 5,
+      "type": "useState",
+      "name": "blendHistory",
+      "setter": "setBlendHistory",
+      "initial": "[]"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 5,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 6,
+      "type": "useState",
+      "name": "showHistory",
+      "setter": "setShowHistory",
+      "initial": null
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 6,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 7,
+      "type": "useState",
+      "name": "loading",
+      "setter": "setLoading",
+      "initial": null
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 7,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 8,
+      "type": "useState",
+      "name": "message",
+      "setter": "setMessage",
+      "initial": ""
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 8,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 11,
+      "type": "useState",
+      "name": "blendData",
+      "setter": "setBlendData",
+      "initial": "{}"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 11,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 19,
+      "type": "useState",
+      "name": "components",
+      "setter": "setComponents",
+      "initial": "[]"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 19,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 25,
+      "type": "useState",
+      "name": "batchesForComponents",
+      "setter": "setBatchesForComponents",
+      "initial": "{}"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 25,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 30,
       "type": "useEffect",
       "hook": "useEffect"
     },
@@ -11531,208 +11571,6 @@
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/OpeningBalanceModule/index.js",
       "line": 74,
-      "type": "useEffect",
-      "hook": "useEffect"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 23,
-      "type": "useState",
-      "name": "suppliers",
-      "setter": "setSuppliers",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 23,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 24,
-      "type": "useState",
-      "name": "materials",
-      "setter": "setMaterials",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 24,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 25,
-      "type": "useState",
-      "name": "categories",
-      "setter": "setCategories",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 25,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 26,
-      "type": "useState",
-      "name": "subcategories",
-      "setter": "setSubcategories",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 26,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 27,
-      "type": "useState",
-      "name": "selectedSupplier",
-      "setter": "setSelectedSupplier",
-      "initial": ""
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 27,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 28,
-      "type": "useState",
-      "name": "showHistory",
-      "setter": "setShowHistory",
-      "initial": null
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 28,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 29,
-      "type": "useState",
-      "name": "showMaterialForm",
-      "setter": "setShowMaterialForm",
-      "initial": null
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 29,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 30,
-      "type": "useState",
-      "name": "purchaseHistory",
-      "setter": "setPurchaseHistory",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 30,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 33,
-      "type": "useState",
-      "name": "newMaterial",
-      "setter": "setNewMaterial",
-      "initial": "{}"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 33,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 45,
-      "type": "useState",
-      "name": "invoiceData",
-      "setter": "setInvoiceData",
-      "initial": "{}"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 45,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 53,
-      "type": "useState",
-      "name": "items",
-      "setter": "setItems",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 53,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 62,
-      "type": "useState",
-      "name": "uomGroups",
-      "setter": "setUomGroups",
-      "initial": "{}"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 62,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 68,
-      "type": "useState",
-      "name": "message",
-      "setter": "setMessage",
-      "initial": ""
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 68,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 69,
-      "type": "useState",
-      "name": "loading",
-      "setter": "setLoading",
-      "initial": null
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 69,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 71,
       "type": "useEffect",
       "hook": "useEffect"
     },
@@ -13842,6 +13680,20 @@
       "calledFrom": "puvi-frontend/puvi-frontend-main/src/modules/MaterialSales/index.js",
       "line": 62,
       "module": "costManagement"
+    },
+    {
+      "path": "categories",
+      "method": "GETLIST",
+      "calledFrom": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
+      "line": 74,
+      "module": "mastersAPI"
+    },
+    {
+      "path": "subcategories",
+      "method": "GETLIST",
+      "calledFrom": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
+      "line": 100,
+      "module": "mastersAPI"
     }
   ],
   "apiEndpoints": {
@@ -13851,6 +13703,34 @@
         "path": "sales",
         "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialSales/index.js",
         "line": 62
+      }
+    ],
+    "mastersAPI": [
+      {
+        "method": "GETLIST",
+        "path": "categories",
+        "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
+        "line": 74
+      },
+      {
+        "method": "GETLIST",
+        "path": "subcategories",
+        "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
+        "line": 100
+      }
+    ],
+    "api": [
+      {
+        "method": "GET",
+        "path": "/api/categories",
+        "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
+        "line": 80
+      },
+      {
+        "method": "POST",
+        "path": "/api/materials",
+        "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
+        "line": 228
       }
     ],
     "batch_bp": [
@@ -14597,54 +14477,6 @@
       "code": "} catch (error) {"
     },
     {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 35,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 41,
-      "type": "catch",
-      "code": "} catch (error) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 48,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 57,
-      "type": "catch",
-      "code": "} catch (error) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 63,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 69,
-      "type": "catch",
-      "code": "} catch (error) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 197,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 245,
-      "type": "catch",
-      "code": "} catch (error) {"
-    },
-    {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
       "line": 73,
       "type": "try-catch",
@@ -14713,6 +14545,54 @@
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
       "line": 607,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 35,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 41,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 48,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 57,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 63,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 69,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 197,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 245,
       "type": "catch",
       "code": "} catch (error) {"
     },
@@ -15132,7 +15012,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 78,
+      "line": 68,
       "type": "try-catch",
       "code": "try {"
     },
@@ -15150,67 +15030,79 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 100,
+      "line": 110,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 106,
+      "line": 117,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 109,
+      "line": 122,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 115,
+      "line": 128,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 120,
+      "line": 133,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 126,
+      "line": 139,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 129,
+      "line": 145,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 191,
+      "line": 151,
       "type": "try-catch",
       "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
+      "line": 157,
+      "type": "catch",
+      "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
       "line": 219,
-      "type": "catch",
-      "code": "} catch (error) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 430,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 476,
+      "line": 256,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
+      "line": 467,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
+      "line": 515,
       "type": "catch",
       "code": "} catch (error) {"
     },
@@ -17532,15 +17424,15 @@
     "jsFiles": 34,
     "pyFiles": 22,
     "components": 38,
-    "routes": 93,
+    "routes": 97,
     "exports": 39,
     "imports": 46,
     "hardcodedValues": 23,
     "databaseQueries": 299,
     "databaseTables": 49,
-    "functions": 481,
-    "stateHooks": 554,
-    "missingEndpoints": 1,
-    "errorHandlers": 481
+    "functions": 482,
+    "stateHooks": 525,
+    "missingEndpoints": 3,
+    "errorHandlers": 483
   }
 }
