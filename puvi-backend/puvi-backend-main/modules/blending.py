@@ -6,6 +6,7 @@ Handles multi-oil blending with dynamic ratios and traceability
 
 from flask import Blueprint, request, jsonify
 from decimal import Decimal
+from datetime import datetime
 from db_utils import get_db_connection, close_connection
 from utils.date_utils import parse_date, integer_to_date
 from utils.validation import safe_decimal, safe_float, validate_required_fields
@@ -298,7 +299,7 @@ def create_blend():
                 component['actual_oil_type'] = component['oil_type']
                 oil_types.append(component['oil_type'])
         
-        # Generate blend code
+        # Generate blend code with proper DDMMYYYY format
         oil_types = list(set(oil_types))
         if len(oil_types) <= 3:
             oil_names = '-'.join(oil_types)
@@ -306,7 +307,9 @@ def create_blend():
             # Use abbreviations for 4+ oils
             oil_names = '-'.join([o[:3].upper() for o in oil_types])
         
-        date_str = data['blend_date'].replace('-', '')
+        # Format date as DDMMYYYY (not YYYYMMDD)
+        blend_date_obj = datetime.strptime(data['blend_date'], '%Y-%m-%d')
+        date_str = blend_date_obj.strftime('%d%m%Y')  # This gives "20082025" (DDMMYYYY)
         blend_code = f"BLEND-{date_str}-{oil_names}-{data['blend_description']}"
         
         # Calculate weighted average cost
