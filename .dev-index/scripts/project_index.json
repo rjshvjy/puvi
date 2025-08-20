@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-20T02:16:24.830Z",
+  "generatedAt": "2025-08-20T02:19:27.371Z",
   "filesScanned": 56,
   "jsFilesScanned": 34,
   "pyFilesScanned": 22,
@@ -1279,67 +1279,67 @@
     {
       "name": "skuDateUtils",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 471
+      "line": 487
     },
     {
       "name": "expiryUtils",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 561
+      "line": 577
     },
     {
       "name": "formatUtils",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 618
+      "line": 634
     },
     {
       "name": "validationUtils",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 663
+      "line": 679
     },
     {
       "name": "skuAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 698
+      "line": 714
     },
     {
       "name": "configAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 699
+      "line": 715
     },
     {
       "name": "batchAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 700
+      "line": 716
     },
     {
       "name": "mastersAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 701
+      "line": 717
     },
     {
       "name": "inventoryAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 702
+      "line": 718
     },
     {
       "name": "reportsAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 703
+      "line": 719
     },
     {
       "name": "purchaseAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 704
+      "line": 720
     },
     {
       "name": "blendingAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 705
+      "line": 721
     },
     {
       "name": "skuService",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 708
+      "line": 724
     },
     {
       "name": "skuDateUtils",
@@ -1735,7 +1735,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 361,
+      "line": 377,
       "type": "object",
       "code": "config: {"
     },
@@ -15906,13 +15906,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 410,
+      "line": 426,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 413,
+      "line": 429,
       "type": "catch",
       "code": "} catch (error) {"
     },
