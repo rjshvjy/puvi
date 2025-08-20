@@ -3,12 +3,12 @@
 // Enhanced with material creation form and category validation
 
 import React, { useState, useEffect } from 'react';
-import apiService, { api as apiDirect, purchaseAPI as purchaseAPIDirect } from '../../services/api';
+import apiService from '../../services/api';
 import './Purchase.css';
 
-// Use direct imports if available, otherwise fall back to default export
-const api = apiDirect || apiService?.api;
-const purchaseAPI = purchaseAPIDirect || apiService?.purchaseAPI;
+// Access api and purchaseAPI from the default export
+const api = apiService.api;
+const purchaseAPI = apiService.purchaseAPI;
 
 const Purchase = () => {
   const [suppliers, setSuppliers] = useState([]);
