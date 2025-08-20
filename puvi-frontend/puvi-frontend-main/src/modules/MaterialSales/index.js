@@ -1,7 +1,6 @@
-// File Path: puvi-frontend/src/modules/MaterialSales/index.js
-// Material Sales Module with Packing Cost Integration - Updated UI
-// Session 3: UI standardized with CostElementRow component
-// IMPORTANT: FIFO logic unchanged and working perfectly
+// File Path: puvi-frontend/puvi-frontend-main/src/modules/MaterialSales/index.js
+// Material Sales Module with ALL Cost Elements Display
+// Shows all cost elements where applicable_to IN ('sales', 'all')
 
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
@@ -21,15 +20,11 @@ const MaterialSales = () => {
   const [oilTypes, setOilTypes] = useState([]);
   const [summary, setSummary] = useState(null);
   
-  // Cost elements state for packing cost
-  const [packingCostElement, setPackingCostElement] = useState({
-    element_id: null,
-    element_name: 'Sacks/Bags',
-    default_rate: 0.3,
-    unit_type: 'Per Kg'
-  });
+  // Cost elements state - NOW AN ARRAY OF ALL APPLICABLE ELEMENTS
+  const [salesCostElements, setSalesCostElements] = useState([]);
+  const [costInputs, setCostInputs] = useState({});
   
-  // Sale form data with packing cost fields
+  // Sale form data
   const [saleData, setSaleData] = useState({
     byproduct_type: 'oil_cake',
     oil_type: '',
@@ -39,9 +34,6 @@ const MaterialSales = () => {
     quantity_sold: '',
     sale_rate: '',
     transport_cost: '0',
-    packing_cost_enabled: false,
-    packing_cost_rate: '',
-    packing_cost_total: '0',
     notes: ''
   });
   
@@ -53,36 +45,34 @@ const MaterialSales = () => {
     fetchByproductTypes();
     fetchInventory('oil_cake');
     fetchSalesHistory();
-    fetchPackingCostElement();
+    fetchSalesCostElements();
   }, []);
   
-  // Fetch packing cost element from master
-  const fetchPackingCostElement = async () => {
+  // Fetch ALL cost elements applicable to sales
+  const fetchSalesCostElements = async () => {
     try {
       const response = await api.costManagement.getCostElementsByStage('sales');
-      if (response.success) {
+      if (response.success && response.cost_elements) {
         const elements = response.cost_elements;
         
-        // Find sacks/bags element
-        const packingElement = elements.find(e => 
-          e.element_name === 'Sacks/Bags' || 
-          e.element_name.toLowerCase().includes('sack') || 
-          e.element_name.toLowerCase().includes('bag') ||
-          e.element_name.toLowerCase().includes('packing')
-        );
+        // Initialize cost inputs for each element
+        const initialInputs = {};
+        elements.forEach(element => {
+          initialInputs[element.element_id] = {
+            enabled: false,
+            overrideRate: '',
+            quantity: 0,
+            total: 0
+          };
+        });
         
-        if (packingElement) {
-          setPackingCostElement({
-            element_id: packingElement.element_id,
-            element_name: packingElement.element_name,
-            default_rate: packingElement.default_rate,
-            unit_type: packingElement.unit_type
-          });
-        }
+        setSalesCostElements(elements);
+        setCostInputs(initialInputs);
+        
+        console.log(`Loaded ${elements.length} cost elements for sales stage`);
       }
     } catch (error) {
-      console.error('Error fetching packing cost element:', error);
-      // Continue with default rate if API fails
+      console.error('Error fetching sales cost elements:', error);
     }
   };
   
@@ -140,48 +130,11 @@ const MaterialSales = () => {
     }
   };
   
-  // Handle form changes with packing cost logic
+  // Handle form changes
   const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value } = e.target;
     
-    if (type === 'checkbox') {
-      setSaleData(prev => {
-        const updated = { ...prev, [name]: checked };
-        
-        // If disabling packing cost, reset the values
-        if (name === 'packing_cost_enabled' && !checked) {
-          updated.packing_cost_rate = '';
-          updated.packing_cost_total = '0';
-        } else if (name === 'packing_cost_enabled' && checked) {
-          // Calculate packing cost with default rate when enabled
-          const quantity = parseFloat(prev.quantity_sold) || 0;
-          const rate = packingCostElement.default_rate;
-          updated.packing_cost_total = (quantity * rate).toFixed(2);
-        }
-        
-        return updated;
-      });
-    } else {
-      setSaleData(prev => {
-        const updated = { ...prev, [name]: value };
-        
-        // Calculate packing cost when quantity changes
-        if (name === 'quantity_sold' && prev.packing_cost_enabled) {
-          const quantity = parseFloat(value) || 0;
-          const rate = parseFloat(prev.packing_cost_rate) || packingCostElement.default_rate;
-          updated.packing_cost_total = (quantity * rate).toFixed(2);
-        }
-        
-        // Calculate packing cost when rate changes
-        if (name === 'packing_cost_rate' && prev.packing_cost_enabled) {
-          const quantity = parseFloat(prev.quantity_sold) || 0;
-          const rate = parseFloat(value) || packingCostElement.default_rate;
-          updated.packing_cost_total = (quantity * rate).toFixed(2);
-        }
-        
-        return updated;
-      });
-    }
+    setSaleData(prev => ({ ...prev, [name]: value }));
     
     // If byproduct type changes, fetch new inventory
     if (name === 'byproduct_type') {
@@ -197,38 +150,46 @@ const MaterialSales = () => {
     // Calculate FIFO preview when quantity changes
     if (name === 'quantity_sold' && value) {
       calculateFifoPreview(parseFloat(value));
+      // Update quantity for all cost elements
+      updateCostElementQuantities(parseFloat(value));
     }
   };
   
-  // Handle packing cost override changes from CostElementRow
-  const handlePackingCostToggle = (enabled) => {
-    setSaleData(prev => {
-      const updated = { ...prev, packing_cost_enabled: enabled };
-      
-      if (!enabled) {
-        updated.packing_cost_rate = '';
-        updated.packing_cost_total = '0';
-      } else {
-        const quantity = parseFloat(prev.quantity_sold) || 0;
-        const rate = packingCostElement.default_rate;
-        updated.packing_cost_total = (quantity * rate).toFixed(2);
-      }
-      
+  // Update quantities for all cost elements when sale quantity changes
+  const updateCostElementQuantities = (quantity) => {
+    setCostInputs(prev => {
+      const updated = { ...prev };
+      Object.keys(updated).forEach(elementId => {
+        updated[elementId] = {
+          ...updated[elementId],
+          quantity: quantity
+        };
+      });
       return updated;
     });
   };
   
-  const handlePackingRateChange = (rate) => {
-    setSaleData(prev => {
-      const quantity = parseFloat(prev.quantity_sold) || 0;
-      const effectiveRate = parseFloat(rate) || packingCostElement.default_rate;
-      
-      return {
-        ...prev,
-        packing_cost_rate: rate,
-        packing_cost_total: (quantity * effectiveRate).toFixed(2)
-      };
-    });
+  // Handle cost element toggle
+  const handleCostElementToggle = (elementId, enabled) => {
+    setCostInputs(prev => ({
+      ...prev,
+      [elementId]: {
+        ...prev[elementId],
+        enabled: enabled,
+        quantity: parseFloat(saleData.quantity_sold) || 0
+      }
+    }));
+  };
+  
+  // Handle cost element rate override
+  const handleCostElementRateChange = (elementId, rate) => {
+    setCostInputs(prev => ({
+      ...prev,
+      [elementId]: {
+        ...prev[elementId],
+        overrideRate: rate
+      }
+    }));
   };
   
   // Calculate FIFO allocation preview - CRITICAL: DO NOT MODIFY
@@ -260,13 +221,30 @@ const MaterialSales = () => {
     }
   };
   
-  // Calculate cost impact with packing cost - CRITICAL: RETROACTIVE LOGIC PRESERVED
+  // Calculate total additional costs
+  const calculateTotalAdditionalCosts = () => {
+    let total = parseFloat(saleData.transport_cost) || 0;
+    
+    // Add all enabled cost elements
+    salesCostElements.forEach(element => {
+      const input = costInputs[element.element_id];
+      if (input?.enabled) {
+        const quantity = parseFloat(saleData.quantity_sold) || 0;
+        const rate = parseFloat(input.overrideRate) || parseFloat(element.default_rate) || 0;
+        total += quantity * rate;
+      }
+    });
+    
+    return total;
+  };
+  
+  // Calculate cost impact with all additional costs - CRITICAL: RETROACTIVE LOGIC PRESERVED
   const calculateCostImpact = () => {
     if (!saleData.sale_rate || fifoPreview.length === 0) return null;
     
     const saleRate = parseFloat(saleData.sale_rate);
-    const packingCost = saleData.packing_cost_enabled ? parseFloat(saleData.packing_cost_total) : 0;
     const quantitySold = parseFloat(saleData.quantity_sold) || 1;
+    const additionalCosts = calculateTotalAdditionalCosts();
     let totalAdjustment = 0;
     
     fifoPreview.forEach(item => {
@@ -274,19 +252,19 @@ const MaterialSales = () => {
       totalAdjustment += adjustment;
     });
     
-    // Add packing cost impact (it increases oil cost)
-    totalAdjustment += packingCost;
+    // Add all additional costs impact (increases oil cost)
+    totalAdjustment += additionalCosts;
     
     return {
       totalAdjustment,
-      packingCostImpact: packingCost,
+      additionalCostsImpact: additionalCosts,
       isPositive: totalAdjustment < 0, // Negative adjustment means sold for more
       perKgImpact: totalAdjustment / quantitySold,
-      netRevenue: (saleRate * quantitySold) - packingCost - (parseFloat(saleData.transport_cost) || 0)
+      netRevenue: (saleRate * quantitySold) - additionalCosts
     };
   };
   
-  // Handle form submission with packing cost
+  // Handle form submission with all cost elements
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -304,48 +282,64 @@ const MaterialSales = () => {
     setMessage('');
     
     try {
-      // Prepare submission data with packing cost
+      // Prepare cost elements data
+      const appliedCosts = [];
+      
+      salesCostElements.forEach(element => {
+        const input = costInputs[element.element_id];
+        if (input?.enabled) {
+          const quantity = parseFloat(saleData.quantity_sold);
+          const rate = parseFloat(input.overrideRate) || parseFloat(element.default_rate);
+          const cost = quantity * rate;
+          
+          appliedCosts.push({
+            element_id: element.element_id,
+            element_name: element.element_name,
+            quantity: quantity,
+            rate: rate,
+            total_cost: cost
+          });
+        }
+      });
+      
+      // Prepare submission data
       const submissionData = {
         ...saleData,
-        packing_cost: saleData.packing_cost_enabled ? parseFloat(saleData.packing_cost_total) : 0,
-        packing_cost_rate: saleData.packing_cost_enabled ? 
-          (parseFloat(saleData.packing_cost_rate) || packingCostElement.default_rate) : 0
+        applied_costs: appliedCosts,
+        total_additional_costs: calculateTotalAdditionalCosts()
       };
       
       const response = await api.sales.addMaterialSale(submissionData);
       
-      // Log packing cost override if different from master
-      if (response.success && saleData.packing_cost_enabled && saleData.packing_cost_rate) {
-        const usedRate = parseFloat(saleData.packing_cost_rate);
-        if (usedRate !== packingCostElement.default_rate) {
-          try {
-            await api.costManagement.saveBatchCosts({
-              record_id: response.sale_id,
-              module: 'material_sales',
-              costs: [{
-                element_id: packingCostElement.element_id,
-                element_name: packingCostElement.element_name,
-                quantity: parseFloat(saleData.quantity_sold),
-                master_rate: packingCostElement.default_rate,
-                override_rate: usedRate,
-                total_cost: parseFloat(saleData.packing_cost_total)
-              }],
-              created_by: 'Material Sales Module'
-            });
-          } catch (auditError) {
-            console.error('Error logging packing cost override:', auditError);
-          }
+      // Log cost overrides if any
+      if (response.success && appliedCosts.length > 0) {
+        try {
+          await api.costManagement.saveBatchCosts({
+            record_id: response.sale_id,
+            module: 'material_sales',
+            costs: appliedCosts.map(cost => ({
+              element_id: cost.element_id,
+              element_name: cost.element_name,
+              quantity: cost.quantity,
+              master_rate: salesCostElements.find(e => e.element_id === cost.element_id)?.default_rate || cost.rate,
+              override_rate: cost.rate,
+              total_cost: cost.total_cost
+            })),
+            created_by: 'Material Sales Module'
+          });
+        } catch (auditError) {
+          console.error('Error logging cost overrides:', auditError);
         }
       }
       
       if (response.success) {
-        const packingInfo = saleData.packing_cost_enabled ? 
-          `\nPacking Cost: ₹${saleData.packing_cost_total}` : '';
+        const costsInfo = appliedCosts.length > 0 ? 
+          `\nAdditional Costs (${appliedCosts.length} elements): ₹${calculateTotalAdditionalCosts().toFixed(2)}` : '';
         
         setMessage(`✅ Sale recorded successfully!
 Sale ID: ${response.sale_id}
 Quantity: ${response.quantity_sold} kg
-Total Amount: ₹${response.total_amount.toFixed(2)}${packingInfo}
+Total Amount: ₹${response.total_amount.toFixed(2)}${costsInfo}
 Batches Allocated: ${response.allocations.length}
 Cost Adjustment: ₹${response.total_cost_adjustment.toFixed(2)}`);
         
@@ -359,11 +353,20 @@ Cost Adjustment: ₹${response.total_cost_adjustment.toFixed(2)}`);
           quantity_sold: '',
           sale_rate: '',
           transport_cost: '0',
-          packing_cost_enabled: false,
-          packing_cost_rate: '',
-          packing_cost_total: '0',
           notes: ''
         });
+        
+        // Reset cost inputs
+        const resetInputs = {};
+        salesCostElements.forEach(element => {
+          resetInputs[element.element_id] = {
+            enabled: false,
+            overrideRate: '',
+            quantity: 0,
+            total: 0
+          };
+        });
+        setCostInputs(resetInputs);
         setFifoPreview([]);
         
         // Refresh data
@@ -392,6 +395,22 @@ Cost Adjustment: ₹${response.total_cost_adjustment.toFixed(2)}`);
     if (!dateStr) return '';
     const date = new Date(dateStr);
     return date.toLocaleDateString('en-GB');
+  };
+  
+  // Get icon for cost element category
+  const getCostIcon = (category) => {
+    const icons = {
+      'Consumables': '📦',
+      'Transport': '🚚',
+      'Labor': '👷',
+      'Labour': '👷',
+      'Utilities': '⚡',
+      'Quality': '✓',
+      'Maintenance': '🔧',
+      'Fixed': '🏭',
+      'Variable': '📊'
+    };
+    return icons[category] || '💰';
   };
   
   return (
@@ -557,29 +576,53 @@ Cost Adjustment: ₹${response.total_cost_adjustment.toFixed(2)}`);
                   />
                 </div>
                 
-                {/* Packing Cost Section - Updated with CostElementRow */}
+                {/* Additional Costs Section - NOW SHOWS ALL APPLICABLE COST ELEMENTS */}
                 <div className="cost-element-section">
-                  <h4 className="subsection-title">Additional Costs</h4>
-                  <CostElementRow
-                    elementName="Sacks/Bags Packing Cost"
-                    masterRate={packingCostElement.default_rate}
-                    unitType="Per Kg"
-                    quantity={parseFloat(saleData.quantity_sold) || 0}
-                    enabled={saleData.packing_cost_enabled}
-                    category="Material"
-                    overrideRate={saleData.packing_cost_rate}
-                    onToggle={handlePackingCostToggle}
-                    onOverrideChange={handlePackingRateChange}
-                    icon="📦"
-                    helpText="Cost for packing materials (sacks/bags) used for by-product sales"
-                    variant="default"
-                  />
+                  <h4 className="subsection-title">
+                    Additional Costs ({salesCostElements.length} available)
+                  </h4>
                   
-                  {saleData.packing_cost_enabled && (
+                  {salesCostElements.length === 0 ? (
+                    <div className="no-cost-elements">
+                      No additional cost elements configured for sales stage.
+                    </div>
+                  ) : (
+                    <>
+                      {salesCostElements.map(element => (
+                        <CostElementRow
+                          key={element.element_id}
+                          elementName={element.element_name}
+                          masterRate={parseFloat(element.default_rate) || 0}
+                          unitType={element.unit_type || 'Per Kg'}
+                          quantity={parseFloat(saleData.quantity_sold) || 0}
+                          enabled={costInputs[element.element_id]?.enabled || false}
+                          category={element.category}
+                          overrideRate={costInputs[element.element_id]?.overrideRate || ''}
+                          onToggle={(enabled) => handleCostElementToggle(element.element_id, enabled)}
+                          onOverrideChange={(rate) => handleCostElementRateChange(element.element_id, rate)}
+                          icon={getCostIcon(element.category)}
+                          helpText={`${element.category} - ${element.activity || 'General'}`}
+                          variant="default"
+                        />
+                      ))}
+                      
+                      {/* Show total if any costs are enabled */}
+                      {Object.values(costInputs).some(input => input.enabled) && (
+                        <div className="cost-summary-row">
+                          <span className="summary-label">Total Additional Costs:</span>
+                          <span className="summary-value">
+                            ₹{calculateTotalAdditionalCosts().toFixed(2)}
+                          </span>
+                        </div>
+                      )}
+                    </>
+                  )}
+                  
+                  {Object.values(costInputs).some(input => input.enabled) && (
                     <div className="cost-warning-note">
                       <span className="warning-icon">⚠️</span>
                       <span className="warning-text">
-                        Packing cost will be deducted from sale revenue and will increase the net oil cost retroactively.
+                        Additional costs will be deducted from sale revenue and will increase the net oil cost retroactively.
                       </span>
                     </div>
                   )}
@@ -597,23 +640,23 @@ Cost Adjustment: ₹${response.total_cost_adjustment.toFixed(2)}`);
                   />
                 </div>
                 
-                {/* Cost Impact Summary with packing cost */}
+                {/* Cost Impact Summary with all additional costs */}
                 {costImpact && (
                   <div className={`cost-impact-card ${costImpact.isPositive ? 'positive' : 'negative'}`}>
                     <h4>Cost Impact Preview</h4>
-                    {saleData.packing_cost_enabled && (
+                    {costImpact.additionalCostsImpact > 0 && (
                       <div className="impact-row highlight">
-                        <span>Packing Cost Impact:</span>
+                        <span>Additional Costs Impact:</span>
                         <span className="impact-value negative">
-                          +₹{costImpact.packingCostImpact.toFixed(2)}
+                          +₹{costImpact.additionalCostsImpact.toFixed(2)}
                         </span>
                       </div>
                     )}
                     <div className="impact-row">
                       <span>Sale Rate Adjustment:</span>
                       <span className="impact-value">
-                        {costImpact.totalAdjustment - costImpact.packingCostImpact > 0 ? '+' : ''}
-                        ₹{(costImpact.totalAdjustment - costImpact.packingCostImpact).toFixed(2)}
+                        {costImpact.totalAdjustment - costImpact.additionalCostsImpact > 0 ? '+' : ''}
+                        ₹{(costImpact.totalAdjustment - costImpact.additionalCostsImpact).toFixed(2)}
                       </span>
                     </div>
                     <div className="impact-row total">
@@ -738,7 +781,7 @@ Cost Adjustment: ₹${response.total_cost_adjustment.toFixed(2)}`);
                   <th>Quantity</th>
                   <th>Rate</th>
                   <th>Amount</th>
-                  <th>Packing</th>
+                  <th>Add. Costs</th>
                   <th>Batches</th>
                   <th>Adjustment</th>
                 </tr>
@@ -759,7 +802,9 @@ Cost Adjustment: ₹${response.total_cost_adjustment.toFixed(2)}`);
                     <td className="text-right">₹{sale.sale_rate.toFixed(2)}</td>
                     <td className="text-right">₹{sale.total_amount.toFixed(2)}</td>
                     <td className="text-right">
-                      {sale.packing_cost ? `₹${sale.packing_cost.toFixed(2)}` : '-'}
+                      {(sale.packing_cost || 0) + (sale.transport_cost || 0) > 0 
+                        ? `₹${((sale.packing_cost || 0) + (sale.transport_cost || 0)).toFixed(2)}` 
+                        : '-'}
                     </td>
                     <td className="text-center">{sale.batch_count}</td>
                     <td className={`text-right ${sale.total_adjustment > 0 ? 'negative' : 'positive'}`}>
