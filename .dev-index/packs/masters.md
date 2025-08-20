@@ -1,5 +1,5 @@
 # Feature Pack: MASTERS
-Generated: 2025-08-20T03:43:48.295Z
+Generated: 2025-08-20T04:22:59.621Z
 Routes: 11 | Tables: 2 | Files: 2
 
 ## Table of Contents
@@ -39,8 +39,8 @@ POST   /api/masters/<master_type>/import
 ## Database Dependencies
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
-| categories_master | masters-crud, purchase | 🟡 MEDIUM | Changes affect 2 other modules |
-| subcategories_master | masters-crud, purchase | 🟡 MEDIUM | Changes affect 2 other modules |
+| categories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
+| subcategories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
 
 ## Backend Implementation
 

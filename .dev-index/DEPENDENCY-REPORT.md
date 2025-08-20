@@ -1,6 +1,6 @@
 # PUVI System - Dependency Analysis Report
 
-**Generated:** 2025-08-20T03:43:48.239Z
+**Generated:** 2025-08-20T04:22:59.554Z
 **Version:** 1.0
 
 ## Executive Summary
@@ -58,6 +58,18 @@ Tables used by multiple modules (changes have cascading effects):
 - **File Count:** 4
 - **Recommendation:** ⚠️ CRITICAL: Changes require coordination across 4 modules
 
+### subcategories_master
+- **Risk Level:** MEDIUM
+- **Shared By:** blending, masters-crud, purchase
+- **File Count:** 3
+- **Recommendation:** Changes will affect blending, masters-crud, purchase
+
+### categories_master
+- **Risk Level:** MEDIUM
+- **Shared By:** blending, masters-crud, purchase
+- **File Count:** 3
+- **Recommendation:** Changes will affect blending, masters-crud, purchase
+
 ## Migration Opportunities
 
 Hardcoded values that should be moved to database:
@@ -71,6 +83,6 @@ Hardcoded values that should be moved to database:
 - **cost_elements_master**: Used by cost-management, sku-management, sku-production, system-config (4 files)
 - **suppliers**: Used by opening-balance, purchase, system-config, unknown (5 files)
 - **sku_master**: Used by sku-management, sku-production, system-config, unknown (4 files)
+- **subcategories_master**: Used by blending, masters-crud, purchase (3 files)
+- **categories_master**: Used by blending, masters-crud, purchase (3 files)
 - **purchase_items**: Used by batch-production, purchase (2 files)
-- **available_oil_types**: Used by batch-production, system-config (2 files)
-- **batch_extended_costs**: Used by batch-production, cost-management (2 files)

@@ -1,6 +1,6 @@
 # Feature Pack: OIL-TYPES-FOR-BLENDING
-Generated: 2025-08-20T03:43:48.294Z
-Routes: 1 | Tables: 6 | Files: 1
+Generated: 2025-08-20T04:22:59.620Z
+Routes: 1 | Tables: 8 | Files: 1
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -22,9 +22,11 @@ GET    /api/oil_types_for_blending
 | batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 7 other modules |
 | blend_batch_components | blending | 🟡 MEDIUM | Changes affect 1 other modules |
 | blend_batches | blending, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
+| categories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
 | inventory | batch-production, blending, material-writeoff | 🔴 HIGH | Changes affect 7 other modules |
 | materials | batch-production, blending, material-writeoff | 🔴 HIGH | Changes affect 9 other modules |
 | purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 5 other modules |
+| subcategories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
 
 ## Backend Implementation
 
