@@ -240,13 +240,29 @@ const api = {
   // OTHER MODULES
   // ============================================
   
-  // Purchase module
+  // Purchase module - FIXED to support supplier_id filtering
   purchase: {
     getMaterials: async (filters = {}) => {
       const params = new URLSearchParams();
       if (filters.category) params.append('category', filters.category);
+      if (filters.supplier_id) params.append('supplier_id', filters.supplier_id); // ✅ FIXED: Added supplier_id support
       const queryString = params.toString();
       return apiCall(`/api/materials${queryString ? `?${queryString}` : ''}`);
+    },
+    
+    getSuppliers: async () => {
+      return apiCall('/api/suppliers');
+    },
+    
+    create: async (data) => {
+      return post('/api/add_purchase', data);
+    },
+    
+    getHistory: async (params = {}) => {
+      const queryParams = new URLSearchParams();
+      if (params.limit) queryParams.append('limit', params.limit);
+      const queryString = queryParams.toString();
+      return apiCall(`/api/purchase_history${queryString ? `?${queryString}` : ''}`);
     }
   },
 
