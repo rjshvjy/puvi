@@ -1,253 +1,261 @@
-// File Path: puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js
-// CostElementRow Component - Reusable cost element UI component
-// Created: Session 3 - UI Standardization Phase
+/* ==================== CostElementRow — Material Sales (refined) ==================== */
+/* Visual parity with Batch Production "Additional Cost Elements" table.
+   Safe for interactivity: no pointer-events blocking, no overlay on checkbox. */
 
-import React, { useState, useEffect } from 'react';
-import './CostElementRow.css';
+/* ---- Theme tokens (align with your app palette) ---- */
+:root {
+  --bp-accent: #2f855a;          /* green accent used in Batch Production */
+  --bp-accent-ink: #276749;
+  --bp-accent-soft: rgba(47,133,90,.08);
 
-/**
- * CostElementRow Component
- * 
- * A reusable component for displaying cost elements with override capability
- * Supports multiple display variants and automatic calculations
- * 
- * @param {Object} props
- * @param {string} props.elementName - Name of the cost element
- * @param {number} props.masterRate - Default rate from cost_elements_master
- * @param {string} props.unitType - Unit type (Per Kg, Per Bag, etc.)
- * @param {number} props.quantity - Quantity for calculation
- * @param {boolean} props.enabled - Whether element is enabled
- * @param {string} props.category - Category for color coding (Labor, Transport, etc.)
- * @param {string} props.overrideRate - User-entered override rate
- * @param {Function} props.onToggle - Callback when enabled/disabled
- * @param {Function} props.onOverrideChange - Callback when override rate changes
- * @param {string} props.variant - Display variant: 'default', 'compact', 'inline'
- * @param {string} props.icon - Optional icon/emoji for the element
- * @param {string} props.helpText - Optional help text
- * @param {boolean} props.showWarning - Show override warning
- */
-const CostElementRow = ({
-  elementName = '',
-  masterRate = 0,
-  unitType = 'Per Unit',
-  quantity = 0,
-  enabled = false,
-  category = 'General',
-  overrideRate = '',
-  onToggle = () => {},
-  onOverrideChange = () => {},
-  variant = 'default',
-  icon = '📋',
-  helpText = '',
-  showWarning = true,
-  className = ''
-}) => {
-  const [localOverrideRate, setLocalOverrideRate] = useState(overrideRate || '');
-  const [showOverrideWarning, setShowOverrideWarning] = useState(false);
-  
-  // Calculate effective rate and total
-  const effectiveRate = localOverrideRate && parseFloat(localOverrideRate) > 0 
-    ? parseFloat(localOverrideRate) 
-    : masterRate;
-  
-  const totalCost = quantity * effectiveRate;
-  
-  // Check for significant override deviation (>20%)
-  useEffect(() => {
-    if (localOverrideRate && parseFloat(localOverrideRate) > 0) {
-      const deviation = Math.abs((parseFloat(localOverrideRate) - masterRate) / masterRate) * 100;
-      setShowOverrideWarning(showWarning && deviation > 20);
-    } else {
-      setShowOverrideWarning(false);
-    }
-  }, [localOverrideRate, masterRate, showWarning]);
-  
-  // Update local state when prop changes
-  useEffect(() => {
-    setLocalOverrideRate(overrideRate || '');
-  }, [overrideRate]);
-  
-  // Handle rate change
-  const handleRateChange = (e) => {
-    const value = e.target.value;
-    setLocalOverrideRate(value);
-    onOverrideChange(value);
-  };
-  
-  // Get category color class
-  const getCategoryClass = () => {
-    const categoryMap = {
-      'Labor': 'category-labor',
-      'Labour': 'category-labor',
-      'Transport': 'category-transport',
-      'Material': 'category-material',
-      'Utility': 'category-utility',
-      'Maintenance': 'category-maintenance',
-      'Quality': 'category-quality',
-      'General': 'category-general'
-    };
-    return categoryMap[category] || 'category-general';
-  };
-  
-  // Render based on variant
-  if (variant === 'inline') {
-    return (
-      <div className={`cost-element-row inline ${getCategoryClass()} ${enabled ? 'enabled' : 'disabled'} ${className}`}>
-        <label className="cost-element-inline-label">
-          <input
-            type="checkbox"
-            checked={enabled}
-            onChange={(e) => onToggle(e.target.checked)}
-            className="cost-element-checkbox"
-          />
-          <span className="element-icon">{icon}</span>
-          <span className="element-name">{elementName}</span>
-        </label>
-        
-        <div className="inline-rates">
-          <span className="master-rate">₹{masterRate}/{unitType}</span>
-          <input
-            type="number"
-            value={localOverrideRate}
-            onChange={handleRateChange}
-            placeholder={masterRate.toString()}
-            step="0.01"
-            className="override-input inline"
-            disabled={!enabled}
-          />
-        </div>
-        <div className="inline-calculation">
-          <span className="quantity">{quantity.toFixed(2)} {unitType}</span>
-          <span className="total-cost">₹{enabled ? totalCost.toFixed(2) : '0.00'}</span>
-        </div>
-      </div>
-    );
+  --bp-blue: #2196F3;
+  --bp-warn: #ffc107;
+
+  --g-50:  #fafafa;
+  --g-75:  #f8fafc;
+  --g-100: #f7fafc;
+  --g-200: #edf2f7;
+  --g-300: #e2e8f0;
+  --g-400: #cbd5e0;
+  --g-500: #a0aec0;
+  --g-600: #718096;
+  --ink:   #2d3748;
+
+  --radius: 10px;
+}
+
+/* ---- Table container (the whole Additional Costs block) ---- */
+.cost-elements-table {
+  background: #fff;
+  border: 1px solid var(--g-200);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,.06);
+  margin: 12px 0 18px;
+}
+
+/* ---- Optional table header row (use with your own header nodes) ---- */
+.cost-table-header {
+  display: grid;
+  grid-template-columns: 44px 1fr 140px 140px 120px 140px;
+  gap: 0;
+  background: var(--g-100);
+  border-bottom: 2px solid var(--g-300);
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+.cost-table-header > * {
+  padding: 10px 12px;
+  text-align: right;
+}
+.cost-table-header > *:first-child,
+.cost-table-header > *:nth-child(2) { text-align: left; }
+
+/* ---- Row shell ---- */
+.cost-element-row {
+  display: grid;
+  grid-template-rows: auto 1fr; /* header + body */
+  border-bottom: 1px solid var(--g-200);
+  background: #fff;
+  transition: background-color .15s ease;
+}
+.cost-element-row:hover { background: var(--g-50); }
+
+/* Gentle, non-blocking disabled styling */
+.cost-element-row.disabled {
+  background: #fff;            /* keep white so numbers stay legible */
+  opacity: .85;                /* light hint only */
+  /* NO pointer-events none; keep inputs editable if JS allows */
+}
+
+/* ---- Header (checkbox + title area) ---- */
+.cost-element-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 12px;
+  min-height: 44px;
+}
+
+/* Checkbox group — ensure it does NOT overlay the row */
+.element-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  z-index: 0;                  /* never sits above other fields */
+}
+
+.cost-element-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--g-400);
+  border-radius: 4px;
+  background: #fff;
+  display: inline-block;
+  vertical-align: middle;
+  cursor: pointer;
+  transition: border-color .15s, background-color .15s, box-shadow .15s;
+}
+.cost-element-checkbox:focus { outline: none; box-shadow: 0 0 0 3px var(--bp-accent-soft); }
+.cost-element-checkbox:checked {
+  background: var(--bp-accent);
+  border-color: var(--bp-accent);
+}
+.cost-element-checkbox:checked::after {
+  content: "";
+  position: relative;
+  display: block;
+  width: 4px; height: 8px;
+  border: solid #fff; border-width: 0 2px 2px 0;
+  transform: translate(5px, 2px) rotate(45deg);
+}
+
+/* Icon + name */
+.element-icon { font-size: 16px; line-height: 1; }
+.element-name  { font-weight: 600; color: var(--ink); }
+.unit-type     { color: var(--g-600); font-size: 12px; margin-left: 6px; }
+
+/* Optional help badge */
+.help-text {
+  margin-left: auto;
+  color: var(--g-600);
+  font-size: 13px;
+  cursor: help;
+}
+
+/* ---- Body (values grid) ---- */
+.cost-element-body {
+  padding: 10px 12px 14px 44px;    /* indent to visually align with checkbox column */
+  background: #fff;
+}
+.cost-element-row:hover .cost-element-body { background: var(--g-75); }
+
+.cost-element-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr;   /* Master | Override | Qty | Total */
+  gap: 14px;
+}
+
+.grid-item {
+  background: #fff;
+  border: 1px solid var(--g-200);
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: grid;
+  grid-template-rows: auto 1fr;
+}
+.grid-item.highlight {
+  background: var(--bp-accent-soft);
+  border-color: var(--bp-accent);
+}
+
+/* Field label/value */
+.field-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .3px;
+  color: var(--g-600);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+.field-value { display: flex; align-items: center; justify-content: space-between; }
+
+/* Numbers & units */
+.master-rate-display {
+  width: 100%;
+  text-align: right;
+  color: var(--g-600);
+  font-size: 14px;
+}
+.quantity-display {
+  width: 100%;
+  text-align: right;
+  color: var(--ink);
+  font-size: 14px;
+}
+.total-cost-display {
+  width: 100%;
+  text-align: right;
+  font-weight: 700;
+  color: var(--bp-accent-ink);
+  font-size: 16px;
+}
+
+/* Inputs */
+.override-input {
+  width: 100%;
+  text-align: right;
+  font-size: 14px;
+  padding: 8px 10px;
+  border: 1px solid var(--g-300);
+  border-radius: 8px;
+  background: #fff;
+  transition: border-color .15s, box-shadow .15s, background-color .15s;
+}
+.override-input:focus {
+  outline: none;
+  border-color: var(--bp-accent);
+  box-shadow: 0 0 0 3px var(--bp-accent-soft);
+}
+.override-input:disabled {
+  background: var(--g-100);
+  color: var(--g-600);
+}
+.override-input.has-override {
+  background: #fffbf0;
+  border-color: var(--bp-warn);
+}
+
+/* Small warning chip for big deviations */
+.override-warning { margin-left: 8px; font-size: 14px; }
+
+/* Override info line */
+.override-info {
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: var(--g-100);
+  color: var(--g-600);
+  font-size: 12px;
+}
+
+/* ---- Category colored left bars (optional) ---- */
+.cost-element-row.category-labor       { border-left: 3px solid #28a745; }
+.cost-element-row.category-utilities   { border-left: 3px solid var(--bp-blue); }
+.cost-element-row.category-consumables { border-left: 3px solid var(--bp-warn); }
+.cost-element-row.category-transport   { border-left: 3px solid #9c27b0; }
+.cost-element-row.category-quality     { border-left: 3px solid #00bcd4; }
+.cost-element-row.category-maintenance { border-left: 3px solid #dc3545; }
+
+/* ---- Section header (if you group rows) ---- */
+.cost-section-header {
+  background: var(--g-100);
+  padding: 10px 14px;
+  font-weight: 700;
+  color: var(--ink);
+  border-left: 4px solid var(--bp-accent);
+  text-transform: uppercase;
+  letter-spacing: .4px;
+}
+
+/* ---- Responsive ---- */
+@media (max-width: 992px) {
+  .cost-table-header {
+    display: none;
   }
-  
-  if (variant === 'compact') {
-    return (
-      <div className={`cost-element-row compact ${getCategoryClass()} ${enabled ? 'enabled' : 'disabled'} ${className}`}>
-        <div className="compact-header">
-          <label className="element-toggle">
-            <input
-              type="checkbox"
-              checked={enabled}
-              onChange={(e) => onToggle(e.target.checked)}
-              className="cost-element-checkbox"
-            />
-            <span className="element-icon">{icon}</span>
-            <span className="element-name">{elementName}</span>
-          </label>
-          <span className="compact-total">₹{enabled ? totalCost.toFixed(2) : '0.00'}</span>
-        </div>
-        
-        <div className="compact-details">
-          <div className="rate-group">
-            <span className="rate-label">Rate:</span>
-            <span className="master-rate">₹{masterRate}</span>
-            <input
-              type="number"
-              value={localOverrideRate}
-              onChange={handleRateChange}
-              placeholder="Override"
-              step="0.01"
-              className="override-input compact"
-              disabled={!enabled}
-            />
-            <span className="unit-label">/{unitType}</span>
-          </div>
-          <div className="quantity-group">
-            <span className="quantity-label">Qty:</span>
-            <span className="quantity-value">{quantity.toFixed(2)}</span>
-          </div>
-        </div>
-      </div>
-    );
+  .cost-element-body { padding-left: 12px; }
+  .cost-element-grid {
+    grid-template-columns: 1fr 1fr;   /* stack into 2 columns on tablets */
   }
-  
-  // Default variant - MODIFIED to always show rate inputs
-  return (
-    <div className={`cost-element-row default ${getCategoryClass()} ${enabled ? 'enabled' : 'disabled'} ${className}`}>
-      <div className="cost-element-header">
-        <label className="element-toggle">
-          <input
-            type="checkbox"
-            checked={enabled}
-            onChange={(e) => onToggle(e.target.checked)}
-            className="cost-element-checkbox"
-          />
-          <span className="element-icon">{icon}</span>
-          <span className="element-name">{elementName}</span>
-          {unitType && <span className="unit-type">({unitType})</span>}
-        </label>
-        {helpText && (
-          <span className="help-text" title={helpText}>ⓘ</span>
-        )}
-      </div>
-      
-      {/* MODIFIED: Always show body, but with disabled state styling */}
-      <div className="cost-element-body">
-        <div className="cost-element-grid">
-          <div className="grid-item">
-            <label className="field-label">Master Rate</label>
-            <div className="field-value master-rate-display">
-              ₹{masterRate.toFixed(2)}
-              <span className="unit-suffix">/{unitType}</span>
-            </div>
-          </div>
-          
-          <div className="grid-item">
-            <label className="field-label">Override Rate</label>
-            <div className="field-value">
-              <input
-                type="number"
-                value={localOverrideRate}
-                onChange={handleRateChange}
-                placeholder={masterRate.toFixed(2)}
-                step="0.01"
-                className={`override-input ${localOverrideRate ? 'has-override' : ''}`}
-                disabled={!enabled}  // Disable input when checkbox is unchecked
-              />
-              {showOverrideWarning && enabled && (
-                <span className="override-warning" title="Rate differs by more than 20% from master">
-                  ⚠️
-                </span>
-              )}
-            </div>
-          </div>
-          
-          <div className="grid-item">
-            <label className="field-label">Quantity</label>
-            <div className="field-value quantity-display">
-              {quantity.toFixed(2)}
-              <span className="unit-suffix">{unitType}</span>
-            </div>
-          </div>
-          
-          <div className="grid-item highlight">
-            <label className="field-label">Total Cost</label>
-            <div className="field-value total-cost-display">
-              ₹{enabled ? totalCost.toFixed(2) : '0.00'}
-            </div>
-          </div>
-        </div>
-        
-        {localOverrideRate && enabled && (
-          <div className="override-info">
-            <span className="override-indicator">
-              ✓ Using override rate: ₹{parseFloat(localOverrideRate).toFixed(2)} 
-              {masterRate !== parseFloat(localOverrideRate) && (
-                <span className="deviation">
-                  ({((parseFloat(localOverrideRate) - masterRate) / masterRate * 100).toFixed(0)}% 
-                  {parseFloat(localOverrideRate) > masterRate ? 'higher' : 'lower'} than master)
-                </span>
-              )}
-            </span>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-};
-
-export default CostElementRow;
+}
+@media (max-width: 640px) {
+  .cost-element-header { padding: 10px 10px; }
+  .cost-element-grid   { grid-template-columns: 1fr; }  /* single column on phones */
+  .grid-item           { padding: 8px 10px; }
+  .total-cost-display  { font-size: 15px; }
+}
