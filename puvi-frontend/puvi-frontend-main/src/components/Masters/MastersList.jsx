@@ -46,10 +46,10 @@ const MastersList = ({
   const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ASC' });
   const [includeInactive, setIncludeInactive] = useState(false);
   
-  // Pagination state
+  // Pagination state - FIXED: Changed default per_page from 10 to 20
   const [pagination, setPagination] = useState({
     page: 1,
-    per_page: 10,
+    per_page: 20,  // Changed from 10 to 20
     total_count: 0,
     total_pages: 0,
     has_next: false,
@@ -109,7 +109,7 @@ const MastersList = ({
     if (masterType) {
       loadData();
     }
-  }, [pagination.page, sortConfig, includeInactive, searchTerm]);
+  }, [pagination.page, pagination.per_page, sortConfig, includeInactive, searchTerm]); // Added pagination.per_page
 
   // Load schema for current master type
   const loadSchema = async () => {
@@ -142,14 +142,22 @@ const MastersList = ({
       
       if (response.success) {
         setRecords(response.records || []);
-        setPagination(response.pagination || {
-          page: 1,
-          per_page: 10,
-          total_count: 0,
-          total_pages: 0,
-          has_next: false,
-          has_prev: false
-        });
+        // FIXED: Properly handle pagination response
+        if (response.pagination) {
+          setPagination(prev => ({
+            ...prev,
+            ...response.pagination,
+            // Calculate has_next and has_prev if not provided
+            has_next: response.pagination.has_next !== undefined ? 
+              response.pagination.has_next : 
+              response.pagination.page < response.pagination.pages,
+            has_prev: response.pagination.has_prev !== undefined ? 
+              response.pagination.has_prev : 
+              response.pagination.page > 1,
+            total_pages: response.pagination.pages || response.pagination.total_pages || 
+              Math.ceil((response.pagination.total || response.pagination.total_count || 0) / prev.per_page)
+          }));
+        }
       }
     } catch (error) {
       showToast('error', `Failed to load data: ${error.message}`);
@@ -177,6 +185,15 @@ const MastersList = ({
   // Handle pagination
   const handlePageChange = (newPage) => {
     setPagination(prev => ({ ...prev, page: newPage }));
+  };
+
+  // ADDED: Handle items per page change
+  const handlePerPageChange = (newPerPage) => {
+    setPagination(prev => ({ 
+      ...prev, 
+      per_page: parseInt(newPerPage),
+      page: 1 // Reset to first page when changing items per page
+    }));
   };
 
   // Check dependencies before delete
@@ -482,46 +499,116 @@ const MastersList = ({
               </table>
             </div>
 
-            {/* Pagination */}
-            {pagination.total_pages > 1 && (
-              <div className="masters-pagination">
-                <div className="masters-pagination-info">
-                  Showing page <span style={{ fontWeight: '600' }}>{pagination.page}</span> of{' '}
-                  <span style={{ fontWeight: '600' }}>{pagination.total_pages}</span> |
-                  Total <span style={{ fontWeight: '600' }}>{pagination.total_count}</span> records
+            {/* FIXED: Pagination - Always show pagination controls */}
+            <div className="masters-pagination">
+              <div className="masters-pagination-info" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                <div>
+                  Showing page <span style={{ fontWeight: '600' }}>{pagination.page || 1}</span> of{' '}
+                  <span style={{ fontWeight: '600' }}>{pagination.total_pages || 1}</span> |
+                  Total <span style={{ fontWeight: '600' }}>{pagination.total_count || pagination.total || records.length}</span> records
                 </div>
-                <div className="masters-pagination-controls">
-                  <button
-                    onClick={() => handlePageChange(1)}
-                    disabled={pagination.page === 1}
-                    className="masters-pagination-btn"
+                
+                {/* ADDED: Items per page selector */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <label style={{ fontSize: '14px', color: '#6b7280' }}>Show:</label>
+                  <select
+                    value={pagination.per_page}
+                    onChange={(e) => handlePerPageChange(e.target.value)}
+                    style={{
+                      padding: '4px 8px',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '4px',
+                      fontSize: '14px',
+                      backgroundColor: 'white',
+                      cursor: 'pointer'
+                    }}
                   >
-                    First
-                  </button>
-                  <button
-                    onClick={() => handlePageChange(pagination.page - 1)}
-                    disabled={!pagination.has_prev}
-                    className="masters-pagination-btn"
-                  >
-                    Previous
-                  </button>
-                  <button
-                    onClick={() => handlePageChange(pagination.page + 1)}
-                    disabled={!pagination.has_next}
-                    className="masters-pagination-btn"
-                  >
-                    Next
-                  </button>
-                  <button
-                    onClick={() => handlePageChange(pagination.total_pages)}
-                    disabled={pagination.page === pagination.total_pages}
-                    className="masters-pagination-btn"
-                  >
-                    Last
-                  </button>
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="50">50</option>
+                    <option value="100">100</option>
+                    <option value="999">All</option>
+                  </select>
+                  <span style={{ fontSize: '14px', color: '#6b7280' }}>per page</span>
                 </div>
               </div>
-            )}
+              
+              <div className="masters-pagination-controls">
+                <button
+                  onClick={() => handlePageChange(1)}
+                  disabled={pagination.page === 1}
+                  className="masters-pagination-btn"
+                >
+                  First
+                </button>
+                <button
+                  onClick={() => handlePageChange(Math.max(1, pagination.page - 1))}
+                  disabled={pagination.page <= 1}
+                  className="masters-pagination-btn"
+                >
+                  Previous
+                </button>
+                
+                {/* ADDED: Page number display */}
+                {pagination.total_pages > 1 && (
+                  <span style={{ 
+                    padding: '4px 12px', 
+                    fontSize: '14px',
+                    color: '#374151',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}>
+                    {/* Show page numbers for quick navigation */}
+                    {[...Array(Math.min(5, pagination.total_pages))].map((_, i) => {
+                      let pageNum;
+                      if (pagination.total_pages <= 5) {
+                        pageNum = i + 1;
+                      } else if (pagination.page <= 3) {
+                        pageNum = i + 1;
+                      } else if (pagination.page >= pagination.total_pages - 2) {
+                        pageNum = pagination.total_pages - 4 + i;
+                      } else {
+                        pageNum = pagination.page - 2 + i;
+                      }
+                      
+                      if (pageNum < 1 || pageNum > pagination.total_pages) return null;
+                      
+                      return (
+                        <button
+                          key={pageNum}
+                          onClick={() => handlePageChange(pageNum)}
+                          className="masters-pagination-btn"
+                          style={{
+                            backgroundColor: pageNum === pagination.page ? '#2563eb' : 'white',
+                            color: pageNum === pagination.page ? 'white' : '#374151',
+                            fontWeight: pageNum === pagination.page ? '600' : '400',
+                            minWidth: '32px'
+                          }}
+                        >
+                          {pageNum}
+                        </button>
+                      );
+                    })}
+                  </span>
+                )}
+                
+                <button
+                  onClick={() => handlePageChange(Math.min(pagination.total_pages || 1, pagination.page + 1))}
+                  disabled={pagination.page >= (pagination.total_pages || 1)}
+                  className="masters-pagination-btn"
+                >
+                  Next
+                </button>
+                <button
+                  onClick={() => handlePageChange(pagination.total_pages || 1)}
+                  disabled={pagination.page === (pagination.total_pages || 1)}
+                  className="masters-pagination-btn"
+                >
+                  Last
+                </button>
+              </div>
+            </div>
           </>
         )}
       </div>
