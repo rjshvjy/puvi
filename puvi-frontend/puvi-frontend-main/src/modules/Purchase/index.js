@@ -3,12 +3,21 @@
 // Enhanced with material creation form and category validation
 
 import React, { useState, useEffect } from 'react';
-import apiService from '../../services/api';
+import { apiCall, purchaseAPI, mastersAPI } from '../../services/api';
 import './Purchase.css';
 
-// Access api and purchaseAPI from the default export
-const api = apiService.api;
-const purchaseAPI = apiService.purchaseAPI;
+// Create api object with necessary methods
+const api = {
+  get: async (endpoint, params = {}) => {
+    const queryString = Object.keys(params).length 
+      ? '?' + new URLSearchParams(params).toString()
+      : '';
+    return apiCall(`${endpoint}${queryString}`, { method: 'GET' });
+  },
+  post: async (endpoint, data = {}) => {
+    return apiCall(endpoint, { method: 'POST', body: data });
+  }
+};
 
 const Purchase = () => {
   const [suppliers, setSuppliers] = useState([]);
@@ -64,15 +73,20 @@ const Purchase = () => {
     fetchCategories(); // NEW: Fetch categories on load
   }, []);
 
-  // NEW: Fetch categories from API
+  // NEW: Fetch categories from API  
   const fetchCategories = async () => {
     try {
-      const data = await api.get('/api/categories');
-      if (data.success) {
-        setCategories(data.categories || []);
+      // Try using masters API if available, otherwise use direct endpoint
+      const data = mastersAPI?.getList ? 
+        await mastersAPI.getList('categories') :
+        await api.get('/api/categories');
+        
+      if (data.success || data.categories) {
+        setCategories(data.categories || data.data || []);
       }
     } catch (error) {
       console.error('Error loading categories:', error);
+      setMessage('Unable to load categories. Please refresh the page.');
     }
   };
 
