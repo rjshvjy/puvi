@@ -1,1 +1,39 @@
+.cost-element-checkbox {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+  height: 0;
+  width: 0;
+}
 
+.element-toggle {
+  position: relative;
+  padding-left: 25px; /* Space for custom checkbox */
+  cursor: pointer;
+}
+
+.element-toggle:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 16px;
+  height: 16px;
+  border: 1px solid #ccc;
+  background: white;
+  border-radius: 3px;
+}
+
+.cost-element-checkbox:checked + .element-toggle:before {
+  background: #007bff; /* Checked color */
+  content: "\\2713"; /* Checkmark */
+  color: white;
+  text-align: center;
+  line-height: 16px;
+  font-size: 12px;
+}
+
+.disabled .element-toggle {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
