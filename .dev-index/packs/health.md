@@ -1,5 +1,5 @@
 # Feature Pack: HEALTH
-Generated: 2025-08-20T12:51:58.560Z
+Generated: 2025-08-20T15:58:40.563Z
 Routes: 1 | Tables: 6 | Files: 1
 
 ## Table of Contents
