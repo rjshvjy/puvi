@@ -63,7 +63,7 @@ const Purchase = () => {
   // NEW: Fetch categories from API
   const fetchCategories = async () => {
     try {
-      const data = await api.get('/api/categories');
+      const data = await api.api.get('/api/categories');
       if (data.success) {
         setCategories(data.categories || []);
       }
@@ -75,7 +75,7 @@ const Purchase = () => {
   // NEW: Fetch subcategories for a specific category
   const fetchSubcategories = async (categoryId) => {
     try {
-      const data = await api.get(`/api/subcategories?category_id=${categoryId}`);
+      const data = await api.api.get(`/api/subcategories?category_id=${categoryId}`);
       if (data.success) {
         setSubcategories(data.subcategories || []);
       }
@@ -169,7 +169,7 @@ const Purchase = () => {
     setMessage('');
     
     try {
-      const data = await api.post('/api/materials', newMaterial);
+      const data = await api.api.post('/api/materials', newMaterial);
       
       if (data.success) {
         setMessage(`✅ Material "${newMaterial.material_name}" created successfully!`);
