@@ -1,4 +1,4 @@
-// File Path: puvi-frontend/src/components/CostManagement/CostElementRow.js
+// File Path: puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js
 // CostElementRow Component - Reusable cost element UI component
 // Created: Session 3 - UI Standardization Phase
 
@@ -104,25 +104,22 @@ const CostElementRow = ({
           <span className="element-name">{elementName}</span>
         </label>
         
-        {enabled && (
-          <>
-            <div className="inline-rates">
-              <span className="master-rate">₹{masterRate}/{unitType}</span>
-              <input
-                type="number"
-                value={localOverrideRate}
-                onChange={handleRateChange}
-                placeholder={masterRate.toString()}
-                step="0.01"
-                className="override-input inline"
-              />
-            </div>
-            <div className="inline-calculation">
-              <span className="quantity">{quantity.toFixed(2)} {unitType}</span>
-              <span className="total-cost">₹{totalCost.toFixed(2)}</span>
-            </div>
-          </>
-        )}
+        <div className="inline-rates">
+          <span className="master-rate">₹{masterRate}/{unitType}</span>
+          <input
+            type="number"
+            value={localOverrideRate}
+            onChange={handleRateChange}
+            placeholder={masterRate.toString()}
+            step="0.01"
+            className="override-input inline"
+            disabled={!enabled}
+          />
+        </div>
+        <div className="inline-calculation">
+          <span className="quantity">{quantity.toFixed(2)} {unitType}</span>
+          <span className="total-cost">₹{enabled ? totalCost.toFixed(2) : '0.00'}</span>
+        </div>
       </div>
     );
   }
@@ -141,37 +138,34 @@ const CostElementRow = ({
             <span className="element-icon">{icon}</span>
             <span className="element-name">{elementName}</span>
           </label>
-          {enabled && (
-            <span className="compact-total">₹{totalCost.toFixed(2)}</span>
-          )}
+          <span className="compact-total">₹{enabled ? totalCost.toFixed(2) : '0.00'}</span>
         </div>
         
-        {enabled && (
-          <div className="compact-details">
-            <div className="rate-group">
-              <span className="rate-label">Rate:</span>
-              <span className="master-rate">₹{masterRate}</span>
-              <input
-                type="number"
-                value={localOverrideRate}
-                onChange={handleRateChange}
-                placeholder="Override"
-                step="0.01"
-                className="override-input compact"
-              />
-              <span className="unit-label">/{unitType}</span>
-            </div>
-            <div className="quantity-group">
-              <span className="quantity-label">Qty:</span>
-              <span className="quantity-value">{quantity.toFixed(2)}</span>
-            </div>
+        <div className="compact-details">
+          <div className="rate-group">
+            <span className="rate-label">Rate:</span>
+            <span className="master-rate">₹{masterRate}</span>
+            <input
+              type="number"
+              value={localOverrideRate}
+              onChange={handleRateChange}
+              placeholder="Override"
+              step="0.01"
+              className="override-input compact"
+              disabled={!enabled}
+            />
+            <span className="unit-label">/{unitType}</span>
           </div>
-        )}
+          <div className="quantity-group">
+            <span className="quantity-label">Qty:</span>
+            <span className="quantity-value">{quantity.toFixed(2)}</span>
+          </div>
+        </div>
       </div>
     );
   }
   
-  // Default variant
+  // Default variant - MODIFIED to always show rate inputs
   return (
     <div className={`cost-element-row default ${getCategoryClass()} ${enabled ? 'enabled' : 'disabled'} ${className}`}>
       <div className="cost-element-header">
@@ -191,67 +185,67 @@ const CostElementRow = ({
         )}
       </div>
       
-      {enabled && (
-        <div className="cost-element-body">
-          <div className="cost-element-grid">
-            <div className="grid-item">
-              <label className="field-label">Master Rate</label>
-              <div className="field-value master-rate-display">
-                ₹{masterRate.toFixed(2)}
-                <span className="unit-suffix">/{unitType}</span>
-              </div>
-            </div>
-            
-            <div className="grid-item">
-              <label className="field-label">Override Rate</label>
-              <div className="field-value">
-                <input
-                  type="number"
-                  value={localOverrideRate}
-                  onChange={handleRateChange}
-                  placeholder={masterRate.toFixed(2)}
-                  step="0.01"
-                  className={`override-input ${localOverrideRate ? 'has-override' : ''}`}
-                />
-                {showOverrideWarning && (
-                  <span className="override-warning" title="Rate differs by more than 20% from master">
-                    ⚠️
-                  </span>
-                )}
-              </div>
-            </div>
-            
-            <div className="grid-item">
-              <label className="field-label">Quantity</label>
-              <div className="field-value quantity-display">
-                {quantity.toFixed(2)}
-                <span className="unit-suffix">{unitType}</span>
-              </div>
-            </div>
-            
-            <div className="grid-item highlight">
-              <label className="field-label">Total Cost</label>
-              <div className="field-value total-cost-display">
-                ₹{totalCost.toFixed(2)}
-              </div>
+      {/* MODIFIED: Always show body, but with disabled state styling */}
+      <div className="cost-element-body">
+        <div className="cost-element-grid">
+          <div className="grid-item">
+            <label className="field-label">Master Rate</label>
+            <div className="field-value master-rate-display">
+              ₹{masterRate.toFixed(2)}
+              <span className="unit-suffix">/{unitType}</span>
             </div>
           </div>
           
-          {localOverrideRate && (
-            <div className="override-info">
-              <span className="override-indicator">
-                ✓ Using override rate: ₹{parseFloat(localOverrideRate).toFixed(2)} 
-                {masterRate !== parseFloat(localOverrideRate) && (
-                  <span className="deviation">
-                    ({((parseFloat(localOverrideRate) - masterRate) / masterRate * 100).toFixed(0)}% 
-                    {parseFloat(localOverrideRate) > masterRate ? ' higher' : ' lower'})
-                  </span>
-                )}
-              </span>
+          <div className="grid-item">
+            <label className="field-label">Override Rate</label>
+            <div className="field-value">
+              <input
+                type="number"
+                value={localOverrideRate}
+                onChange={handleRateChange}
+                placeholder={masterRate.toFixed(2)}
+                step="0.01"
+                className={`override-input ${localOverrideRate ? 'has-override' : ''}`}
+                disabled={!enabled}  // Disable input when checkbox is unchecked
+              />
+              {showOverrideWarning && enabled && (
+                <span className="override-warning" title="Rate differs by more than 20% from master">
+                  ⚠️
+                </span>
+              )}
             </div>
-          )}
+          </div>
+          
+          <div className="grid-item">
+            <label className="field-label">Quantity</label>
+            <div className="field-value quantity-display">
+              {quantity.toFixed(2)}
+              <span className="unit-suffix">{unitType}</span>
+            </div>
+          </div>
+          
+          <div className="grid-item highlight">
+            <label className="field-label">Total Cost</label>
+            <div className="field-value total-cost-display">
+              ₹{enabled ? totalCost.toFixed(2) : '0.00'}
+            </div>
+          </div>
         </div>
-      )}
+        
+        {localOverrideRate && enabled && (
+          <div className="override-info">
+            <span className="override-indicator">
+              ✓ Using override rate: ₹{parseFloat(localOverrideRate).toFixed(2)} 
+              {masterRate !== parseFloat(localOverrideRate) && (
+                <span className="deviation">
+                  ({((parseFloat(localOverrideRate) - masterRate) / masterRate * 100).toFixed(0)}% 
+                  {parseFloat(localOverrideRate) > masterRate ? 'higher' : 'lower'} than master)
+                </span>
+              )}
+            </span>
+          </div>
+        )}
+      </div>
     </div>
   );
 };
