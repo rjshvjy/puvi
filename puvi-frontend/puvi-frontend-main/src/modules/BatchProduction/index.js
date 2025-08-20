@@ -554,7 +554,7 @@ const BatchProduction = () => {
         created_by: 'Production Operator'
       };
       
-      const response = await api.batch.createBatch(submitData);
+      const response = await api.batch.addBatch(submitData);
       
       // Log the actual response to debug
       console.log('API Response:', response);
