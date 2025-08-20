@@ -3,51 +3,8 @@
 // Enhanced with material creation form and category validation
 
 import React, { useState, useEffect } from 'react';
-import * as apiImports from '../../services/api';
+import api, { purchaseAPI, mastersAPI } from '../../services/api';
 import './Purchase.css';
-
-// Debug to understand the import structure
-console.log('Full API imports object:', apiImports);
-
-// Try to find the right structure
-const apiService = apiImports.default || apiImports;
-
-// Try to reconstruct the API methods
-let api = {};
-let purchaseAPI = {};
-
-// Check all possible structures
-if (apiImports.apiCall) {
-  console.log('Found apiCall in named exports');
-  // Build api object using apiCall
-  api = {
-    get: (endpoint, params = {}) => {
-      const queryString = Object.keys(params).length 
-        ? '?' + new URLSearchParams(params).toString()
-        : '';
-      return apiImports.apiCall(`${endpoint}${queryString}`, { method: 'GET' });
-    },
-    post: (endpoint, data = {}) => {
-      return apiImports.apiCall(endpoint, { method: 'POST', body: data });
-    }
-  };
-}
-
-if (apiImports.purchaseAPI) {
-  console.log('Found purchaseAPI in named exports');
-  purchaseAPI = apiImports.purchaseAPI;
-} else if (apiService?.purchaseAPI) {
-  console.log('Found purchaseAPI in default export');
-  purchaseAPI = apiService.purchaseAPI;
-}
-
-// If we still don't have api methods, try from default export
-if (!api.get && apiService?.api) {
-  console.log('Found api in default export');
-  api = apiService.api;
-}
-
-const mastersAPI = apiImports.mastersAPI || apiService?.mastersAPI || {};
 
 const Purchase = () => {
   const [suppliers, setSuppliers] = useState([]);
@@ -108,18 +65,12 @@ const Purchase = () => {
     try {
       let data;
       
-      // Try api.get if available
-      if (api?.get) {
-        console.log('Using api.get for categories');
-        data = await api.get('/api/categories');
-      }
-      // Try apiCall if available
-      else if (apiImports.apiCall) {
-        console.log('Using apiCall for categories');
-        data = await apiImports.apiCall('/api/categories', { method: 'GET' });
-      }
-      // Direct fetch as fallback
-      else {
+      // Use the masters API to get categories
+      if (api?.masters?.getCategories) {
+        console.log('Using api.masters.getCategories');
+        data = await api.masters.getCategories();
+      } else {
+        // Direct fetch as fallback
         console.log('Using direct fetch for categories');
         const url = 'https://puvi-backend.onrender.com/api/categories';
         const res = await fetch(url, {
@@ -144,16 +95,13 @@ const Purchase = () => {
     try {
       let data;
       
-      // Try api.get if available
-      if (api?.get) {
-        data = await api.get('/api/subcategories', { category_id: categoryId });
-      }
-      // Try apiCall if available
-      else if (apiImports.apiCall) {
-        data = await apiImports.apiCall(`/api/subcategories?category_id=${categoryId}`, { method: 'GET' });
-      }
-      // Direct fetch as fallback
-      else {
+      // Use the masters API to get subcategories
+      if (api?.masters?.getSubcategories) {
+        console.log('Using api.masters.getSubcategories');
+        data = await api.masters.getSubcategories(categoryId);
+      } else {
+        // Direct fetch as fallback
+        console.log('Using direct fetch for subcategories');
         const url = `https://puvi-backend.onrender.com/api/subcategories?category_id=${categoryId}`;
         const res = await fetch(url, {
           method: 'GET',
@@ -162,7 +110,7 @@ const Purchase = () => {
         data = await res.json();
       }
       
-      if (data?.success) {
+      if (data?.success || data?.subcategories) {
         setSubcategories(data.subcategories || []);
       }
     } catch (error) {
@@ -174,18 +122,15 @@ const Purchase = () => {
     try {
       let response;
       
-      // Try purchaseAPI first
-      if (purchaseAPI?.getSuppliers) {
+      // Use purchase API to get suppliers
+      if (api?.purchase?.getSuppliers) {
+        console.log('Using api.purchase.getSuppliers');
+        response = await api.purchase.getSuppliers();
+      } else if (purchaseAPI?.getSuppliers) {
         console.log('Using purchaseAPI.getSuppliers');
         response = await purchaseAPI.getSuppliers();
-      } 
-      // Try apiCall if available
-      else if (apiImports.apiCall) {
-        console.log('Using apiCall for suppliers');
-        response = await apiImports.apiCall('/api/suppliers', { method: 'GET' });
-      }
-      // Direct fetch as fallback
-      else {
+      } else {
+        // Direct fetch as fallback
         console.log('Using direct fetch for suppliers');
         const url = 'https://puvi-backend.onrender.com/api/suppliers';
         const res = await fetch(url, {
@@ -210,18 +155,15 @@ const Purchase = () => {
     try {
       let response;
       
-      // Try api.get if available
-      if (api?.get) {
-        console.log('Using api.get for materials');
-        response = await api.get('/api/materials', { supplier_id: supplierId });
-      }
-      // Try apiCall if available
-      else if (apiImports.apiCall) {
-        console.log('Using apiCall for materials');
-        response = await apiImports.apiCall(`/api/materials?supplier_id=${supplierId}`, { method: 'GET' });
-      }
-      // Direct fetch as fallback
-      else {
+      // Use purchase API to get materials
+      if (api?.purchase?.getMaterials) {
+        console.log('Using api.purchase.getMaterials');
+        response = await api.purchase.getMaterials({ supplier_id: supplierId });
+      } else if (purchaseAPI?.getMaterials) {
+        console.log('Using purchaseAPI.getMaterials');
+        response = await purchaseAPI.getMaterials({ supplier_id: supplierId });
+      } else {
+        // Direct fetch as fallback
         console.log('Using direct fetch for materials');
         const url = `https://puvi-backend.onrender.com/api/materials?supplier_id=${supplierId}`;
         const res = await fetch(url, {
@@ -246,23 +188,13 @@ const Purchase = () => {
     try {
       let response;
       
-      // Try api.get if available
-      if (api?.get) {
-        response = await api.get('/api/purchase_history', { limit: 20 });
-      }
-      // Try apiCall if available
-      else if (apiImports.apiCall) {
-        response = await apiImports.apiCall('/api/purchase_history?limit=20', { method: 'GET' });
-      }
-      // Direct fetch as fallback
-      else {
-        const url = 'https://puvi-backend.onrender.com/api/purchase_history?limit=20';
-        const res = await fetch(url, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' }
-        });
-        response = await res.json();
-      }
+      // Direct fetch for purchase history as it's not in the API exports
+      const url = 'https://puvi-backend.onrender.com/api/purchase_history?limit=20';
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      response = await res.json();
       
       if (response) {
         setPurchaseHistory(response.purchases || []);
@@ -332,27 +264,15 @@ const Purchase = () => {
     try {
       let data;
       
-      // Try api.post if available
-      if (api?.post) {
-        data = await api.post('/api/materials', newMaterial);
-      }
-      // Try apiCall if available
-      else if (apiImports.apiCall) {
-        data = await apiImports.apiCall('/api/materials', {
-          method: 'POST',
-          body: newMaterial
-        });
-      }
-      // Direct fetch as fallback
-      else {
-        const url = 'https://puvi-backend.onrender.com/api/materials';
-        const res = await fetch(url, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(newMaterial)
-        });
-        data = await res.json();
-      }
+      // Try to create material through API (POST /api/materials)
+      // The purchase module doesn't have a createMaterial method, so we use direct fetch
+      const url = 'https://puvi-backend.onrender.com/api/materials';
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newMaterial)
+      });
+      data = await res.json();
       
       if (data?.success) {
         setMessage(`✅ Material "${newMaterial.material_name}" created successfully!`);
@@ -605,23 +525,13 @@ Please ensure UOM allocation totals 100% and all items have proper units.`);
 
       let response;
       
-      // Try purchaseAPI.create if available
-      if (purchaseAPI?.create) {
+      // Use purchaseAPI.create if available
+      if (api?.purchase?.create) {
+        response = await api.purchase.create(payload);
+      } else if (purchaseAPI?.create) {
         response = await purchaseAPI.create(payload);
-      }
-      // Try api.post if available
-      else if (api?.post) {
-        response = await api.post('/api/add_purchase', payload);
-      }
-      // Try apiCall if available
-      else if (apiImports.apiCall) {
-        response = await apiImports.apiCall('/api/add_purchase', {
-          method: 'POST',
-          body: payload
-        });
-      }
-      // Direct fetch as fallback
-      else {
+      } else {
+        // Direct fetch as fallback
         const url = 'https://puvi-backend.onrender.com/api/add_purchase';
         const res = await fetch(url, {
           method: 'POST',
