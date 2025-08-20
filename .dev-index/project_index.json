@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-20T00:12:22.570Z",
+  "generatedAt": "2025-08-20T00:21:07.881Z",
   "filesScanned": 56,
   "jsFilesScanned": 34,
   "pyFilesScanned": 22,
@@ -11,22 +11,6 @@
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialSales/index.js",
       "line": 62,
       "module": "costManagement",
-      "source": "frontend"
-    },
-    {
-      "method": "GET",
-      "path": "/api/categories",
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 66,
-      "module": "api",
-      "source": "frontend"
-    },
-    {
-      "method": "POST",
-      "path": "/api/materials",
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 172,
-      "module": "api",
       "source": "frontend"
     },
     {
@@ -7335,7 +7319,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 105,
+      "line": 107,
       "name": "fetchPurchaseHistory",
       "params": "",
       "type": "arrow",
@@ -7343,7 +7327,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 114,
+      "line": 116,
       "name": "handleSupplierChange",
       "params": "e",
       "type": "arrow",
@@ -7351,7 +7335,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 141,
+      "line": 143,
       "name": "handleCategoryChange",
       "params": "categoryName",
       "type": "arrow",
@@ -7359,7 +7343,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 158,
+      "line": 160,
       "name": "handleCreateMaterial",
       "params": "e",
       "type": "arrow",
@@ -7367,7 +7351,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 206,
+      "line": 208,
       "name": "handleInvoiceChange",
       "params": "e",
       "type": "arrow",
@@ -7375,7 +7359,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 216,
+      "line": 218,
       "name": "handleItemChange",
       "params": "index, field, value",
       "type": "arrow",
@@ -7383,7 +7367,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 237,
+      "line": 239,
       "name": "addItem",
       "params": "",
       "type": "arrow",
@@ -7391,7 +7375,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 248,
+      "line": 250,
       "name": "removeItem",
       "params": "index",
       "type": "arrow",
@@ -7399,7 +7383,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 257,
+      "line": 259,
       "name": "getMaterialUnit",
       "params": "materialId",
       "type": "arrow",
@@ -7407,7 +7391,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 263,
+      "line": 265,
       "name": "getMaterialDisplay",
       "params": "material",
       "type": "arrow",
@@ -7415,7 +7399,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 275,
+      "line": 277,
       "name": "allocateCharges",
       "params": "",
       "type": "arrow",
@@ -7423,7 +7407,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 313,
+      "line": 315,
       "name": "handleGroupPercentageChange",
       "params": "group, value",
       "type": "arrow",
@@ -7431,7 +7415,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 328,
+      "line": 330,
       "name": "calculateTotals",
       "params": "",
       "type": "arrow",
@@ -7439,7 +7423,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 365,
+      "line": 367,
       "name": "handleSubmit",
       "params": "e",
       "type": "arrow",
@@ -7447,7 +7431,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 467,
+      "line": 469,
       "name": "formatDate",
       "params": "dateStr",
       "type": "arrow",
@@ -7455,7 +7439,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 474,
+      "line": 476,
       "name": "currentCategoryRequiresSubcategory",
       "params": "",
       "type": "arrow",
@@ -13869,20 +13853,6 @@
         "line": 62
       }
     ],
-    "api": [
-      {
-        "method": "GET",
-        "path": "/api/categories",
-        "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-        "line": 66
-      },
-      {
-        "method": "POST",
-        "path": "/api/materials",
-        "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-        "line": 172
-      }
-    ],
     "batch_bp": [
       {
         "method": "GET",
@@ -15204,43 +15174,43 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 100,
+      "line": 102,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 106,
+      "line": 108,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 109,
+      "line": 111,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 171,
+      "line": 173,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 199,
+      "line": 201,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 410,
+      "line": 412,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js",
-      "line": 456,
+      "line": 458,
       "type": "catch",
       "code": "} catch (error) {"
     },
@@ -17562,7 +17532,7 @@
     "jsFiles": 34,
     "pyFiles": 22,
     "components": 38,
-    "routes": 95,
+    "routes": 93,
     "exports": 39,
     "imports": 46,
     "hardcodedValues": 23,
