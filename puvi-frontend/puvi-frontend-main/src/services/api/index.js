@@ -1,6 +1,6 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/services/api/index.js
 // Consolidated API Service for PUVI Oil Manufacturing System
-// Version: 2.0 - Complete SKU module integration with MRP & Expiry
+// Version: 2.1 - Complete with Material Sales module integration
 // This file consolidates all API services and utilities
 
 const API_URL = process.env.REACT_APP_API_URL || 'https://puvi-backend.onrender.com';
@@ -459,6 +459,49 @@ const api = {
     }
   },
 
+  // ============================================
+  // MATERIAL SALES MODULE - NEW ADDITION
+  // ============================================
+  sales: {
+    // Get byproduct types (oil cake, sludge, gunny bags)
+    getByproductTypes: async () => {
+      return apiCall('/api/byproduct_types');
+    },
+    
+    // Get available inventory for material sales
+    getMaterialSalesInventory: async (params = {}) => {
+      const queryParams = new URLSearchParams();
+      if (params.type) queryParams.append('type', params.type);
+      if (params.oil_type) queryParams.append('oil_type', params.oil_type);
+      const queryString = queryParams.toString();
+      return apiCall(`/api/material_sales_inventory${queryString ? `?${queryString}` : ''}`);
+    },
+    
+    // Get material sales history with filters
+    getMaterialSalesHistory: async (params = {}) => {
+      const queryParams = new URLSearchParams();
+      if (params.limit) queryParams.append('limit', params.limit);
+      if (params.type) queryParams.append('type', params.type);
+      if (params.start_date) queryParams.append('start_date', params.start_date);
+      if (params.end_date) queryParams.append('end_date', params.end_date);
+      const queryString = queryParams.toString();
+      return apiCall(`/api/material_sales_history${queryString ? `?${queryString}` : ''}`);
+    },
+    
+    // Get cost reconciliation report
+    getCostReconciliationReport: async () => {
+      return apiCall('/api/cost_reconciliation_report');
+    },
+    
+    // Create a new material sale
+    addMaterialSale: async (saleData) => {
+      return post('/api/add_material_sale', saleData);
+    },
+    
+    // Legacy naming support
+    createSale: async (data) => api.sales.addMaterialSale(data)
+  },
+
   // Masters module  
   masters: {
     getSuppliers: async () => apiCall('/api/masters/suppliers'),
@@ -719,6 +762,7 @@ export const inventoryAPI = api.inventory;
 export const reportsAPI = api.reports;
 export const purchaseAPI = api.purchase;
 export const blendingAPI = api.blending;
+export const salesAPI = api.sales;  // NEW EXPORT
 
 // Export the default skuService object for legacy imports
 export const skuService = {
