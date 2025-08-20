@@ -1,39 +1,454 @@
+/* File Path: puvi-frontend/src/components/CostManagement/CostElementRow.css */
+/* CostElementRow Component Styles - Fixed checkbox clickability issue */
+
+/* ==================== Main Container ==================== */
+.cost-element-row {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  background: white;
+  transition: all 0.2s ease;
+}
+
+.cost-element-row:hover:not(.disabled) {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  border-color: #cbd5e0;
+}
+
+.cost-element-row.disabled {
+  opacity: 0.6;
+  background: #f9fafb;
+}
+
+/* ==================== CHECKBOX FIX - Critical Section ==================== */
+/* Fixed invisible checkbox - now has clickable dimensions */
 .cost-element-checkbox {
   position: absolute;
   opacity: 0;
   cursor: pointer;
-  height: 0;
-  width: 0;
+  /* FIX: Give proper dimensions instead of 0 */
+  height: 20px;
+  width: 20px;
+  z-index: 2; /* Above the visual checkbox */
+  margin: 0;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
+.cost-element-row.disabled .cost-element-checkbox {
+  cursor: not-allowed;
+}
+
+/* ==================== Custom Checkbox Visual ==================== */
 .element-toggle {
   position: relative;
-  padding-left: 25px; /* Space for custom checkbox */
+  padding-left: 32px;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  user-select: none;
 }
 
+/* Visual checkbox box */
 .element-toggle:before {
   content: "";
   position: absolute;
   left: 0;
-  top: 0;
-  width: 16px;
-  height: 16px;
-  border: 1px solid #ccc;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 18px;
+  height: 18px;
+  border: 2px solid #cbd5e0;
   background: white;
-  border-radius: 3px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
 }
 
-.cost-element-checkbox:checked + .element-toggle:before {
-  background: #007bff; /* Checked color */
-  content: "\\2713"; /* Checkmark */
-  color: white;
-  text-align: center;
-  line-height: 16px;
+/* Hover state */
+.element-toggle:hover:before {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* Checked state background */
+.cost-element-checkbox:checked ~ .element-toggle:before {
+  background: #2563eb;
+  border-color: #2563eb;
+}
+
+/* Checkmark icon */
+.cost-element-checkbox:checked ~ .element-toggle:after {
+  content: "";
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%) rotate(45deg);
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  margin-top: -2px;
+}
+
+/* Focus state for accessibility */
+.cost-element-checkbox:focus ~ .element-toggle:before {
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+/* ==================== Element Header ==================== */
+.cost-element-header {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+.cost-element-row.enabled .cost-element-header {
+  border-bottom-color: #e5e7eb;
+}
+
+.element-icon {
+  margin-right: 8px;
+  font-size: 16px;
+}
+
+.element-name {
+  font-weight: 500;
+  color: #111827;
+  font-size: 14px;
+}
+
+.unit-type {
+  color: #6b7280;
+  font-size: 12px;
+  margin-left: 8px;
+}
+
+.help-text {
+  color: #9ca3af;
+  cursor: help;
+  font-size: 14px;
+  padding: 2px 6px;
+  border-radius: 50%;
+  background: #f3f4f6;
+  transition: all 0.2s ease;
+}
+
+.help-text:hover {
+  background: #e5e7eb;
+  color: #6b7280;
+}
+
+/* ==================== Element Body ==================== */
+.cost-element-body {
+  padding: 16px;
+  background: #f9fafb;
+  border-radius: 0 0 8px 8px;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 500px;
+  }
+}
+
+/* ==================== Grid Layout ==================== */
+.cost-element-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.grid-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.field-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.field-value {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* ==================== Rate Display ==================== */
+.master-rate-display {
+  font-size: 16px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.override-input {
+  padding: 6px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 120px;
+  transition: all 0.2s ease;
+}
+
+.override-input:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.override-input.has-override {
+  border-color: #f59e0b;
+  background: #fef3c7;
+}
+
+.override-warning {
+  color: #f59e0b;
+  font-size: 16px;
+  cursor: help;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.unit-suffix {
+  color: #9ca3af;
+  font-size: 12px;
+  font-weight: normal;
+}
+
+/* ==================== Quantity & Total Display ==================== */
+.quantity-display {
+  font-size: 16px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.total-cost-display {
+  font-size: 18px;
+  font-weight: 700;
+  color: #059669;
+}
+
+.grid-item.highlight {
+  background: white;
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #d1d5db;
+}
+
+/* ==================== Override Info ==================== */
+.override-info {
+  margin-top: 12px;
+  padding: 8px 12px;
+  background: #fef3c7;
+  border-left: 3px solid #f59e0b;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #92400e;
+}
+
+.override-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.deviation {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+/* ==================== Variant: Compact ==================== */
+.cost-element-row.compact {
+  margin-bottom: 8px;
+}
+
+.cost-element-row.compact .compact-header {
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.cost-element-row.compact .element-toggle {
+  padding-left: 28px;
+}
+
+.cost-element-row.compact .compact-total {
+  font-weight: 600;
+  color: #059669;
+  font-size: 14px;
+}
+
+.cost-element-row.compact .compact-details {
+  padding: 8px 12px 8px 40px;
+  background: #f9fafb;
+  display: flex;
+  gap: 20px;
+  font-size: 13px;
+}
+
+.cost-element-row.compact .rate-group,
+.cost-element-row.compact .quantity-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.cost-element-row.compact .rate-label,
+.cost-element-row.compact .quantity-label {
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.cost-element-row.compact .master-rate {
+  color: #111827;
+  font-weight: 600;
+}
+
+.cost-element-row.compact .override-input.compact {
+  width: 80px;
+  padding: 4px 6px;
   font-size: 12px;
 }
 
-.disabled .element-toggle {
-  opacity: 0.5;
-  cursor: not-allowed;
+.cost-element-row.compact .unit-label {
+  color: #9ca3af;
+  font-size: 11px;
+}
+
+.cost-element-row.compact .quantity-value {
+  font-weight: 600;
+  color: #374151;
+}
+
+/* ==================== Variant: Inline ==================== */
+.cost-element-row.inline {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 8px 12px;
+  margin-bottom: 4px;
+}
+
+.cost-element-inline-label {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 200px;
+  position: relative;
+  padding-left: 28px;
+  cursor: pointer;
+}
+
+.cost-element-row.inline .cost-element-checkbox {
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.cost-element-row.inline .inline-rates {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cost-element-row.inline .master-rate {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.cost-element-row.inline .override-input.inline {
+  width: 70px;
+  padding: 4px 6px;
+  font-size: 12px;
+}
+
+.cost-element-row.inline .inline-calculation {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
+}
+
+.cost-element-row.inline .quantity {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.cost-element-row.inline .total-cost {
+  font-weight: 600;
+  color: #059669;
+  font-size: 14px;
+  min-width: 80px;
+  text-align: right;
+}
+
+/* ==================== Category Colors ==================== */
+.category-labor { border-left: 3px solid #3b82f6; }
+.category-transport { border-left: 3px solid #f59e0b; }
+.category-material { border-left: 3px solid #10b981; }
+.category-utility { border-left: 3px solid #8b5cf6; }
+.category-maintenance { border-left: 3px solid #ef4444; }
+.category-quality { border-left: 3px solid #06b6d4; }
+.category-general { border-left: 3px solid #6b7280; }
+
+/* ==================== Responsive Design ==================== */
+@media (max-width: 768px) {
+  .cost-element-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .cost-element-row.inline {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .cost-element-row.inline .inline-calculation {
+    margin-left: 28px;
+    margin-top: 4px;
+  }
+}
+
+/* ==================== Print Styles ==================== */
+@media print {
+  .cost-element-row {
+    page-break-inside: avoid;
+    border: 1px solid #000;
+  }
+  
+  .cost-element-checkbox,
+  .element-toggle:before,
+  .element-toggle:after {
+    display: none;
+  }
+  
+  .element-toggle {
+    padding-left: 0;
+  }
+  
+  .override-input {
+    border: none;
+    background: none;
+    padding: 0;
+  }
 }
