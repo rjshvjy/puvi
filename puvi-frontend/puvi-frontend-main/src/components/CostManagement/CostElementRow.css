@@ -1,38 +1,58 @@
 /* File Path: puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.css */
-/* CostElementRow Component - Redesigned to match Batch Production module */
+/* CostElementRow Component - Aligned with Batch Production module styling */
 
 /* ==================== CSS Variables ==================== */
 :root {
+  /* Primary Colors - Matching Batch Production */
+  --primary: #2f855a;
+  --primary-dark: #276749;
+  --primary-light: rgba(47, 133, 90, 0.1);
   --primary-blue: #2196F3;
-  --primary-green: #4CAF50;
-  --warning-yellow: #FFC107;
-  --danger-red: #f44336;
-  --light-blue-bg: #E3F2FD;
-  --light-green-bg: #E8F5E9;
-  --light-yellow-bg: #FFF9C4;
-  --border-color: #E0E0E0;
-  --text-primary: #212121;
-  --text-secondary: #757575;
-  --success-green: #4CAF50;
+  --success-green: #28a745;
+  --warning: #ffc107;
+  --danger: #dc3545;
+  --info: #17a2b8;
+  
+  /* Gray Scale - Matching Batch Production */
+  --white: #ffffff;
+  --gray-50: #fafafa;
+  --gray-100: #f7fafc;
+  --gray-200: #edf2f7;
+  --gray-300: #e2e8f0;
+  --gray-400: #cbd5e0;
+  --gray-500: #a0aec0;
+  --gray-600: #718096;
+  --gray-700: #4a5568;
+  --text-color: #2d3748;
+  --text-light: #64748b;
+  
+  /* Component Specific */
+  --border-radius: 8px;
+  --spacing-unit: 16px;
+  --box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  --box-shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.15);
+  --transition: all 0.2s ease;
   --checkbox-size: 18px;
 }
 
 /* ==================== Main Container ==================== */
 .cost-element-row {
-  background: white;
-  margin-bottom: 1px;
-  transition: all 0.2s ease;
-  border: none;
-  border-radius: 0;
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--border-radius);
+  margin-bottom: 8px;
+  transition: var(--transition);
+  box-shadow: var(--box-shadow);
 }
 
 .cost-element-row:hover {
-  background-color: #FAFAFA;
+  background-color: var(--gray-50);
+  box-shadow: var(--box-shadow-hover);
 }
 
 .cost-element-row.disabled {
-  opacity: 1; /* Don't reduce opacity */
-  background: white;
+  opacity: 0.9;
+  background: var(--gray-50);
 }
 
 /* ==================== Element Header (Main Row) ==================== */
@@ -40,23 +60,16 @@
   display: grid;
   grid-template-columns: 40px 1fr 120px 120px 120px 100px;
   align-items: center;
-  padding: 12px 16px;
-  gap: 16px;
-  border-bottom: 1px solid var(--border-color);
+  padding: calc(var(--spacing-unit) * 0.875) var(--spacing-unit);
+  gap: var(--spacing-unit);
 }
 
-.cost-element-row:last-child .cost-element-header {
-  border-bottom: none;
-}
-
-/* ==================== Checkbox Styling - Fixed with visible checkmark ==================== */
+/* ==================== Checkbox Styling - FIXED ==================== */
 .element-toggle {
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  padding: 0;
-  cursor: pointer;
+  justify-content: center;
   width: var(--checkbox-size);
   height: var(--checkbox-size);
 }
@@ -65,58 +78,48 @@
 .cost-element-checkbox {
   position: absolute;
   opacity: 0;
-  cursor: pointer !important;
-  width: var(--checkbox-size) !important;
-  height: var(--checkbox-size) !important;
+  width: var(--checkbox-size);
+  height: var(--checkbox-size);
   margin: 0;
+  cursor: pointer;
   z-index: 2;
-  pointer-events: auto !important;
 }
 
 /* Custom checkbox visual */
 .element-toggle::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
   width: var(--checkbox-size);
   height: var(--checkbox-size);
-  border: 2px solid #9E9E9E;
-  background: white;
-  border-radius: 3px;
-  transition: all 0.2s ease;
-  pointer-events: none;
+  border: 2px solid var(--gray-400);
+  background: var(--white);
+  border-radius: 4px;
+  transition: var(--transition);
 }
 
-/* Checked state - blue background */
-.cost-element-checkbox:checked + .element-toggle::before {
-  background-color: var(--primary-blue);
-  border-color: var(--primary-blue);
+/* Checked state - green background matching Batch Production */
+.cost-element-checkbox:checked ~ .element-toggle::before {
+  background-color: var(--primary);
+  border-color: var(--primary);
 }
 
-/* White checkmark when checked */
-.cost-element-checkbox:checked + .element-toggle::after {
+/* White checkmark when checked - FIXED */
+.cost-element-checkbox:checked ~ .element-toggle::after {
   content: '';
   position: absolute;
   left: 6px;
-  top: 2px;
+  top: 3px;
   width: 5px;
-  height: 10px;
+  height: 9px;
   border: solid white;
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
-  pointer-events: none;
 }
 
 /* Hover effect */
 .element-toggle:hover::before {
-  border-color: var(--primary-blue);
-}
-
-/* Disabled state for checkbox */
-.cost-element-row.disabled .cost-element-checkbox {
-  pointer-events: auto !important;
-  cursor: pointer !important;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(47, 133, 90, 0.1);
 }
 
 /* ==================== Element Name with Badge ==================== */
@@ -126,43 +129,38 @@
   gap: 8px;
 }
 
-.element-icon {
-  display: none; /* Hide emoji icons for cleaner look */
-}
-
 .element-name {
   font-size: 14px;
-  color: var(--text-primary);
-  font-weight: 400;
+  color: var(--text-color);
+  font-weight: 500;
 }
 
 .element-badge {
-  padding: 2px 8px;
+  padding: 4px 10px;
   border-radius: 12px;
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 600;
   text-transform: uppercase;
-  margin-left: 8px;
 }
 
 .badge-required {
-  background-color: #FFEBEE;
-  color: #C62828;
+  background: #ffebee;
+  color: #c62828;
 }
 
 .badge-optional {
-  background-color: #E3F2FD;
-  color: #1565C0;
+  background: #e7e8ea;
+  color: #383d41;
 }
 
 .badge-common {
-  background-color: #E8F5E9;
-  color: #2E7D32;
+  background: #d4edda;
+  color: #155724;
 }
 
 .unit-type {
   font-size: 12px;
-  color: var(--text-secondary);
+  color: var(--text-light);
   margin-left: 4px;
 }
 
@@ -175,50 +173,50 @@
 
 .master-rate-display {
   font-size: 14px;
-  color: var(--text-primary);
+  color: var(--text-light);
   min-width: 60px;
   text-align: right;
 }
 
 .override-input {
   width: 80px;
-  padding: 6px 8px;
-  border: 1px solid var(--border-color);
+  padding: 6px 10px;
+  border: 1px solid var(--gray-300);
   border-radius: 4px;
   font-size: 14px;
   text-align: right;
-  transition: all 0.2s ease;
-  background: white;
+  transition: var(--transition);
+  background: var(--white);
 }
 
 .override-input:focus {
   outline: none;
-  border-color: var(--primary-blue);
-  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(47, 133, 90, 0.1);
 }
 
 .override-input:disabled {
-  background-color: #F5F5F5;
-  color: #9E9E9E;
+  background-color: var(--gray-100);
+  color: var(--gray-500);
   cursor: not-allowed;
 }
 
 .override-input.has-override {
-  background-color: #FFF9C4;
-  border-color: var(--warning-yellow);
+  background-color: #fffbf0;
+  border-color: var(--warning);
 }
 
 /* ==================== Quantity Display ==================== */
 .quantity-display {
   font-size: 14px;
-  color: var(--text-primary);
+  color: var(--gray-700);
   text-align: right;
   min-width: 80px;
 }
 
 .quantity-unit {
   font-size: 12px;
-  color: var(--text-secondary);
+  color: var(--text-light);
   margin-left: 4px;
 }
 
@@ -226,29 +224,27 @@
 .total-cost-display {
   font-size: 15px;
   font-weight: 600;
-  color: var(--success-green);
+  color: var(--primary-dark);
   text-align: right;
   min-width: 80px;
 }
 
 .cost-element-row.disabled .total-cost-display {
-  color: var(--text-secondary);
+  color: var(--gray-500);
 }
 
 /* ==================== Element Body (Expanded Details) ==================== */
 .cost-element-body {
-  display: grid;
-  grid-template-columns: 40px 1fr 120px 120px 120px 100px;
-  align-items: center;
-  padding: 8px 16px;
-  gap: 16px;
-  background-color: #FAFAFA;
-  border-bottom: 1px solid var(--border-color);
+  padding: calc(var(--spacing-unit) * 0.75) var(--spacing-unit);
+  background-color: var(--gray-50);
+  border-top: 1px solid var(--gray-200);
 }
 
-/* ==================== Grid Layout for default variant ==================== */
+/* ==================== Grid Layout ==================== */
 .cost-element-grid {
-  display: contents; /* Use parent grid */
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: var(--spacing-unit);
 }
 
 .grid-item {
@@ -259,8 +255,8 @@
 
 .field-label {
   font-size: 11px;
-  font-weight: 500;
-  color: var(--text-secondary);
+  font-weight: 600;
+  color: var(--text-light);
   text-transform: uppercase;
   margin-bottom: 4px;
   letter-spacing: 0.5px;
@@ -270,55 +266,51 @@
   display: flex;
   align-items: center;
   gap: 4px;
+  font-size: 14px;
+  color: var(--text-color);
 }
 
 /* ==================== Section Headers (for grouping) ==================== */
 .cost-section-header {
-  background: linear-gradient(to right, #E3F2FD, #F5F5F5);
-  padding: 10px 16px;
-  margin: 16px 0 8px 0;
-  border-left: 4px solid var(--primary-blue);
-  font-weight: 500;
-  font-size: 14px;
-  color: var(--text-primary);
+  background: var(--gray-100);
+  padding: calc(var(--spacing-unit) * 0.75) var(--spacing-unit);
+  margin: calc(var(--spacing-unit) * 1.5) 0 calc(var(--spacing-unit) * 0.5) 0;
+  border-left: 4px solid var(--primary);
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--text-color);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  border-radius: var(--border-radius);
 }
 
 .cost-section-header.labor {
-  background: linear-gradient(to right, #E8F5E9, #F5F5F5);
   border-left-color: var(--success-green);
 }
 
 .cost-section-header.utilities {
-  background: linear-gradient(to right, #E3F2FD, #F5F5F5);
   border-left-color: var(--primary-blue);
 }
 
 .cost-section-header.consumables {
-  background: linear-gradient(to right, #FFF9C4, #F5F5F5);
-  border-left-color: var(--warning-yellow);
+  border-left-color: var(--warning);
 }
 
 .section-count {
-  background: white;
+  background: var(--white);
   padding: 2px 8px;
   border-radius: 12px;
   font-size: 12px;
-  color: var(--text-secondary);
-}
-
-/* ==================== Override Info Banner ==================== */
-.override-info {
-  display: none; /* Hide for cleaner look */
+  color: var(--text-light);
+  font-weight: 500;
 }
 
 /* ==================== Compact Variant ==================== */
 .cost-element-row.compact .cost-element-header {
   display: flex;
-  padding: 8px 12px;
-  gap: 12px;
+  padding: calc(var(--spacing-unit) * 0.5) calc(var(--spacing-unit) * 0.75);
+  gap: calc(var(--spacing-unit) * 0.75);
 }
 
 .cost-element-row.compact .element-toggle {
@@ -339,9 +331,8 @@
 .cost-element-row.inline {
   display: flex;
   align-items: center;
-  padding: 8px 16px;
-  gap: 16px;
-  border-bottom: 1px solid var(--border-color);
+  padding: calc(var(--spacing-unit) * 0.75) var(--spacing-unit);
+  gap: var(--spacing-unit);
 }
 
 .cost-element-row.inline .element-toggle {
@@ -369,39 +360,40 @@
 
 /* ==================== Category Color Bars ==================== */
 .cost-element-row.category-labor {
-  border-left: 3px solid #4CAF50;
+  border-left: 4px solid var(--success-green);
 }
 
 .cost-element-row.category-utilities {
-  border-left: 3px solid #2196F3;
+  border-left: 4px solid var(--primary-blue);
 }
 
 .cost-element-row.category-consumables {
-  border-left: 3px solid #FF9800;
+  border-left: 4px solid var(--warning);
 }
 
 .cost-element-row.category-transport {
-  border-left: 3px solid #9C27B0;
+  border-left: 4px solid #9c27b0;
 }
 
 .cost-element-row.category-quality {
-  border-left: 3px solid #00BCD4;
+  border-left: 4px solid var(--info);
 }
 
 .cost-element-row.category-maintenance {
-  border-left: 3px solid #F44336;
+  border-left: 4px solid var(--danger);
 }
 
 .cost-element-row.category-general {
-  border-left: 3px solid #607D8B;
+  border-left: 4px solid var(--gray-600);
 }
 
 /* ==================== Summary Row Styling ==================== */
 .cost-summary-row {
-  background: #F5F5F5;
-  padding: 12px 16px;
-  margin-top: 8px;
-  border-top: 2px solid var(--border-color);
+  background: var(--gray-100);
+  padding: calc(var(--spacing-unit) * 0.875) var(--spacing-unit);
+  margin-top: var(--spacing-unit);
+  border-top: 2px solid var(--primary);
+  border-radius: var(--border-radius);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -409,13 +401,42 @@
 }
 
 .summary-label {
-  font-size: 14px;
-  color: var(--text-primary);
+  font-size: 16px;
+  color: var(--text-color);
 }
 
 .summary-value {
-  font-size: 16px;
-  color: var(--success-green);
+  font-size: 18px;
+  color: var(--primary-dark);
+}
+
+/* ==================== Status Badge Styling ==================== */
+.status-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.status-badge.good {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-badge.low {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.status-badge.normal {
+  background: #d1ecf1;
+  color: #0c5460;
+}
+
+.status-badge.warning {
+  background: #fff3cd;
+  color: #856404;
 }
 
 /* ==================== Responsive Design ==================== */
@@ -433,13 +454,13 @@
   
   .cost-element-body {
     display: block;
-    padding: 12px 16px 12px 56px;
+    padding: calc(var(--spacing-unit) * 0.75) var(--spacing-unit) calc(var(--spacing-unit) * 0.75) calc(var(--spacing-unit) * 3);
   }
   
   .cost-element-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
+    gap: calc(var(--spacing-unit) * 0.75);
   }
 }
 
