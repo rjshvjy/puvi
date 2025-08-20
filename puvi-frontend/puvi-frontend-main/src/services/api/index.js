@@ -1,6 +1,6 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/services/api/index.js
 // Consolidated API Service for PUVI Oil Manufacturing System
-// Version: 2.1 - Complete with Material Sales module integration
+// Version: 2.2 - Complete with Material Sales and Material Writeoff modules
 // This file consolidates all API services and utilities
 
 const API_URL = process.env.REACT_APP_API_URL || 'https://puvi-backend.onrender.com';
@@ -502,6 +502,41 @@ const api = {
     createSale: async (data) => api.sales.addMaterialSale(data)
   },
 
+  // ============================================
+  // MATERIAL WRITEOFF MODULE
+  // ============================================
+  writeoff: {
+    // Get writeoff reason codes
+    getReasons: async () => {
+      return apiCall('/api/writeoff_reasons');
+    },
+    
+    // Get materials with current inventory for writeoff selection
+    getMaterials: async (category = null) => {
+      const params = new URLSearchParams();
+      if (category) params.append('category', category);
+      const queryString = params.toString();
+      return apiCall(`/api/inventory_for_writeoff${queryString ? `?${queryString}` : ''}`);
+    },
+    
+    // Record a material writeoff
+    recordWriteoff: async (writeoffData) => {
+      return post('/api/add_writeoff', writeoffData);
+    },
+    
+    // Get writeoff history with filters
+    getHistory: async (params = {}) => {
+      const queryParams = new URLSearchParams();
+      if (params.limit) queryParams.append('limit', params.limit);
+      if (params.material_id) queryParams.append('material_id', params.material_id);
+      if (params.reason_code) queryParams.append('reason_code', params.reason_code);
+      if (params.start_date) queryParams.append('start_date', params.start_date);
+      if (params.end_date) queryParams.append('end_date', params.end_date);
+      const queryString = queryParams.toString();
+      return apiCall(`/api/writeoff_history${queryString ? `?${queryString}` : ''}`);
+    }
+  },
+
   // Masters module  
   masters: {
     getSuppliers: async () => apiCall('/api/masters/suppliers'),
@@ -763,6 +798,7 @@ export const reportsAPI = api.reports;
 export const purchaseAPI = api.purchase;
 export const blendingAPI = api.blending;
 export const salesAPI = api.sales;  // NEW EXPORT
+export const writeoffAPI = api.writeoff;  // NEW EXPORT
 
 // Export the default skuService object for legacy imports
 export const skuService = {
