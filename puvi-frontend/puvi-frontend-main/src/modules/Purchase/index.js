@@ -155,15 +155,20 @@ const Purchase = () => {
     try {
       let response;
       
-      // IMPORTANT: api.purchase.getMaterials doesn't support supplier_id filtering
-      // We must use direct fetch to properly filter by supplier
-      console.log('Fetching materials for supplier:', supplierId);
-      const url = `https://puvi-backend.onrender.com/api/materials?supplier_id=${supplierId}`;
-      const res = await fetch(url, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
-      });
-      response = await res.json();
+      // Use the API service if available (requires supplier_id support in api/index.js)
+      if (api?.purchase?.getMaterials) {
+        console.log('Using api.purchase.getMaterials for supplier:', supplierId);
+        response = await api.purchase.getMaterials({ supplier_id: supplierId });
+      } else {
+        // Direct fetch as fallback
+        console.log('Using direct fetch for materials');
+        const url = `https://puvi-backend.onrender.com/api/materials?supplier_id=${supplierId}`;
+        const res = await fetch(url, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        response = await res.json();
+      }
       
       console.log('Materials response:', response);
       
