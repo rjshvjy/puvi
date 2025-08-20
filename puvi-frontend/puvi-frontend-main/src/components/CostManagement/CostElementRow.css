@@ -1,205 +1,269 @@
 /* File Path: puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.css */
-/* CostElementRow Component Styles - Fixed checkbox clickability issue */
+/* CostElementRow Component - Redesigned to match Batch Production module */
+
+/* ==================== CSS Variables ==================== */
+:root {
+  --primary-blue: #2196F3;
+  --primary-green: #4CAF50;
+  --warning-yellow: #FFC107;
+  --danger-red: #f44336;
+  --light-blue-bg: #E3F2FD;
+  --light-green-bg: #E8F5E9;
+  --light-yellow-bg: #FFF9C4;
+  --border-color: #E0E0E0;
+  --text-primary: #212121;
+  --text-secondary: #757575;
+  --success-green: #4CAF50;
+  --checkbox-size: 18px;
+}
 
 /* ==================== Main Container ==================== */
 .cost-element-row {
-  border: 1px solid #e5e7eb;
-  border-radius: 8px;
-  margin-bottom: 12px;
   background: white;
+  margin-bottom: 1px;
   transition: all 0.2s ease;
+  border: none;
+  border-radius: 0;
 }
 
-.cost-element-row:hover:not(.disabled) {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  border-color: #cbd5e0;
+.cost-element-row:hover {
+  background-color: #FAFAFA;
 }
 
 .cost-element-row.disabled {
-  opacity: 0.6;
-  background: #f9fafb;
-  /* REMOVED pointer-events from here - do not block all interactions */
+  opacity: 1; /* Don't reduce opacity */
+  background: white;
 }
 
-/* ==================== CHECKBOX FIX - Critical Section ==================== */
-/* Fixed invisible checkbox - now has clickable dimensions */
+/* ==================== Element Header (Main Row) ==================== */
+.cost-element-header {
+  display: grid;
+  grid-template-columns: 40px 1fr 120px 120px 120px 100px;
+  align-items: center;
+  padding: 12px 16px;
+  gap: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.cost-element-row:last-child .cost-element-header {
+  border-bottom: none;
+}
+
+/* ==================== Checkbox Styling - Fixed with visible checkmark ==================== */
+.element-toggle {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0;
+  cursor: pointer;
+  width: var(--checkbox-size);
+  height: var(--checkbox-size);
+}
+
+/* Hide native checkbox but keep it functional */
 .cost-element-checkbox {
   position: absolute;
   opacity: 0;
   cursor: pointer !important;
-  /* FIX: Give proper dimensions instead of 0 */
-  height: 20px !important;
-  width: 20px !important;
-  z-index: 10 !important; /* Increased z-index */
+  width: var(--checkbox-size) !important;
+  height: var(--checkbox-size) !important;
   margin: 0;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: auto !important; /* Force enable mouse events */
-}
-
-/* CRITICAL FIX: Override disabled state to keep checkbox clickable */
-.cost-element-row.disabled .cost-element-checkbox {
-  cursor: pointer !important; /* Changed from not-allowed */
-  pointer-events: auto !important; /* Force enable clicks even when disabled */
-  height: 20px !important;
-  width: 20px !important;
-  z-index: 10 !important;
-}
-
-/* ==================== Custom Checkbox Visual ==================== */
-.element-toggle {
-  position: relative;
-  padding-left: 32px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  min-height: 24px;
-  user-select: none;
-  pointer-events: none; /* Prevent toggle label from blocking checkbox */
-}
-
-/* Allow pointer events only on the checkbox area */
-.element-toggle .cost-element-checkbox {
+  z-index: 2;
   pointer-events: auto !important;
 }
 
-/* Visual checkbox box */
-.element-toggle:before {
-  content: "";
+/* Custom checkbox visual */
+.element-toggle::before {
+  content: '';
   position: absolute;
+  top: 0;
   left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 18px;
-  height: 18px;
-  border: 2px solid #cbd5e0;
+  width: var(--checkbox-size);
+  height: var(--checkbox-size);
+  border: 2px solid #9E9E9E;
   background: white;
-  border-radius: 4px;
+  border-radius: 3px;
   transition: all 0.2s ease;
-  pointer-events: none; /* Visual element shouldn't block clicks */
+  pointer-events: none;
 }
 
-/* Hover state */
-.element-toggle:hover:before {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+/* Checked state - blue background */
+.cost-element-checkbox:checked + .element-toggle::before {
+  background-color: var(--primary-blue);
+  border-color: var(--primary-blue);
 }
 
-/* Checked state background */
-.cost-element-checkbox:checked ~ .element-toggle:before {
-  background: #2563eb;
-  border-color: #2563eb;
-}
-
-/* Checkmark icon */
-.cost-element-checkbox:checked ~ .element-toggle:after {
-  content: "";
+/* White checkmark when checked */
+.cost-element-checkbox:checked + .element-toggle::after {
+  content: '';
   position: absolute;
   left: 6px;
-  top: 50%;
-  transform: translateY(-50%) rotate(45deg);
+  top: 2px;
   width: 5px;
   height: 10px;
   border: solid white;
   border-width: 0 2px 2px 0;
-  margin-top: -2px;
-  pointer-events: none; /* Visual element shouldn't block clicks */
+  transform: rotate(45deg);
+  pointer-events: none;
 }
 
-/* Focus state for accessibility */
-.cost-element-checkbox:focus ~ .element-toggle:before {
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+/* Hover effect */
+.element-toggle:hover::before {
+  border-color: var(--primary-blue);
 }
 
-/* ==================== Element Header ==================== */
-.cost-element-header {
-  padding: 12px 16px;
+/* Disabled state for checkbox */
+.cost-element-row.disabled .cost-element-checkbox {
+  pointer-events: auto !important;
+  cursor: pointer !important;
+}
+
+/* ==================== Element Name with Badge ==================== */
+.element-info {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid transparent;
-  transition: border-color 0.2s ease;
-}
-
-.cost-element-row.enabled .cost-element-header {
-  border-bottom-color: #e5e7eb;
+  gap: 8px;
 }
 
 .element-icon {
-  margin-right: 8px;
-  font-size: 16px;
-  pointer-events: none;
+  display: none; /* Hide emoji icons for cleaner look */
 }
 
 .element-name {
-  font-weight: 500;
-  color: #111827;
   font-size: 14px;
-  pointer-events: none;
+  color: var(--text-primary);
+  font-weight: 400;
+}
+
+.element-badge {
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin-left: 8px;
+}
+
+.badge-required {
+  background-color: #FFEBEE;
+  color: #C62828;
+}
+
+.badge-optional {
+  background-color: #E3F2FD;
+  color: #1565C0;
+}
+
+.badge-common {
+  background-color: #E8F5E9;
+  color: #2E7D32;
 }
 
 .unit-type {
-  color: #6b7280;
   font-size: 12px;
-  margin-left: 8px;
-  pointer-events: none;
+  color: var(--text-secondary);
+  margin-left: 4px;
 }
 
-.help-text {
-  color: #9ca3af;
-  cursor: help;
+/* ==================== Rate Input Fields ==================== */
+.rate-field {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.master-rate-display {
   font-size: 14px;
-  padding: 2px 6px;
-  border-radius: 50%;
-  background: #f3f4f6;
+  color: var(--text-primary);
+  min-width: 60px;
+  text-align: right;
+}
+
+.override-input {
+  width: 80px;
+  padding: 6px 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 14px;
+  text-align: right;
   transition: all 0.2s ease;
-  pointer-events: auto;
+  background: white;
 }
 
-.help-text:hover {
-  background: #e5e7eb;
-  color: #6b7280;
+.override-input:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
 }
 
-/* ==================== Element Body ==================== */
+.override-input:disabled {
+  background-color: #F5F5F5;
+  color: #9E9E9E;
+  cursor: not-allowed;
+}
+
+.override-input.has-override {
+  background-color: #FFF9C4;
+  border-color: var(--warning-yellow);
+}
+
+/* ==================== Quantity Display ==================== */
+.quantity-display {
+  font-size: 14px;
+  color: var(--text-primary);
+  text-align: right;
+  min-width: 80px;
+}
+
+.quantity-unit {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin-left: 4px;
+}
+
+/* ==================== Total Cost Display ==================== */
+.total-cost-display {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--success-green);
+  text-align: right;
+  min-width: 80px;
+}
+
+.cost-element-row.disabled .total-cost-display {
+  color: var(--text-secondary);
+}
+
+/* ==================== Element Body (Expanded Details) ==================== */
 .cost-element-body {
-  padding: 16px;
-  background: #f9fafb;
-  border-radius: 0 0 8px 8px;
-  animation: slideDown 0.2s ease;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    max-height: 0;
-  }
-  to {
-    opacity: 1;
-    max-height: 500px;
-  }
-}
-
-/* ==================== Grid Layout ==================== */
-.cost-element-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: 40px 1fr 120px 120px 120px 100px;
+  align-items: center;
+  padding: 8px 16px;
   gap: 16px;
+  background-color: #FAFAFA;
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* ==================== Grid Layout for default variant ==================== */
+.cost-element-grid {
+  display: contents; /* Use parent grid */
 }
 
 .grid-item {
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
 }
 
 .field-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: #6b7280;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
   margin-bottom: 4px;
+  letter-spacing: 0.5px;
 }
 
 .field-value {
@@ -208,253 +272,174 @@
   gap: 4px;
 }
 
-/* ==================== Rate Display ==================== */
-.master-rate-display {
-  font-size: 16px;
-  font-weight: 600;
-  color: #111827;
-}
-
-.override-input {
-  padding: 6px 10px;
-  border: 1px solid #d1d5db;
-  border-radius: 4px;
-  font-size: 14px;
-  width: 120px;
-  transition: all 0.2s ease;
-  pointer-events: auto !important; /* Ensure input is always interactive */
-}
-
-.override-input:focus {
-  outline: none;
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-}
-
-.override-input:disabled {
-  background-color: #f3f4f6;
-  color: #9ca3af;
-  cursor: not-allowed;
-}
-
-.override-input.has-override {
-  border-color: #f59e0b;
-  background: #fef3c7;
-}
-
-.override-warning {
-  color: #f59e0b;
-  font-size: 16px;
-  cursor: help;
-  animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
-}
-
-.unit-suffix {
-  color: #9ca3af;
-  font-size: 12px;
-  font-weight: normal;
-}
-
-/* ==================== Quantity & Total Display ==================== */
-.quantity-display {
-  font-size: 16px;
+/* ==================== Section Headers (for grouping) ==================== */
+.cost-section-header {
+  background: linear-gradient(to right, #E3F2FD, #F5F5F5);
+  padding: 10px 16px;
+  margin: 16px 0 8px 0;
+  border-left: 4px solid var(--primary-blue);
   font-weight: 500;
-  color: #374151;
-}
-
-.total-cost-display {
-  font-size: 18px;
-  font-weight: 700;
-  color: #059669;
-}
-
-.grid-item.highlight {
-  background: white;
-  padding: 8px;
-  border-radius: 4px;
-  border: 1px solid #d1d5db;
-}
-
-/* ==================== Override Info ==================== */
-.override-info {
-  margin-top: 12px;
-  padding: 8px 12px;
-  background: #fef3c7;
-  border-left: 3px solid #f59e0b;
-  border-radius: 4px;
-  font-size: 13px;
-  color: #92400e;
-}
-
-.override-indicator {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.deviation {
-  color: #dc2626;
-  font-weight: 600;
-}
-
-/* ==================== Variant: Compact ==================== */
-.cost-element-row.compact {
-  margin-bottom: 8px;
-}
-
-.cost-element-row.compact .compact-header {
-  padding: 8px 12px;
+  font-size: 14px;
+  color: var(--text-primary);
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
 
-.cost-element-row.compact .element-toggle {
-  padding-left: 28px;
+.cost-section-header.labor {
+  background: linear-gradient(to right, #E8F5E9, #F5F5F5);
+  border-left-color: var(--success-green);
 }
 
-.cost-element-row.compact .compact-total {
-  font-weight: 600;
-  color: #059669;
-  font-size: 14px;
+.cost-section-header.utilities {
+  background: linear-gradient(to right, #E3F2FD, #F5F5F5);
+  border-left-color: var(--primary-blue);
 }
 
-.cost-element-row.compact .compact-details {
-  padding: 8px 12px 8px 40px;
-  background: #f9fafb;
-  display: flex;
-  gap: 20px;
-  font-size: 13px;
+.cost-section-header.consumables {
+  background: linear-gradient(to right, #FFF9C4, #F5F5F5);
+  border-left-color: var(--warning-yellow);
 }
 
-.cost-element-row.compact .rate-group,
-.cost-element-row.compact .quantity-group {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.cost-element-row.compact .rate-label,
-.cost-element-row.compact .quantity-label {
-  color: #6b7280;
-  font-weight: 500;
-}
-
-.cost-element-row.compact .master-rate {
-  color: #111827;
-  font-weight: 600;
-}
-
-.cost-element-row.compact .override-input.compact {
-  width: 80px;
-  padding: 4px 6px;
+.section-count {
+  background: white;
+  padding: 2px 8px;
+  border-radius: 12px;
   font-size: 12px;
+  color: var(--text-secondary);
 }
 
-.cost-element-row.compact .unit-label {
-  color: #9ca3af;
-  font-size: 11px;
+/* ==================== Override Info Banner ==================== */
+.override-info {
+  display: none; /* Hide for cleaner look */
 }
 
-.cost-element-row.compact .quantity-value {
-  font-weight: 600;
-  color: #374151;
+/* ==================== Compact Variant ==================== */
+.cost-element-row.compact .cost-element-header {
+  display: flex;
+  padding: 8px 12px;
+  gap: 12px;
 }
 
-/* ==================== Variant: Inline ==================== */
+.cost-element-row.compact .element-toggle {
+  flex-shrink: 0;
+}
+
+.cost-element-row.compact .element-info {
+  flex: 1;
+}
+
+.cost-element-row.compact .rate-field,
+.cost-element-row.compact .quantity-display,
+.cost-element-row.compact .total-cost-display {
+  flex-shrink: 0;
+}
+
+/* ==================== Inline Variant ==================== */
 .cost-element-row.inline {
   display: flex;
   align-items: center;
+  padding: 8px 16px;
   gap: 16px;
-  padding: 8px 12px;
-  margin-bottom: 4px;
+  border-bottom: 1px solid var(--border-color);
 }
 
-.cost-element-inline-label {
-  display: flex;
-  align-items: center;
+.cost-element-row.inline .element-toggle {
+  flex-shrink: 0;
+}
+
+.cost-element-row.inline .element-info {
   flex: 1;
   min-width: 200px;
-  position: relative;
-  padding-left: 28px;
-  cursor: pointer;
 }
 
-.cost-element-row.inline .cost-element-checkbox {
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: auto !important;
+.cost-element-row.inline .rate-field {
+  min-width: 150px;
 }
 
-.cost-element-row.inline .inline-rates {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.cost-element-row.inline .quantity-display {
+  min-width: 100px;
+  text-align: right;
 }
 
-.cost-element-row.inline .master-rate {
-  font-size: 13px;
-  color: #6b7280;
-}
-
-.cost-element-row.inline .override-input.inline {
-  width: 70px;
-  padding: 4px 6px;
-  font-size: 12px;
-}
-
-.cost-element-row.inline .inline-calculation {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-left: auto;
-}
-
-.cost-element-row.inline .quantity {
-  font-size: 13px;
-  color: #6b7280;
-}
-
-.cost-element-row.inline .total-cost {
-  font-weight: 600;
-  color: #059669;
-  font-size: 14px;
+.cost-element-row.inline .total-cost-display {
   min-width: 80px;
   text-align: right;
 }
 
-/* ==================== Category Colors ==================== */
-.category-labor { border-left: 3px solid #3b82f6; }
-.category-transport { border-left: 3px solid #f59e0b; }
-.category-material { border-left: 3px solid #10b981; }
-.category-utility { border-left: 3px solid #8b5cf6; }
-.category-utilities { border-left: 3px solid #8b5cf6; } /* Added utilities variant */
-.category-maintenance { border-left: 3px solid #ef4444; }
-.category-quality { border-left: 3px solid #06b6d4; }
-.category-general { border-left: 3px solid #6b7280; }
-.category-consumables { border-left: 3px solid #ec4899; } /* Added consumables */
+/* ==================== Category Color Bars ==================== */
+.cost-element-row.category-labor {
+  border-left: 3px solid #4CAF50;
+}
+
+.cost-element-row.category-utilities {
+  border-left: 3px solid #2196F3;
+}
+
+.cost-element-row.category-consumables {
+  border-left: 3px solid #FF9800;
+}
+
+.cost-element-row.category-transport {
+  border-left: 3px solid #9C27B0;
+}
+
+.cost-element-row.category-quality {
+  border-left: 3px solid #00BCD4;
+}
+
+.cost-element-row.category-maintenance {
+  border-left: 3px solid #F44336;
+}
+
+.cost-element-row.category-general {
+  border-left: 3px solid #607D8B;
+}
+
+/* ==================== Summary Row Styling ==================== */
+.cost-summary-row {
+  background: #F5F5F5;
+  padding: 12px 16px;
+  margin-top: 8px;
+  border-top: 2px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+}
+
+.summary-label {
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.summary-value {
+  font-size: 16px;
+  color: var(--success-green);
+}
 
 /* ==================== Responsive Design ==================== */
 @media (max-width: 768px) {
-  .cost-element-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .cost-element-row.inline {
-    flex-direction: column;
-    align-items: flex-start;
+  .cost-element-header {
+    grid-template-columns: 40px 1fr;
     gap: 8px;
   }
   
-  .cost-element-row.inline .inline-calculation {
-    margin-left: 28px;
-    margin-top: 4px;
+  .rate-field,
+  .quantity-display,
+  .total-cost-display {
+    display: none;
+  }
+  
+  .cost-element-body {
+    display: block;
+    padding: 12px 16px 12px 56px;
+  }
+  
+  .cost-element-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
   }
 }
 
@@ -462,22 +447,11 @@
 @media print {
   .cost-element-row {
     page-break-inside: avoid;
-    border: 1px solid #000;
   }
   
-  .cost-element-checkbox,
-  .element-toggle:before,
-  .element-toggle:after {
-    display: none;
-  }
-  
-  .element-toggle {
-    padding-left: 0;
-  }
-  
-  .override-input {
-    border: none;
-    background: none;
-    padding: 0;
+  .element-toggle::before,
+  .element-toggle::after {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
   }
 }
