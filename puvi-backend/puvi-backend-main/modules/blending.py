@@ -1,3 +1,4 @@
+# puvi-backend/modules/blending.py
 """
 Blending Module for PUVI Oil Manufacturing System
 Handles multi-oil blending with dynamic ratios and traceability
@@ -15,46 +16,45 @@ blending_bp = Blueprint('blending', __name__)
 
 @blending_bp.route('/api/oil_types_for_blending', methods=['GET'])
 def get_oil_types_for_blending():
-    """Get distinct oil types available for blending"""
+    """Get oil subcategories from database for blending"""
     conn = get_db_connection()
     cur = conn.cursor()
     
     try:
-        # Get oil types from materials (bulk oils)
+        # Get oil subcategories from subcategories_master
+        # This gives us clean, database-driven oil types
         cur.execute("""
             SELECT DISTINCT 
-                CASE 
-                    WHEN m.material_name LIKE '%Groundnut%' THEN 'Groundnut'
-                    WHEN m.material_name LIKE '%Sesame%' THEN 'Sesame'
-                    WHEN m.material_name LIKE '%Coconut%' THEN 'Coconut'
-                    WHEN m.material_name LIKE '%Mustard%' THEN 'Mustard'
-                    ELSE SPLIT_PART(m.material_name, ' ', 1)
-                END as oil_type
-            FROM materials m
-            WHERE m.category IN ('Oil', 'Bulk Oil', 'Seeds')
-                OR m.material_name LIKE '%Oil%'
-            ORDER BY oil_type
+                s.subcategory_name,
+                s.oil_type,
+                s.subcategory_code
+            FROM subcategories_master s
+            WHERE s.category_id = (
+                SELECT category_id 
+                FROM categories_master 
+                WHERE category_name = 'Oil'
+                LIMIT 1
+            )
+            AND s.oil_type IS NOT NULL
+            AND s.is_active = true
+            ORDER BY s.subcategory_name
         """)
         
-        oil_types = [row[0] for row in cur.fetchall() if row[0]]
+        oil_types = []
+        oil_type_mapping = {}
         
-        # Also get from batch production
-        cur.execute("""
-            SELECT DISTINCT oil_type 
-            FROM batch 
-            WHERE oil_type IS NOT NULL
-            ORDER BY oil_type
-        """)
-        
-        batch_oil_types = [row[0] for row in cur.fetchall() if row[0]]
-        
-        # Combine and deduplicate
-        all_oil_types = list(set(oil_types + batch_oil_types))
-        all_oil_types.sort()
+        for row in cur.fetchall():
+            subcategory_name = row[0]
+            oil_type = row[1]
+            subcategory_code = row[2]
+            
+            oil_types.append(subcategory_name)  # Display name for dropdown
+            oil_type_mapping[subcategory_name] = oil_type  # For reference
         
         return jsonify({
             'success': True,
-            'oil_types': all_oil_types
+            'oil_types': oil_types,  # Frontend expects this key
+            'oil_type_mapping': oil_type_mapping  # Additional info for debugging
         })
         
     except Exception as e:
@@ -70,9 +70,26 @@ def get_batches_for_oil_type():
     cur = conn.cursor()
     
     try:
-        oil_type = request.args.get('oil_type')
-        if not oil_type:
+        # The oil_type parameter will now be the subcategory_name (e.g., "Groundnut Oil")
+        # We need to convert it to the actual oil_type (e.g., "Groundnut")
+        subcategory_name = request.args.get('oil_type')
+        if not subcategory_name:
             return jsonify({'success': False, 'error': 'Oil type is required'}), 400
+        
+        # Get the actual oil_type from subcategory_name
+        cur.execute("""
+            SELECT oil_type 
+            FROM subcategories_master 
+            WHERE subcategory_name = %s 
+            AND is_active = true
+            LIMIT 1
+        """, (subcategory_name,))
+        
+        result = cur.fetchone()
+        if not result:
+            return jsonify({'success': False, 'error': f'Oil type {subcategory_name} not found'}), 400
+        
+        oil_type = result[0]  # This is the actual oil_type to filter batches
         
         batches = []
         
@@ -112,8 +129,8 @@ def get_batches_for_oil_type():
                 'batch_code': row[1],
                 'oil_type': row[2],
                 'production_date': integer_to_date(row[3]),
-                'available_quantity': float(row[4]),
-                'cost_per_kg': float(row[5]),
+                'available_quantity': float(row[4]) if row[4] else 0,
+                'cost_per_kg': float(row[5]) if row[5] else 0,
                 'traceable_code': row[6],
                 'source_type': row[7],
                 'display_name': f"{row[1]} - {integer_to_date(row[3])}"
@@ -158,14 +175,15 @@ def get_batches_for_oil_type():
                 'batch_code': row[1],
                 'oil_type': row[2],
                 'production_date': integer_to_date(row[3]),
-                'available_quantity': float(row[4]),
-                'cost_per_kg': float(row[5]),
+                'available_quantity': float(row[4]) if row[4] else 0,
+                'cost_per_kg': float(row[5]) if row[5] else 0,
                 'traceable_code': row[6],
                 'source_type': row[7],
                 'display_name': f"{row[1]} - {integer_to_date(row[3])}"
             })
         
         # 3. Get from outsourced/purchased bulk oil
+        # Need to match by oil_type or produces_oil_type in materials
         cur.execute("""
             SELECT 
                 i.inventory_id,
@@ -180,21 +198,21 @@ def get_batches_for_oil_type():
             FROM inventory i
             LEFT JOIN purchases p ON p.purchase_id = i.source_reference_id
             LEFT JOIN materials m ON m.material_id = i.material_id
-            WHERE i.oil_type = %s
+            WHERE (i.oil_type = %s OR m.produces_oil_type = %s)
                 AND i.source_type = 'purchase'
                 AND i.closing_stock > 0
                 AND i.is_bulk_oil = true
             ORDER BY p.purchase_date DESC
-        """, (oil_type,))
+        """, (oil_type, oil_type))
         
         for row in cur.fetchall():
             batches.append({
                 'batch_id': row[0],
                 'batch_code': row[1],
-                'oil_type': row[2],
+                'oil_type': row[2] or oil_type,
                 'production_date': integer_to_date(row[3]) if row[3] else 'N/A',
-                'available_quantity': float(row[4]),
-                'cost_per_kg': float(row[5]),
+                'available_quantity': float(row[4]) if row[4] else 0,
+                'cost_per_kg': float(row[5]) if row[5] else 0,
                 'traceable_code': row[6],
                 'source_type': row[7],
                 'display_name': f"{row[8] or row[1]} - Outsourced"
@@ -211,7 +229,8 @@ def get_batches_for_oil_type():
             'success': True,
             'batches': batches,
             'grouped_batches': grouped_batches,
-            'total_count': len(batches)
+            'total_count': len(batches),
+            'oil_type_used': oil_type  # For debugging
         })
         
     except Exception as e:
@@ -258,8 +277,29 @@ def create_blend():
         # Parse date
         blend_date = parse_date(data['blend_date'])
         
+        # For each component, convert subcategory_name to oil_type
+        oil_types = []
+        for component in components:
+            # Component oil_type might be subcategory_name, need to get actual oil_type
+            cur.execute("""
+                SELECT oil_type 
+                FROM subcategories_master 
+                WHERE subcategory_name = %s
+                LIMIT 1
+            """, (component['oil_type'],))
+            
+            result = cur.fetchone()
+            if result:
+                actual_oil_type = result[0]
+                component['actual_oil_type'] = actual_oil_type
+                oil_types.append(actual_oil_type)
+            else:
+                # Fallback to using as-is if not found in subcategories
+                component['actual_oil_type'] = component['oil_type']
+                oil_types.append(component['oil_type'])
+        
         # Generate blend code
-        oil_types = list(set([c['oil_type'] for c in components]))
+        oil_types = list(set(oil_types))
         if len(oil_types) <= 3:
             oil_names = '-'.join(oil_types)
         else:
@@ -290,7 +330,6 @@ def create_blend():
             })
         
         # Generate traceable code
-        # Note: This is a simplified version. The actual implementation might need adjustment
         traceable_code = f"BLEND-{oil_names}-{date_str}"
         
         # Begin transaction
@@ -318,7 +357,7 @@ def create_blend():
         
         # Insert blend components and update source inventory
         for component in components:
-            oil_type = component['oil_type']
+            actual_oil_type = component.get('actual_oil_type', component['oil_type'])
             source_type = component['source_type']
             source_batch_id = component.get('batch_id')
             source_batch_code = component.get('batch_code')
@@ -326,7 +365,7 @@ def create_blend():
             quantity_used = total_quantity * percentage
             cost_per_kg = safe_decimal(component['cost_per_kg'])
             
-            # Insert component record
+            # Insert component record with actual oil_type
             cur.execute("""
                 INSERT INTO blend_batch_components (
                     blend_id, oil_type, source_type, source_batch_id,
@@ -335,7 +374,7 @@ def create_blend():
                 ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
             """, (
                 blend_id,
-                oil_type,
+                actual_oil_type,  # Use the actual oil_type from database
                 source_type,
                 source_batch_id,
                 source_batch_code,
@@ -362,7 +401,7 @@ def create_blend():
                     float(quantity_used),
                     blend_date,
                     source_batch_id,
-                    oil_type,
+                    actual_oil_type,
                     float(quantity_used)
                 ))
                 
@@ -449,9 +488,22 @@ def get_blend_history():
     try:
         # Get query parameters
         limit = request.args.get('limit', 50, type=int)
-        oil_type = request.args.get('oil_type')
+        oil_type_filter = request.args.get('oil_type')
         start_date = request.args.get('start_date')
         end_date = request.args.get('end_date')
+        
+        # If oil_type_filter is provided, it might be subcategory_name
+        # Convert to actual oil_type for filtering
+        actual_oil_type = None
+        if oil_type_filter:
+            cur.execute("""
+                SELECT oil_type 
+                FROM subcategories_master 
+                WHERE subcategory_name = %s
+                LIMIT 1
+            """, (oil_type_filter,))
+            result = cur.fetchone()
+            actual_oil_type = result[0] if result else oil_type_filter
         
         # Build query
         query = """
@@ -474,13 +526,13 @@ def get_blend_history():
         
         params = []
         
-        if oil_type:
+        if actual_oil_type:
             query += """ AND EXISTS (
                 SELECT 1 FROM blend_batch_components bc2 
                 WHERE bc2.blend_id = bl.blend_id 
                 AND bc2.oil_type = %s
             )"""
-            params.append(oil_type)
+            params.append(actual_oil_type)
         
         if start_date:
             query += " AND bl.blend_date >= %s"
@@ -558,17 +610,20 @@ def get_blend_history():
         """
         
         # Apply same filters for summary
-        summary_params = params[:-1]  # Exclude limit
-        if oil_type:
+        summary_params = []
+        if actual_oil_type:
             summary_query += """ AND EXISTS (
                 SELECT 1 FROM blend_batch_components bc 
                 WHERE bc.blend_id = blend_batches.blend_id 
                 AND bc.oil_type = %s
             )"""
+            summary_params.append(actual_oil_type)
         if start_date:
             summary_query += " AND blend_date >= %s"
+            summary_params.append(parse_date(start_date))
         if end_date:
             summary_query += " AND blend_date <= %s"
+            summary_params.append(parse_date(end_date))
         
         cur.execute(summary_query, summary_params)
         stats = cur.fetchone()
