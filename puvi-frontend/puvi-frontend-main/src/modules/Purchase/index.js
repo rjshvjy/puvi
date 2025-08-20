@@ -3,7 +3,7 @@
 // Enhanced with material creation form and category validation
 
 import React, { useState, useEffect } from 'react';
-import api from '../../services/api';
+import { api, purchaseAPI } from '../../services/api';
 import './Purchase.css';
 
 const Purchase = () => {
@@ -63,7 +63,7 @@ const Purchase = () => {
   // NEW: Fetch categories from API
   const fetchCategories = async () => {
     try {
-      const data = await api.api.get('/api/categories');
+      const data = await api.get('/api/categories');
       if (data.success) {
         setCategories(data.categories || []);
       }
@@ -75,7 +75,7 @@ const Purchase = () => {
   // NEW: Fetch subcategories for a specific category
   const fetchSubcategories = async (categoryId) => {
     try {
-      const data = await api.api.get(`/api/subcategories?category_id=${categoryId}`);
+      const data = await api.get(`/api/subcategories?category_id=${categoryId}`);
       if (data.success) {
         setSubcategories(data.subcategories || []);
       }
@@ -86,7 +86,7 @@ const Purchase = () => {
 
   const fetchSuppliers = async () => {
     try {
-      const response = await api.purchaseAPI.getSuppliers();
+      const response = await purchaseAPI.getSuppliers();
       setSuppliers(response.suppliers || []);
     } catch (error) {
       setMessage(`Error loading suppliers: ${error.message}`);
@@ -95,7 +95,9 @@ const Purchase = () => {
 
   const fetchMaterialsForSupplier = async (supplierId) => {
     try {
-      const response = await api.purchaseAPI.getMaterials({ supplier_id: supplierId });
+      // Note: The API endpoint needs to be updated to accept supplier_id as a param
+      // For now, we'll fetch all materials and filter client-side if needed
+      const response = await api.get('/api/materials', { supplier_id: supplierId });
       setMaterials(response.materials || []);
     } catch (error) {
       setMessage(`Error loading materials: ${error.message}`);
@@ -104,7 +106,7 @@ const Purchase = () => {
 
   const fetchPurchaseHistory = async () => {
     try {
-      const response = await api.purchaseAPI.getPurchaseHistory({ limit: 20 });
+      const response = await purchaseAPI.getAll({ limit: 20 });
       setPurchaseHistory(response.purchases || []);
     } catch (error) {
       setMessage(`Error loading purchase history: ${error.message}`);
@@ -169,7 +171,7 @@ const Purchase = () => {
     setMessage('');
     
     try {
-      const data = await api.api.post('/api/materials', newMaterial);
+      const data = await api.post('/api/materials', newMaterial);
       
       if (data.success) {
         setMessage(`✅ Material "${newMaterial.material_name}" created successfully!`);
@@ -420,7 +422,7 @@ Please ensure UOM allocation totals 100% and all items have proper units.`);
         }))
       };
 
-      const response = await api.purchaseAPI.addPurchase(payload);
+      const response = await purchaseAPI.create(payload);
       
       if (response.traceable_codes) {
         setMessage(`✅ Purchase recorded successfully! 
