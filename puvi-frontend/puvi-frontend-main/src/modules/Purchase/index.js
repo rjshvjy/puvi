@@ -86,17 +86,7 @@ const Purchase = () => {
     }
   };
 
-  // NEW: Fetch subcategories for a specific category
-  const fetchSubcategories = async (categoryId) => {
-    try {
-      const data = await api.get(`/api/subcategories?category_id=${categoryId}`);
-      if (data.success) {
-        setSubcategories(data.subcategories || []);
-      }
-    } catch (error) {
-      console.error('Error loading subcategories:', error);
-    }
-  };
+
 
   const fetchSuppliers = async () => {
     try {
