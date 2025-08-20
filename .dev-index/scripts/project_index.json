@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-20T04:22:58.744Z",
+  "generatedAt": "2025-08-20T05:39:49.874Z",
   "filesScanned": 56,
   "jsFilesScanned": 34,
   "pyFilesScanned": 22,
@@ -71,7 +71,7 @@
       "method": "GET",
       "path": "/api/oil_types_for_blending",
       "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-      "line": 17,
+      "line": 18,
       "blueprint": "blending_bp",
       "function": "get_oil_types_for_blending",
       "source": "backend"
@@ -80,7 +80,7 @@
       "method": "GET",
       "path": "/api/batches_for_oil_type",
       "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-      "line": 66,
+      "line": 67,
       "blueprint": "blending_bp",
       "function": "get_batches_for_oil_type",
       "source": "backend"
@@ -89,7 +89,7 @@
       "method": "POST",
       "path": "/api/create_blend",
       "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-      "line": 242,
+      "line": 243,
       "blueprint": "blending_bp",
       "function": "create_blend",
       "source": "backend"
@@ -98,7 +98,7 @@
       "method": "GET",
       "path": "/api/blend_history",
       "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-      "line": 482,
+      "line": 485,
       "blueprint": "blending_bp",
       "function": "get_blend_history",
       "source": "backend"
@@ -2119,7 +2119,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-      "line": 26,
+      "line": 27,
       "type": "SELECT",
       "tables": [
         "subcategories_master",
@@ -2129,7 +2129,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-      "line": 80,
+      "line": 81,
       "type": "SELECT",
       "tables": [
         "subcategories_master",
@@ -2139,7 +2139,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-      "line": 97,
+      "line": 98,
       "type": "SELECT",
       "tables": [
         "subcategories_master",
@@ -2152,7 +2152,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-      "line": 140,
+      "line": 141,
       "type": "SELECT",
       "tables": [
         "subcategories_master",
@@ -2166,7 +2166,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-      "line": 187,
+      "line": 188,
       "type": "SELECT",
       "tables": [
         "subcategories_master",
@@ -2182,7 +2182,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-      "line": 284,
+      "line": 285,
       "type": "SELECT",
       "tables": [
         "subcategories_master",
@@ -2198,7 +2198,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-      "line": 336,
+      "line": 339,
       "type": "OTHER",
       "tables": [
         "subcategories_master",
@@ -2214,7 +2214,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-      "line": 339,
+      "line": 342,
       "type": "INSERT",
       "tables": [
         "subcategories_master",
@@ -2230,7 +2230,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-      "line": 369,
+      "line": 372,
       "type": "INSERT",
       "tables": [
         "subcategories_master",
@@ -2246,7 +2246,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-      "line": 390,
+      "line": 393,
       "type": "UPDATE",
       "tables": [
         "subcategories_master",
@@ -2262,7 +2262,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-      "line": 410,
+      "line": 413,
       "type": "UPDATE",
       "tables": [
         "subcategories_master",
@@ -2278,7 +2278,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-      "line": 428,
+      "line": 431,
       "type": "UPDATE",
       "tables": [
         "subcategories_master",
@@ -2294,7 +2294,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-      "line": 444,
+      "line": 447,
       "type": "INSERT",
       "tables": [
         "subcategories_master",
@@ -2310,7 +2310,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-      "line": 499,
+      "line": 502,
       "type": "SELECT",
       "tables": [
         "subcategories_master",
@@ -2326,7 +2326,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-      "line": 554,
+      "line": 557,
       "type": "OTHER",
       "tables": [
         "subcategories_master",
@@ -2342,7 +2342,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-      "line": 573,
+      "line": 576,
       "type": "SELECT",
       "tables": [
         "subcategories_master",
@@ -2358,7 +2358,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-      "line": 628,
+      "line": 631,
       "type": "OTHER",
       "tables": [
         "subcategories_master",
@@ -8946,7 +8946,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-      "line": 18,
+      "line": 19,
       "name": "get_oil_types_for_blending",
       "params": "",
       "type": "python",
@@ -8954,7 +8954,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-      "line": 67,
+      "line": 68,
       "name": "get_batches_for_oil_type",
       "params": "",
       "type": "python",
@@ -8962,7 +8962,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-      "line": 243,
+      "line": 244,
       "name": "create_blend",
       "params": "",
       "type": "python",
@@ -8970,7 +8970,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-      "line": 483,
+      "line": 486,
       "name": "get_blend_history",
       "params": "",
       "type": "python",
@@ -13961,28 +13961,28 @@
         "method": "GET",
         "path": "/api/oil_types_for_blending",
         "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-        "line": 17,
+        "line": 18,
         "function": "get_oil_types_for_blending"
       },
       {
         "method": "GET",
         "path": "/api/batches_for_oil_type",
         "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-        "line": 66,
+        "line": 67,
         "function": "get_batches_for_oil_type"
       },
       {
         "method": "POST",
         "path": "/api/create_blend",
         "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-        "line": 242,
+        "line": 243,
         "function": "create_blend"
       },
       {
         "method": "GET",
         "path": "/api/blend_history",
         "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-        "line": 482,
+        "line": 485,
         "function": "get_blend_history"
       }
     ],
@@ -16105,52 +16105,52 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-      "line": 23,
+      "line": 24,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-      "line": 60,
+      "line": 61,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-      "line": 72,
+      "line": 73,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-      "line": 236,
+      "line": 237,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-      "line": 248,
+      "line": 249,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-      "line": 473,
+      "line": 476,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-      "line": 488,
+      "line": 491,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/blending.py",
-      "line": 642,
+      "line": 645,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
