@@ -1,7 +1,7 @@
 """
 Common utilities and configurations for Masters CRUD operations
 File Path: puvi-backend/puvi-backend-main/modules/masters_common.py
-Updated: Added density field, expanded categories, added BOM mapping master
+Updated: Added self-healing standardization for select fields without hardcoded mappings
 """
 
 import re
@@ -23,6 +23,41 @@ def decimal_handler(obj):
     elif isinstance(obj, bytes):
         return obj.decode('utf-8', errors='ignore')
     raise TypeError(f"Object of type {type(obj).__name__} is not JSON serializable")
+
+# =====================================================
+# SELF-HEALING STANDARDIZATION FUNCTION
+# =====================================================
+
+def standardize_select_value(field_config, value):
+    """
+    Standardize select field values based on defined options in config
+    Uses the first matching option (case-insensitive) as the standard
+    
+    Args:
+        field_config: Field configuration dict containing options
+        value: The value to standardize
+    
+    Returns:
+        Standardized value (first matching option) or original if no match
+    """
+    if not value or not isinstance(value, str):
+        return value
+    
+    options = field_config.get('options', [])
+    if not options or options == 'dynamic':
+        # Dynamic options loaded from database, no standardization needed
+        return value
+    
+    value_lower = value.lower()
+    
+    # Find the first option that matches case-insensitively
+    for option in options:
+        if isinstance(option, str) and option.lower() == value_lower:
+            # Return the option as defined in config (this is the standard)
+            return option
+    
+    # No match found, return original value
+    return value
 
 # =====================================================
 # MASTERS CONFIGURATION
@@ -618,13 +653,14 @@ def check_dependencies(conn, cur, master_type, record_id):
 
 
 # =====================================================
-# FIELD VALIDATION
+# FIELD VALIDATION - UPDATED WITH CASE-INSENSITIVE
 # =====================================================
 
 def validate_field(field_name, value, field_config, conn=None, cur=None, 
                    table_name=None, record_id=None, primary_key=None):
     """
     Validate a single field value against its configuration
+    Now with case-insensitive validation for select fields
     
     Returns:
         tuple: (is_valid, error_message)
@@ -688,8 +724,29 @@ def validate_field(field_name, value, field_config, conn=None, cur=None,
     
     elif field_type == 'select':
         options = field_config.get('options', [])
-        if value not in options:
-            return False, f"{field_config.get('label', field_name)} must be one of: {', '.join(options)}"
+        
+        # Skip validation for dynamic options (loaded from database)
+        if options == 'dynamic':
+            return True, None
+        
+        # SELF-HEALING: Case-insensitive validation for select fields
+        # Check if value matches any option (case-insensitive)
+        value_str = str(value) if value is not None else ''
+        value_lower = value_str.lower()
+        
+        # Check against all options case-insensitively
+        valid = False
+        for option in options:
+            if isinstance(option, str):
+                if option.lower() == value_lower:
+                    valid = True
+                    break
+            elif str(option) == value_str:
+                valid = True
+                break
+        
+        if not valid:
+            return False, f"{field_config.get('label', field_name)} must be one of: {', '.join(str(o) for o in options)}"
     
     elif field_type == 'boolean':
         if not isinstance(value, bool):
@@ -747,16 +804,17 @@ def transform_field_value(field_config, value):
 
 
 # =====================================================
-# MASTER DATA VALIDATION
+# MASTER DATA VALIDATION - WITH SELF-HEALING
 # =====================================================
 
 def validate_master_data(master_type, data, record_id=None):
     """
     Validate all fields in master data
+    Also applies self-healing standardization for select fields
     
     Args:
         master_type: Type of master
-        data: Dictionary of field values
+        data: Dictionary of field values (will be modified in place for standardization)
         record_id: ID if updating existing record
     
     Returns:
@@ -775,15 +833,27 @@ def validate_master_data(master_type, data, record_id=None):
         primary_key = config.get('primary_key')
         table_name = config.get('table')
         
-        # Validate each field
+        # Validate and standardize each field
         for field_name, field_config in config['fields'].items():
             if field_name in data:
+                # Apply transformation first (uppercase, lowercase, etc.)
+                data[field_name] = transform_field_value(field_config, data[field_name])
+                
+                # Validate the field
                 is_valid, error_msg = validate_field(
                     field_name, data[field_name], field_config,
                     conn, cur, table_name, record_id, primary_key
                 )
                 if not is_valid:
                     errors[field_name] = error_msg
+                else:
+                    # SELF-HEALING: If validation passed and it's a select field, standardize it
+                    if field_config.get('type') == 'select' and data[field_name]:
+                        standardized = standardize_select_value(field_config, data[field_name])
+                        if standardized != data[field_name]:
+                            # Apply standardization (self-healing)
+                            print(f"Self-healing: {field_name} '{data[field_name]}' -> '{standardized}'")
+                            data[field_name] = standardized
         
         return len(errors) == 0, errors
         
