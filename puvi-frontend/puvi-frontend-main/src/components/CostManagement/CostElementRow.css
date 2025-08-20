@@ -260,3 +260,90 @@
   .grid-item           { padding: 8px 10px; }
   .total-cost-display  { font-size: 15px; }
 }
+/* ---------- HOTFIX: make disabled rows clickable again ---------- */
+/* Some global CSS likely sets `.disabled { pointer-events: none; }`.
+   We must explicitly re-enable pointer events inside the cost rows. */
+.cost-element-row.disabled,
+.cost-element-row.disabled * {
+  pointer-events: auto !important;   /* restore clicks everywhere */
+}
+
+/* But keep fields that are truly disabled by JS uneditable */
+.cost-element-row .override-input[disabled],
+.cost-element-row input[disabled],
+.cost-element-row select[disabled],
+.cost-element-row textarea[disabled] {
+  pointer-events: none !important;   /* honor real disabled attributes */
+}
+
+/* ---------- Replace the fragile hidden-checkbox styling ---------- */
+/* Show and style the real checkbox directly so it’s always clickable. */
+.element-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.cost-element-checkbox {
+  /* Remove the previous absolute/opacity hack */
+  position: static !important;
+  opacity: 1 !important;
+  z-index: auto !important;
+  margin: 0;
+  width: 18px;
+  height: 18px;
+
+  -webkit-appearance: none;
+  appearance: none;
+  border: 2px solid var(--gray-400, #cbd5e0);
+  border-radius: 4px;
+  background: #fff;
+  display: inline-block;
+  vertical-align: middle;
+  transition: border-color .15s, background-color .15s, box-shadow .15s;
+}
+
+.cost-element-checkbox:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(47, 133, 90, 0.12); /* matches your theme */
+  border-color: var(--primary, #2f855a);
+}
+
+.cost-element-checkbox:checked {
+  background: var(--primary, #2f855a);
+  border-color: var(--primary, #2f855a);
+}
+
+.cost-element-checkbox:checked::after {
+  content: "";
+  position: relative;
+  display: block;
+  width: 4px; height: 8px;
+  border: solid #fff; border-width: 0 2px 2px 0;
+  transform: translate(6px, 2px) rotate(45deg);
+}
+
+/* Keep the light visual hint for an “off” row, but don’t block it */
+.cost-element-row.disabled {
+  opacity: 0.85;                /* just a visual hint */
+  background: #fff;
+}
+
+/* Inputs: keep your existing look/feel */
+.override-input {
+  text-align: right;
+  border-radius: 8px;
+  border: 1px solid var(--gray-300, #e2e8f0);
+  padding: 8px 10px;
+  transition: border-color .15s, box-shadow .15s, background-color .15s;
+}
+.override-input:focus {
+  outline: none;
+  border-color: var(--primary, #2f855a);
+  box-shadow: 0 0 0 3px rgba(47, 133, 90, 0.12);
+}
+.override-input[disabled] {
+  background: var(--gray-100, #f7fafc);
+  color: var(--gray-500, #a0aec0);
+}
