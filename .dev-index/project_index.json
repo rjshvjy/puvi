@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-20T07:20:28.701Z",
+  "generatedAt": "2025-08-20T09:48:09.510Z",
   "filesScanned": 56,
   "jsFilesScanned": 34,
   "pyFilesScanned": 22,
@@ -1770,21 +1770,21 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_common.py",
-      "line": 157,
+      "line": 192,
       "type": "object",
       "code": "'gst_rate': {"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_common.py",
-      "line": 418,
+      "line": 453,
       "type": "object",
       "code": "'default_rate': {"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_common.py",
-      "line": 692,
+      "line": 749,
       "type": "object",
-      "code": "return False, f\"{field_config.get('label', field_name)} must be one of: {', '.join(options)}\""
+      "code": "return False, f\"{field_config.get('label', field_name)} must be one of: {', '.join(str(o) for o in o"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/system_config.py",
@@ -2823,7 +2823,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_common.py",
-      "line": 528,
+      "line": 563,
       "type": "INSERT",
       "tables": [
         "masters_audit_log"
@@ -2832,7 +2832,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_common.py",
-      "line": 586,
+      "line": 621,
       "type": "SELECT",
       "tables": [
         "masters_audit_log"
@@ -2841,7 +2841,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_common.py",
-      "line": 591,
+      "line": 626,
       "type": "SELECT",
       "tables": [
         "masters_audit_log"
@@ -2850,7 +2850,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_common.py",
-      "line": 702,
+      "line": 759,
       "type": "SELECT",
       "tables": [
         "masters_audit_log"
@@ -2859,7 +2859,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_common.py",
-      "line": 708,
+      "line": 765,
       "type": "SELECT",
       "tables": [
         "masters_audit_log"
@@ -2868,34 +2868,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_common.py",
-      "line": 814,
-      "type": "SELECT",
-      "tables": [
-        "masters_audit_log"
-      ],
-      "preview": "cur.execute(f\"SELECT * FROM {table} WHERE {primary_key} = %s\", (record_id,))"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/masters_common.py",
-      "line": 824,
-      "type": "UPDATE",
-      "tables": [
-        "masters_audit_log"
-      ],
-      "preview": "cur.execute(f\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/masters_common.py",
-      "line": 858,
-      "type": "UPDATE",
-      "tables": [
-        "masters_audit_log"
-      ],
-      "preview": "cur.execute(f\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/masters_common.py",
-      "line": 898,
+      "line": 884,
       "type": "SELECT",
       "tables": [
         "masters_audit_log"
@@ -2904,7 +2877,34 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_common.py",
-      "line": 900,
+      "line": 894,
+      "type": "UPDATE",
+      "tables": [
+        "masters_audit_log"
+      ],
+      "preview": "cur.execute(f\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/masters_common.py",
+      "line": 928,
+      "type": "UPDATE",
+      "tables": [
+        "masters_audit_log"
+      ],
+      "preview": "cur.execute(f\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/masters_common.py",
+      "line": 968,
+      "type": "SELECT",
+      "tables": [
+        "masters_audit_log"
+      ],
+      "preview": "cur.execute(f\"SELECT * FROM {table} WHERE {primary_key} = %s\", (record_id,))"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/masters_common.py",
+      "line": 970,
       "type": "SELECT",
       "tables": [
         "masters_audit_log"
@@ -9151,7 +9151,15 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_common.py",
-      "line": 554,
+      "line": 31,
+      "name": "standardize_select_value",
+      "params": "field_config, value",
+      "type": "python",
+      "isRoute": false
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/masters_common.py",
+      "line": 589,
       "name": "check_dependencies",
       "params": "conn, cur, master_type, record_id",
       "type": "python",
@@ -9159,7 +9167,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_common.py",
-      "line": 723,
+      "line": 780,
       "name": "transform_field_value",
       "params": "field_config, value",
       "type": "python",
@@ -9167,7 +9175,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_common.py",
-      "line": 753,
+      "line": 810,
       "name": "validate_master_data",
       "params": "master_type, data, record_id=None",
       "type": "python",
@@ -9175,7 +9183,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_common.py",
-      "line": 798,
+      "line": 868,
       "name": "soft_delete_record",
       "params": "conn, cur, master_type, record_id, deleted_by=None",
       "type": "python",
@@ -9183,7 +9191,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_common.py",
-      "line": 842,
+      "line": 912,
       "name": "restore_record",
       "params": "conn, cur, master_type, record_id, restored_by=None",
       "type": "python",
@@ -9191,7 +9199,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_common.py",
-      "line": 882,
+      "line": 952,
       "name": "get_record_by_id",
       "params": "conn, cur, master_type, record_id",
       "type": "python",
@@ -9199,7 +9207,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_common.py",
-      "line": 915,
+      "line": 985,
       "name": "get_export_query",
       "params": "master_type, include_inactive=False",
       "type": "python",
@@ -9207,7 +9215,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_common.py",
-      "line": 950,
+      "line": 1020,
       "name": "get_master_types",
       "params": "",
       "type": "python",
@@ -9215,7 +9223,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_common.py",
-      "line": 955,
+      "line": 1025,
       "name": "get_master_config",
       "params": "master_type",
       "type": "python",
@@ -9223,7 +9231,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_common.py",
-      "line": 960,
+      "line": 1030,
       "name": "format_response_data",
       "params": "row_data",
       "type": "python",
@@ -16400,46 +16408,46 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_common.py",
-      "line": 510,
+      "line": 545,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_common.py",
-      "line": 545,
+      "line": 580,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_common.py",
-      "line": 662,
+      "line": 698,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_common.py",
-      "line": 672,
+      "line": 708,
       "type": "except",
       "exception": "generic",
       "code": "except:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_common.py",
-      "line": 676,
+      "line": 712,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_common.py",
-      "line": 686,
+      "line": 722,
       "type": "except",
       "exception": "generic",
       "code": "except:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_common.py",
-      "line": 773,
+      "line": 831,
       "type": "try-catch",
       "code": "try:"
     },
@@ -17658,7 +17666,7 @@
     "hardcodedValues": 23,
     "databaseQueries": 301,
     "databaseTables": 49,
-    "functions": 488,
+    "functions": 489,
     "stateHooks": 554,
     "missingEndpoints": 1,
     "errorHandlers": 481
