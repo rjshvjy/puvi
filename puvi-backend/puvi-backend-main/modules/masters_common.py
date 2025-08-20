@@ -32,16 +32,58 @@ def standardize_select_value(field_config, value):
     """
     Standardize select field values based on defined options in config
     Uses the first matching option (case-insensitive) as the standard
+    Also handles legacy values that are no longer valid
     
     Args:
         field_config: Field configuration dict containing options
         value: The value to standardize
     
     Returns:
-        Standardized value (first matching option) or original if no match
+        Standardized value (first matching option) or mapped legacy value
     """
     if not value or not isinstance(value, str):
         return value
+    
+    # Legacy value mappings for removed options
+    legacy_mappings = {
+        # Old per_bag values map to per_kg (since no bag conversion exists)
+        'per_bag': 'per_kg',
+        'Per Bag': 'per_kg',
+        'PER_BAG': 'per_kg',
+        
+        # Old percentage values map to fixed
+        'percentage': 'fixed',
+        'Percentage': 'fixed',
+        'PERCENTAGE': 'fixed',
+        
+        # Old per_unit values map to per_kg
+        'per_unit': 'per_kg',
+        'Per Unit': 'per_kg',
+        'PER_UNIT': 'per_kg',
+        
+        # Formula-based maps to fixed
+        'Formula-based': 'fixed',
+        'formula': 'fixed',
+        'Formula': 'fixed',
+        
+        # Direct maps to actual
+        'Direct': 'actual',
+        'direct': 'actual',
+        'DIRECT': 'actual',
+        
+        # Allocation maps to fixed
+        'Allocation': 'fixed',
+        'allocation': 'fixed',
+        
+        # Fixed Amount maps to fixed
+        'Fixed Amount': 'fixed',
+        'FIXED AMOUNT': 'fixed'
+    }
+    
+    # Check if it's a legacy value that needs mapping
+    if value in legacy_mappings:
+        print(f"Self-healing: Legacy value '{value}' -> '{legacy_mappings[value]}'")
+        return legacy_mappings[value]
     
     options = field_config.get('options', [])
     if not options or options == 'dynamic':
@@ -54,9 +96,13 @@ def standardize_select_value(field_config, value):
     for option in options:
         if isinstance(option, str) and option.lower() == value_lower:
             # Return the option as defined in config (this is the standard)
+            if value != option:
+                print(f"Self-healing: Standardizing '{value}' -> '{option}'")
             return option
     
-    # No match found, return original value
+    # If no match found and not in legacy mappings, return original value
+    # This shouldn't happen with proper validation
+    print(f"Warning: Unknown value '{value}' not in options or legacy mappings")
     return value
 
 # =====================================================
@@ -447,8 +493,9 @@ MASTERS_CONFIG = {
             'unit_type': {
                 'type': 'select',
                 'required': True,
-                'options': ['Per Unit', 'Percentage', 'Fixed Amount', 'per_kg', 'per_hour', 'per_bag', 'per_unit', 'fixed', 'percentage', 'actual'],
-                'label': 'Unit Type'
+                'options': ['per_kg', 'per_hour', 'fixed', 'actual'],
+                'label': 'Unit Type',
+                'help_text': 'per_kg: Rate × Weight | per_hour: Rate × Hours | fixed: Flat amount | actual: Manual entry'
             },
             'default_rate': {
                 'type': 'decimal',
@@ -460,8 +507,9 @@ MASTERS_CONFIG = {
             'calculation_method': {
                 'type': 'select',
                 'required': True,
-                'options': ['Direct', 'Formula-based', 'Allocation', 'per_kg', 'per_hour', 'per_bag', 'fixed', 'actual', 'formula'],
-                'label': 'Calculation Method'
+                'options': ['per_kg', 'per_hour', 'fixed', 'actual'],
+                'label': 'Calculation Method',
+                'help_text': 'per_kg: Cost = Quantity(kg) × Rate | per_hour: Cost = Hours × Rate | fixed: Cost = Rate (flat) | actual: Manual cost entry'
             },
             'is_optional': {
                 'type': 'boolean',
