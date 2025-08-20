@@ -1,5 +1,5 @@
 # Feature Pack: CATEGORIES
-Generated: 2025-08-20T16:23:50.240Z
+Generated: 2025-08-20T16:30:46.519Z
 Routes: 1 | Tables: 2 | Files: 1
 
 ## Table of Contents
