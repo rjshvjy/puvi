@@ -1,5 +1,5 @@
 # Feature Pack: ADD-BATCH
-Generated: 2025-08-20T01:47:58.211Z
+Generated: 2025-08-20T01:59:54.217Z
 Routes: 1 | Tables: 9 | Files: 1
 
 ## Table of Contents
@@ -27,7 +27,7 @@ POST   /api/add_batch
 | oil_cake_inventory | batch-production, material-sales | 🟡 MEDIUM | Changes affect 2 other modules |
 | oil_cake_rate_master | batch-production | 🟡 MEDIUM | Changes affect 1 other modules |
 | purchase_items | batch-production, purchase | 🟡 MEDIUM | Changes affect 2 other modules |
-| purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 5 other modules |
+| purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 4 other modules |
 
 ### ⚠️ Hardcoded Values Detected
 - `batch_production.py:214` - object
