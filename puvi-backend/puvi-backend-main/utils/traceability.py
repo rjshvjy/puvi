@@ -2,7 +2,7 @@
 Traceability utilities for PUVI Oil Manufacturing System
 Handles generation of traceable codes throughout the production cycle
 File Path: puvi-backend/puvi-backend-main/utils/traceability.py
-FIXED: Proper batch serial tracking from database
+FIXED: Batch codes now use DDMMYYYY format for consistency
 """
 
 from datetime import date, timedelta
@@ -157,7 +157,7 @@ def get_next_batch_serial(seed_material_id, seed_purchase_code, production_date,
 def generate_batch_code(production_date, batch_description, cur):
     """
     Generate unique batch code with automatic serial numbering
-    Format: BATCH-YYYYMMDD-Description or BATCH-YYYYMMDD-Description-1, -2, etc.
+    Format: BATCH-DDMMYYYY-Description or BATCH-DDMMYYYY-Description-1, -2, etc.
     
     Args:
         production_date: Production date as integer (days since epoch)
@@ -167,9 +167,9 @@ def generate_batch_code(production_date, batch_description, cur):
     Returns:
         str: Generated unique batch code
     """
-    # Format date as YYYYMMDD
+    # Format date as DDMMYYYY (consistent with other codes)
     dt = date(1970, 1, 1) + timedelta(days=production_date)
-    date_str = dt.strftime('%Y%m%d')
+    date_str = dt.strftime('%d%m%Y')
     
     # Clean the description - remove any special characters that might cause issues
     import re
@@ -185,7 +185,7 @@ def generate_batch_code(production_date, batch_description, cur):
         return base_code
     
     # Base code exists, find the highest serial number for this pattern
-    # Pattern: BATCH-YYYYMMDD-Description-N where N is a number
+    # Pattern: BATCH-DDMMYYYY-Description-N where N is a number
     search_pattern = f"{base_code}-%"
     cur.execute("""
         SELECT batch_code 
@@ -202,7 +202,7 @@ def generate_batch_code(production_date, batch_description, cur):
             # Base code exists without serial, so we need at least serial 1
             max_serial = max(max_serial, 0)
         elif code.startswith(f"{base_code}-"):
-            # Extract serial number from codes like BATCH-20250813-Morning-1
+            # Extract serial number from codes like BATCH-20082025-Morning-1
             try:
                 serial_part = code[len(base_code)+1:]  # Get part after base_code-
                 serial = int(serial_part)
