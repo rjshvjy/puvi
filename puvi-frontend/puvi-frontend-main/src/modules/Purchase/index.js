@@ -202,29 +202,30 @@ const Purchase = () => {
         const data = await post('/api/materials', newMaterial);
         
         if (data?.success) {
-        setMessage(`✅ Material "${newMaterial.material_name}" created successfully!`);
-        
-        // Refresh materials list
-        if (selectedSupplier) {
-          await fetchMaterialsForSupplier(selectedSupplier);
+          setMessage(`✅ Material "${newMaterial.material_name}" created successfully!`);
+          
+          // Refresh materials list
+          if (selectedSupplier) {
+            await fetchMaterialsForSupplier(selectedSupplier);
+          }
+          
+          // Reset form
+          setNewMaterial({
+            material_name: '',
+            supplier_id: selectedSupplier,
+            category: '',
+            subcategory_id: null,
+            unit: 'kg',
+            current_cost: '',
+            gst_rate: '5',
+            density: '0.91',
+            short_code: ''
+          });
+          setSubcategories([]);
+          setShowMaterialForm(false);
+        } else {
+          setMessage(`❌ Error: ${data?.error || 'Failed to create material'}`);
         }
-        
-        // Reset form
-        setNewMaterial({
-          material_name: '',
-          supplier_id: selectedSupplier,
-          category: '',
-          subcategory_id: null,
-          unit: 'kg',
-          current_cost: '',
-          gst_rate: '5',
-          density: '0.91',
-          short_code: ''
-        });
-        setSubcategories([]);
-        setShowMaterialForm(false);
-      } else {
-        setMessage(`❌ Error: ${data.error}`);
       }
     } catch (error) {
       setMessage(`❌ Error creating material: ${error.message}`);
