@@ -48,6 +48,13 @@ const MaterialSales = () => {
     fetchSalesCostElements();
   }, []);
   
+  // Re-initialize cost element quantities when salesCostElements changes
+  useEffect(() => {
+    if (salesCostElements.length > 0 && saleData.quantity_sold) {
+      updateCostElementQuantities(parseFloat(saleData.quantity_sold));
+    }
+  }, [salesCostElements]);
+  
   // Fetch ALL cost elements applicable to sales
   const fetchSalesCostElements = async () => {
     try {
@@ -55,13 +62,14 @@ const MaterialSales = () => {
       if (response.success && response.cost_elements) {
         const elements = response.cost_elements;
         
-        // Initialize cost inputs for each element
+        // Initialize cost inputs for each element with current quantity
+        const currentQuantity = parseFloat(saleData.quantity_sold) || 0;
         const initialInputs = {};
         elements.forEach(element => {
           initialInputs[element.element_id] = {
             enabled: false,
             overrideRate: '',
-            quantity: 0,
+            quantity: currentQuantity,  // Use current quantity instead of 0
             total: 0
           };
         });
@@ -70,6 +78,7 @@ const MaterialSales = () => {
         setCostInputs(initialInputs);
         
         console.log(`Loaded ${elements.length} cost elements for sales stage`);
+        console.log('Elements:', elements);  // Debug log
       }
     } catch (error) {
       console.error('Error fetching sales cost elements:', error);
@@ -157,6 +166,7 @@ const MaterialSales = () => {
   
   // Update quantities for all cost elements when sale quantity changes
   const updateCostElementQuantities = (quantity) => {
+    console.log('Updating all cost element quantities to:', quantity);
     setCostInputs(prev => {
       const updated = { ...prev };
       Object.keys(updated).forEach(elementId => {
@@ -171,14 +181,20 @@ const MaterialSales = () => {
   
   // Handle cost element toggle
   const handleCostElementToggle = (elementId, enabled) => {
-    setCostInputs(prev => ({
-      ...prev,
-      [elementId]: {
-        ...prev[elementId],
-        enabled: enabled,
-        quantity: parseFloat(saleData.quantity_sold) || 0
-      }
-    }));
+    console.log(`handleCostElementToggle called - Element ID: ${elementId}, Enabled: ${enabled}`);
+    
+    setCostInputs(prev => {
+      const updated = {
+        ...prev,
+        [elementId]: {
+          ...prev[elementId],
+          enabled: enabled,
+          quantity: parseFloat(saleData.quantity_sold) || 0
+        }
+      };
+      console.log('Updated costInputs:', updated);
+      return updated;
+    });
   };
   
   // Handle cost element rate override
@@ -588,23 +604,40 @@ Cost Adjustment: ₹${response.total_cost_adjustment.toFixed(2)}`);
                     </div>
                   ) : (
                     <>
-                      {salesCostElements.map(element => (
-                        <CostElementRow
-                          key={element.element_id}
-                          elementName={element.element_name}
-                          masterRate={parseFloat(element.default_rate) || 0}
-                          unitType={element.unit_type || 'Per Kg'}
-                          quantity={parseFloat(saleData.quantity_sold) || 0}
-                          enabled={costInputs[element.element_id]?.enabled || false}
-                          category={element.category}
-                          overrideRate={costInputs[element.element_id]?.overrideRate || ''}
-                          onToggle={(enabled) => handleCostElementToggle(element.element_id, enabled)}
-                          onOverrideChange={(rate) => handleCostElementRateChange(element.element_id, rate)}
-                          icon={getCostIcon(element.category)}
-                          helpText={`${element.category} - ${element.activity || 'General'}`}
-                          variant="default"
-                        />
-                      ))}
+                      {salesCostElements.map(element => {
+                        const elementQuantity = parseFloat(saleData.quantity_sold) || 0;
+                        const elementRate = parseFloat(element.default_rate) || 0;
+                        const isEnabled = costInputs[element.element_id]?.enabled || false;
+                        
+                        // Debug logging
+                        console.log(`Rendering ${element.element_name}:`, {
+                          quantity: elementQuantity,
+                          rate: elementRate,
+                          enabled: isEnabled,
+                          element_id: element.element_id
+                        });
+                        
+                        return (
+                          <CostElementRow
+                            key={element.element_id}
+                            elementName={element.element_name}
+                            masterRate={elementRate}
+                            unitType={element.unit_type || 'Per Kg'}
+                            quantity={elementQuantity}
+                            enabled={isEnabled}
+                            category={element.category}
+                            overrideRate={costInputs[element.element_id]?.overrideRate || ''}
+                            onToggle={(enabled) => {
+                              console.log(`Toggle ${element.element_name} to:`, enabled);
+                              handleCostElementToggle(element.element_id, enabled);
+                            }}
+                            onOverrideChange={(rate) => handleCostElementRateChange(element.element_id, rate)}
+                            icon={getCostIcon(element.category)}
+                            helpText={`${element.category} - ${element.activity || 'General'} - Rate: ₹${elementRate}/kg`}
+                            variant="default"
+                          />
+                        );
+                      })}
                       
                       {/* Show total if any costs are enabled */}
                       {Object.values(costInputs).some(input => input.enabled) && (
