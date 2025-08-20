@@ -1,5 +1,5 @@
 # Feature Pack: OPENING-BALANCE
-Generated: 2025-08-20T01:59:54.223Z
+Generated: 2025-08-20T02:06:34.410Z
 Routes: 8 | Tables: 11 | Files: 1
 
 ## Table of Contents
@@ -39,10 +39,10 @@ POST   /api/opening_balance/import
 | material_writeoffs | material-writeoff | 🟡 MEDIUM | Changes affect 1 other modules |
 | materials | batch-production, blending, material-writeoff | 🔴 HIGH | Changes affect 8 other modules |
 | opening_balances | None | 🟢 LOW | Isolated to this module |
-| purchases | batch-production, blending, purchase | 🔴 HIGH | Changes affect 3 other modules |
+| purchases | batch-production, blending, purchase | 🔴 HIGH | Changes affect 4 other modules |
 | serial_number_tracking | unknown | 🟡 MEDIUM | Changes affect 1 other modules |
 | suppliers | purchase, system-config, unknown | 🔴 HIGH | Changes affect 3 other modules |
-| system_configuration | None | 🟢 LOW | Isolated to this module |
+| system_configuration | unknown | 🟡 MEDIUM | Changes affect 1 other modules |
 | year_end_closing | None | 🟢 LOW | Isolated to this module |
 
 ## Backend Implementation

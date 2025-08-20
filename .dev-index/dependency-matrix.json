@@ -1,9 +1,9 @@
 {
   "version": "1.0",
-  "generatedAt": "2025-08-20T01:59:54.164Z",
+  "generatedAt": "2025-08-20T02:06:34.351Z",
   "summary": {
     "totalTables": 49,
-    "sharedTables": 22,
+    "sharedTables": 23,
     "hardcodedCategories": 0,
     "migrationOpportunities": 0
   },
@@ -76,7 +76,7 @@
         "system-config",
         "unknown"
       ],
-      "fileCount": 9,
+      "fileCount": 10,
       "operations": {
         "batch-production": {
           "files": [
@@ -128,7 +128,8 @@
         },
         "unknown": {
           "files": [
-            "puvi-backend/puvi-backend-main/utils/traceability.py"
+            "puvi-backend/puvi-backend-main/utils/traceability.py",
+            "puvi-backend/puvi-backend-main/app.py"
           ],
           "queryCount": 0
         }
@@ -139,9 +140,10 @@
         "batch-production",
         "blending",
         "opening-balance",
-        "purchase"
+        "purchase",
+        "unknown"
       ],
-      "fileCount": 4,
+      "fileCount": 5,
       "operations": {
         "batch-production": {
           "files": [
@@ -164,6 +166,12 @@
         "purchase": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/purchase.py"
+          ],
+          "queryCount": 0
+        },
+        "unknown": {
+          "files": [
+            "puvi-backend/puvi-backend-main/app.py"
           ],
           "queryCount": 0
         }
@@ -235,7 +243,7 @@
         "sku-production",
         "unknown"
       ],
-      "fileCount": 7,
+      "fileCount": 8,
       "operations": {
         "batch-production": {
           "files": [
@@ -275,7 +283,8 @@
         },
         "unknown": {
           "files": [
-            "puvi-backend/puvi-backend-main/utils/traceability.py"
+            "puvi-backend/puvi-backend-main/utils/traceability.py",
+            "puvi-backend/puvi-backend-main/app.py"
           ],
           "queryCount": 0
         }
@@ -598,13 +607,20 @@
     },
     "system_configuration": {
       "usedBy": [
-        "opening-balance"
+        "opening-balance",
+        "unknown"
       ],
-      "fileCount": 1,
+      "fileCount": 2,
       "operations": {
         "opening-balance": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/opening_balance.py"
+          ],
+          "queryCount": 0
+        },
+        "unknown": {
+          "files": [
+            "puvi-backend/puvi-backend-main/app.py"
           ],
           "queryCount": 0
         }
@@ -631,7 +647,7 @@
         "system-config",
         "unknown"
       ],
-      "fileCount": 4,
+      "fileCount": 5,
       "operations": {
         "opening-balance": {
           "files": [
@@ -653,7 +669,8 @@
         },
         "unknown": {
           "files": [
-            "puvi-backend/puvi-backend-main/utils/traceability.py"
+            "puvi-backend/puvi-backend-main/utils/traceability.py",
+            "puvi-backend/puvi-backend-main/app.py"
           ],
           "queryCount": 0
         }
@@ -726,9 +743,10 @@
       "usedBy": [
         "sku-management",
         "sku-production",
-        "system-config"
+        "system-config",
+        "unknown"
       ],
-      "fileCount": 3,
+      "fileCount": 4,
       "operations": {
         "sku-management": {
           "files": [
@@ -745,6 +763,12 @@
         "system-config": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/system_config.py"
+          ],
+          "queryCount": 0
+        },
+        "unknown": {
+          "files": [
+            "puvi-backend/puvi-backend-main/app.py"
           ],
           "queryCount": 0
         }
@@ -1050,7 +1074,7 @@
         "unknown"
       ],
       "moduleCount": 9,
-      "fileCount": 9,
+      "fileCount": 10,
       "risk": "HIGH",
       "recommendation": "⚠️ CRITICAL: Changes require coordination across 9 modules"
     },
@@ -1060,12 +1084,13 @@
         "batch-production",
         "blending",
         "opening-balance",
-        "purchase"
+        "purchase",
+        "unknown"
       ],
-      "moduleCount": 4,
-      "fileCount": 4,
+      "moduleCount": 5,
+      "fileCount": 5,
       "risk": "HIGH",
-      "recommendation": "⚠️ CRITICAL: Changes require coordination across 4 modules"
+      "recommendation": "⚠️ CRITICAL: Changes require coordination across 5 modules"
     },
     {
       "table": "batch",
@@ -1079,7 +1104,7 @@
         "unknown"
       ],
       "moduleCount": 7,
-      "fileCount": 7,
+      "fileCount": 8,
       "risk": "HIGH",
       "recommendation": "⚠️ CRITICAL: Changes require coordination across 7 modules"
     },
@@ -1105,7 +1130,7 @@
         "unknown"
       ],
       "moduleCount": 4,
-      "fileCount": 4,
+      "fileCount": 5,
       "risk": "HIGH",
       "recommendation": "⚠️ CRITICAL: Changes require coordination across 4 modules"
     },
@@ -1114,12 +1139,13 @@
       "sharedBy": [
         "sku-management",
         "sku-production",
-        "system-config"
+        "system-config",
+        "unknown"
       ],
-      "moduleCount": 3,
-      "fileCount": 3,
-      "risk": "MEDIUM",
-      "recommendation": "Changes will affect sku-management, sku-production, system-config"
+      "moduleCount": 4,
+      "fileCount": 4,
+      "risk": "HIGH",
+      "recommendation": "⚠️ CRITICAL: Changes require coordination across 4 modules"
     },
     {
       "table": "purchase_items",
@@ -1230,6 +1256,17 @@
       "fileCount": 2,
       "risk": "LOW",
       "recommendation": "Changes will affect material-writeoff, opening-balance"
+    },
+    {
+      "table": "system_configuration",
+      "sharedBy": [
+        "opening-balance",
+        "unknown"
+      ],
+      "moduleCount": 2,
+      "fileCount": 2,
+      "risk": "LOW",
+      "recommendation": "Changes will affect opening-balance, unknown"
     },
     {
       "table": "serial_number_tracking",

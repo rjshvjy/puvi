@@ -1,5 +1,5 @@
 # Feature Pack: BLEND-HISTORY
-Generated: 2025-08-20T01:59:54.219Z
+Generated: 2025-08-20T02:06:34.406Z
 Routes: 1 | Tables: 6 | Files: 1
 
 ## Table of Contents
@@ -24,7 +24,7 @@ GET    /api/blend_history
 | blend_batches | blending, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
 | inventory | batch-production, blending, material-writeoff | 🔴 HIGH | Changes affect 7 other modules |
 | materials | batch-production, blending, material-writeoff | 🔴 HIGH | Changes affect 9 other modules |
-| purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 4 other modules |
+| purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 5 other modules |
 
 ## Backend Implementation
 
