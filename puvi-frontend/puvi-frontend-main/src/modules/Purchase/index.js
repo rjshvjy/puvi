@@ -634,13 +634,13 @@ Please ensure UOM allocation totals 100% and all items have proper units.`);
         response = await res.json();
       }
       
-      if (response.traceable_codes) {
+      if (response && response.traceable_codes) {
         setMessage(`✅ Purchase recorded successfully! 
 Invoice: ${response.invoice_ref}
 Total: ₹${response.total_cost}
 Items: ${response.items_count}
 Traceable Codes: ${response.traceable_codes.join(', ')}`);
-      } else {
+      } else if (response) {
         setMessage(`✅ Purchase recorded successfully! 
 Invoice: ${response.invoice_ref}
 Total: ₹${response.total_cost}
