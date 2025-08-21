@@ -1,3 +1,9 @@
+/**
+ * Blending Module Frontend Component
+ * File Path: puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js
+ * Handles oil blending with automatic and manual oil type selection
+ */
+
 import React, { useState, useEffect } from 'react';
 
 const Blending = () => {
@@ -6,6 +12,10 @@ const Blending = () => {
   const [showHistory, setShowHistory] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  
+  // Result oil type for mixed blends
+  const [resultOilType, setResultOilType] = useState('');
+  const [availableResultTypes, setAvailableResultTypes] = useState([]);
   
   // Blend form data
   const [blendData, setBlendData] = useState({
@@ -17,8 +27,8 @@ const Blending = () => {
   
   // Blend components - start with 2 rows
   const [components, setComponents] = useState([
-    { id: 1, oil_type: '', batch_id: '', batch_code: '', available_quantity: 0, cost_per_kg: 0, percentage: '', source_type: '', traceable_code: '' },
-    { id: 2, oil_type: '', batch_id: '', batch_code: '', available_quantity: 0, cost_per_kg: 0, percentage: '', source_type: '', traceable_code: '' }
+    { id: 1, oil_type: '', batch_id: '', batch_code: '', available_quantity: 0, cost_per_kg: 0, percentage: '', source_type: '', traceable_code: '', actual_oil_type: '' },
+    { id: 2, oil_type: '', batch_id: '', batch_code: '', available_quantity: 0, cost_per_kg: 0, percentage: '', source_type: '', traceable_code: '', actual_oil_type: '' }
   ]);
   
   // Available batches for each component
@@ -31,16 +41,59 @@ const Blending = () => {
     fetchOilTypes();
   }, []);
   
+  // Check if we need result oil type selection whenever components change
+  useEffect(() => {
+    checkResultOilTypeNeeded();
+  }, [components]);
+  
   const fetchOilTypes = async () => {
     try {
       const response = await fetch(`${API_BASE}/api/oil_types_for_blending`);
       const data = await response.json();
       if (data.success) {
         setOilTypes(data.oil_types);
+        // Also fetch all available oil types for result selection
+        fetchAvailableResultTypes();
       }
     } catch (error) {
       console.error('Error fetching oil types:', error);
       setMessage('Error loading oil types');
+    }
+  };
+  
+  const fetchAvailableResultTypes = async () => {
+    try {
+      // Get all available oil types from subcategories for result type selection
+      const response = await fetch(`${API_BASE}/api/oil_types_for_blending`);
+      const data = await response.json();
+      if (data.success) {
+        setAvailableResultTypes(data.oil_types);
+      }
+    } catch (error) {
+      console.error('Error fetching result types:', error);
+    }
+  };
+  
+  const checkResultOilTypeNeeded = () => {
+    // Get unique actual oil types from selected components
+    const validComponents = components.filter(c => c.oil_type && c.batch_id);
+    const uniqueOilTypes = [...new Set(validComponents.map(c => {
+      // Use actual_oil_type if available (from batch data), otherwise use oil_type
+      return c.actual_oil_type || c.oil_type;
+    }))];
+    
+    // If mixing different oil types, we need user to select result type
+    if (uniqueOilTypes.length > 1) {
+      // Keep existing selection if already made
+      if (!resultOilType) {
+        setMessage('ℹ️ Mixing different oil types - please select the result oil type below');
+      }
+    } else {
+      // Same oil types or no valid components - clear result oil type
+      setResultOilType('');
+      if (uniqueOilTypes.length === 1) {
+        setMessage('');
+      }
     }
   };
   
@@ -74,7 +127,7 @@ const Blending = () => {
   const handleOilTypeChange = (componentId, oilType) => {
     const updatedComponents = components.map(comp => {
       if (comp.id === componentId) {
-        return { ...comp, oil_type: oilType, batch_id: '', batch_code: '', available_quantity: 0, cost_per_kg: 0 };
+        return { ...comp, oil_type: oilType, batch_id: '', batch_code: '', available_quantity: 0, cost_per_kg: 0, actual_oil_type: '' };
       }
       return comp;
     });
@@ -105,7 +158,8 @@ const Blending = () => {
             available_quantity: selectedBatch.available_quantity,
             cost_per_kg: selectedBatch.cost_per_kg,
             source_type: selectedBatch.source_type,
-            traceable_code: selectedBatch.traceable_code || ''
+            traceable_code: selectedBatch.traceable_code || '',
+            actual_oil_type: selectedBatch.oil_type // Store the actual oil type from batch
           };
         }
         return comp;
@@ -135,7 +189,8 @@ const Blending = () => {
       cost_per_kg: 0,
       percentage: '',
       source_type: '',
-      traceable_code: ''
+      traceable_code: '',
+      actual_oil_type: ''
     }]);
   };
   
@@ -172,6 +227,13 @@ const Blending = () => {
     };
   };
   
+  // Check if mixing different oil types
+  const isDifferentOilsMix = () => {
+    const validComponents = components.filter(c => c.oil_type && c.batch_id);
+    const uniqueOilTypes = [...new Set(validComponents.map(c => c.actual_oil_type || c.oil_type))];
+    return uniqueOilTypes.length > 1;
+  };
+  
   const handleSubmit = async () => {
     const totals = calculateTotals();
     if (!totals.isValid) {
@@ -188,6 +250,13 @@ const Blending = () => {
     
     if (!blendData.blend_description || !blendData.total_quantity) {
       setMessage('❌ Error: Please fill in all required fields');
+      return;
+    }
+    
+    // Check if result oil type is needed and provided
+    const needsResultOilType = isDifferentOilsMix();
+    if (needsResultOilType && !resultOilType) {
+      setMessage('❌ Error: Please select the result oil type for this mixed blend');
       return;
     }
     
@@ -208,6 +277,11 @@ const Blending = () => {
         }))
       };
       
+      // Add result_oil_type only if mixing different oils
+      if (needsResultOilType) {
+        payload.result_oil_type = resultOilType;
+      }
+      
       const response = await fetch(`${API_BASE}/api/create_blend`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -220,6 +294,7 @@ const Blending = () => {
         setMessage(`✅ Blend created successfully!
 Blend Code: ${data.blend_code}
 Traceable Code: ${data.traceable_code}
+Result Oil Type: ${data.result_oil_type}
 Weighted Average Cost: ₹${data.weighted_avg_cost}/kg`);
         
         // Reset form
@@ -230,17 +305,26 @@ Weighted Average Cost: ₹${data.weighted_avg_cost}/kg`);
           created_by: ''
         });
         setComponents([
-          { id: 1, oil_type: '', batch_id: '', batch_code: '', available_quantity: 0, cost_per_kg: 0, percentage: '', source_type: '', traceable_code: '' },
-          { id: 2, oil_type: '', batch_id: '', batch_code: '', available_quantity: 0, cost_per_kg: 0, percentage: '', source_type: '', traceable_code: '' }
+          { id: 1, oil_type: '', batch_id: '', batch_code: '', available_quantity: 0, cost_per_kg: 0, percentage: '', source_type: '', traceable_code: '', actual_oil_type: '' },
+          { id: 2, oil_type: '', batch_id: '', batch_code: '', available_quantity: 0, cost_per_kg: 0, percentage: '', source_type: '', traceable_code: '', actual_oil_type: '' }
         ]);
         setBatchesForComponents({});
+        setResultOilType('');
         
         // Refresh history if visible
         if (showHistory) {
           fetchBlendHistory();
         }
       } else {
-        setMessage(`❌ Error: ${data.error}`);
+        // Check if backend is asking for result oil type selection
+        if (data.requires_selection && data.available_types) {
+          setAvailableResultTypes(data.available_types.map(t => t.display_name || t.oil_type));
+          setMessage(`❌ Error: ${data.error}
+Mixing: ${data.mixed_oil_types ? data.mixed_oil_types.join(' + ') : 'different oils'}
+Please select the result oil type below.`);
+        } else {
+          setMessage(`❌ Error: ${data.error}`);
+        }
       }
     } catch (error) {
       setMessage(`❌ Error: ${error.message}`);
@@ -250,6 +334,7 @@ Weighted Average Cost: ₹${data.weighted_avg_cost}/kg`);
   };
   
   const totals = calculateTotals();
+  const needsResultOilType = isDifferentOilsMix();
   
   // Inline styles for professional UI
   const styles = {
@@ -294,6 +379,11 @@ Weighted Average Cost: ₹${data.weighted_avg_cost}/kg`);
       backgroundColor: '#f8d7da',
       color: '#721c24',
       border: '1px solid #f5c6cb'
+    },
+    infoMessage: {
+      backgroundColor: '#d1ecf1',
+      color: '#0c5460',
+      border: '1px solid #bee5eb'
     },
     card: {
       backgroundColor: '#fff',
@@ -393,6 +483,13 @@ Weighted Average Cost: ₹${data.weighted_avg_cost}/kg`);
       padding: '15px',
       borderRadius: '6px',
       textAlign: 'center'
+    },
+    resultOilTypeCard: {
+      backgroundColor: '#fff3cd',
+      border: '1px solid #ffeaa7',
+      padding: '20px',
+      borderRadius: '6px',
+      marginBottom: '20px'
     }
   };
   
@@ -416,7 +513,9 @@ Weighted Average Cost: ₹${data.weighted_avg_cost}/kg`);
       {message && (
         <div style={{
           ...styles.message,
-          ...(message.includes('✅') ? styles.successMessage : styles.errorMessage)
+          ...(message.includes('✅') ? styles.successMessage : 
+              message.includes('ℹ️') ? styles.infoMessage : 
+              styles.errorMessage)
         }}>
           {message}
         </div>
@@ -560,6 +659,36 @@ Weighted Average Cost: ₹${data.weighted_avg_cost}/kg`);
             </div>
           </div>
           
+          {/* Result Oil Type Selection - Only shown when mixing different oils */}
+          {needsResultOilType && (
+            <div style={styles.resultOilTypeCard}>
+              <h3 style={styles.cardTitle}>Result Oil Type Selection</h3>
+              <p style={{ marginBottom: '15px', color: '#856404' }}>
+                You are mixing different oil types. Please select what the resulting blend should be classified as:
+              </p>
+              <div style={styles.formGroup}>
+                <label style={styles.label}>Result Oil Type *</label>
+                <select
+                  value={resultOilType}
+                  onChange={(e) => setResultOilType(e.target.value)}
+                  style={{ ...styles.select, borderColor: '#ffc107', borderWidth: '2px' }}
+                >
+                  <option value="">-- Select Result Oil Type --</option>
+                  {availableResultTypes.map(type => (
+                    <option key={type} value={type}>{type}</option>
+                  ))}
+                </select>
+                <small style={{ marginTop: '8px', color: '#856404' }}>
+                  Mixing: {components
+                    .filter(c => c.oil_type && c.batch_id)
+                    .map(c => c.actual_oil_type || c.oil_type)
+                    .filter((v, i, a) => a.indexOf(v) === i)
+                    .join(' + ')}
+                </small>
+              </div>
+            </div>
+          )}
+          
           {/* Cost Summary */}
           <div style={styles.card}>
             <h3 style={styles.cardTitle}>Blend Summary</h3>
@@ -598,10 +727,10 @@ Weighted Average Cost: ₹${data.weighted_avg_cost}/kg`);
           <div style={{ textAlign: 'right' }}>
             <button
               onClick={handleSubmit}
-              disabled={loading || !totals.isValid}
+              disabled={loading || !totals.isValid || (needsResultOilType && !resultOilType)}
               style={{
                 ...styles.submitBtn,
-                ...(loading || !totals.isValid ? styles.submitBtnDisabled : {})
+                ...(loading || !totals.isValid || (needsResultOilType && !resultOilType) ? styles.submitBtnDisabled : {})
               }}
             >
               {loading ? 'Creating Blend...' : 'Create Blend'}
@@ -617,11 +746,12 @@ Weighted Average Cost: ₹${data.weighted_avg_cost}/kg`);
                 <tr>
                   <th style={styles.th}>Date</th>
                   <th style={styles.th}>Blend Code</th>
-                  <th style={styles.th}>Oil Types</th>
+                  <th style={styles.th}>Components</th>
+                  <th style={styles.th}>Result Type</th>
                   <th style={{ ...styles.th, textAlign: 'center' }}>Quantity</th>
                   <th style={{ ...styles.th, textAlign: 'center' }}>Avg Cost</th>
                   <th style={styles.th}>Traceable Code</th>
-                  <th style={{ ...styles.th, textAlign: 'center' }}>Components</th>
+                  <th style={{ ...styles.th, textAlign: 'center' }}>Count</th>
                 </tr>
               </thead>
               <tbody>
@@ -630,6 +760,7 @@ Weighted Average Cost: ₹${data.weighted_avg_cost}/kg`);
                     <td style={styles.td}>{blend.blend_date}</td>
                     <td style={styles.td}>{blend.blend_code}</td>
                     <td style={styles.td}>{blend.oil_types}</td>
+                    <td style={styles.td}><strong>{blend.result_oil_type || 'Mixed'}</strong></td>
                     <td style={{ ...styles.td, textAlign: 'center' }}>{blend.total_quantity} kg</td>
                     <td style={{ ...styles.td, textAlign: 'center' }}>₹{blend.weighted_avg_cost.toFixed(2)}</td>
                     <td style={{ ...styles.td, fontFamily: 'monospace', fontSize: '12px' }}>{blend.traceable_code}</td>
