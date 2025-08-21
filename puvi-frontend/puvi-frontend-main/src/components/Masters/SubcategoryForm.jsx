@@ -343,7 +343,7 @@ const SubcategoryForm = ({
 
         <form onSubmit={handleSubmit} className="masters-form-body">
           {/* Context-Sensitive Help */}
-          {formData.category_id && (
+          {formData.category_id ? (
             <div style={{
               padding: '10px',
               backgroundColor: '#f0f9ff',
@@ -370,7 +370,7 @@ const SubcategoryForm = ({
                 )}
               </div>
             </div>
-          )}
+          ) : null}
 
           {/* Error display */}
           {errors.submit && (
@@ -505,7 +505,7 @@ const SubcategoryForm = ({
           {/* Oil Type - ONLY FOR OIL PRODUCTS */}
           {formData.category_id && ['Oil', 'Seeds'].includes(
             categories.find(c => c.category_id === formData.category_id)?.category_name
-          ) && (
+          ) ? (
             <div className="form-group" style={{
               padding: '12px',
               backgroundColor: '#fef3c7',
@@ -536,7 +536,7 @@ const SubcategoryForm = ({
                 <strong>Example:</strong> Seeds with produces_oil_type="Groundnut" → Oil with oil_type="Groundnut"
               </div>
             </div>
-          )}
+          ) : null}
 
           {/* Active Status */}
           <div className="form-group">
