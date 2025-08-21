@@ -36,6 +36,34 @@ from modules.masters_common import (
 masters_crud_bp = Blueprint('masters_crud', __name__)
 
 # =====================================================
+# HELPER FUNCTION TO CHECK COLUMN EXISTENCE
+# =====================================================
+
+def check_column_exists(cur, table_name, column_name):
+    """
+    Check if a column exists in a table
+    
+    Args:
+        cur: Database cursor
+        table_name: Name of the table
+        column_name: Name of the column
+    
+    Returns:
+        bool: True if column exists, False otherwise
+    """
+    try:
+        cur.execute("""
+            SELECT COUNT(*) 
+            FROM information_schema.columns 
+            WHERE table_name = %s 
+            AND column_name = %s
+        """, (table_name, column_name))
+        
+        return cur.fetchone()[0] > 0
+    except:
+        return False
+
+# =====================================================
 # LIST MASTER TYPES
 # =====================================================
 
@@ -402,7 +430,7 @@ def create_record(master_type):
 
 
 # =====================================================
-# UPDATE RECORD
+# UPDATE RECORD - FIXED WITH COLUMN CHECK
 # =====================================================
 
 @masters_crud_bp.route('/api/masters/<master_type>/<record_id>', methods=['PUT'])
@@ -468,8 +496,9 @@ def update_record(master_type, record_id):
                 'error': 'No valid fields to update'
             }), 400
         
-        # Add updated_at
-        set_clauses.append("updated_at = CURRENT_TIMESTAMP")
+        # Check if updated_at column exists before adding it
+        if check_column_exists(cur, table, 'updated_at'):
+            set_clauses.append("updated_at = CURRENT_TIMESTAMP")
         
         # Add record_id to values
         if config.get('primary_key_type') == 'varchar':
