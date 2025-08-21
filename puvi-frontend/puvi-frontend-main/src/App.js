@@ -1,5 +1,6 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/App.js
 // Modern Professional App Component for PUVI Oil Manufacturing System
+// MODIFIED: Added Oil Configuration as a standalone module
 
 import React, { useState, useEffect } from 'react';
 import './App.css';
@@ -14,6 +15,7 @@ import CostManagement from './modules/CostManagement';
 import SKUManagement from './modules/SKUManagement';
 import MastersManagement from './modules/MastersManagement';
 import OpeningBalanceModule from './modules/OpeningBalanceModule';
+import OilConfigurationDashboard from './components/Masters/OilConfigurationDashboard';
 
 function App() {
   // State Management
@@ -58,7 +60,8 @@ function App() {
     {
       section: 'CONFIGURATION',
       items: [
-        { id: 'masters', label: 'Masters', icon: '⚙️', badge: null }
+        { id: 'masters', label: 'Masters', icon: '⚙️', badge: null },
+        { id: 'oilConfig', label: 'Oil Configuration', icon: '🛢️', badge: null }
       ]
     }
   ];
@@ -142,7 +145,8 @@ function App() {
       sales: 'Material Sales',
       writeoff: 'Material Writeoff',
       cost: 'Cost Management',
-      masters: 'Master Data Management'
+      masters: 'Master Data Management',
+      oilConfig: 'Oil Configuration Manager'
     };
     return titles[activeModule] || 'Dashboard';
   };
@@ -159,7 +163,8 @@ function App() {
       sales: 'Track material and by-product sales',
       writeoff: 'Record material losses and writeoffs',
       cost: 'Analyze and manage production costs',
-      masters: 'Configure suppliers, materials, and system settings'
+      masters: 'Configure suppliers, materials, and system settings',
+      oilConfig: 'Manage oil type mappings for production chain'
     };
     return subtitles[activeModule] || '';
   };
@@ -185,6 +190,8 @@ function App() {
         return <MastersManagement />;
       case 'openingBalance':
         return <OpeningBalanceModule />;
+      case 'oilConfig':
+        return <OilConfigurationDashboard />;
       case 'dashboard':
       default:
         return <DashboardContent stats={systemStats} onNavigate={setActiveModule} onRefresh={fetchSystemStats} />;
