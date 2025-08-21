@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-21T19:06:31.910Z",
+  "generatedAt": "2025-08-21T19:19:52.502Z",
   "filesScanned": 59,
   "jsFilesScanned": 37,
   "pyFilesScanned": 22,
@@ -1003,6 +1003,12 @@
       ]
     },
     {
+      "from": "./components/Masters/OilConfigurationDashboard",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/App.js"
+      ]
+    },
+    {
       "from": "react-dom/client",
       "usedIn": [
         "puvi-frontend/puvi-frontend-main/src/index.js"
@@ -1460,13 +1466,13 @@
     {
       "name": "DashboardContent",
       "file": "puvi-frontend/puvi-frontend-main/src/App.js",
-      "line": 278,
+      "line": 285,
       "type": "const"
     },
     {
       "name": "App",
       "file": "puvi-frontend/puvi-frontend-main/src/App.js",
-      "line": 469,
+      "line": 476,
       "type": "default-export"
     },
     {
@@ -6777,7 +6783,7 @@
   "functionSignatures": [
     {
       "file": "puvi-frontend/puvi-frontend-main/src/App.js",
-      "line": 18,
+      "line": 20,
       "name": "App",
       "params": "",
       "type": "function",
@@ -6785,7 +6791,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/App.js",
-      "line": 72,
+      "line": 75,
       "name": "checkAPIConnection",
       "params": "",
       "type": "arrow",
@@ -6793,7 +6799,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/App.js",
-      "line": 87,
+      "line": 90,
       "name": "fetchSystemStats",
       "params": "",
       "type": "arrow",
@@ -6801,7 +6807,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/App.js",
-      "line": 91,
+      "line": 94,
       "name": "fetchWithFallback",
       "params": "url",
       "type": "arrow",
@@ -6809,7 +6815,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/App.js",
-      "line": 124,
+      "line": 127,
       "name": "toggleSidebar",
       "params": "",
       "type": "arrow",
@@ -6817,7 +6823,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/App.js",
-      "line": 129,
+      "line": 132,
       "name": "toggleMobileMenu",
       "params": "",
       "type": "arrow",
@@ -6825,7 +6831,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/App.js",
-      "line": 134,
+      "line": 137,
       "name": "getModuleTitle",
       "params": "",
       "type": "arrow",
@@ -6833,7 +6839,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/App.js",
-      "line": 151,
+      "line": 155,
       "name": "getModuleSubtitle",
       "params": "",
       "type": "arrow",
@@ -6841,7 +6847,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/App.js",
-      "line": 168,
+      "line": 173,
       "name": "renderModuleContent",
       "params": "",
       "type": "arrow",
@@ -6849,7 +6855,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/App.js",
-      "line": 278,
+      "line": 285,
       "name": "DashboardContent",
       "params": "{ stats, onNavigate, onRefresh }",
       "type": "arrow",
@@ -11107,7 +11113,7 @@
   "stateManagement": [
     {
       "file": "puvi-frontend/puvi-frontend-main/src/App.js",
-      "line": 20,
+      "line": 22,
       "type": "useState",
       "name": "activeModule",
       "setter": "setActiveModule",
@@ -11115,13 +11121,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/App.js",
-      "line": 20,
+      "line": 22,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/App.js",
-      "line": 21,
+      "line": 23,
       "type": "useState",
       "name": "sidebarCollapsed",
       "setter": "setSidebarCollapsed",
@@ -11129,13 +11135,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/App.js",
-      "line": 21,
+      "line": 23,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/App.js",
-      "line": 22,
+      "line": 24,
       "type": "useState",
       "name": "mobileMenuOpen",
       "setter": "setMobileMenuOpen",
@@ -11143,13 +11149,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/App.js",
-      "line": 22,
+      "line": 24,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/App.js",
-      "line": 23,
+      "line": 25,
       "type": "useState",
       "name": "systemStats",
       "setter": "setSystemStats",
@@ -11157,19 +11163,19 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/App.js",
-      "line": 23,
+      "line": 25,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/App.js",
-      "line": 67,
+      "line": 70,
       "type": "useEffect",
       "hook": "useEffect"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/App.js",
-      "line": 83,
+      "line": 86,
       "type": "useEffect",
       "hook": "useEffect"
     },
@@ -16095,21 +16101,15 @@
   "errorHandling": [
     {
       "file": "puvi-frontend/puvi-frontend-main/src/App.js",
-      "line": 73,
+      "line": 76,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/App.js",
-      "line": 76,
+      "line": 79,
       "type": "catch",
       "code": "} catch (error) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/App.js",
-      "line": 89,
-      "type": "try-catch",
-      "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/App.js",
@@ -16119,13 +16119,19 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/App.js",
-      "line": 96,
+      "line": 95,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/App.js",
+      "line": 99,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/App.js",
-      "line": 117,
+      "line": 120,
       "type": "catch",
       "code": "} catch (error) {"
     },
@@ -19431,7 +19437,7 @@
     "components": 41,
     "routes": 100,
     "exports": 41,
-    "imports": 50,
+    "imports": 51,
     "hardcodedValues": 23,
     "databaseQueries": 327,
     "databaseTables": 50,
