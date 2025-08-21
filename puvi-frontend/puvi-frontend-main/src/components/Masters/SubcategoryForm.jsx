@@ -14,9 +14,18 @@ const apiCall = async (url, options = {}) => {
       },
       ...options
     });
-    const data = await response.json();
+    let data;
+    try {
+      data = await response.json();
+    } catch (jsonError) {
+      // If not JSON, fall back to text
+      const text = await response.text();
+      console.log('Backend non-JSON response:', text);
+      throw new Error(text || `API call failed: ${response.status}`);
+    }
     if (!response.ok) {
-      throw new Error(data.error || `API call failed: ${response.status}`);
+      console.log('Backend response data:', data); // Log raw data for debugging
+      throw new Error(data.message || data.error || JSON.stringify(data) || `API call failed: ${response.status}`);
     }
     return data;
   } catch (error) {
@@ -347,7 +356,7 @@ const SubcategoryForm = ({
                 {['Chemicals', 'Consumables', 'Packaging'].includes(
                   categories.find(c => c.category_id === formData.category_id)?.category_name
                 ) && (
-                  <>• Optional - - you can add materials directly to the category<br/>
+                  <>• Optional - you can add materials directly to the category<br/>
                   • Create subcategories only if you need further grouping</>
                 )}
               </div>
