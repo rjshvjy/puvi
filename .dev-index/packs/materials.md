@@ -1,5 +1,5 @@
 # Feature Pack: MATERIALS
-Generated: 2025-08-20T17:34:01.640Z
+Generated: 2025-08-21T01:06:53.464Z
 Routes: 4 | Tables: 14 | Files: 2
 
 ## Table of Contents

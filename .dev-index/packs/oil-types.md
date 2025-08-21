@@ -1,5 +1,5 @@
 # Feature Pack: OIL-TYPES
-Generated: 2025-08-20T17:34:01.634Z
+Generated: 2025-08-21T01:06:53.458Z
 Routes: 1 | Tables: 9 | Files: 1
 
 ## Table of Contents
@@ -30,10 +30,10 @@ GET    /api/oil_types
 | purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 5 other modules |
 
 ### ⚠️ Hardcoded Values Detected
-- `batch_production.py:214` - object
-- `batch_production.py:215` - object
 - `batch_production.py:216` - object
 - `batch_production.py:217` - object
+- `batch_production.py:218` - object
+- `batch_production.py:219` - object
 
 ## Backend Implementation
 
