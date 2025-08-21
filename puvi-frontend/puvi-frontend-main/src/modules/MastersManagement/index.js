@@ -1,12 +1,14 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/index.js
 // Masters Management Module with Categories and Subcategories Support
 // Updated to include Oil Types & Blends management via subcategories
+// MODIFIED: Added Oil Configuration Manager navigation
 
 import React, { useState } from 'react';
 import MastersList from '../../components/Masters/MastersList';
 import MasterForm from '../../components/Masters/MasterForm';
 import SubcategoriesList from '../../components/Masters/SubcategoriesList';
 import SubcategoryForm from '../../components/Masters/SubcategoryForm';
+import OilConfigurationDashboard from '../../components/Masters/OilConfigurationDashboard';
 import './MastersManagement.css';
 
 const MastersManagement = () => {
@@ -14,6 +16,7 @@ const MastersManagement = () => {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
   const [showForm, setShowForm] = useState(false);
   const [editData, setEditData] = useState(null);
+  const [showOilConfig, setShowOilConfig] = useState(false);
 
   // Extended tabs to include categories and subcategories
   const masterTabs = [
@@ -49,16 +52,115 @@ const MastersManagement = () => {
     setEditData(null);
   };
 
+  const handleOilConfigClose = () => {
+    setShowOilConfig(false);
+    setRefreshTrigger(prev => prev + 1); // Refresh lists after config changes
+  };
+
   // Render appropriate list component based on active tab
   const renderListComponent = () => {
+    // Show Oil Configuration Dashboard if active
+    if (showOilConfig) {
+      return (
+        <div style={{ position: 'relative' }}>
+          {/* Back button */}
+          <div style={{ 
+            marginBottom: '20px',
+            padding: '10px',
+            backgroundColor: '#f3f4f6',
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px'
+          }}>
+            <button
+              onClick={handleOilConfigClose}
+              className="masters-btn masters-btn-secondary"
+              style={{
+                padding: '8px 16px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}
+            >
+              ← Back to Subcategories
+            </button>
+            <span style={{ color: '#6b7280' }}>
+              Configure oil type mappings for production chain
+            </span>
+          </div>
+          <OilConfigurationDashboard />
+        </div>
+      );
+    }
+
     // Special handling for subcategories which use different endpoints
     if (activeTab === 'subcategories') {
       return (
-        <SubcategoriesList
-          onAdd={handleAdd}
-          onEdit={handleEdit}
-          refreshTrigger={refreshTrigger}
-        />
+        <div>
+          {/* Oil Configuration Section */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '20px',
+            padding: '16px',
+            backgroundColor: '#fef3c7',
+            borderRadius: '8px',
+            border: '1px solid #f59e0b'
+          }}>
+            <div>
+              <h3 style={{ margin: 0, color: '#92400e' }}>
+                🛢️ Oil Types & Blends Configuration
+              </h3>
+              <p style={{ 
+                color: '#78350f', 
+                fontSize: '14px', 
+                marginTop: '4px',
+                marginBottom: 0
+              }}>
+                Manage oil types and product subcategories. Configure seed-to-oil mappings for production.
+              </p>
+            </div>
+            <button
+              onClick={() => setShowOilConfig(true)}
+              className="masters-btn masters-btn-primary"
+              style={{
+                backgroundColor: '#f59e0b',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                padding: '10px 20px',
+                fontSize: '14px',
+                fontWeight: '600',
+                border: 'none',
+                borderRadius: '6px',
+                color: 'white',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = '#d97706';
+                e.target.style.transform = 'translateY(-2px)';
+                e.target.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = '#f59e0b';
+                e.target.style.transform = 'translateY(0)';
+                e.target.style.boxShadow = 'none';
+              }}
+            >
+              🔧 Oil Configuration Manager
+            </button>
+          </div>
+
+          {/* Existing SubcategoriesList component */}
+          <SubcategoriesList
+            onAdd={handleAdd}
+            onEdit={handleEdit}
+            refreshTrigger={refreshTrigger}
+          />
+        </div>
       );
     }
     
@@ -130,6 +232,7 @@ const MastersManagement = () => {
               setActiveTab(tab.id);
               setShowForm(false); // Close any open forms when switching tabs
               setEditData(null);
+              setShowOilConfig(false); // Close oil config when switching tabs
             }}
             className={`masters-tab ${activeTab === tab.id ? 'active' : ''}`}
           >
