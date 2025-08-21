@@ -342,15 +342,6 @@ const SubcategoryForm = ({
               {existingOilTypes.map(type => (
                 <option key={type} value={type} />
               ))}
-              {/* Add common suggestions */}
-              <option value="Groundnut" />
-              <option value="Sesame" />
-              <option value="Coconut" />
-              <option value="Sunflower" />
-              <option value="Mustard" />
-              <option value="Deepam Oil" />
-              <option value="Cooking Blend" />
-              <option value="Festival Special" />
             </datalist>
             <div className="form-help" style={{ marginTop: '8px', color: '#92400e' }}>
               <strong>Critical:</strong> This value determines what oil type is produced. 
