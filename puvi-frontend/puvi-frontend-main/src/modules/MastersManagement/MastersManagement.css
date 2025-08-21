@@ -1,6 +1,7 @@
 /* File Path: puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/MastersManagement.css */
 /* Masters Management Module - Complete Professional Design System */
 /* Includes styles for MastersManagement, MastersList, and MasterForm components */
+/* Updated: Added form classes for SubcategoryForm component */
 
 /* ==================== Main Container ==================== */
 .masters-management-container {
@@ -529,6 +530,93 @@
   gap: 12px;
 }
 
+/* ==================== NEW: Form Classes for SubcategoryForm ==================== */
+/* These are simpler form classes used by SubcategoryForm component */
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.form-control {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  color: #1f2937;
+  background: white;
+  transition: all 0.2s ease;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.form-control.error {
+  border-color: #ef4444;
+}
+
+.form-control:disabled {
+  background: #f3f4f6;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.form-error {
+  color: #ef4444;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.form-help {
+  color: #6b7280;
+  font-size: 12px;
+  margin-top: 4px;
+  line-height: 1.4;
+}
+
+/* Alert Styles for Forms */
+.alert {
+  padding: 12px 16px;
+  border-radius: 6px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.alert-error {
+  background: #fee;
+  color: #c00;
+  border: 1px solid #fcc;
+}
+
+.alert-success {
+  background: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.alert-warning {
+  background: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeaa7;
+}
+
+.alert-info {
+  background: #d1ecf1;
+  color: #0c5460;
+  border: 1px solid #bee5eb;
+}
+
 /* ==================== Button Styles ==================== */
 .masters-btn {
   padding: 10px 20px;
@@ -553,6 +641,11 @@
   box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
 }
 
+.masters-btn-primary:disabled {
+  background: #93bbfc;
+  cursor: not-allowed;
+}
+
 .masters-btn-secondary {
   background: #6b7280;
   color: white;
@@ -560,6 +653,11 @@
 
 .masters-btn-secondary:hover {
   background: #4b5563;
+}
+
+.masters-btn-secondary:disabled {
+  background: #9ca3af;
+  cursor: not-allowed;
 }
 
 .masters-btn-success {
@@ -617,6 +715,7 @@
 /* ==================== Loading and Empty States ==================== */
 .masters-loading {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   padding: 60px;
@@ -630,6 +729,7 @@
   border-top-color: #2563eb;
   border-radius: 50%;
   animation: spin 1s linear infinite;
+  margin-bottom: 12px;
 }
 
 @keyframes spin {
@@ -654,6 +754,13 @@
   font-size: 16px;
   margin-bottom: 8px;
   color: #4b5563;
+}
+
+.masters-empty-text small {
+  display: block;
+  margin-top: 8px;
+  font-size: 14px;
+  color: #9ca3af;
 }
 
 .masters-empty-subtext {
