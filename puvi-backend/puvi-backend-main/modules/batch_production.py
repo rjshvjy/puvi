@@ -2,7 +2,7 @@
 Batch Production Module for PUVI Oil Manufacturing System
 Handles oil extraction from seeds, cost allocation, by-product tracking, and traceability
 File Path: puvi-backend/puvi-backend-main/modules/batch_production.py
-UPDATED: Includes activity field in cost elements response
+UPDATED: Auto-detects oil type from materials.produces_oil_type
 """
 
 from flask import Blueprint, request, jsonify
@@ -22,7 +22,7 @@ def get_seeds_for_batch():
     cur = conn.cursor()
     
     try:
-        # Modified query to include purchase traceable codes
+        # Modified query to include produces_oil_type
         cur.execute("""
             SELECT DISTINCT ON (i.material_id)
                 i.inventory_id,
@@ -33,7 +33,8 @@ def get_seeds_for_batch():
                 i.weighted_avg_cost,
                 m.category,
                 m.short_code,
-                p.traceable_code as latest_purchase_code
+                p.traceable_code as latest_purchase_code,
+                m.produces_oil_type
             FROM inventory i
             JOIN materials m ON i.material_id = m.material_id
             LEFT JOIN purchases p ON p.supplier_id = m.supplier_id
@@ -58,6 +59,7 @@ def get_seeds_for_batch():
                 'category': row[6],
                 'short_code': row[7],
                 'latest_purchase_code': row[8],
+                'produces_oil_type': row[9],  # Include oil type it produces
                 'total_value': value
             })
         
@@ -263,7 +265,7 @@ def get_oil_types():
 
 @batch_bp.route('/api/add_batch', methods=['POST'])
 def add_batch():
-    """Create a new batch production record with comprehensive validation and traceability"""
+    """Create a new batch production record with auto oil type detection"""
     conn = get_db_connection()
     cur = conn.cursor()
     
@@ -273,8 +275,35 @@ def add_batch():
         # Debug logging
         print(f"Received batch data: {data}")
         
-        # Validate required fields
-        required_fields = ['oil_type', 'batch_description', 'production_date', 
+        # AUTO-DETECT OIL TYPE FROM MATERIAL
+        material_id = data.get('material_id')
+        if not material_id:
+            return jsonify({
+                'success': False,
+                'error': 'Material ID is required'
+            }), 400
+        
+        # Get oil type from materials.produces_oil_type
+        cur.execute("""
+            SELECT produces_oil_type, material_name
+            FROM materials
+            WHERE material_id = %s
+        """, (material_id,))
+        
+        result = cur.fetchone()
+        if not result or not result[0]:
+            return jsonify({
+                'success': False,
+                'error': f'Selected material does not produce oil or oil type not configured. Please update materials.produces_oil_type for this seed.'
+            }), 400
+        
+        oil_type = result[0]  # Auto-detected from database
+        material_name = result[1]
+        
+        print(f"Auto-detected oil type: {oil_type} from material: {material_name}")
+        
+        # Validate required fields (oil_type no longer required from frontend)
+        required_fields = ['batch_description', 'production_date', 
                           'material_id', 'seed_quantity_before_drying', 
                           'seed_quantity_after_drying', 'oil_yield', 
                           'cake_yield', 'cake_estimated_rate']
@@ -308,7 +337,7 @@ def add_batch():
                     AND p.traceable_code IS NOT NULL
                 ORDER BY p.purchase_date DESC
                 LIMIT 1
-            """, (data['material_id'],))
+            """, (material_id,))
             
             result = cur.fetchone()
             if result:
@@ -322,7 +351,7 @@ def add_batch():
         # Generate batch traceable code
         try:
             batch_traceable_code = generate_batch_traceable_code(
-                data['material_id'],
+                material_id,
                 seed_purchase_code,
                 production_date,
                 cur
@@ -362,7 +391,7 @@ def add_batch():
             SELECT closing_stock FROM inventory 
             WHERE material_id = %s
             ORDER BY inventory_id DESC LIMIT 1
-        """, (data['material_id'],))
+        """, (material_id,))
         
         available_stock = cur.fetchone()
         if not available_stock or float(available_stock[0]) < float(seed_qty_before):
@@ -381,7 +410,7 @@ def add_batch():
         # Begin transaction
         cur.execute("BEGIN")
         
-        # Insert batch record with traceable code
+        # Insert batch record with auto-detected oil type
         cur.execute("""
             INSERT INTO batch (
                 batch_code, oil_type, seed_quantity_before_drying,
@@ -393,7 +422,7 @@ def add_batch():
             RETURNING batch_id
         """, (
             batch_code,
-            data['oil_type'],
+            oil_type,  # Auto-detected from materials.produces_oil_type
             float(seed_qty_before),
             float(seed_qty_after),
             float(drying_loss),
@@ -515,7 +544,7 @@ def add_batch():
             float(seed_qty_before),
             float(seed_qty_before),
             production_date,
-            data['material_id']
+            material_id
         ))
         
         # 2. Add oil to inventory
@@ -530,7 +559,7 @@ def add_batch():
                 AND source_type = 'extraction'
             ORDER BY inventory_id DESC
             LIMIT 1
-        """, (data['oil_type'],))
+        """, (oil_type,))
         
         oil_inv = cur.fetchone()
         
@@ -560,7 +589,7 @@ def add_batch():
                     is_bulk_oil
                 ) VALUES (%s, %s, %s, %s, %s, %s, %s)
             """, (
-                data['oil_type'],
+                oil_type,
                 float(oil_yield),
                 float(oil_cost_per_kg),
                 production_date,
@@ -578,7 +607,7 @@ def add_batch():
                 ) VALUES (%s, %s, %s, %s, %s, %s)
             """, (
                 batch_id,
-                data['oil_type'],
+                oil_type,
                 float(cake_yield),
                 float(cake_yield),
                 float(cake_estimated_rate),
@@ -588,15 +617,18 @@ def add_batch():
         # Commit transaction
         conn.commit()
         
+        print(f"Batch created successfully with auto-detected oil type: {oil_type}")
+        
         return jsonify({
             'success': True,
             'batch_id': batch_id,
             'batch_code': batch_code,
             'traceable_code': batch_traceable_code,
+            'oil_type': oil_type,  # Include auto-detected oil type in response
             'oil_cost_per_kg': float(oil_cost_per_kg),
             'total_oil_produced': float(oil_yield),
             'net_oil_cost': float(net_oil_cost),
-            'message': f'Batch {batch_code} created successfully with traceable code {batch_traceable_code}!'
+            'message': f'Batch {batch_code} created successfully with {oil_type} oil and traceable code {batch_traceable_code}!'
         }), 201
         
     except Exception as e:
