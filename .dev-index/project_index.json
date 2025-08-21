@@ -1,8 +1,8 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-21T18:05:01.293Z",
-  "filesScanned": 58,
-  "jsFilesScanned": 36,
+  "generatedAt": "2025-08-21T18:31:53.937Z",
+  "filesScanned": 59,
+  "jsFilesScanned": 37,
   "pyFilesScanned": 22,
   "routes": [
     {
@@ -943,6 +943,7 @@
         "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
         "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
         "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+        "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
         "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoriesList.jsx",
         "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
         "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
@@ -1230,6 +1231,12 @@
       "from": "./MasterForm.css",
       "usedIn": [
         "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx"
+      ]
+    },
+    {
+      "from": "./Masters.css",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx"
       ]
     },
     {
@@ -1666,6 +1673,12 @@
     {
       "name": "MastersList",
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx",
+      "line": 35,
+      "type": "const"
+    },
+    {
+      "name": "OilConfigurationDashboard",
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
       "line": 35,
       "type": "const"
     },
@@ -9314,6 +9327,158 @@
       "isAsync": false
     },
     {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 12,
+      "name": "apiCall",
+      "params": "url, options = {}",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 35,
+      "name": "OilConfigurationDashboard",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 57,
+      "name": "loadDataForTab",
+      "params": "tab",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 86,
+      "name": "loadHealthStatus",
+      "params": "",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 92,
+      "name": "loadSeedVarieties",
+      "params": "",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 98,
+      "name": "loadOilProducts",
+      "params": "",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 104,
+      "name": "loadProductionFlow",
+      "params": "",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 110,
+      "name": "validateConfiguration",
+      "params": "",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 145,
+      "name": "handleSuggestionEdit",
+      "params": "index, newValue",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 153,
+      "name": "toggleSuggestionSelection",
+      "params": "index",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 166,
+      "name": "applySelectedSuggestions",
+      "params": "",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 218,
+      "name": "applySingleSuggestion",
+      "params": "suggestion, index",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 248,
+      "name": "getHealthColor",
+      "params": "score",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 258,
+      "name": "getConfidenceBadge",
+      "params": "confidence",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 282,
+      "name": "renderStatusTab",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 395,
+      "name": "renderSeedsTab",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 456,
+      "name": "renderOilsTab",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 519,
+      "name": "renderFlowTab",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 634,
+      "name": "renderSuggestions",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoriesList.jsx",
       "line": 11,
       "name": "apiCall",
@@ -14551,6 +14716,166 @@
       "hook": "useEffect"
     },
     {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 37,
+      "type": "useState",
+      "name": "activeTab",
+      "setter": "setActiveTab",
+      "initial": "status"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 37,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 38,
+      "type": "useState",
+      "name": "loading",
+      "setter": "setLoading",
+      "initial": null
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 38,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 39,
+      "type": "useState",
+      "name": "error",
+      "setter": "setError",
+      "initial": ""
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 39,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 40,
+      "type": "useState",
+      "name": "successMessage",
+      "setter": "setSuccessMessage",
+      "initial": ""
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 40,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 43,
+      "type": "useState",
+      "name": "healthStatus",
+      "setter": "setHealthStatus",
+      "initial": null
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 43,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 44,
+      "type": "useState",
+      "name": "seedVarieties",
+      "setter": "setSeedVarieties",
+      "initial": "[]"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 44,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 45,
+      "type": "useState",
+      "name": "oilProducts",
+      "setter": "setOilProducts",
+      "initial": "[]"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 45,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 46,
+      "type": "useState",
+      "name": "productionFlow",
+      "setter": "setProductionFlow",
+      "initial": "[]"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 46,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 47,
+      "type": "useState",
+      "name": "suggestions",
+      "setter": "setSuggestions",
+      "initial": "[]"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 47,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 48,
+      "type": "useState",
+      "name": "editedSuggestions",
+      "setter": "setEditedSuggestions",
+      "initial": "{}"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 48,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 49,
+      "type": "useState",
+      "name": "selectedSuggestions",
+      "setter": "setSelectedSuggestions",
+      "initial": null
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 49,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 52,
+      "type": "useEffect",
+      "hook": "useEffect"
+    },
+    {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoriesList.jsx",
       "line": 35,
       "type": "useState",
@@ -17075,6 +17400,66 @@
       "code": "} catch (error) {"
     },
     {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 13,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 29,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 61,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 78,
+      "type": "catch",
+      "code": "} catch (err) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 117,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 137,
+      "type": "catch",
+      "code": "} catch (err) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 189,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 210,
+      "type": "catch",
+      "code": "} catch (err) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 222,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
+      "line": 240,
+      "type": "catch",
+      "code": "} catch (err) {"
+    },
+    {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoriesList.jsx",
       "line": 12,
       "type": "try-catch",
@@ -19093,19 +19478,19 @@
   ],
   "lineNumbers": {},
   "summary": {
-    "totalFiles": 58,
-    "jsFiles": 36,
+    "totalFiles": 59,
+    "jsFiles": 37,
     "pyFiles": 22,
-    "components": 40,
+    "components": 41,
     "routes": 101,
     "exports": 41,
-    "imports": 48,
+    "imports": 49,
     "hardcodedValues": 23,
     "databaseQueries": 331,
     "databaseTables": 50,
-    "functions": 522,
-    "stateHooks": 590,
+    "functions": 541,
+    "stateHooks": 613,
     "missingEndpoints": 1,
-    "errorHandlers": 526
+    "errorHandlers": 536
   }
 }
