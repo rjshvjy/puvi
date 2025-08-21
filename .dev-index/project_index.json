@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-21T19:22:32.804Z",
+  "generatedAt": "2025-08-21T19:36:28.975Z",
   "filesScanned": 59,
   "jsFilesScanned": 37,
   "pyFilesScanned": 22,
@@ -9503,7 +9503,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 84,
+      "line": 85,
       "name": "loadCategories",
       "params": "",
       "type": "arrow",
@@ -9511,7 +9511,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 102,
+      "line": 108,
       "name": "loadExistingOilTypes",
       "params": "",
       "type": "arrow",
@@ -9519,7 +9519,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 113,
+      "line": 120,
       "name": "handleFieldChange",
       "params": "fieldName, value",
       "type": "arrow",
@@ -9535,7 +9535,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 209,
+      "line": 210,
       "name": "handleSubmit",
       "params": "e",
       "type": "arrow",
@@ -17487,31 +17487,31 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 85,
+      "line": 86,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 96,
+      "line": 101,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 103,
+      "line": 109,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 107,
+      "line": 113,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 218,
+      "line": 219,
       "type": "try-catch",
       "code": "try {"
     },
