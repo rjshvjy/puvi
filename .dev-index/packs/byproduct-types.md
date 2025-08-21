@@ -1,5 +1,5 @@
 # Feature Pack: BYPRODUCT-TYPES
-Generated: 2025-08-21T17:52:54.335Z
+Generated: 2025-08-21T18:05:02.158Z
 Routes: 1 | Tables: 5 | Files: 1
 
 ## Table of Contents
@@ -19,7 +19,7 @@ GET    /api/byproduct_types
 ## Database Dependencies
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
-| batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 7 other modules |
+| batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 8 other modules |
 | batches | material-sales | 🟡 MEDIUM | Changes affect 1 other modules |
 | oil_cake_inventory | batch-production, material-sales | 🟡 MEDIUM | Changes affect 2 other modules |
 | oil_cake_sale_allocations | material-sales | 🟡 MEDIUM | Changes affect 1 other modules |

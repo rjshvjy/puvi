@@ -1,5 +1,5 @@
 # Feature Pack: SUPPLIERS
-Generated: 2025-08-21T17:52:54.339Z
+Generated: 2025-08-21T18:05:02.161Z
 Routes: 1 | Tables: 9 | Files: 1
 
 ## Table of Contents
@@ -20,9 +20,9 @@ GET    /api/suppliers
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
 | categories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
-| inventory | batch-production, blending, material-writeoff | 🔴 HIGH | Changes affect 7 other modules |
+| inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
 | material_tags | purchase | 🟡 MEDIUM | Changes affect 1 other modules |
-| materials | batch-production, blending, material-writeoff | 🔴 HIGH | Changes affect 9 other modules |
+| materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
 | purchase_items | batch-production, purchase | 🟡 MEDIUM | Changes affect 2 other modules |
 | purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 5 other modules |
 | subcategories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
@@ -34,10 +34,10 @@ GET    /api/suppliers
 ## Data Flow & Integration
 ### 🔗 Cascading Dependencies
 - **inventory** (HIGH RISK)
-  - Shared with: batch-production, blending, material-writeoff, opening-balance, purchase, sku-production, unknown
+  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, unknown
   - Impact: Changes will cascade to these modules
 - **materials** (HIGH RISK)
-  - Shared with: batch-production, blending, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, unknown
+  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, unknown
   - Impact: Changes will cascade to these modules
 - **suppliers** (HIGH RISK)
   - Shared with: opening-balance, purchase, system-config, unknown

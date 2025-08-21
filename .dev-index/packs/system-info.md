@@ -1,5 +1,5 @@
 # Feature Pack: SYSTEM-INFO
-Generated: 2025-08-21T17:52:54.340Z
+Generated: 2025-08-21T18:05:02.162Z
 Routes: 1 | Tables: 6 | Files: 1
 
 ## Table of Contents
@@ -19,10 +19,10 @@ GET    /api/system_info
 ## Database Dependencies
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
-| batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 7 other modules |
-| materials | batch-production, blending, material-writeoff | 🔴 HIGH | Changes affect 9 other modules |
+| batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 8 other modules |
+| materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
 | purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 5 other modules |
-| sku_master | sku-management, sku-production, system-config | 🔴 HIGH | Changes affect 4 other modules |
+| sku_master | masters-crud, sku-management, sku-production | 🔴 HIGH | Changes affect 5 other modules |
 | suppliers | opening-balance, purchase, system-config | 🔴 HIGH | Changes affect 4 other modules |
 | system_configuration | opening-balance, unknown | 🟡 MEDIUM | Changes affect 2 other modules |
 
@@ -31,7 +31,7 @@ GET    /api/system_info
 ## Data Flow & Integration
 ### 🔗 Cascading Dependencies
 - **materials** (HIGH RISK)
-  - Shared with: batch-production, blending, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, unknown
+  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, unknown
   - Impact: Changes will cascade to these modules
 - **suppliers** (HIGH RISK)
   - Shared with: opening-balance, purchase, system-config, unknown

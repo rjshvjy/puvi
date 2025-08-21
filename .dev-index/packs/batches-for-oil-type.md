@@ -1,5 +1,5 @@
 # Feature Pack: BATCHES-FOR-OIL-TYPE
-Generated: 2025-08-21T17:52:54.333Z
+Generated: 2025-08-21T18:05:02.155Z
 Routes: 1 | Tables: 8 | Files: 1
 
 ## Table of Contents
@@ -19,12 +19,12 @@ GET    /api/batches_for_oil_type
 ## Database Dependencies
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
-| batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 7 other modules |
+| batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 8 other modules |
 | blend_batch_components | blending | 🟡 MEDIUM | Changes affect 1 other modules |
-| blend_batches | blending, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
+| blend_batches | blending, masters-crud, sku-production | 🔴 HIGH | Changes affect 3 other modules |
 | categories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
-| inventory | batch-production, blending, material-writeoff | 🔴 HIGH | Changes affect 7 other modules |
-| materials | batch-production, blending, material-writeoff | 🔴 HIGH | Changes affect 9 other modules |
+| inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
+| materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
 | purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 5 other modules |
 | subcategories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
 
@@ -33,10 +33,10 @@ GET    /api/batches_for_oil_type
 ## Data Flow & Integration
 ### 🔗 Cascading Dependencies
 - **inventory** (HIGH RISK)
-  - Shared with: batch-production, blending, material-writeoff, opening-balance, purchase, sku-production, unknown
+  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, unknown
   - Impact: Changes will cascade to these modules
 - **materials** (HIGH RISK)
-  - Shared with: batch-production, blending, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, unknown
+  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, unknown
   - Impact: Changes will cascade to these modules
 
 ### Integration Points

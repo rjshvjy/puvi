@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "generatedAt": "2025-08-21T17:52:54.276Z",
+  "generatedAt": "2025-08-21T18:05:02.098Z",
   "summary": {
     "totalTables": 50,
     "sharedTables": 25,
@@ -12,13 +12,14 @@
       "usedBy": [
         "batch-production",
         "blending",
+        "masters-crud",
         "material-writeoff",
         "opening-balance",
         "purchase",
         "sku-production",
         "unknown"
       ],
-      "fileCount": 7,
+      "fileCount": 8,
       "operations": {
         "batch-production": {
           "files": [
@@ -29,6 +30,12 @@
         "blending": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/blending.py"
+          ],
+          "queryCount": 0
+        },
+        "masters-crud": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/masters_crud.py"
           ],
           "queryCount": 0
         },
@@ -68,6 +75,7 @@
       "usedBy": [
         "batch-production",
         "blending",
+        "masters-crud",
         "material-writeoff",
         "opening-balance",
         "purchase",
@@ -76,7 +84,7 @@
         "system-config",
         "unknown"
       ],
-      "fileCount": 10,
+      "fileCount": 11,
       "operations": {
         "batch-production": {
           "files": [
@@ -87,6 +95,12 @@
         "blending": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/blending.py"
+          ],
+          "queryCount": 0
+        },
+        "masters-crud": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/masters_crud.py"
           ],
           "queryCount": 0
         },
@@ -238,12 +252,13 @@
         "batch-production",
         "blending",
         "cost-management",
+        "masters-crud",
         "material-sales",
         "opening-balance",
         "sku-production",
         "unknown"
       ],
-      "fileCount": 8,
+      "fileCount": 9,
       "operations": {
         "batch-production": {
           "files": [
@@ -260,6 +275,12 @@
         "cost-management": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/cost_management.py"
+          ],
+          "queryCount": 0
+        },
+        "masters-crud": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/masters_crud.py"
           ],
           "queryCount": 0
         },
@@ -405,13 +426,20 @@
     "blend_batches": {
       "usedBy": [
         "blending",
+        "masters-crud",
         "sku-production"
       ],
-      "fileCount": 2,
+      "fileCount": 3,
       "operations": {
         "blending": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/blending.py"
+          ],
+          "queryCount": 0
+        },
+        "masters-crud": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/masters_crud.py"
           ],
           "queryCount": 0
         },
@@ -572,6 +600,48 @@
         "sku-management": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/sku_management.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "sku_master": {
+      "usedBy": [
+        "masters-crud",
+        "sku-management",
+        "sku-production",
+        "system-config",
+        "unknown"
+      ],
+      "fileCount": 5,
+      "operations": {
+        "masters-crud": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+          ],
+          "queryCount": 0
+        },
+        "sku-management": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_management.py"
+          ],
+          "queryCount": 0
+        },
+        "sku-production": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_production.py"
+          ],
+          "queryCount": 0
+        },
+        "system-config": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/system_config.py"
+          ],
+          "queryCount": 0
+        },
+        "unknown": {
+          "files": [
+            "puvi-backend/puvi-backend-main/app.py"
           ],
           "queryCount": 0
         }
@@ -790,41 +860,6 @@
         "purchase": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/purchase.py"
-          ],
-          "queryCount": 0
-        }
-      }
-    },
-    "sku_master": {
-      "usedBy": [
-        "sku-management",
-        "sku-production",
-        "system-config",
-        "unknown"
-      ],
-      "fileCount": 4,
-      "operations": {
-        "sku-management": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/sku_management.py"
-          ],
-          "queryCount": 0
-        },
-        "sku-production": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/sku_production.py"
-          ],
-          "queryCount": 0
-        },
-        "system-config": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/system_config.py"
-          ],
-          "queryCount": 0
-        },
-        "unknown": {
-          "files": [
-            "puvi-backend/puvi-backend-main/app.py"
           ],
           "queryCount": 0
         }
@@ -1091,22 +1126,24 @@
       "sharedBy": [
         "batch-production",
         "blending",
+        "masters-crud",
         "material-writeoff",
         "opening-balance",
         "purchase",
         "sku-production",
         "unknown"
       ],
-      "moduleCount": 7,
-      "fileCount": 7,
+      "moduleCount": 8,
+      "fileCount": 8,
       "risk": "HIGH",
-      "recommendation": "⚠️ CRITICAL: Changes require coordination across 7 modules"
+      "recommendation": "⚠️ CRITICAL: Changes require coordination across 8 modules"
     },
     {
       "table": "materials",
       "sharedBy": [
         "batch-production",
         "blending",
+        "masters-crud",
         "material-writeoff",
         "opening-balance",
         "purchase",
@@ -1115,10 +1152,10 @@
         "system-config",
         "unknown"
       ],
-      "moduleCount": 9,
-      "fileCount": 10,
+      "moduleCount": 10,
+      "fileCount": 11,
       "risk": "HIGH",
-      "recommendation": "⚠️ CRITICAL: Changes require coordination across 9 modules"
+      "recommendation": "⚠️ CRITICAL: Changes require coordination across 10 modules"
     },
     {
       "table": "purchases",
@@ -1140,15 +1177,16 @@
         "batch-production",
         "blending",
         "cost-management",
+        "masters-crud",
         "material-sales",
         "opening-balance",
         "sku-production",
         "unknown"
       ],
-      "moduleCount": 7,
-      "fileCount": 8,
+      "moduleCount": 8,
+      "fileCount": 9,
       "risk": "HIGH",
-      "recommendation": "⚠️ CRITICAL: Changes require coordination across 7 modules"
+      "recommendation": "⚠️ CRITICAL: Changes require coordination across 8 modules"
     },
     {
       "table": "cost_elements_master",
@@ -1164,6 +1202,20 @@
       "recommendation": "⚠️ CRITICAL: Changes require coordination across 4 modules"
     },
     {
+      "table": "sku_master",
+      "sharedBy": [
+        "masters-crud",
+        "sku-management",
+        "sku-production",
+        "system-config",
+        "unknown"
+      ],
+      "moduleCount": 5,
+      "fileCount": 5,
+      "risk": "HIGH",
+      "recommendation": "⚠️ CRITICAL: Changes require coordination across 5 modules"
+    },
+    {
       "table": "suppliers",
       "sharedBy": [
         "opening-balance",
@@ -1173,19 +1225,6 @@
       ],
       "moduleCount": 4,
       "fileCount": 5,
-      "risk": "HIGH",
-      "recommendation": "⚠️ CRITICAL: Changes require coordination across 4 modules"
-    },
-    {
-      "table": "sku_master",
-      "sharedBy": [
-        "sku-management",
-        "sku-production",
-        "system-config",
-        "unknown"
-      ],
-      "moduleCount": 4,
-      "fileCount": 4,
       "risk": "HIGH",
       "recommendation": "⚠️ CRITICAL: Changes require coordination across 4 modules"
     },
@@ -1212,6 +1251,18 @@
       "fileCount": 3,
       "risk": "MEDIUM",
       "recommendation": "Changes will affect blending, masters-crud, purchase"
+    },
+    {
+      "table": "blend_batches",
+      "sharedBy": [
+        "blending",
+        "masters-crud",
+        "sku-production"
+      ],
+      "moduleCount": 3,
+      "fileCount": 3,
+      "risk": "MEDIUM",
+      "recommendation": "Changes will affect blending, masters-crud, sku-production"
     },
     {
       "table": "purchase_items",
@@ -1256,17 +1307,6 @@
       "fileCount": 2,
       "risk": "LOW",
       "recommendation": "Changes will affect batch-production, material-sales"
-    },
-    {
-      "table": "blend_batches",
-      "sharedBy": [
-        "blending",
-        "sku-production"
-      ],
-      "moduleCount": 2,
-      "fileCount": 2,
-      "risk": "LOW",
-      "recommendation": "Changes will affect blending, sku-production"
     },
     {
       "table": "masters_audit_log",

@@ -1,5 +1,5 @@
 # Feature Pack: WRITEOFF-HISTORY
-Generated: 2025-08-21T17:52:54.337Z
+Generated: 2025-08-21T18:05:02.160Z
 Routes: 1 | Tables: 4 | Files: 1
 
 ## Table of Contents
@@ -19,9 +19,9 @@ GET    /api/writeoff_history
 ## Database Dependencies
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
-| inventory | batch-production, blending, material-writeoff | 🔴 HIGH | Changes affect 7 other modules |
+| inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
 | material_writeoffs | material-writeoff, opening-balance | 🟡 MEDIUM | Changes affect 2 other modules |
-| materials | batch-production, blending, material-writeoff | 🔴 HIGH | Changes affect 9 other modules |
+| materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
 | writeoff_reasons | material-writeoff, system-config | 🟡 MEDIUM | Changes affect 2 other modules |
 
 ## Backend Implementation
@@ -29,10 +29,10 @@ GET    /api/writeoff_history
 ## Data Flow & Integration
 ### 🔗 Cascading Dependencies
 - **inventory** (HIGH RISK)
-  - Shared with: batch-production, blending, material-writeoff, opening-balance, purchase, sku-production, unknown
+  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, unknown
   - Impact: Changes will cascade to these modules
 - **materials** (HIGH RISK)
-  - Shared with: batch-production, blending, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, unknown
+  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, unknown
   - Impact: Changes will cascade to these modules
 
 ### Integration Points

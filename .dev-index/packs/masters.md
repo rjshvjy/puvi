@@ -1,6 +1,6 @@
 # Feature Pack: MASTERS
-Generated: 2025-08-21T17:52:54.334Z
-Routes: 11 | Tables: 3 | Files: 2
+Generated: 2025-08-21T18:05:02.156Z
+Routes: 11 | Tables: 8 | Files: 2
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -39,8 +39,13 @@ POST   /api/masters/<master_type>/import
 ## Database Dependencies
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
+| batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 8 other modules |
+| blend_batches | blending, masters-crud, sku-production | 🔴 HIGH | Changes affect 3 other modules |
 | categories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
 | information_schema | masters-common, masters-crud | 🟡 MEDIUM | Changes affect 2 other modules |
+| inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
+| materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
+| sku_master | masters-crud, sku-management, sku-production | 🔴 HIGH | Changes affect 5 other modules |
 | subcategories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
 
 ## Backend Implementation
@@ -48,7 +53,13 @@ POST   /api/masters/<master_type>/import
 ## Frontend Components
 
 ## Data Flow & Integration
-*No critical cross-module dependencies detected*
+### 🔗 Cascading Dependencies
+- **inventory** (HIGH RISK)
+  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, unknown
+  - Impact: Changes will cascade to these modules
+- **materials** (HIGH RISK)
+  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, unknown
+  - Impact: Changes will cascade to these modules
 
 ### Integration Points
 

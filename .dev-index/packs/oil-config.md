@@ -1,6 +1,6 @@
-# Feature Pack: TAGS
-Generated: 2025-08-21T18:05:02.162Z
-Routes: 1 | Tables: 9 | Files: 1
+# Feature Pack: OIL-CONFIG
+Generated: 2025-08-21T18:05:02.157Z
+Routes: 8 | Tables: 8 | Files: 1
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -12,22 +12,34 @@ Routes: 1 | Tables: 9 | Files: 1
 
 ## API Endpoints
 ```
-# get_tags
-GET    /api/tags
+# apply_single_oil_suggestion
+POST   /api/oil-config/apply-suggestion
+POST   /api/oil-config/apply-suggestion
+# get_oil_config_status
+GET    /api/oil-config/status
+# get_seed_varieties
+GET    /api/oil-config/seed-varieties
+# get_oil_products
+GET    /api/oil-config/oil-products
+# get_production_flow
+GET    /api/oil-config/production-flow
+# validate_oil_configuration
+POST   /api/oil-config/validate
+# apply_oil_suggestions
+POST   /api/oil-config/apply-suggestions
 ```
 
 ## Database Dependencies
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
+| batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 8 other modules |
+| blend_batches | blending, masters-crud, sku-production | 🔴 HIGH | Changes affect 3 other modules |
 | categories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
+| information_schema | masters-common, masters-crud | 🟡 MEDIUM | Changes affect 2 other modules |
 | inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
-| material_tags | purchase | 🟡 MEDIUM | Changes affect 1 other modules |
 | materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
-| purchase_items | batch-production, purchase | 🟡 MEDIUM | Changes affect 2 other modules |
-| purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 5 other modules |
+| sku_master | masters-crud, sku-management, sku-production | 🔴 HIGH | Changes affect 5 other modules |
 | subcategories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
-| suppliers | opening-balance, purchase, system-config | 🔴 HIGH | Changes affect 4 other modules |
-| tags | purchase | 🟡 MEDIUM | Changes affect 1 other modules |
 
 ## Backend Implementation
 
@@ -38,9 +50,6 @@ GET    /api/tags
   - Impact: Changes will cascade to these modules
 - **materials** (HIGH RISK)
   - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, unknown
-  - Impact: Changes will cascade to these modules
-- **suppliers** (HIGH RISK)
-  - Shared with: opening-balance, purchase, system-config, unknown
   - Impact: Changes will cascade to these modules
 
 ### Integration Points
