@@ -337,7 +337,7 @@ def get_single_record(master_type, record_id):
 
 
 # =====================================================
-# CREATE RECORD
+# CREATE RECORD - FIXED TO CHECK COLUMN EXISTS
 # =====================================================
 
 @masters_crud_bp.route('/api/masters/<master_type>', methods=['POST'])
@@ -381,11 +381,12 @@ def create_record(master_type):
                 values.append(data[field_name])
                 placeholders.append('%s')
         
-        # Add created_by if not present
-        if 'created_by' not in fields:
-            fields.append('created_by')
-            values.append(data.get('created_by', 'System'))
-            placeholders.append('%s')
+        # FIXED: Only add created_by if the column exists in the database
+        if check_column_exists(cur, table, 'created_by'):
+            if 'created_by' not in fields:
+                fields.append('created_by')
+                values.append(data.get('created_by', 'System'))
+                placeholders.append('%s')
         
         # Add is_active for new records
         soft_delete_field = config.get('soft_delete_field', 'is_active')
@@ -430,7 +431,7 @@ def create_record(master_type):
 
 
 # =====================================================
-# UPDATE RECORD - FIXED WITH COLUMN CHECK
+# UPDATE RECORD - ALREADY FIXED WITH COLUMN CHECK
 # =====================================================
 
 @masters_crud_bp.route('/api/masters/<master_type>/<record_id>', methods=['PUT'])
