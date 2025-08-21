@@ -202,19 +202,34 @@ def create_material():
             # Auto-generate from first 6 chars of name
             short_code = ''.join(data['material_name'].split())[:6].upper()
         
-        # Insert new material with subcategory
+        # FIXED: Extract oil_type from subcategory for seed materials
+        produces_oil_type = None
+        if subcategory_id and data['category'] == 'Seeds':
+            cur.execute("""
+                SELECT oil_type
+                FROM subcategories_master
+                WHERE subcategory_id = %s AND is_active = true
+            """, (subcategory_id,))
+            
+            result = cur.fetchone()
+            if result and result[0]:
+                produces_oil_type = result[0]
+                print(f"Auto-setting produces_oil_type to '{produces_oil_type}' from subcategory")
+        
+        # Insert new material with subcategory AND produces_oil_type
         cur.execute("""
             INSERT INTO materials (
                 material_name, supplier_id, category, subcategory_id,
                 unit, current_cost, gst_rate, density, 
-                short_code, material_type, is_active, last_updated
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                short_code, material_type, is_active, last_updated,
+                produces_oil_type
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING material_id
         """, (
             data['material_name'],
             data['supplier_id'],
             data['category'],
-            subcategory_id,  # Can be NULL for categories that don't require it
+            subcategory_id,
             data['unit'],
             float(data['current_cost']),
             float(data['gst_rate']),
@@ -222,7 +237,8 @@ def create_material():
             short_code,
             data.get('material_type', 'raw'),
             True,
-            date_to_day_number('today')
+            date_to_day_number('today'),
+            produces_oil_type
         ))
         
         material_id = cur.fetchone()[0]
