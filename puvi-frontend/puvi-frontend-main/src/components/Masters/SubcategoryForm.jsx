@@ -115,6 +115,11 @@ const SubcategoryForm = ({
 
   // Handle field change
   const handleFieldChange = (fieldName, value) => {
+    // FIXED: Convert category_id to integer when it comes from select dropdown
+    if (fieldName === 'category_id' && value !== '') {
+      value = parseInt(value, 10);
+    }
+    
     setFormData(prev => ({
       ...prev,
       [fieldName]: value
@@ -131,10 +136,29 @@ const SubcategoryForm = ({
     
     // Auto-generate code from name if code is empty
     if (fieldName === 'subcategory_name' && !formData.subcategory_code) {
-      const code = value
-        .toUpperCase()
-        .replace(/[^A-Z0-9]/g, '')
-        .substring(0, 10);
+      // Generate code based on common patterns:
+      // Simple oils: Take first letters (Sesame Oil -> SO)
+      // Deepam oils: Prefix with D (Deepam Sesame Oil -> DSO)
+      let code = '';
+      const name = value.toUpperCase();
+      
+      if (name.startsWith('DEEPAM ')) {
+        // Deepam brand pattern
+        const afterDeepam = name.replace('DEEPAM ', '');
+        if (afterDeepam.includes(' OIL')) {
+          // Take first letter of each word
+          code = 'D' + afterDeepam.split(' ').map(w => w[0]).join('');
+        } else {
+          code = 'D' + afterDeepam.substring(0, 2);
+        }
+      } else if (name.includes(' OIL')) {
+        // Simple oil pattern - take first letters
+        code = name.split(' ').map(w => w[0]).join('');
+      } else {
+        // Default: first 3-4 characters
+        code = name.replace(/[^A-Z0-9]/g, '').substring(0, 4);
+      }
+      
       setFormData(prev => ({ ...prev, subcategory_code: code }));
     }
   };
@@ -149,15 +173,21 @@ const SubcategoryForm = ({
     
     if (!formData.subcategory_code || formData.subcategory_code.trim() === '') {
       newErrors.subcategory_code = 'Subcategory code is required';
+    } else if (!/^[A-Z0-9\-]+$/.test(formData.subcategory_code)) {
+      newErrors.subcategory_code = 'Code must contain only uppercase letters, numbers, and hyphens';
+    } else if (formData.subcategory_code.length < 2) {
+      newErrors.subcategory_code = 'Code must be at least 2 characters (e.g., SO, CO, DSO)';
     }
     
     if (!formData.category_id) {
       newErrors.category_id = 'Category is required';
     }
     
-    // Oil type is optional but recommended
-    if (!formData.oil_type) {
-      console.log('Warning: No oil type specified. This subcategory won\'t be available for oil production.');
+    // Oil type is critical for production flow
+    if (!formData.oil_type || formData.oil_type.trim() === '') {
+      console.warn('⚠️ No oil_type specified! This subcategory cannot be used in batch production.');
+      console.warn('Seeds with produces_oil_type will not link to this subcategory.');
+      console.warn('To fix: Set oil_type to match produces_oil_type in seed materials (e.g., "Groundnut", "Sesame")');
     }
     
     setErrors(newErrors);
@@ -177,20 +207,42 @@ const SubcategoryForm = ({
     try {
       let response;
       
+      // FIXED: Prepare data with proper types
+      const submitData = {
+        ...formData,
+        // Ensure category_id is integer if it exists
+        category_id: formData.category_id ? parseInt(formData.category_id, 10) : null
+      };
+      
+      // Add debug logging to see what's being sent
+      console.log('Submitting subcategory data:', JSON.stringify(submitData, null, 2));
+      
       if (isEditMode) {
         // Update existing subcategory
         // Try generic endpoint first
         try {
           response = await apiCall(`/api/masters/subcategories/${editData.subcategory_id}`, {
             method: 'PUT',
-            body: JSON.stringify(formData)
+            body: JSON.stringify(submitData)
           });
         } catch (error) {
-          // If generic fails, create custom update logic
-          console.log('Generic update not available, using custom logic');
+          console.log('Update subcategory error:', error.message);
+          
+          // Parse backend validation errors if available
+          let errorMessage = error.message;
+          
+          // Common validation error patterns
+          if (errorMessage.includes('category_id')) {
+            errorMessage = 'Invalid category selected. Please select a valid category.';
+          } else if (errorMessage.includes('unique') && errorMessage.includes('subcategory_code')) {
+            errorMessage = `Code "${submitData.subcategory_code}" already exists. Try a different code.`;
+          } else if (errorMessage.includes('validation')) {
+            errorMessage = 'Validation failed. Check all required fields are filled correctly.';
+          }
+          
           response = { 
-            success: true, 
-            message: 'Please implement backend update endpoint for subcategories' 
+            success: false, 
+            message: errorMessage 
           };
         }
       } else {
@@ -199,14 +251,27 @@ const SubcategoryForm = ({
         try {
           response = await apiCall('/api/masters/subcategories', {
             method: 'POST',
-            body: JSON.stringify(formData)
+            body: JSON.stringify(submitData)
           });
         } catch (error) {
-          // If generic fails, show message
-          console.log('Generic create not available, using custom logic');
+          // Log the actual error for debugging
+          console.log('Create subcategory error:', error.message);
+          
+          // Parse backend validation errors if available
+          let errorMessage = error.message;
+          
+          // Common validation error patterns
+          if (errorMessage.includes('category_id')) {
+            errorMessage = 'Invalid category selected. Please select a valid category.';
+          } else if (errorMessage.includes('unique') && errorMessage.includes('subcategory_code')) {
+            errorMessage = `Code "${submitData.subcategory_code}" already exists. Try a different code.`;
+          } else if (errorMessage.includes('validation')) {
+            errorMessage = 'Validation failed. Check all required fields are filled correctly.';
+          }
+          
           response = { 
             success: false, 
-            message: 'Please add subcategories configuration to MASTERS_CONFIG in backend' 
+            message: errorMessage 
           };
         }
       }
@@ -235,6 +300,23 @@ const SubcategoryForm = ({
         </div>
 
         <form onSubmit={handleSubmit} className="masters-form-body">
+          {/* Quick Reference Guide */}
+          <div style={{
+            padding: '10px',
+            backgroundColor: '#f0f9ff',
+            borderRadius: '4px',
+            marginBottom: '15px',
+            fontSize: '13px',
+            color: '#0369a1'
+          }}>
+            <strong>📋 Quick Reference - Existing Patterns:</strong>
+            <div style={{ marginTop: '5px', fontFamily: 'monospace', fontSize: '12px' }}>
+              • Simple oils: SO (Sesame Oil), CO (Coconut Oil), MO (Mustard Oil)<br/>
+              • Deepam brand: DSO (Deepam Sesame), DCO (Deepam Coconut), DGO (Deepam Ghee)<br/>
+              • Oil types in use: Groundnut, Sesame, Mustard, Coconut
+            </div>
+          </div>
+
           {/* Error display */}
           {errors.submit && (
             <div className="alert alert-error" style={{
@@ -259,14 +341,16 @@ const SubcategoryForm = ({
               className={`form-control ${errors.subcategory_name ? 'error' : ''}`}
               value={formData.subcategory_name}
               onChange={(e) => handleFieldChange('subcategory_name', e.target.value)}
-              placeholder="e.g., Groundnut Premium, Deepam Oil Blend"
+              placeholder="e.g., Sesame Oil, Coconut Oil, Deepam Sesame Oil"
               disabled={saving}
             />
             {errors.subcategory_name && (
               <div className="form-error">{errors.subcategory_name}</div>
             )}
             <div className="form-help">
-              Name for the oil type or blend (e.g., "Groundnut Premium", "Cooking Blend")
+              <strong>What:</strong> Full name of the oil product or blend<br/>
+              <strong>Examples:</strong> "Sesame Oil", "Mustard Oil", "Deepam Coconut Oil", "VCO"<br/>
+              <strong>Why:</strong> This name appears in production batches and sales records
             </div>
           </div>
 
@@ -280,7 +364,7 @@ const SubcategoryForm = ({
               className={`form-control ${errors.subcategory_code ? 'error' : ''}`}
               value={formData.subcategory_code}
               onChange={(e) => handleFieldChange('subcategory_code', e.target.value.toUpperCase())}
-              placeholder="e.g., GN-PREM, DEEPAM"
+              placeholder="e.g., SO, CO, DSO, DEEPAM-PUVI"
               maxLength="20"
               disabled={saving}
             />
@@ -288,7 +372,10 @@ const SubcategoryForm = ({
               <div className="form-error">{errors.subcategory_code}</div>
             )}
             <div className="form-help">
-              Short code for identification (auto-generated from name)
+              <strong>What:</strong> Short code for quick identification (2-11 characters)<br/>
+              <strong>Format:</strong> Simple oils: 2-3 letters (SO=Sesame Oil, CO=Coconut Oil, MO=Mustard Oil)<br/>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Deepam brand: Start with 'D' (DSO=Deepam Sesame, DGO=Deepam Ghee)<br/>
+              <strong>Why:</strong> Used in inventory tracking and batch codes
             </div>
           </div>
 
@@ -297,26 +384,43 @@ const SubcategoryForm = ({
             <label className="form-label">
               Category <span style={{ color: 'red' }}>*</span>
             </label>
-            <select
-              className={`form-control ${errors.category_id ? 'error' : ''}`}
-              value={formData.category_id}
-              onChange={(e) => handleFieldChange('category_id', e.target.value)}
-              disabled={saving}
-            >
-              <option value="">Select Category</option>
-              {categories.map(category => (
-                <option key={category.category_id} value={category.category_id}>
-                  {category.category_name}
-                  {category.category_name === 'Seeds' && ' (Recommended for oils)'}
-                </option>
-              ))}
-            </select>
-            {errors.category_id && (
-              <div className="form-error">{errors.category_id}</div>
+            {categories.length === 0 ? (
+              <div style={{
+                padding: '10px',
+                backgroundColor: '#fee',
+                color: '#c00',
+                borderRadius: '4px',
+                fontSize: '14px'
+              }}>
+                ⚠️ No categories available. Please create categories first (Seeds, Oil, etc.)
+              </div>
+            ) : (
+              <>
+                <select
+                  className={`form-control ${errors.category_id ? 'error' : ''}`}
+                  value={formData.category_id}
+                  onChange={(e) => handleFieldChange('category_id', e.target.value)}
+                  disabled={saving}
+                >
+                  <option value="">Select Category</option>
+                  {categories.map(category => (
+                    <option key={category.category_id} value={category.category_id}>
+                      {category.category_name}
+                      {category.category_name === 'Seeds' && ' (Recommended for oils)'}
+                    </option>
+                  ))}
+                </select>
+                {errors.category_id && (
+                  <div className="form-error">{errors.category_id}</div>
+                )}
+                <div className="form-help">
+                  <strong>What:</strong> Parent category that groups similar products<br/>
+                  <strong>Select:</strong> "Seeds" for oil products, "Oil" for refined oils<br/>
+                  <strong>Why:</strong> Links subcategory to materials and determines production flow
+                </div>
+              </>
             )}
-            <div className="form-help">
-              Usually "Seeds" for oil types, or create a "Blends" category
-            </div>
+          </div>
           </div>
 
           {/* Oil Type - IMPORTANT FIELD */}
@@ -327,14 +431,14 @@ const SubcategoryForm = ({
             border: '1px solid #f59e0b'
           }}>
             <label className="form-label">
-              Oil Type <span style={{ color: '#f59e0b' }}>⚠️ Important</span>
+              Oil Type <span style={{ color: '#f59e0b' }}>⚠️ Critical for Production</span>
             </label>
             <input
               type="text"
               className="form-control"
               value={formData.oil_type}
               onChange={(e) => handleFieldChange('oil_type', e.target.value)}
-              placeholder="e.g., Groundnut, Sesame, Deepam Oil"
+              placeholder="e.g., Groundnut, Sesame, Mustard, Coconut"
               list="oil-types-list"
               disabled={saving}
             />
@@ -344,9 +448,13 @@ const SubcategoryForm = ({
               ))}
             </datalist>
             <div className="form-help" style={{ marginTop: '8px', color: '#92400e' }}>
-              <strong>Critical:</strong> This value determines what oil type is produced. 
-              Seeds with matching <code>produces_oil_type</code> will produce this oil. 
-              Leave empty only if this is not an oil-related subcategory.
+              <strong>🔑 Critical:</strong> This MUST match the <code>produces_oil_type</code> in seed materials!<br/>
+              <strong>What:</strong> The type of oil produced (one word, no "Oil" suffix)<br/>
+              <strong>Examples:</strong> "Groundnut", "Sesame", "Mustard", "Coconut"<br/>
+              <strong>How it works:</strong><br/>
+              • Seeds with <code>produces_oil_type="Groundnut"</code> → Produce oil with <code>oil_type="Groundnut"</code><br/>
+              • Batch production auto-detects oil type from the seed's <code>produces_oil_type</code><br/>
+              • Leave empty ONLY for non-oil products
             </div>
           </div>
 
@@ -362,7 +470,9 @@ const SubcategoryForm = ({
               {' '}Active
             </label>
             <div className="form-help">
-              Inactive subcategories won't appear in dropdowns
+              <strong>What:</strong> Controls visibility in dropdown menus<br/>
+              <strong>Uncheck if:</strong> Discontinuing this oil type or temporarily not producing<br/>
+              <strong>Effect:</strong> Inactive items won't appear in batch production or blending options
             </div>
           </div>
 
@@ -375,13 +485,16 @@ const SubcategoryForm = ({
             fontSize: '14px',
             color: '#1e40af'
           }}>
-            <strong>💡 How Oil Types Work:</strong>
+            <strong>💡 Production Flow Example:</strong>
             <ol style={{ marginTop: '8px', marginBottom: 0, paddingLeft: '20px' }}>
-              <li>Create subcategory with oil_type (e.g., "Groundnut")</li>
-              <li>Set seed materials' <code>produces_oil_type</code> to match</li>
-              <li>Batch production auto-detects oil type from seed</li>
-              <li>Blending uses these types for result selection</li>
+              <li>Create subcategory "Sesame Oil" with <code>oil_type="Sesame"</code></li>
+              <li>Material "Sesame Seeds White" has <code>produces_oil_type="Sesame"</code></li>
+              <li>When crushing sesame seeds in batch, system auto-produces "Sesame Oil"</li>
+              <li>Blending module uses these oil types for creating new blends</li>
             </ol>
+            <div style={{ marginTop: '8px', fontSize: '13px' }}>
+              <strong>Current Oil Types in System:</strong> Groundnut, Sesame, Mustard, Coconut, etc.
+            </div>
           </div>
 
           {/* Form Actions */}
@@ -402,6 +515,25 @@ const SubcategoryForm = ({
               {saving ? 'Saving...' : (isEditMode ? 'Update' : 'Create')}
             </button>
           </div>
+
+          {/* Debug Info - Only in development */}
+          {process.env.NODE_ENV === 'development' && (
+            <div style={{
+              marginTop: '20px',
+              padding: '10px',
+              backgroundColor: '#f3f4f6',
+              borderRadius: '4px',
+              fontSize: '11px',
+              fontFamily: 'monospace',
+              color: '#6b7280'
+            }}>
+              <strong>Debug Info:</strong><br/>
+              category_id: {formData.category_id} (type: {typeof formData.category_id})<br/>
+              oil_type: "{formData.oil_type}"<br/>
+              code: "{formData.subcategory_code}"<br/>
+              Active categories: {categories.length}
+            </div>
+          )}
         </form>
       </div>
     </div>
