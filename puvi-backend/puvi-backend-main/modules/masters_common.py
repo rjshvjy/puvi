@@ -2,6 +2,7 @@
 Common utilities and configurations for Masters CRUD operations
 File Path: puvi-backend/puvi-backend-main/modules/masters_common.py
 Updated: Added self-healing standardization for select fields without hardcoded mappings
+FIXED: Added produces_oil_type field to materials configuration
 """
 
 import re
@@ -271,6 +272,15 @@ MASTERS_CONFIG = {
                 'label': 'Short Code (e.g., GNS-K)',
                 'transform': 'uppercase',
                 'placeholder': 'XXX-Y'
+            },
+            # FIXED: Added produces_oil_type field for seed materials
+            'produces_oil_type': {
+                'type': 'text',
+                'required': False,
+                'max_length': 50,
+                'label': 'Produces Oil Type',
+                'help_text': 'For seed materials: Type of oil this seed produces (e.g., Groundnut, Sesame, Coconut)',
+                'placeholder': 'e.g., Groundnut'
             }
         },
         'list_query': """
