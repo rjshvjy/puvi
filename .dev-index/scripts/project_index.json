@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-21T18:36:26.955Z",
+  "generatedAt": "2025-08-21T19:06:31.910Z",
   "filesScanned": 59,
   "jsFilesScanned": 37,
   "pyFilesScanned": 22,
@@ -1094,6 +1094,12 @@
       ]
     },
     {
+      "from": "../../components/Masters/OilConfigurationDashboard",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/index.js"
+      ]
+    },
+    {
       "from": "./MastersManagement.css",
       "usedIn": [
         "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/index.js"
@@ -1514,7 +1520,7 @@
     {
       "name": "MastersManagement",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/index.js",
-      "line": 12,
+      "line": 14,
       "type": "const"
     },
     {
@@ -7675,7 +7681,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/index.js",
-      "line": 12,
+      "line": 14,
       "name": "MastersManagement",
       "params": "",
       "type": "arrow",
@@ -7683,7 +7689,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/index.js",
-      "line": 29,
+      "line": 32,
       "name": "handleAdd",
       "params": "",
       "type": "arrow",
@@ -7691,7 +7697,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/index.js",
-      "line": 34,
+      "line": 37,
       "name": "handleEdit",
       "params": "record",
       "type": "arrow",
@@ -7699,7 +7705,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/index.js",
-      "line": 39,
+      "line": 42,
       "name": "handleSave",
       "params": "response",
       "type": "arrow",
@@ -7707,7 +7713,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/index.js",
-      "line": 47,
+      "line": 50,
       "name": "handleCancel",
       "params": "",
       "type": "arrow",
@@ -7715,7 +7721,15 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/index.js",
-      "line": 53,
+      "line": 55,
+      "name": "handleOilConfigClose",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/index.js",
+      "line": 61,
       "name": "renderListComponent",
       "params": "",
       "type": "arrow",
@@ -7723,7 +7737,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/index.js",
-      "line": 95,
+      "line": 197,
       "name": "renderFormComponent",
       "params": "",
       "type": "arrow",
@@ -12156,7 +12170,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/index.js",
-      "line": 13,
+      "line": 15,
       "type": "useState",
       "name": "activeTab",
       "setter": "setActiveTab",
@@ -12164,13 +12178,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/index.js",
-      "line": 13,
+      "line": 15,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/index.js",
-      "line": 14,
+      "line": 16,
       "type": "useState",
       "name": "refreshTrigger",
       "setter": "setRefreshTrigger",
@@ -12178,13 +12192,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/index.js",
-      "line": 14,
+      "line": 16,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/index.js",
-      "line": 15,
+      "line": 17,
       "type": "useState",
       "name": "showForm",
       "setter": "setShowForm",
@@ -12192,13 +12206,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/index.js",
-      "line": 15,
+      "line": 17,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/index.js",
-      "line": 16,
+      "line": 18,
       "type": "useState",
       "name": "editData",
       "setter": "setEditData",
@@ -12206,7 +12220,21 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/index.js",
-      "line": 16,
+      "line": 18,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/index.js",
+      "line": 19,
+      "type": "useState",
+      "name": "showOilConfig",
+      "setter": "setShowOilConfig",
+      "initial": null
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/index.js",
+      "line": 19,
       "type": "useState",
       "hook": "useState"
     },
@@ -19403,12 +19431,12 @@
     "components": 41,
     "routes": 100,
     "exports": 41,
-    "imports": 49,
+    "imports": 50,
     "hardcodedValues": 23,
     "databaseQueries": 327,
     "databaseTables": 50,
-    "functions": 540,
-    "stateHooks": 613,
+    "functions": 541,
+    "stateHooks": 615,
     "missingEndpoints": 1,
     "errorHandlers": 534
   }
