@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-21T18:31:53.937Z",
+  "generatedAt": "2025-08-21T18:36:26.955Z",
   "filesScanned": 59,
   "jsFilesScanned": 37,
   "pyFilesScanned": 22,
@@ -248,19 +248,10 @@
       "source": "backend"
     },
     {
-      "method": "POST",
-      "path": "/api/oil-config/apply-suggestion",
-      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 417,
-      "blueprint": "masters_crud_bp",
-      "function": "apply_single_oil_suggestion",
-      "source": "backend"
-    },
-    {
       "method": "GET",
       "path": "/api/masters/<master_type>/<record_id>",
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 555,
+      "line": 422,
       "blueprint": "masters_crud_bp",
       "function": "get_single_record",
       "source": "backend"
@@ -269,7 +260,7 @@
       "method": "POST",
       "path": "/api/masters/<master_type>",
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 611,
+      "line": 478,
       "blueprint": "masters_crud_bp",
       "function": "create_record",
       "source": "backend"
@@ -278,7 +269,7 @@
       "method": "PUT",
       "path": "/api/masters/<master_type>/<record_id>",
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 704,
+      "line": 571,
       "blueprint": "masters_crud_bp",
       "function": "update_record",
       "source": "backend"
@@ -287,7 +278,7 @@
       "method": "DELETE",
       "path": "/api/masters/<master_type>/<record_id>",
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 818,
+      "line": 685,
       "blueprint": "masters_crud_bp",
       "function": "delete_record",
       "source": "backend"
@@ -296,7 +287,7 @@
       "method": "POST",
       "path": "/api/masters/<master_type>/<record_id>/restore",
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 886,
+      "line": 753,
       "blueprint": "masters_crud_bp",
       "function": "restore_record_endpoint",
       "source": "backend"
@@ -305,7 +296,7 @@
       "method": "GET",
       "path": "/api/masters/<master_type>/<record_id>/dependencies",
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 925,
+      "line": 792,
       "blueprint": "masters_crud_bp",
       "function": "check_record_dependencies",
       "source": "backend"
@@ -314,7 +305,7 @@
       "method": "GET",
       "path": "/api/masters/<master_type>/export",
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 956,
+      "line": 823,
       "blueprint": "masters_crud_bp",
       "function": "export_to_csv",
       "source": "backend"
@@ -323,7 +314,7 @@
       "method": "POST",
       "path": "/api/masters/<master_type>/import",
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1031,
+      "line": 898,
       "blueprint": "masters_crud_bp",
       "function": "import_from_csv",
       "source": "backend"
@@ -332,7 +323,7 @@
       "method": "GET",
       "path": "/api/categories",
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1141,
+      "line": 1008,
       "blueprint": "masters_crud_bp",
       "function": "get_categories",
       "source": "backend"
@@ -341,7 +332,7 @@
       "method": "GET",
       "path": "/api/subcategories",
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1180,
+      "line": 1047,
       "blueprint": "masters_crud_bp",
       "function": "get_subcategories",
       "source": "backend"
@@ -350,7 +341,7 @@
       "method": "GET",
       "path": "/api/subcategories/<int:subcategory_id>",
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1246,
+      "line": 1113,
       "blueprint": "masters_crud_bp",
       "function": "get_subcategory_details",
       "source": "backend"
@@ -359,7 +350,7 @@
       "method": "GET",
       "path": "/api/oil-config/status",
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1302,
+      "line": 1169,
       "blueprint": "masters_crud_bp",
       "function": "get_oil_config_status",
       "source": "backend"
@@ -368,7 +359,7 @@
       "method": "GET",
       "path": "/api/oil-config/seed-varieties",
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1428,
+      "line": 1295,
       "blueprint": "masters_crud_bp",
       "function": "get_seed_varieties",
       "source": "backend"
@@ -377,7 +368,7 @@
       "method": "GET",
       "path": "/api/oil-config/oil-products",
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1480,
+      "line": 1347,
       "blueprint": "masters_crud_bp",
       "function": "get_oil_products",
       "source": "backend"
@@ -386,7 +377,7 @@
       "method": "GET",
       "path": "/api/oil-config/production-flow",
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1533,
+      "line": 1400,
       "blueprint": "masters_crud_bp",
       "function": "get_production_flow",
       "source": "backend"
@@ -395,7 +386,7 @@
       "method": "POST",
       "path": "/api/oil-config/validate",
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1620,
+      "line": 1487,
       "blueprint": "masters_crud_bp",
       "function": "validate_oil_configuration",
       "source": "backend"
@@ -404,7 +395,7 @@
       "method": "POST",
       "path": "/api/oil-config/apply-suggestions",
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1867,
+      "line": 1734,
       "blueprint": "masters_crud_bp",
       "function": "apply_oil_suggestions",
       "source": "backend"
@@ -3181,51 +3172,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 446,
-      "type": "SELECT",
-      "tables": [
-        "information_schema",
-        "subcategories_master",
-        "materials"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 463,
-      "type": "UPDATE",
-      "tables": [
-        "information_schema",
-        "subcategories_master",
-        "materials"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 493,
-      "type": "SELECT",
-      "tables": [
-        "information_schema",
-        "subcategories_master",
-        "materials"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 510,
-      "type": "UPDATE",
-      "tables": [
-        "information_schema",
-        "subcategories_master",
-        "materials"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 574,
+      "line": 441,
       "type": "SELECT",
       "tables": [
         "information_schema",
@@ -3236,7 +3183,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 576,
+      "line": 443,
       "type": "SELECT",
       "tables": [
         "information_schema",
@@ -3247,7 +3194,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 674,
+      "line": 541,
       "type": "INSERT",
       "tables": [
         "information_schema",
@@ -3258,7 +3205,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 724,
+      "line": 591,
       "type": "SELECT",
       "tables": [
         "information_schema",
@@ -3269,7 +3216,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 726,
+      "line": 593,
       "type": "SELECT",
       "tables": [
         "information_schema",
@@ -3280,7 +3227,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 783,
+      "line": 650,
       "type": "UPDATE",
       "tables": [
         "information_schema",
@@ -3291,7 +3238,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 857,
+      "line": 724,
       "type": "DELETE",
       "tables": [
         "information_schema",
@@ -3302,7 +3249,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 859,
+      "line": 726,
       "type": "DELETE",
       "tables": [
         "information_schema",
@@ -3313,7 +3260,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 984,
+      "line": 851,
       "type": "OTHER",
       "tables": [
         "information_schema",
@@ -3324,7 +3271,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1114,
+      "line": 981,
       "type": "OTHER",
       "tables": [
         "information_schema",
@@ -3335,7 +3282,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1148,
+      "line": 1015,
       "type": "SELECT",
       "tables": [
         "information_schema",
@@ -3347,7 +3294,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1191,
+      "line": 1058,
       "type": "SELECT",
       "tables": [
         "information_schema",
@@ -3359,7 +3306,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1207,
+      "line": 1074,
       "type": "SELECT",
       "tables": [
         "information_schema",
@@ -3371,7 +3318,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1253,
+      "line": 1120,
       "type": "SELECT",
       "tables": [
         "information_schema",
@@ -3383,7 +3330,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1310,
+      "line": 1177,
       "type": "SELECT",
       "tables": [
         "information_schema",
@@ -3395,7 +3342,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1343,
+      "line": 1210,
       "type": "SELECT",
       "tables": [
         "information_schema",
@@ -3408,7 +3355,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1374,
+      "line": 1241,
       "type": "SELECT",
       "tables": [
         "information_schema",
@@ -3421,7 +3368,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1384,
+      "line": 1251,
       "type": "SELECT",
       "tables": [
         "information_schema",
@@ -3434,7 +3381,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1435,
+      "line": 1302,
       "type": "SELECT",
       "tables": [
         "information_schema",
@@ -3448,7 +3395,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1487,
+      "line": 1354,
       "type": "SELECT",
       "tables": [
         "information_schema",
@@ -3464,7 +3411,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1541,
+      "line": 1408,
       "type": "SELECT",
       "tables": [
         "information_schema",
@@ -3480,7 +3427,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1633,
+      "line": 1500,
       "type": "SELECT",
       "tables": [
         "information_schema",
@@ -3496,7 +3443,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1738,
+      "line": 1605,
       "type": "SELECT",
       "tables": [
         "information_schema",
@@ -3512,7 +3459,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1778,
+      "line": 1645,
       "type": "SELECT",
       "tables": [
         "information_schema",
@@ -3528,7 +3475,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1897,
+      "line": 1764,
       "type": "SELECT",
       "tables": [
         "information_schema",
@@ -3544,7 +3491,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1909,
+      "line": 1776,
       "type": "UPDATE",
       "tables": [
         "information_schema",
@@ -3560,7 +3507,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1935,
+      "line": 1802,
       "type": "SELECT",
       "tables": [
         "information_schema",
@@ -3576,7 +3523,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1946,
+      "line": 1813,
       "type": "UPDATE",
       "tables": [
         "information_schema",
@@ -3592,7 +3539,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1971,
+      "line": 1838,
       "type": "SELECT",
       "tables": [
         "information_schema",
@@ -3608,7 +3555,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1983,
+      "line": 1850,
       "type": "UPDATE",
       "tables": [
         "information_schema",
@@ -10224,15 +10171,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 418,
-      "name": "apply_single_oil_suggestion",
-      "params": "",
-      "type": "python",
-      "isRoute": true
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 556,
+      "line": 423,
       "name": "get_single_record",
       "params": "master_type, record_id",
       "type": "python",
@@ -10240,7 +10179,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 612,
+      "line": 479,
       "name": "create_record",
       "params": "master_type",
       "type": "python",
@@ -10248,7 +10187,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 705,
+      "line": 572,
       "name": "update_record",
       "params": "master_type, record_id",
       "type": "python",
@@ -10256,7 +10195,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 819,
+      "line": 686,
       "name": "delete_record",
       "params": "master_type, record_id",
       "type": "python",
@@ -10264,7 +10203,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 887,
+      "line": 754,
       "name": "restore_record_endpoint",
       "params": "master_type, record_id",
       "type": "python",
@@ -10272,7 +10211,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 926,
+      "line": 793,
       "name": "check_record_dependencies",
       "params": "master_type, record_id",
       "type": "python",
@@ -10280,7 +10219,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 957,
+      "line": 824,
       "name": "export_to_csv",
       "params": "master_type",
       "type": "python",
@@ -10288,7 +10227,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1032,
+      "line": 899,
       "name": "import_from_csv",
       "params": "master_type",
       "type": "python",
@@ -10296,7 +10235,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1142,
+      "line": 1009,
       "name": "get_categories",
       "params": "",
       "type": "python",
@@ -10304,7 +10243,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1181,
+      "line": 1048,
       "name": "get_subcategories",
       "params": "",
       "type": "python",
@@ -10312,7 +10251,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1247,
+      "line": 1114,
       "name": "get_subcategory_details",
       "params": "subcategory_id",
       "type": "python",
@@ -10320,7 +10259,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1303,
+      "line": 1170,
       "name": "get_oil_config_status",
       "params": "",
       "type": "python",
@@ -10328,7 +10267,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1429,
+      "line": 1296,
       "name": "get_seed_varieties",
       "params": "",
       "type": "python",
@@ -10336,7 +10275,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1481,
+      "line": 1348,
       "name": "get_oil_products",
       "params": "",
       "type": "python",
@@ -10344,7 +10283,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1534,
+      "line": 1401,
       "name": "get_production_flow",
       "params": "",
       "type": "python",
@@ -10352,7 +10291,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1621,
+      "line": 1488,
       "name": "validate_oil_configuration",
       "params": "",
       "type": "python",
@@ -10360,7 +10299,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1868,
+      "line": 1735,
       "name": "apply_oil_suggestions",
       "params": "",
       "type": "python",
@@ -15596,129 +15535,122 @@
         "function": "apply_single_oil_suggestion"
       },
       {
-        "method": "POST",
-        "path": "/api/oil-config/apply-suggestion",
-        "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-        "line": 417,
-        "function": "apply_single_oil_suggestion"
-      },
-      {
         "method": "GET",
         "path": "/api/masters/<master_type>/<record_id>",
         "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-        "line": 555,
+        "line": 422,
         "function": "get_single_record"
       },
       {
         "method": "POST",
         "path": "/api/masters/<master_type>",
         "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-        "line": 611,
+        "line": 478,
         "function": "create_record"
       },
       {
         "method": "PUT",
         "path": "/api/masters/<master_type>/<record_id>",
         "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-        "line": 704,
+        "line": 571,
         "function": "update_record"
       },
       {
         "method": "DELETE",
         "path": "/api/masters/<master_type>/<record_id>",
         "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-        "line": 818,
+        "line": 685,
         "function": "delete_record"
       },
       {
         "method": "POST",
         "path": "/api/masters/<master_type>/<record_id>/restore",
         "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-        "line": 886,
+        "line": 753,
         "function": "restore_record_endpoint"
       },
       {
         "method": "GET",
         "path": "/api/masters/<master_type>/<record_id>/dependencies",
         "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-        "line": 925,
+        "line": 792,
         "function": "check_record_dependencies"
       },
       {
         "method": "GET",
         "path": "/api/masters/<master_type>/export",
         "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-        "line": 956,
+        "line": 823,
         "function": "export_to_csv"
       },
       {
         "method": "POST",
         "path": "/api/masters/<master_type>/import",
         "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-        "line": 1031,
+        "line": 898,
         "function": "import_from_csv"
       },
       {
         "method": "GET",
         "path": "/api/categories",
         "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-        "line": 1141,
+        "line": 1008,
         "function": "get_categories"
       },
       {
         "method": "GET",
         "path": "/api/subcategories",
         "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-        "line": 1180,
+        "line": 1047,
         "function": "get_subcategories"
       },
       {
         "method": "GET",
         "path": "/api/subcategories/<int:subcategory_id>",
         "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-        "line": 1246,
+        "line": 1113,
         "function": "get_subcategory_details"
       },
       {
         "method": "GET",
         "path": "/api/oil-config/status",
         "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-        "line": 1302,
+        "line": 1169,
         "function": "get_oil_config_status"
       },
       {
         "method": "GET",
         "path": "/api/oil-config/seed-varieties",
         "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-        "line": 1428,
+        "line": 1295,
         "function": "get_seed_varieties"
       },
       {
         "method": "GET",
         "path": "/api/oil-config/oil-products",
         "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-        "line": 1480,
+        "line": 1347,
         "function": "get_oil_products"
       },
       {
         "method": "GET",
         "path": "/api/oil-config/production-flow",
         "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-        "line": 1533,
+        "line": 1400,
         "function": "get_production_flow"
       },
       {
         "method": "POST",
         "path": "/api/oil-config/validate",
         "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-        "line": 1620,
+        "line": 1487,
         "function": "validate_oil_configuration"
       },
       {
         "method": "POST",
         "path": "/api/oil-config/apply-suggestions",
         "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-        "line": 1867,
+        "line": 1734,
         "function": "apply_oil_suggestions"
       }
     ],
@@ -18210,260 +18142,247 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 423,
+      "line": 428,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 544,
+      "line": 468,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 561,
+      "line": 484,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 601,
+      "line": 560,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 617,
+      "line": 577,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 693,
+      "line": 674,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 710,
+      "line": 691,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 807,
+      "line": 742,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 824,
+      "line": 759,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 875,
+      "line": 781,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 892,
+      "line": 798,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 914,
+      "line": 813,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 931,
+      "line": 829,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 946,
+      "line": 888,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 962,
+      "line": 904,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1021,
+      "line": 935,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
+      "line": 984,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1037,
-      "type": "try-catch",
-      "code": "try:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1068,
-      "type": "try-catch",
-      "code": "try:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1117,
+      "line": 998,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1131,
+      "line": 1014,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
+      "line": 1041,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1147,
+      "line": 1053,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1174,
+      "line": 1107,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1186,
+      "line": 1119,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1240,
+      "line": 1159,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1252,
+      "line": 1175,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1292,
+      "line": 1289,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1308,
+      "line": 1301,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1422,
+      "line": 1341,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1434,
+      "line": 1353,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1474,
+      "line": 1394,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1486,
+      "line": 1406,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1527,
+      "line": 1481,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1539,
+      "line": 1493,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1614,
+      "line": 1728,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1626,
+      "line": 1740,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1861,
+      "line": 1756,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
+      "line": 1882,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1873,
-      "type": "try-catch",
-      "code": "try:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 1889,
-      "type": "try-catch",
-      "code": "try:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 2015,
-      "type": "except",
-      "exception": "Exception",
-      "code": "except Exception as e:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-      "line": 2035,
+      "line": 1902,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
@@ -19482,15 +19401,15 @@
     "jsFiles": 37,
     "pyFiles": 22,
     "components": 41,
-    "routes": 101,
+    "routes": 100,
     "exports": 41,
     "imports": 49,
     "hardcodedValues": 23,
-    "databaseQueries": 331,
+    "databaseQueries": 327,
     "databaseTables": 50,
-    "functions": 541,
+    "functions": 540,
     "stateHooks": 613,
     "missingEndpoints": 1,
-    "errorHandlers": 536
+    "errorHandlers": 534
   }
 }

@@ -1,6 +1,6 @@
 # Feature Pack: OIL-CONFIG
-Generated: 2025-08-21T18:31:54.819Z
-Routes: 8 | Tables: 8 | Files: 1
+Generated: 2025-08-21T18:36:27.823Z
+Routes: 7 | Tables: 8 | Files: 1
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -13,7 +13,6 @@ Routes: 8 | Tables: 8 | Files: 1
 ## API Endpoints
 ```
 # apply_single_oil_suggestion
-POST   /api/oil-config/apply-suggestion
 POST   /api/oil-config/apply-suggestion
 # get_oil_config_status
 GET    /api/oil-config/status
