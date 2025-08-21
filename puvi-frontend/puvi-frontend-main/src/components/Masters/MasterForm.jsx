@@ -1,9 +1,8 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx
 // Professional Master Form Component with Enterprise UI
-// Updated: Dynamic options from database (no hardcoded values)
+// Fixed: Categories dropdown and added produces_oil_type field
 
 import React, { useState, useEffect, useRef } from 'react';
-import { configAPI } from '../../services/api'; // NEW: Import configAPI for dynamic options
 import './MasterForm.css';
 
 // API configuration
@@ -190,7 +189,6 @@ const NumberField = ({ id, label, value, onChange, error, required, disabled, mi
   </div>
 );
 
-// UPDATED: SelectField to handle dynamic options loading
 const SelectField = ({ id, label, value, onChange, options, error, required, disabled, help, loading = false }) => (
   <div className="field">
     <label htmlFor={id} className="label">
@@ -439,9 +437,14 @@ const MasterForm = ({
     'material-naming': true
   });
   
-  // NEW: State for dynamic options
+  // State for dynamic options
   const [dynamicOptions, setDynamicOptions] = useState({});
   const [loadingDynamicOptions, setLoadingDynamicOptions] = useState({});
+  
+  // NEW: State for categories and oil types
+  const [categories, setCategories] = useState([]);
+  const [oilTypes, setOilTypes] = useState([]);
+  const [showProducesOilType, setShowProducesOilType] = useState(false);
   
   // Refs
   const firstErrorRef = useRef(null);
@@ -465,18 +468,23 @@ const MasterForm = ({
       loadReferences();
       if (editData) {
         setFormData(editData);
+        // Check if editing a seed material
+        if (masterType === 'materials' && editData.category === 'Seeds') {
+          setShowProducesOilType(true);
+        }
       } else {
         setFormData({});
+        setShowProducesOilType(false);
       }
       setErrors({});
       setTouchedFields({});
       setAlert(null);
-      setDynamicOptions({}); // Reset dynamic options
-      setLoadingDynamicOptions({}); // Reset loading states
+      setDynamicOptions({});
+      setLoadingDynamicOptions({});
     }
   }, [masterType, editData, isOpen]);
   
-  // NEW: Load dynamic options when schema changes
+  // Load dynamic options when schema changes
   useEffect(() => {
     if (schema && schema.fields) {
       loadDynamicOptions();
@@ -504,94 +512,72 @@ const MasterForm = ({
     }
   };
   
-  // NEW: Load dynamic options for fields marked as dynamic
+  // Load dynamic options for fields
   const loadDynamicOptions = async () => {
     if (!schema || !schema.fields) return;
     
     console.log('Loading dynamic options for schema:', schema);
     
     for (const field of schema.fields) {
-      // Check if field has dynamic options
+      // FIXED: Special handling for category field
+      if (field.name === 'category') {
+        console.log('Loading categories from /api/categories');
+        setLoadingDynamicOptions(prev => ({ ...prev, category: true }));
+        
+        try {
+          // Use the correct categories endpoint
+          const response = await apiCall('/api/categories');
+          const categoryNames = response.categories ? 
+            response.categories.map(cat => cat.category_name) : [];
+          
+          console.log('Loaded categories:', categoryNames);
+          setCategories(response.categories || []);
+          setDynamicOptions(prev => ({
+            ...prev,
+            category: categoryNames
+          }));
+        } catch (error) {
+          console.error('Failed to load categories:', error);
+          setDynamicOptions(prev => ({
+            ...prev,
+            category: []
+          }));
+        } finally {
+          setLoadingDynamicOptions(prev => ({ ...prev, category: false }));
+        }
+        continue;
+      }
+      
+      // Handle other dynamic fields
       if (field.options === 'dynamic' && field.options_endpoint) {
         console.log(`Loading dynamic options for field: ${field.name} from ${field.options_endpoint}`);
         
-        // Set loading state for this field
         setLoadingDynamicOptions(prev => ({ ...prev, [field.name]: true }));
         
         try {
-          // Determine which API to call based on endpoint
           let optionsData = [];
           
-          if (field.options_endpoint.includes('/api/materials/categories')) {
-            const response = await configAPI.getMaterialCategories();
-            optionsData = response.categories || response.values || [];
-          } else if (field.options_endpoint.includes('/api/materials/units')) {
-            const response = await configAPI.getMaterialUnits();
-            optionsData = response.units || response.values || [];
+          if (field.options_endpoint.includes('/api/materials/units')) {
+            const response = await apiCall('/api/materials/units');
+            optionsData = response.units || [];
           } else if (field.options_endpoint.includes('/api/config/gst_rates')) {
-            const response = await configAPI.getGSTRates();
-            optionsData = response.values || response.rates || [];
+            const response = await apiCall('/api/config/gst_rates');
+            optionsData = response.values || response.data || [];
           } else if (field.options_endpoint.includes('/api/config/density_values')) {
-            const response = await configAPI.getDensityValues();
-            optionsData = response.values || response.densities || [];
+            const response = await apiCall('/api/config/density_values');
+            optionsData = response.values || response.data || [];
           } else {
-            // Generic fetch for other endpoints
-            const response = await fetch(`${API_BASE_URL}${field.options_endpoint}`);
-            const data = await response.json();
-            
-            if (response.ok && data.success) {
-              // Extract the options array from various possible response structures
-              optionsData = data.categories || data.units || data.values || 
-                          data.options || data.data || data.items || [];
-            }
+            const response = await apiCall(field.options_endpoint);
+            optionsData = response.categories || response.units || response.values || 
+                        response.options || response.data || response.items || [];
           }
           
           console.log(`Loaded options for ${field.name}:`, optionsData);
           
-          // Set the dynamic options for this field
           setDynamicOptions(prev => ({
             ...prev,
             [field.name]: optionsData
           }));
-        } catch (error) {
-          console.error(`Failed to load dynamic options for ${field.name}:`, error);
-          // Set empty array on error to prevent undefined
-          setDynamicOptions(prev => ({
-            ...prev,
-            [field.name]: []
-          }));
-        } finally {
-          // Clear loading state for this field
-          setLoadingDynamicOptions(prev => ({ ...prev, [field.name]: false }));
-        }
-      } else if (field.options === 'dynamic' && !field.options_endpoint) {
-        // Handle special cases where options are dynamic but endpoint is determined by field name
-        console.log(`Field ${field.name} is dynamic but no endpoint specified, trying by name`);
-        
-        setLoadingDynamicOptions(prev => ({ ...prev, [field.name]: true }));
-        
-        try {
-          let optionsData = [];
-          
-          // Map field names to appropriate API calls
-          if (field.name === 'category') {
-            const response = await configAPI.getMaterialCategories();
-            optionsData = response.categories || [];
-          } else if (field.name === 'unit') {
-            const response = await configAPI.getMaterialUnits();
-            optionsData = response.units || [];
-          } else if (field.name === 'gst_rate') {
-            const response = await configAPI.getGSTRates();
-            optionsData = response.values || response.rates || [];
-          }
-          
-          if (optionsData.length > 0) {
-            console.log(`Loaded options for ${field.name} by name:`, optionsData);
-            setDynamicOptions(prev => ({
-              ...prev,
-              [field.name]: optionsData
-            }));
-          }
         } catch (error) {
           console.error(`Failed to load dynamic options for ${field.name}:`, error);
           setDynamicOptions(prev => ({
@@ -602,6 +588,25 @@ const MasterForm = ({
           setLoadingDynamicOptions(prev => ({ ...prev, [field.name]: false }));
         }
       }
+    }
+    
+    // Load oil types for materials form
+    if (masterType === 'materials') {
+      loadOilTypes();
+    }
+  };
+  
+  // NEW: Load oil types
+  const loadOilTypes = async () => {
+    try {
+      console.log('Loading oil types from /api/config/oil_types');
+      const response = await apiCall('/api/config/oil_types');
+      const types = response.values || response.data || [];
+      console.log('Loaded oil types:', types);
+      setOilTypes(types);
+    } catch (error) {
+      console.error('Failed to load oil types:', error);
+      setOilTypes([]);
     }
   };
   
@@ -635,6 +640,18 @@ const MasterForm = ({
       ...prev,
       [fieldName]: value
     }));
+    
+    // NEW: Check if category changed to Seeds
+    if (fieldName === 'category') {
+      setShowProducesOilType(value === 'Seeds');
+      if (value !== 'Seeds') {
+        // Clear produces_oil_type if not Seeds
+        setFormData(prev => ({
+          ...prev,
+          produces_oil_type: null
+        }));
+      }
+    }
     
     // Clear error if field is modified
     if (errors[fieldName] && touchedFields[fieldName]) {
@@ -735,13 +752,18 @@ const MasterForm = ({
       
       const method = isEditMode ? 'PUT' : 'POST';
       
-      // Only send fields defined in schema
+      // Only send fields defined in schema plus produces_oil_type if needed
       const dataToSend = {};
       schema.fields.forEach(field => {
         if (formData[field.name] !== undefined) {
           dataToSend[field.name] = formData[field.name];
         }
       });
+      
+      // NEW: Include produces_oil_type if it's a seed material
+      if (masterType === 'materials' && formData.category === 'Seeds' && formData.produces_oil_type) {
+        dataToSend.produces_oil_type = formData.produces_oil_type;
+      }
       
       const response = await apiCall(url, {
         method,
@@ -786,20 +808,11 @@ const MasterForm = ({
       onBlur: () => handleFieldBlur(field)
     };
     
-    // Debug logging for supplier field
-    if (field.name === 'supplier_id') {
-      console.log('Rendering supplier field:', field);
-      console.log('Field type:', field.type);
-      console.log('Reference table:', field.reference_table);
-      console.log('Available suppliers:', suppliers);
-    }
-    
-    // Reference field (supplier dropdown) - Multiple checks to ensure it catches supplier field
+    // Reference field (supplier dropdown)
     if (field.type === 'reference' || 
         field.reference_table === 'suppliers' || 
         field.name === 'supplier_id' ||
         (field.label && field.label.toLowerCase().includes('supplier'))) {
-      console.log('Rendering as ReferenceField');
       return (
         <ReferenceField
           {...commonProps}
@@ -809,20 +822,28 @@ const MasterForm = ({
       );
     }
     
-    // UPDATED: Handle dynamic select fields
+    // FIXED: Handle category field specifically
+    if (field.name === 'category') {
+      return (
+        <SelectField
+          {...commonProps}
+          options={dynamicOptions.category || []}
+          loading={loadingDynamicOptions.category}
+          help={field.help || (loadingDynamicOptions.category ? 'Loading categories...' : 'Select material category')}
+        />
+      );
+    }
+    
+    // Handle other select fields
     if (field.type === 'select') {
-      // Check if this field has dynamic options
       const isDynamic = field.options === 'dynamic';
       const isLoading = loadingDynamicOptions[field.name];
       
       let fieldOptions = [];
       
       if (isDynamic) {
-        // Use dynamic options if available
         fieldOptions = dynamicOptions[field.name] || [];
-        console.log(`Using dynamic options for ${field.name}:`, fieldOptions);
       } else if (Array.isArray(field.options)) {
-        // Use static options if provided
         fieldOptions = field.options;
       }
       
@@ -848,9 +869,8 @@ const MasterForm = ({
       );
     }
     
-    // Number fields (including density)
+    // Number fields
     if (field.type === 'decimal' || field.type === 'integer') {
-      // Special handling for density field to show it's now editable
       const isDensityField = field.name === 'density';
       return (
         <NumberField
@@ -858,13 +878,12 @@ const MasterForm = ({
           min={field.min}
           max={field.max}
           step={field.type === 'decimal' ? 0.01 : 1}
-          help={field.help || (isDensityField ? 'Density value (specific gravity) - now editable' : undefined)}
+          help={field.help || (isDensityField ? 'Density value (specific gravity)' : undefined)}
         />
       );
     }
     
-    // Text/Email fields (DEFAULT - only if not caught above)
-    console.log('Rendering as TextField (default):', field.name);
+    // Text/Email fields (DEFAULT)
     return (
       <TextField
         {...commonProps}
@@ -872,6 +891,39 @@ const MasterForm = ({
         help={field.help || (field.name === 'short_code' ? `Example: ${masterType === 'suppliers' ? 'SKM' : 'GNS-K'}` : '')}
         maxLength={field.max_length}
       />
+    );
+  };
+  
+  // NEW: Render produces_oil_type field
+  const renderProducesOilTypeField = () => {
+    if (!showProducesOilType || masterType !== 'materials') {
+      return null;
+    }
+    
+    return (
+      <div className="field">
+        <label htmlFor="produces_oil_type" className="label">
+          Produces Oil Type
+          <span className="form-help" style={{ marginLeft: '10px' }}>(For seed materials)</span>
+        </label>
+        <select
+          id="produces_oil_type"
+          className="select"
+          value={formData.produces_oil_type || ''}
+          onChange={(e) => handleFieldChange('produces_oil_type', e.target.value)}
+          disabled={saving}
+        >
+          <option value="">Select oil type produced</option>
+          {oilTypes.map(oilType => (
+            <option key={oilType} value={oilType}>
+              {oilType}
+            </option>
+          ))}
+        </select>
+        <div className="form-help">
+          This seed material will produce {formData.produces_oil_type || '[selected oil]'} when processed in batch production
+        </div>
+      </div>
     );
   };
   
@@ -893,7 +945,9 @@ const MasterForm = ({
           description: 'Category and measurement',
           fields: schema.fields.filter(f => 
             ['category', 'unit'].includes(f.name)
-          )
+          ),
+          // NEW: Add produces_oil_type after category
+          extraContent: renderProducesOilTypeField()
         },
         {
           title: 'Cost & Pricing',
@@ -1030,7 +1084,7 @@ const MasterForm = ({
       {/* Alert Messages */}
       {alert && <InlineAlert {...alert} />}
       
-      {/* NEW: Show if dynamic options are being loaded */}
+      {/* Show if dynamic options are being loaded */}
       {Object.keys(loadingDynamicOptions).some(key => loadingDynamicOptions[key]) && (
         <div className="inline-alert info">
           <div className="inline-alert-icon"></div>
@@ -1088,6 +1142,9 @@ const MasterForm = ({
                   )}
                 </React.Fragment>
               ))}
+              
+              {/* NEW: Extra content (produces_oil_type) */}
+              {section.extraContent}
             </FormSection>
           ))}
         </div>
