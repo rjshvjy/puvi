@@ -395,7 +395,7 @@ const SubcategoryForm = ({
                 ⚠️ No categories available. Please create categories first (Seeds, Oil, etc.)
               </div>
             ) : (
-              <>
+              <div>
                 <select
                   className={`form-control ${errors.category_id ? 'error' : ''}`}
                   value={formData.category_id}
@@ -418,7 +418,7 @@ const SubcategoryForm = ({
                   <strong>Select:</strong> "Seeds" for oil products, "Oil" for refined oils<br/>
                   <strong>Why:</strong> Links subcategory to materials and determines production flow
                 </div>
-              </>
+              </div>
             )}
           </div>
           </div>
