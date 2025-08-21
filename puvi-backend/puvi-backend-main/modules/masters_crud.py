@@ -280,6 +280,274 @@ def list_master_records(master_type):
         close_connection(conn, cur)
 
 
+@masters_crud_bp.route('/api/oil-config/apply-suggestion', methods=['POST'])
+def apply_single_oil_suggestion():
+    """Apply a single oil configuration suggestion after user review"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        data = request.json
+        
+        # Required fields
+        required_fields = ['entity_type', 'entity_id', 'field', 'value']
+        missing = [f for f in required_fields if f not in data or data[f] is None]
+        
+        if missing:
+            return jsonify({
+                'success': False,
+                'error': f'Missing required fields: {", ".join(missing)}'
+            }), 400
+        
+        entity_type = data['entity_type']
+        entity_id = data['entity_id']
+        field = data['field']
+        new_value = data['value']
+        applied_by = data.get('applied_by', 'System')
+        reason = data.get('reason', 'Applied oil configuration suggestion')
+        
+        # Apply based on entity type
+        if entity_type in ['subcategory', 'oil_subcategory'] and field == 'oil_type':
+            # Get current value
+            cur.execute("""
+                SELECT oil_type, subcategory_name 
+                FROM subcategories_master 
+                WHERE subcategory_id = %s
+            """, (entity_id,))
+            
+            row = cur.fetchone()
+            if not row:
+                return jsonify({
+                    'success': False,
+                    'error': f'Subcategory {entity_id} not found'
+                }), 404
+            
+            old_value = row[0]
+            entity_name = row[1]
+            
+            # Update
+            cur.execute("""
+                UPDATE subcategories_master 
+                SET oil_type = %s 
+                WHERE subcategory_id = %s
+            """, (new_value, entity_id))
+            
+            # Audit log
+            log_audit(
+                conn, cur, 'subcategories_master', entity_id, 'UPDATE',
+                old_values={'oil_type': old_value},
+                new_values={'oil_type': new_value},
+                changed_by=applied_by,
+                reason=reason
+            )
+            
+            conn.commit()
+            
+            return jsonify({
+                'success': True,
+                'message': f'Updated oil_type for {entity_name}',
+                'changes': {
+                    'entity': entity_name,
+                    'field': field,
+                    'old_value': old_value,
+                    'new_value': new_value
+                }
+            })
+            
+        elif entity_type == 'material' and field == 'produces_oil_type':
+            # Get current value
+            cur.execute("""
+                SELECT produces_oil_type, material_name 
+                FROM materials 
+                WHERE material_id = %s
+            """, (entity_id,))
+            
+            row = cur.fetchone()
+            if not row:
+                return jsonify({
+                    'success': False,
+                    'error': f'Material {entity_id} not found'
+                }), 404
+            
+            old_value = row[0]
+            entity_name = row[1]
+            
+            # Update
+            cur.execute("""
+                UPDATE materials 
+                SET produces_oil_type = %s 
+                WHERE material_id = %s
+            """, (new_value, entity_id))
+            
+            # Audit log
+            log_audit(
+                conn, cur, 'materials', entity_id, 'UPDATE',
+                old_values={'produces_oil_type': old_value},
+                new_values={'produces_oil_type': new_value},
+                changed_by=applied_by,
+                reason=reason
+            )
+            
+            conn.commit()
+            
+            return jsonify({
+                'success': True,
+                'message': f'Updated produces_oil_type for {entity_name}',
+                'changes': {
+                    'entity': entity_name,
+                    'field': field,
+                    'old_value': old_value,
+                    'new_value': new_value
+                }
+            })
+            
+        else:
+            return jsonify({
+                'success': False,
+                'error': f'Unknown entity type {entity_type} or field {field}'
+            }), 400
+            
+    except Exception as e:
+        conn.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+@masters_crud_bp.route('/api/oil-config/apply-suggestion', methods=['POST'])
+def apply_single_oil_suggestion():
+    """Apply a single oil configuration suggestion after user review"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        data = request.json
+        
+        # Required fields
+        required_fields = ['entity_type', 'entity_id', 'field', 'value']
+        missing = [f for f in required_fields if f not in data or data[f] is None]
+        
+        if missing:
+            return jsonify({
+                'success': False,
+                'error': f'Missing required fields: {", ".join(missing)}'
+            }), 400
+        
+        entity_type = data['entity_type']
+        entity_id = data['entity_id']
+        field = data['field']
+        new_value = data['value']
+        applied_by = data.get('applied_by', 'System')
+        reason = data.get('reason', 'Applied oil configuration suggestion')
+        
+        # Apply based on entity type
+        if entity_type in ['subcategory', 'oil_subcategory'] and field == 'oil_type':
+            # Get current value
+            cur.execute("""
+                SELECT oil_type, subcategory_name 
+                FROM subcategories_master 
+                WHERE subcategory_id = %s
+            """, (entity_id,))
+            
+            row = cur.fetchone()
+            if not row:
+                return jsonify({
+                    'success': False,
+                    'error': f'Subcategory {entity_id} not found'
+                }), 404
+            
+            old_value = row[0]
+            entity_name = row[1]
+            
+            # Update
+            cur.execute("""
+                UPDATE subcategories_master 
+                SET oil_type = %s 
+                WHERE subcategory_id = %s
+            """, (new_value, entity_id))
+            
+            # Audit log
+            log_audit(
+                conn, cur, 'subcategories_master', entity_id, 'UPDATE',
+                old_values={'oil_type': old_value},
+                new_values={'oil_type': new_value},
+                changed_by=applied_by,
+                reason=reason
+            )
+            
+            conn.commit()
+            
+            return jsonify({
+                'success': True,
+                'message': f'Updated oil_type for {entity_name}',
+                'changes': {
+                    'entity': entity_name,
+                    'field': field,
+                    'old_value': old_value,
+                    'new_value': new_value
+                }
+            })
+            
+        elif entity_type == 'material' and field == 'produces_oil_type':
+            # Get current value
+            cur.execute("""
+                SELECT produces_oil_type, material_name 
+                FROM materials 
+                WHERE material_id = %s
+            """, (entity_id,))
+            
+            row = cur.fetchone()
+            if not row:
+                return jsonify({
+                    'success': False,
+                    'error': f'Material {entity_id} not found'
+                }), 404
+            
+            old_value = row[0]
+            entity_name = row[1]
+            
+            # Update
+            cur.execute("""
+                UPDATE materials 
+                SET produces_oil_type = %s 
+                WHERE material_id = %s
+            """, (new_value, entity_id))
+            
+            # Audit log
+            log_audit(
+                conn, cur, 'materials', entity_id, 'UPDATE',
+                old_values={'produces_oil_type': old_value},
+                new_values={'produces_oil_type': new_value},
+                changed_by=applied_by,
+                reason=reason
+            )
+            
+            conn.commit()
+            
+            return jsonify({
+                'success': True,
+                'message': f'Updated produces_oil_type for {entity_name}',
+                'changes': {
+                    'entity': entity_name,
+                    'field': field,
+                    'old_value': old_value,
+                    'new_value': new_value
+                }
+            })
+            
+        else:
+            return jsonify({
+                'success': False,
+                'error': f'Unknown entity type {entity_type} or field {field}'
+            }), 400
+            
+    except Exception as e:
+        conn.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
 # =====================================================
 # GET SINGLE RECORD
 # =====================================================
@@ -337,7 +605,7 @@ def get_single_record(master_type, record_id):
 
 
 # =====================================================
-# CREATE RECORD - FIXED TO CHECK COLUMN EXISTS
+# CREATE RECORD
 # =====================================================
 
 @masters_crud_bp.route('/api/masters/<master_type>', methods=['POST'])
@@ -381,12 +649,11 @@ def create_record(master_type):
                 values.append(data[field_name])
                 placeholders.append('%s')
         
-        # FIXED: Only add created_by if the column exists in the database
-        if check_column_exists(cur, table, 'created_by'):
-            if 'created_by' not in fields:
-                fields.append('created_by')
-                values.append(data.get('created_by', 'System'))
-                placeholders.append('%s')
+        # Add created_by if not present
+        if 'created_by' not in fields:
+            fields.append('created_by')
+            values.append(data.get('created_by', 'System'))
+            placeholders.append('%s')
         
         # Add is_active for new records
         soft_delete_field = config.get('soft_delete_field', 'is_active')
@@ -431,7 +698,7 @@ def create_record(master_type):
 
 
 # =====================================================
-# UPDATE RECORD - ALREADY FIXED WITH COLUMN CHECK
+# UPDATE RECORD - FIXED WITH COLUMN CHECK
 # =====================================================
 
 @masters_crud_bp.route('/api/masters/<master_type>/<record_id>', methods=['PUT'])
@@ -1023,6 +1290,750 @@ def get_subcategory_details(subcategory_id):
         })
         
     except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+# =====================================================
+# OIL CONFIGURATION ENDPOINTS (NEW)
+# =====================================================
+
+@masters_crud_bp.route('/api/oil-config/status', methods=['GET'])
+def get_oil_config_status():
+    """Get comprehensive oil configuration health status"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        # Check Seeds subcategories with oil_type mapping
+        cur.execute("""
+            SELECT 
+                s.subcategory_id,
+                s.subcategory_name,
+                s.subcategory_code,
+                s.oil_type,
+                COUNT(DISTINCT m.material_id) as material_count,
+                COUNT(DISTINCT CASE WHEN m.produces_oil_type IS NOT NULL THEN m.material_id END) as mapped_materials
+            FROM subcategories_master s
+            JOIN categories_master c ON s.category_id = c.category_id
+            LEFT JOIN materials m ON s.subcategory_id = m.subcategory_id
+            WHERE c.category_name = 'Seeds' AND s.is_active = true
+            GROUP BY s.subcategory_id, s.subcategory_name, s.subcategory_code, s.oil_type
+        """)
+        
+        seed_configs = []
+        unmapped_seeds = 0
+        for row in cur.fetchall():
+            is_configured = row[3] is not None and row[3] != ''
+            if not is_configured:
+                unmapped_seeds += 1
+            
+            seed_configs.append({
+                'subcategory_id': row[0],
+                'name': row[1],
+                'code': row[2],
+                'oil_type': row[3],
+                'material_count': row[4],
+                'mapped_materials': row[5],
+                'is_configured': is_configured
+            })
+        
+        # Check Oil subcategories
+        cur.execute("""
+            SELECT 
+                s.subcategory_id,
+                s.subcategory_name,
+                s.subcategory_code,
+                s.oil_type,
+                COUNT(DISTINCT sku.sku_id) as sku_count
+            FROM subcategories_master s
+            JOIN categories_master c ON s.category_id = c.category_id
+            LEFT JOIN sku_master sku ON sku.oil_type = s.oil_type
+            WHERE c.category_name = 'Oil' AND s.is_active = true
+            GROUP BY s.subcategory_id, s.subcategory_name, s.subcategory_code, s.oil_type
+        """)
+        
+        oil_products = []
+        unmapped_oils = 0
+        for row in cur.fetchall():
+            is_configured = row[3] is not None and row[3] != ''
+            if not is_configured:
+                unmapped_oils += 1
+                
+            oil_products.append({
+                'subcategory_id': row[0],
+                'name': row[1],
+                'code': row[2],
+                'oil_type': row[3],
+                'sku_count': row[4],
+                'is_configured': is_configured
+            })
+        
+        # Check materials without produces_oil_type
+        cur.execute("""
+            SELECT COUNT(*) 
+            FROM materials 
+            WHERE category = 'Seeds' 
+            AND (produces_oil_type IS NULL OR produces_oil_type = '')
+            AND is_active = true
+        """)
+        materials_without_oil_type = cur.fetchone()[0]
+        
+        # Check for orphaned oil types (oil without corresponding seeds)
+        cur.execute("""
+            SELECT DISTINCT s.oil_type
+            FROM subcategories_master s
+            JOIN categories_master c ON s.category_id = c.category_id
+            WHERE c.category_name = 'Oil' 
+            AND s.oil_type IS NOT NULL 
+            AND s.oil_type != ''
+            AND s.oil_type NOT IN (
+                SELECT DISTINCT oil_type 
+                FROM subcategories_master s2
+                JOIN categories_master c2 ON s2.category_id = c2.category_id
+                WHERE c2.category_name = 'Seeds' 
+                AND oil_type IS NOT NULL
+            )
+        """)
+        orphaned_oil_types = [row[0] for row in cur.fetchall()]
+        
+        # Calculate health score
+        total_issues = unmapped_seeds + unmapped_oils + materials_without_oil_type + len(orphaned_oil_types)
+        health_score = 'healthy' if total_issues == 0 else 'warning' if total_issues <= 3 else 'critical'
+        
+        return jsonify({
+            'success': True,
+            'health_score': health_score,
+            'total_issues': total_issues,
+            'seed_configurations': seed_configs,
+            'oil_products': oil_products,
+            'statistics': {
+                'total_seed_varieties': len(seed_configs),
+                'unmapped_seed_varieties': unmapped_seeds,
+                'total_oil_products': len(oil_products),
+                'unmapped_oil_products': unmapped_oils,
+                'materials_without_oil_type': materials_without_oil_type,
+                'orphaned_oil_types': orphaned_oil_types
+            },
+            'recommendations': []
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+@masters_crud_bp.route('/api/oil-config/seed-varieties', methods=['GET'])
+def get_seed_varieties():
+    """Get seed subcategories with oil mapping status and material counts"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        cur.execute("""
+            SELECT 
+                s.subcategory_id,
+                s.subcategory_name,
+                s.subcategory_code,
+                s.oil_type,
+                s.is_active,
+                COUNT(DISTINCT m.material_id) as total_materials,
+                COUNT(DISTINCT CASE WHEN m.produces_oil_type IS NOT NULL THEN m.material_id END) as configured_materials,
+                COALESCE(SUM(i.closing_stock), 0) as total_stock
+            FROM subcategories_master s
+            JOIN categories_master c ON s.category_id = c.category_id
+            LEFT JOIN materials m ON s.subcategory_id = m.subcategory_id AND m.is_active = true
+            LEFT JOIN inventory i ON m.material_id = i.material_id
+            WHERE c.category_name = 'Seeds'
+            GROUP BY s.subcategory_id, s.subcategory_name, s.subcategory_code, s.oil_type, s.is_active
+            ORDER BY s.subcategory_name
+        """)
+        
+        varieties = []
+        for row in cur.fetchall():
+            varieties.append({
+                'subcategory_id': row[0],
+                'variety_name': row[1],
+                'code': row[2],
+                'produces_oil': row[3] if row[3] else 'NOT CONFIGURED',
+                'is_active': row[4],
+                'total_materials': row[5],
+                'configured_materials': row[6],
+                'total_stock': float(row[7]),
+                'configuration_status': 'configured' if row[3] else 'needs_configuration'
+            })
+        
+        return jsonify({
+            'success': True,
+            'seed_varieties': varieties,
+            'count': len(varieties)
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+@masters_crud_bp.route('/api/oil-config/oil-products', methods=['GET'])
+def get_oil_products():
+    """Get oil subcategories with production statistics"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        cur.execute("""
+            SELECT 
+                s.subcategory_id,
+                s.subcategory_name,
+                s.subcategory_code,
+                s.oil_type,
+                s.is_active,
+                COUNT(DISTINCT sku.sku_id) as sku_count,
+                COUNT(DISTINCT b.batch_id) as batch_count,
+                COUNT(DISTINCT blend.blend_id) as blend_count
+            FROM subcategories_master s
+            JOIN categories_master c ON s.category_id = c.category_id
+            LEFT JOIN sku_master sku ON sku.oil_type = s.oil_type
+            LEFT JOIN batch b ON b.oil_type = s.oil_type
+            LEFT JOIN blend_batches blend ON blend.result_oil_type = s.oil_type
+            WHERE c.category_name = 'Oil'
+            GROUP BY s.subcategory_id, s.subcategory_name, s.subcategory_code, s.oil_type, s.is_active
+            ORDER BY s.subcategory_name
+        """)
+        
+        products = []
+        for row in cur.fetchall():
+            products.append({
+                'subcategory_id': row[0],
+                'product_name': row[1],
+                'code': row[2],
+                'oil_type': row[3] if row[3] else 'NOT SET',
+                'is_active': row[4],
+                'sku_count': row[5],
+                'batch_count': row[6],
+                'blend_count': row[7],
+                'configuration_status': 'configured' if row[3] else 'needs_configuration'
+            })
+        
+        return jsonify({
+            'success': True,
+            'oil_products': products,
+            'count': len(products)
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+@masters_crud_bp.route('/api/oil-config/production-flow', methods=['GET'])
+def get_production_flow():
+    """Get the complete seed → oil → product → SKU flow for visualization"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        # Get the production chain
+        cur.execute("""
+            WITH seed_to_oil AS (
+                SELECT DISTINCT
+                    s.subcategory_name as seed_variety,
+                    s.oil_type as produces_oil,
+                    COUNT(DISTINCT m.material_id) as material_count
+                FROM subcategories_master s
+                JOIN categories_master c ON s.category_id = c.category_id
+                LEFT JOIN materials m ON s.subcategory_id = m.subcategory_id
+                WHERE c.category_name = 'Seeds' AND s.oil_type IS NOT NULL
+                GROUP BY s.subcategory_name, s.oil_type
+            ),
+            oil_to_product AS (
+                SELECT DISTINCT
+                    s.oil_type,
+                    s.subcategory_name as oil_product,
+                    COUNT(DISTINCT sku.sku_id) as sku_count
+                FROM subcategories_master s
+                JOIN categories_master c ON s.category_id = c.category_id
+                LEFT JOIN sku_master sku ON sku.oil_type = s.oil_type
+                WHERE c.category_name = 'Oil' AND s.oil_type IS NOT NULL
+                GROUP BY s.oil_type, s.subcategory_name
+            )
+            SELECT 
+                sto.seed_variety,
+                sto.produces_oil,
+                sto.material_count,
+                otp.oil_product,
+                otp.sku_count
+            FROM seed_to_oil sto
+            LEFT JOIN oil_to_product otp ON sto.produces_oil = otp.oil_type
+            ORDER BY sto.produces_oil, sto.seed_variety
+        """)
+        
+        flow_data = []
+        oil_types = {}
+        
+        for row in cur.fetchall():
+            oil_type = row[1]
+            if oil_type not in oil_types:
+                oil_types[oil_type] = {
+                    'oil_type': oil_type,
+                    'seeds': [],
+                    'products': [],
+                    'total_materials': 0,
+                    'total_skus': 0
+                }
+            
+            # Add seed variety
+            oil_types[oil_type]['seeds'].append({
+                'name': row[0],
+                'material_count': row[2]
+            })
+            oil_types[oil_type]['total_materials'] += row[2]
+            
+            # Add oil product if not already added
+            if row[3] and row[3] not in [p['name'] for p in oil_types[oil_type]['products']]:
+                oil_types[oil_type]['products'].append({
+                    'name': row[3],
+                    'sku_count': row[4]
+                })
+                oil_types[oil_type]['total_skus'] += row[4]
+        
+        # Convert to list
+        for oil_type, data in oil_types.items():
+            flow_data.append(data)
+        
+        return jsonify({
+            'success': True,
+            'production_flow': flow_data,
+            'oil_type_count': len(flow_data)
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+@masters_crud_bp.route('/api/oil-config/validate', methods=['POST'])
+def validate_oil_configuration():
+    """Validate oil configuration and suggest fixes (does not auto-apply)"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        data = request.json or {}
+        
+        issues = []
+        suggestions = []
+        
+        # Check 1: Seed subcategories without oil_type
+        cur.execute("""
+            SELECT s.subcategory_id, s.subcategory_name, s.subcategory_code
+            FROM subcategories_master s
+            JOIN categories_master c ON s.category_id = c.category_id
+            WHERE c.category_name = 'Seeds' 
+            AND (s.oil_type IS NULL OR s.oil_type = '')
+            AND s.is_active = true
+            ORDER BY s.subcategory_name
+        """)
+        
+        for row in cur.fetchall():
+            subcategory_id = row[0]
+            subcategory_name = row[1]
+            subcategory_code = row[2]
+            
+            # Issue tracking
+            issues.append({
+                'type': 'missing_oil_type',
+                'entity': 'subcategory',
+                'id': subcategory_id,
+                'name': subcategory_name,
+                'message': f"Seed variety '{subcategory_name}' has no oil_type configured"
+            })
+            
+            # Try to suggest oil type based on name patterns
+            name_upper = subcategory_name.upper()
+            suggested_oil_type = None
+            confidence = 'low'
+            pattern_matched = None
+            
+            # High confidence patterns (exact matches with "SEED" keyword)
+            if 'GROUNDNUT' in name_upper and 'SEED' in name_upper:
+                suggested_oil_type = 'Groundnut'
+                confidence = 'high'
+                pattern_matched = 'Groundnut + Seed'
+            elif ('SESAME' in name_upper or 'GINGELLY' in name_upper) and 'SEED' in name_upper:
+                suggested_oil_type = 'Sesame'
+                confidence = 'high'
+                pattern_matched = 'Sesame/Gingelly + Seed'
+            elif 'COCONUT' in name_upper and ('SEED' in name_upper or 'COPRA' in name_upper):
+                suggested_oil_type = 'Coconut'
+                confidence = 'high'
+                pattern_matched = 'Coconut/Copra'
+            elif 'MUSTARD' in name_upper and 'SEED' in name_upper:
+                suggested_oil_type = 'Mustard'
+                confidence = 'high'
+                pattern_matched = 'Mustard + Seed'
+            elif 'SUNFLOWER' in name_upper and 'SEED' in name_upper:
+                suggested_oil_type = 'Sunflower'
+                confidence = 'high'
+                pattern_matched = 'Sunflower + Seed'
+            elif 'CASTOR' in name_upper and 'SEED' in name_upper:
+                suggested_oil_type = 'Castor'
+                confidence = 'high'
+                pattern_matched = 'Castor + Seed'
+            # Medium confidence patterns (name contains oil type but not "SEED")
+            elif 'GROUNDNUT' in name_upper:
+                suggested_oil_type = 'Groundnut'
+                confidence = 'medium'
+                pattern_matched = 'Groundnut'
+            elif 'SESAME' in name_upper or 'GINGELLY' in name_upper:
+                suggested_oil_type = 'Sesame'
+                confidence = 'medium'
+                pattern_matched = 'Sesame/Gingelly'
+            elif 'COCONUT' in name_upper:
+                suggested_oil_type = 'Coconut'
+                confidence = 'medium'
+                pattern_matched = 'Coconut'
+            elif 'MUSTARD' in name_upper:
+                suggested_oil_type = 'Mustard'
+                confidence = 'medium'
+                pattern_matched = 'Mustard'
+            elif 'SUNFLOWER' in name_upper:
+                suggested_oil_type = 'Sunflower'
+                confidence = 'medium'
+                pattern_matched = 'Sunflower'
+            elif 'CASTOR' in name_upper:
+                suggested_oil_type = 'Castor'
+                confidence = 'medium'
+                pattern_matched = 'Castor'
+            # Low confidence patterns (partial matches)
+            elif 'PALM' in name_upper:
+                suggested_oil_type = 'Palm'
+                confidence = 'low'
+                pattern_matched = 'Palm'
+            elif 'NEEM' in name_upper:
+                suggested_oil_type = 'Neem'
+                confidence = 'low'
+                pattern_matched = 'Neem'
+            
+            if suggested_oil_type:
+                suggestions.append({
+                    'entity_type': 'subcategory',
+                    'entity_id': subcategory_id,
+                    'entity_name': subcategory_name,
+                    'entity_code': subcategory_code,
+                    'field': 'oil_type',
+                    'current_value': None,
+                    'suggested_value': suggested_oil_type,
+                    'confidence': confidence,
+                    'pattern_matched': pattern_matched,
+                    'reason': f"Name contains '{pattern_matched}'"
+                })
+        
+        # Check 2: Seed materials without produces_oil_type but subcategory has oil_type
+        cur.execute("""
+            SELECT m.material_id, m.material_name, s.oil_type, s.subcategory_name
+            FROM materials m
+            JOIN subcategories_master s ON m.subcategory_id = s.subcategory_id
+            WHERE m.category = 'Seeds' 
+            AND (m.produces_oil_type IS NULL OR m.produces_oil_type = '')
+            AND m.is_active = true
+            AND s.oil_type IS NOT NULL
+            AND s.oil_type != ''
+            ORDER BY m.material_name
+        """)
+        
+        for row in cur.fetchall():
+            material_id = row[0]
+            material_name = row[1]
+            subcategory_oil_type = row[2]
+            subcategory_name = row[3]
+            
+            issues.append({
+                'type': 'missing_produces_oil_type',
+                'entity': 'material',
+                'id': material_id,
+                'name': material_name,
+                'message': f"Seed material '{material_name}' has no produces_oil_type set"
+            })
+            
+            # High confidence suggestion since subcategory already has oil_type
+            suggestions.append({
+                'entity_type': 'material',
+                'entity_id': material_id,
+                'entity_name': material_name,
+                'field': 'produces_oil_type',
+                'current_value': None,
+                'suggested_value': subcategory_oil_type,
+                'confidence': 'high',
+                'pattern_matched': 'subcategory_oil_type',
+                'reason': f"Subcategory '{subcategory_name}' has oil_type='{subcategory_oil_type}'"
+            })
+        
+        # Check 3: Oil subcategories without oil_type
+        cur.execute("""
+            SELECT s.subcategory_id, s.subcategory_name, s.subcategory_code
+            FROM subcategories_master s
+            JOIN categories_master c ON s.category_id = c.category_id
+            WHERE c.category_name = 'Oil' 
+            AND (s.oil_type IS NULL OR s.oil_type = '')
+            AND s.is_active = true
+            ORDER BY s.subcategory_name
+        """)
+        
+        for row in cur.fetchall():
+            subcategory_id = row[0]
+            subcategory_name = row[1]
+            
+            issues.append({
+                'type': 'oil_product_missing_type',
+                'entity': 'subcategory',
+                'id': subcategory_id,
+                'name': subcategory_name,
+                'message': f"Oil product '{subcategory_name}' has no oil_type configured"
+            })
+            
+            # Try to detect oil type from product name
+            name_upper = subcategory_name.upper()
+            suggested_oil_type = None
+            confidence = 'low'
+            
+            # Remove common suffixes to identify base oil
+            cleaned_name = name_upper.replace(' OIL', '').replace('DEEPAM ', '').strip()
+            
+            if 'COCONUT' in cleaned_name:
+                suggested_oil_type = 'Coconut'
+                confidence = 'medium'
+            elif 'SESAME' in cleaned_name or 'GINGELLY' in cleaned_name:
+                suggested_oil_type = 'Sesame'
+                confidence = 'medium'
+            elif 'GROUNDNUT' in cleaned_name:
+                suggested_oil_type = 'Groundnut'
+                confidence = 'medium'
+            elif 'MUSTARD' in cleaned_name:
+                suggested_oil_type = 'Mustard'
+                confidence = 'medium'
+            elif 'CASTOR' in cleaned_name:
+                suggested_oil_type = 'Castor'
+                confidence = 'medium'
+            
+            if suggested_oil_type:
+                suggestions.append({
+                    'entity_type': 'oil_subcategory',
+                    'entity_id': subcategory_id,
+                    'entity_name': subcategory_name,
+                    'field': 'oil_type',
+                    'current_value': None,
+                    'suggested_value': suggested_oil_type,
+                    'confidence': confidence,
+                    'pattern_matched': suggested_oil_type,
+                    'reason': f"Product name contains '{suggested_oil_type}'"
+                })
+        
+        # Group suggestions by confidence for better UX
+        suggestions_by_confidence = {
+            'high': [s for s in suggestions if s['confidence'] == 'high'],
+            'medium': [s for s in suggestions if s['confidence'] == 'medium'],
+            'low': [s for s in suggestions if s['confidence'] == 'low']
+        }
+        
+        return jsonify({
+            'success': True,
+            'issues_count': len(issues),
+            'suggestions_count': len(suggestions),
+            'issues': issues,
+            'suggestions': suggestions,
+            'suggestions_by_confidence': suggestions_by_confidence,
+            'summary': {
+                'subcategories_without_oil_type': len([i for i in issues if i['type'] == 'missing_oil_type']),
+                'materials_without_produces_oil_type': len([i for i in issues if i['type'] == 'missing_produces_oil_type']),
+                'oil_products_without_type': len([i for i in issues if i['type'] == 'oil_product_missing_type']),
+                'high_confidence_suggestions': len(suggestions_by_confidence['high']),
+                'medium_confidence_suggestions': len(suggestions_by_confidence['medium']),
+                'low_confidence_suggestions': len(suggestions_by_confidence['low'])
+            }
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+@masters_crud_bp.route('/api/oil-config/apply-suggestions', methods=['POST'])
+def apply_oil_suggestions():
+    """Apply selected oil configuration suggestions with audit trail"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        data = request.json
+        suggestions_to_apply = data.get('suggestions', [])
+        applied_by = data.get('applied_by', 'System')
+        
+        if not suggestions_to_apply:
+            return jsonify({
+                'success': False,
+                'error': 'No suggestions provided to apply'
+            }), 400
+        
+        applied_count = 0
+        failed_count = 0
+        results = []
+        
+        for suggestion in suggestions_to_apply:
+            try:
+                entity_type = suggestion.get('entity_type')
+                entity_id = suggestion.get('entity_id')
+                field = suggestion.get('field')
+                new_value = suggestion.get('value')  # Can be suggested_value or user-modified
+                
+                if entity_type == 'subcategory' and field == 'oil_type':
+                    # Get current value for audit
+                    cur.execute("""
+                        SELECT oil_type, subcategory_name 
+                        FROM subcategories_master 
+                        WHERE subcategory_id = %s
+                    """, (entity_id,))
+                    row = cur.fetchone()
+                    
+                    if row:
+                        old_value = row[0]
+                        entity_name = row[1]
+                        
+                        # Update subcategory oil_type
+                        cur.execute("""
+                            UPDATE subcategories_master 
+                            SET oil_type = %s 
+                            WHERE subcategory_id = %s
+                        """, (new_value, entity_id))
+                        
+                        # Log audit
+                        log_audit(
+                            conn, cur, 'subcategories_master', entity_id, 'UPDATE',
+                            old_values={'oil_type': old_value},
+                            new_values={'oil_type': new_value},
+                            changed_by=applied_by,
+                            reason=f'Applied oil type suggestion for seed variety'
+                        )
+                        
+                        applied_count += 1
+                        results.append({
+                            'entity': entity_name,
+                            'field': field,
+                            'old_value': old_value,
+                            'new_value': new_value,
+                            'status': 'success'
+                        })
+                        
+                elif entity_type == 'oil_subcategory' and field == 'oil_type':
+                    # Similar to above but for oil products
+                    cur.execute("""
+                        SELECT oil_type, subcategory_name 
+                        FROM subcategories_master 
+                        WHERE subcategory_id = %s
+                    """, (entity_id,))
+                    row = cur.fetchone()
+                    
+                    if row:
+                        old_value = row[0]
+                        entity_name = row[1]
+                        
+                        cur.execute("""
+                            UPDATE subcategories_master 
+                            SET oil_type = %s 
+                            WHERE subcategory_id = %s
+                        """, (new_value, entity_id))
+                        
+                        log_audit(
+                            conn, cur, 'subcategories_master', entity_id, 'UPDATE',
+                            old_values={'oil_type': old_value},
+                            new_values={'oil_type': new_value},
+                            changed_by=applied_by,
+                            reason=f'Applied oil type suggestion for oil product'
+                        )
+                        
+                        applied_count += 1
+                        results.append({
+                            'entity': entity_name,
+                            'field': field,
+                            'old_value': old_value,
+                            'new_value': new_value,
+                            'status': 'success'
+                        })
+                        
+                elif entity_type == 'material' and field == 'produces_oil_type':
+                    # Get current value for audit
+                    cur.execute("""
+                        SELECT produces_oil_type, material_name 
+                        FROM materials 
+                        WHERE material_id = %s
+                    """, (entity_id,))
+                    row = cur.fetchone()
+                    
+                    if row:
+                        old_value = row[0]
+                        entity_name = row[1]
+                        
+                        # Update material produces_oil_type
+                        cur.execute("""
+                            UPDATE materials 
+                            SET produces_oil_type = %s 
+                            WHERE material_id = %s
+                        """, (new_value, entity_id))
+                        
+                        # Log audit
+                        log_audit(
+                            conn, cur, 'materials', entity_id, 'UPDATE',
+                            old_values={'produces_oil_type': old_value},
+                            new_values={'produces_oil_type': new_value},
+                            changed_by=applied_by,
+                            reason=f'Applied produces_oil_type from subcategory oil_type'
+                        )
+                        
+                        applied_count += 1
+                        results.append({
+                            'entity': entity_name,
+                            'field': field,
+                            'old_value': old_value,
+                            'new_value': new_value,
+                            'status': 'success'
+                        })
+                else:
+                    failed_count += 1
+                    results.append({
+                        'entity': f"{entity_type}:{entity_id}",
+                        'field': field,
+                        'status': 'failed',
+                        'error': 'Unknown entity type or field'
+                    })
+                    
+            except Exception as e:
+                failed_count += 1
+                results.append({
+                    'entity': suggestion.get('entity_name', 'Unknown'),
+                    'status': 'failed',
+                    'error': str(e)
+                })
+        
+        # Commit if any successful updates
+        if applied_count > 0:
+            conn.commit()
+        
+        return jsonify({
+            'success': True,
+            'applied_count': applied_count,
+            'failed_count': failed_count,
+            'results': results,
+            'message': f'Applied {applied_count} suggestions successfully'
+        })
+        
+    except Exception as e:
+        conn.rollback()
         return jsonify({'success': False, 'error': str(e)}), 500
     finally:
         close_connection(conn, cur)
