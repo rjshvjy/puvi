@@ -1,6 +1,6 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx
 // Subcategory Form Component for Oil Types & Blends CRUD
-// Handles creation and editing of oil type subcategories
+// FIXED: Now only shows Seeds and Oil categories for oil production management
 import React, { useState, useEffect } from 'react';
 // API configuration
 const API_BASE_URL = 'https://puvi-backend.onrender.com';
@@ -80,15 +80,20 @@ const SubcategoryForm = ({
       setErrors({});
     }
   }, [editData, isOpen]);
-  // Load categories
+  
+  // FIXED: Load ONLY oil-related categories (Seeds and Oil)
   const loadCategories = async () => {
     try {
       const response = await apiCall('/api/categories');
       if (response.success) {
-        setCategories(response.categories || []);
+        // FILTER to only Seeds and Oil categories for oil production management
+        const oilRelatedCategories = (response.categories || [])
+          .filter(c => ['Seeds', 'Oil'].includes(c.category_name));
+        
+        setCategories(oilRelatedCategories);
        
-        // Auto-select "Seeds" category for oil-related subcategories
-        const seedsCategory = response.categories.find(c => c.category_name === 'Seeds');
+        // Auto-select "Seeds" category for new entries
+        const seedsCategory = oilRelatedCategories.find(c => c.category_name === 'Seeds');
         if (seedsCategory && !editData) {
           setFormData(prev => ({ ...prev, category_id: seedsCategory.category_id }));
         }
@@ -98,6 +103,7 @@ const SubcategoryForm = ({
       setCategories([]);
     }
   };
+  
   // Load existing oil types for suggestions
   const loadExistingOilTypes = async () => {
     try {
@@ -109,22 +115,12 @@ const SubcategoryForm = ({
       setExistingOilTypes([]);
     }
   };
+  
   // Handle field change
   const handleFieldChange = (fieldName, value) => {
-    // FIXED: Convert category_id to integer when it comes from select dropdown
+    // Convert category_id to integer when it comes from select dropdown
     if (fieldName === 'category_id' && value !== '') {
       value = parseInt(value, 10);
-     
-      // Clear oil_type if switching to non-oil category
-      const selectedCategory = categories.find(c => c.category_id === value);
-      if (selectedCategory && !['Oil', 'Seeds'].includes(selectedCategory.category_name)) {
-        setFormData(prev => ({
-          ...prev,
-          category_id: value,
-          oil_type: '' // Clear oil_type for non-oil categories
-        }));
-        return;
-      }
     }
    
     setFormData(prev => ({
@@ -161,6 +157,9 @@ const SubcategoryForm = ({
       } else if (name.includes(' OIL')) {
         // Simple oil pattern - take first letters
         code = name.split(' ').map(w => w[0]).join('');
+      } else if (name.includes('SEED')) {
+        // Seed pattern - take first letters
+        code = name.split(' ').map(w => w[0]).join('');
       } else {
         // Default: first 3-4 characters
         code = name.replace(/[^A-Z0-9]/g, '').substring(0, 4);
@@ -169,16 +168,17 @@ const SubcategoryForm = ({
       setFormData(prev => ({ ...prev, subcategory_code: code }));
     }
   };
+  
   // Validate form
   const validateForm = () => {
     const newErrors = {};
    
     if (!formData.subcategory_name || formData.subcategory_name.trim() === '') {
-      newErrors.subcategory_name = 'Subcategory name is required';
+      newErrors.subcategory_name = 'Name is required';
     }
    
     if (!formData.subcategory_code || formData.subcategory_code.trim() === '') {
-      newErrors.subcategory_code = 'Subcategory code is required';
+      newErrors.subcategory_code = 'Code is required';
     } else if (!/^[A-Z0-9\-]+$/.test(formData.subcategory_code)) {
       newErrors.subcategory_code = 'Code must contain only uppercase letters, numbers, and hyphens';
     } else if (formData.subcategory_code.length < 2) {
@@ -205,6 +205,7 @@ const SubcategoryForm = ({
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
+  
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -218,7 +219,7 @@ const SubcategoryForm = ({
     try {
       let response;
      
-      // FIXED: Prepare data with proper types
+      // Prepare data with proper types
       const submitData = {
         ...formData,
         // Ensure category_id is integer if it exists
@@ -233,7 +234,6 @@ const SubcategoryForm = ({
      
       if (isEditMode) {
         // Update existing subcategory
-        // Try generic endpoint first
         try {
           response = await apiCall(`/api/masters/subcategories/${editData.subcategory_id}`, {
             method: 'PUT',
@@ -312,7 +312,7 @@ const SubcategoryForm = ({
       if (response.success) {
         onSave(response);
       } else {
-        setErrors({ submit: response.message || 'Failed to save subcategory' });
+        setErrors({ submit: response.message || 'Failed to save' });
       }
     } catch (error) {
       setErrors({ submit: error.message });
@@ -320,20 +320,23 @@ const SubcategoryForm = ({
       setSaving(false);
     }
   };
+  
   if (!isOpen) return null;
+  
   return (
     <div className="masters-modal-overlay">
       <div className="masters-form-container" style={{ maxWidth: '600px' }}>
         <div className="masters-form-header">
           <h2 className="masters-form-title">
-            {isEditMode ? 'Edit Subcategory' : 'Add New Subcategory'}
+            {isEditMode ? 'Edit Oil Type/Blend' : 'Add New Oil Type or Seed Variety'}
           </h2>
           <div style={{ fontSize: '14px', color: '#666', marginTop: '5px' }}>
-            Create subcategories under main categories (e.g., oil types under Oil/Seeds, sub-types under Chemicals/Packaging)
+            Configure oil production: Map seeds to oil types or define finished oil products
           </div>
         </div>
+        
         <form onSubmit={handleSubmit} className="masters-form-body">
-          {/* Context-Sensitive Help */}
+          {/* SIMPLIFIED Context-Sensitive Help for Oil Production Only */}
           {formData.category_id ? (
             <div style={{
               padding: '10px',
@@ -343,25 +346,37 @@ const SubcategoryForm = ({
               fontSize: '13px',
               color: '#0369a1'
             }}>
-              <strong>📋 Creating Subcategory for: {categories.find(c => c.category_id === formData.category_id)?.category_name}</strong>
+              <strong>📋 Creating {categories.find(c => c.category_id === formData.category_id)?.category_name} Subcategory</strong>
               <div style={{ marginTop: '5px', fontSize: '12px' }}>
                 {categories.find(c => c.category_id === formData.category_id)?.category_name === 'Oil' && (
-                  <>• Oil subcategories define finished oil products (Sesame Oil, Coconut Oil, etc.)<br/>
-                  • Set oil_type to match what seeds produce (Groundnut, Sesame, etc.)</>
+                  <>• Define finished oil products (Sesame Oil, Coconut Oil, Deepam Oil, etc.)<br/>
+                  • Set oil_type to match what seeds produce (e.g., "Groundnut", "Sesame")<br/>
+                  • Used in blending and SKU production</>
                 )}
                 {categories.find(c => c.category_id === formData.category_id)?.category_name === 'Seeds' && (
-                  <>• Seeds usually don't need subcategories - add seeds directly as materials<br/>
-                  • Only create if you need to group different seed types</>
-                )}
-                {['Chemicals', 'Consumables', 'Packaging'].includes(
-                  categories.find(c => c.category_id === formData.category_id)?.category_name
-                ) && (
-                  <>• Optional - you can add materials directly to the category<br/>
-                  • Create subcategories only if you need further grouping</>
+                  <>• Define seed varieties that produce specific oil types<br/>
+                  • Set oil_type to specify what oil this seed produces<br/>
+                  • Enables auto-detection in batch production</>
                 )}
               </div>
             </div>
-          ) : null}
+          ) : (
+            <div style={{
+              padding: '10px',
+              backgroundColor: '#f0f9ff',
+              borderRadius: '4px',
+              marginBottom: '15px',
+              fontSize: '13px',
+              color: '#0369a1'
+            }}>
+              <strong>📋 Oil Production Configuration</strong>
+              <div style={{ marginTop: '5px', fontSize: '12px' }}>
+                • <strong>Seeds:</strong> Define what oil type each seed variety produces<br/>
+                • <strong>Oil:</strong> Define finished oil products and blends
+              </div>
+            </div>
+          )}
+          
           {/* Error display */}
           {errors.submit && (
             <div className="alert alert-error" style={{
@@ -375,10 +390,11 @@ const SubcategoryForm = ({
               {errors.submit}
             </div>
           )}
-          {/* Subcategory Name */}
+          
+          {/* Name Field */}
           <div className="form-group">
             <label className="form-label">
-              Subcategory Name <span style={{ color: 'red' }}>*</span>
+              Name <span style={{ color: 'red' }}>*</span>
             </label>
             <input
               type="text"
@@ -389,7 +405,7 @@ const SubcategoryForm = ({
                 formData.category_id ?
                   (categories.find(c => c.category_id === formData.category_id)?.category_name === 'Oil' ?
                     "e.g., Sesame Oil, Coconut Oil, Deepam Oil" :
-                    "Enter subcategory name") :
+                    "e.g., Groundnut Seed, Sesame Seed") :
                   "Select a category first"
               }
               disabled={saving}
@@ -398,29 +414,23 @@ const SubcategoryForm = ({
               <div className="form-error">{errors.subcategory_name}</div>
             )}
             <div className="form-help">
-              <strong>What:</strong> Name for the subcategory type<br/>
-              <strong>Examples by Category:</strong><br/>
-              • Oil: "Sesame Oil", "Coconut Oil", "Deepam Sesame Oil"<br/>
-              • Chemicals: "Acids", "Bases", "Solvents" (if needed)<br/>
-              • Packaging: "Bottles", "Labels", "Boxes" (if needed)<br/>
-              <strong>Note:</strong> This name appears in materials management and production
+              {categories.find(c => c.category_id === formData.category_id)?.category_name === 'Oil' ? 
+                "Name of the finished oil product or blend" :
+                "Name of the seed variety"}
             </div>
           </div>
-          {/* Subcategory Code */}
+          
+          {/* Code Field */}
           <div className="form-group">
             <label className="form-label">
-              Subcategory Code <span style={{ color: 'red' }}>*</span>
+              Code <span style={{ color: 'red' }}>*</span>
             </label>
             <input
               type="text"
               className={`form-control ${errors.subcategory_code ? 'error' : ''}`}
               value={formData.subcategory_code}
               onChange={(e) => handleFieldChange('subcategory_code', e.target.value.toUpperCase())}
-              placeholder={
-                formData.category_id && formData.subcategory_name ?
-                  "Auto-generated from name" :
-                  "e.g., SO, CO, DSO, CHEM-01"
-              }
+              placeholder="e.g., SO, CO, DSO, GNS"
               maxLength="20"
               disabled={saving}
             />
@@ -428,16 +438,11 @@ const SubcategoryForm = ({
               <div className="form-error">{errors.subcategory_code}</div>
             )}
             <div className="form-help">
-              <strong>What:</strong> Short code for identification (2-20 characters, MUST BE UNIQUE)<br/>
-              <strong>Examples by Type:</strong><br/>
-              • Oil products: SO (Sesame Oil), CO (Coconut Oil), MO (Mustard Oil)<br/>
-              • Branded items: DSO (Deepam Sesame), DGO (Deepam Ghee)<br/>
-              • Others: Create meaningful abbreviations<br/>
-              <strong>⚠️ Note:</strong> Code must be unique across all subcategories<br/>
-              <strong>Auto-generates</strong> from name if left empty
+              Short unique code (2-20 characters). Auto-generates from name if left empty.
             </div>
           </div>
-          {/* Category Selection */}
+          
+          {/* Category Selection - ONLY Seeds and Oil */}
           <div className="form-group">
             <label className="form-label">
               Category <span style={{ color: 'red' }}>*</span>
@@ -450,7 +455,7 @@ const SubcategoryForm = ({
                 borderRadius: '4px',
                 fontSize: '14px'
               }}>
-                ⚠️ No categories available. Please create categories first (Seeds, Oil, etc.)
+                ⚠️ No oil-related categories available. Please ensure Seeds and Oil categories exist.
               </div>
             ) : (
               <div>
@@ -471,23 +476,14 @@ const SubcategoryForm = ({
                   <div className="form-error">{errors.category_id}</div>
                 )}
                 <div className="form-help">
-                  <strong>Purpose:</strong> Groups materials into specific types under this category<br/>
-                  {formData.category_id && categories.find(c => c.category_id === formData.category_id)?.category_name === 'Oil' && (
-                    <><strong>For Oil:</strong> Create different oil product types (Sesame Oil, Coconut Oil, etc.)<br/></>
-                  )}
-                  {formData.category_id && categories.find(c => c.category_id === formData.category_id)?.category_name === 'Seeds' && (
-                    <><strong>For Seeds:</strong> Usually not needed - seeds are materials, not subcategories<br/></>
-                  )}
-                  {formData.category_id && ['Chemicals', 'Consumables', 'Packaging'].includes(
-                    categories.find(c => c.category_id === formData.category_id)?.category_name
-                  ) && (
-                    <><strong>Note:</strong> Subcategories optional - materials can directly belong to category<br/></>
-                  )}
+                  <strong>Seeds:</strong> For seed varieties that produce oil<br/>
+                  <strong>Oil:</strong> For finished oil products and blends
                 </div>
               </div>
             )}
           </div>
-          {/* Oil Type - ONLY FOR OIL PRODUCTS */}
+          
+          {/* Oil Type - Critical for Production */}
           {formData.category_id && ['Oil', 'Seeds'].includes(
             categories.find(c => c.category_id === formData.category_id)?.category_name
           ) ? (
@@ -498,7 +494,7 @@ const SubcategoryForm = ({
               border: '1px solid #f59e0b'
             }}>
               <label className="form-label">
-                Oil Type <span style={{ color: '#f59e0b' }}>⚠️ Required for Oil Production</span>
+                Oil Type <span style={{ color: '#f59e0b' }}>⚠️ Required for Production</span>
               </label>
               <input
                 type="text"
@@ -515,13 +511,13 @@ const SubcategoryForm = ({
                 ))}
               </datalist>
               <div className="form-help" style={{ marginTop: '8px', color: '#92400e' }}>
-                <strong>🔑 Critical for Production:</strong> Must match seed's <code>produces_oil_type</code><br/>
+                <strong>🔑 Critical:</strong> Must match exactly between seeds and oil products<br/>
                 <strong>Format:</strong> Single word (Groundnut, Sesame, Mustard, Coconut)<br/>
-                <strong>NOT:</strong> Full product names like "Deepam Oil" or "Sesame Oil"<br/>
-                <strong>Example:</strong> Seeds with produces_oil_type="Groundnut" → Oil with oil_type="Groundnut"
+                <strong>Example:</strong> Seed with oil_type="Groundnut" → Oil with oil_type="Groundnut"
               </div>
             </div>
           ) : null}
+          
           {/* Active Status */}
           <div className="form-group">
             <label className="form-label">
@@ -534,49 +530,29 @@ const SubcategoryForm = ({
               {' '}Active
             </label>
             <div className="form-help">
-              <strong>What:</strong> Controls visibility in dropdown menus<br/>
-              <strong>Uncheck if:</strong> Discontinuing this oil type or temporarily not producing<br/>
-              <strong>Effect:</strong> Inactive items won't appear in batch production or blending options
+              Uncheck to hide from dropdowns without deleting
             </div>
           </div>
-          {/* Information Box - Show relevant info based on category */}
-          {formData.category_id && ['Oil', 'Seeds'].includes(
-            categories.find(c => c.category_id === formData.category_id)?.category_name
-          ) ? (
-            <div style={{
-              padding: '12px',
-              backgroundColor: '#dbeafe',
-              borderRadius: '4px',
-              marginTop: '20px',
-              fontSize: '14px',
-              color: '#1e40af'
-            }}>
-              <strong>💡 Oil Production Flow:</strong>
-              <ol style={{ marginTop: '8px', marginBottom: 0, paddingLeft: '20px' }}>
-                <li>Create oil subcategory with matching <code>oil_type</code></li>
-                <li>Seed materials have <code>produces_oil_type</code> set to same value</li>
-                <li>Batch production auto-detects and produces the correct oil type</li>
-                <li>Blending module uses these oil types for creating blends</li>
-              </ol>
-            </div>
-          ) : (
-            <div style={{
-              padding: '12px',
-              backgroundColor: '#e0e7ff',
-              borderRadius: '4px',
-              marginTop: '20px',
-              fontSize: '14px',
-              color: '#3730a3'
-            }}>
-              <strong>💡 Subcategory Usage:</strong>
-              <div style={{ marginTop: '8px' }}>
-                • Subcategories group materials into specific types<br/>
-                • Materials will belong to Category → Subcategory<br/>
-                • Only create if you need this extra level of organization<br/>
-                • For simple materials, you can skip subcategories
-              </div>
-            </div>
-          )}
+          
+          {/* Production Flow Info Box */}
+          <div style={{
+            padding: '12px',
+            backgroundColor: '#dbeafe',
+            borderRadius: '4px',
+            marginTop: '20px',
+            fontSize: '14px',
+            color: '#1e40af'
+          }}>
+            <strong>💡 Oil Production Flow:</strong>
+            <ol style={{ marginTop: '8px', marginBottom: 0, paddingLeft: '20px' }}>
+              <li>Create seed variety with oil_type (e.g., "Groundnut")</li>
+              <li>Create oil product with matching oil_type</li>
+              <li>Purchase seeds → Materials get produces_oil_type</li>
+              <li>Batch production auto-detects and produces correct oil</li>
+              <li>Blending module uses these oil types</li>
+            </ol>
+          </div>
+          
           {/* Form Actions */}
           <div className="masters-form-footer" style={{ marginTop: '20px' }}>
             <button
@@ -600,4 +576,5 @@ const SubcategoryForm = ({
     </div>
   );
 };
+
 export default SubcategoryForm;
