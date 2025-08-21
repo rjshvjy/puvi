@@ -497,25 +497,6 @@ const SubcategoryForm = ({
             </div>
           </div>
 
-          {/* Form Actions */}
-          <div className="masters-form-footer" style={{ marginTop: '20px' }}>
-            <button
-              type="button"
-              className="masters-btn masters-btn-secondary"
-              onClick={onCancel}
-              disabled={saving}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="masters-btn masters-btn-primary"
-              disabled={saving}
-            >
-              {saving ? 'Saving...' : (isEditMode ? 'Update' : 'Create')}
-            </button>
-          </div>
-
           {/* Debug Info - Only in development */}
           {process.env.NODE_ENV === 'development' && (
             <div style={{
@@ -534,7 +515,28 @@ const SubcategoryForm = ({
               Active categories: {categories.length}
             </div>
           )}
+
+          {/* Form Actions */}
+          <div className="masters-form-footer" style={{ marginTop: '20px' }}>
+            <button
+              type="button"
+              className="masters-btn masters-btn-secondary"
+              onClick={onCancel}
+              disabled={saving}
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="masters-btn masters-btn-primary"
+              disabled={saving}
+            >
+              {saving ? 'Saving...' : (isEditMode ? 'Update' : 'Create')}
+            </button>
+          </div>
         </form>
+      </div>
+    </div>
       </div>
     </div>
   );
