@@ -1,9 +1,9 @@
 {
   "version": "1.0",
-  "generatedAt": "2025-08-21T05:10:18.158Z",
+  "generatedAt": "2025-08-21T05:11:07.085Z",
   "summary": {
     "totalTables": 50,
-    "sharedTables": 23,
+    "sharedTables": 25,
     "hardcodedCategories": 0,
     "migrationOpportunities": 0
   },
@@ -537,13 +537,41 @@
     },
     "information_schema": {
       "usedBy": [
+        "masters-common",
         "masters-crud"
       ],
-      "fileCount": 1,
+      "fileCount": 2,
       "operations": {
+        "masters-common": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/masters_common.py"
+          ],
+          "queryCount": 0
+        },
         "masters-crud": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "query": {
+      "usedBy": [
+        "masters-common",
+        "sku-management"
+      ],
+      "fileCount": 2,
+      "operations": {
+        "masters-common": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/masters_common.py"
+          ],
+          "queryCount": 0
+        },
+        "sku-management": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_management.py"
           ],
           "queryCount": 0
         }
@@ -860,20 +888,6 @@
         "sku-production": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/sku_production.py"
-          ],
-          "queryCount": 0
-        }
-      }
-    },
-    "query": {
-      "usedBy": [
-        "sku-management"
-      ],
-      "fileCount": 1,
-      "operations": {
-        "sku-management": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/sku_management.py"
           ],
           "queryCount": 0
         }
@@ -1264,6 +1278,28 @@
       "fileCount": 2,
       "risk": "LOW",
       "recommendation": "Changes will affect masters-common, opening-balance"
+    },
+    {
+      "table": "information_schema",
+      "sharedBy": [
+        "masters-common",
+        "masters-crud"
+      ],
+      "moduleCount": 2,
+      "fileCount": 2,
+      "risk": "LOW",
+      "recommendation": "Changes will affect masters-common, masters-crud"
+    },
+    {
+      "table": "query",
+      "sharedBy": [
+        "masters-common",
+        "sku-management"
+      ],
+      "moduleCount": 2,
+      "fileCount": 2,
+      "risk": "LOW",
+      "recommendation": "Changes will affect masters-common, sku-management"
     },
     {
       "table": "writeoff_reasons",

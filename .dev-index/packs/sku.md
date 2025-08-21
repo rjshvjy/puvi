@@ -1,5 +1,5 @@
 # Feature Pack: SKU
-Generated: 2025-08-21T05:10:18.221Z
+Generated: 2025-08-21T05:11:07.162Z
 Routes: 23 | Tables: 18 | Files: 10
 
 ## Table of Contents
@@ -73,7 +73,7 @@ POST   /api/sku/production/allocate-oil
 | created_at | sku-production | 🟡 MEDIUM | Changes affect 1 other modules |
 | inventory | batch-production, blending, material-writeoff | 🔴 HIGH | Changes affect 7 other modules |
 | materials | batch-production, blending, material-writeoff | 🔴 HIGH | Changes affect 9 other modules |
-| query | sku-management | 🟡 MEDIUM | Changes affect 1 other modules |
+| query | masters-common, sku-management | 🟡 MEDIUM | Changes affect 2 other modules |
 | sku_bom_details | sku-management, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
 | sku_bom_master | sku-management, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
 | sku_master | sku-management, sku-production, system-config | 🔴 HIGH | Changes affect 4 other modules |
