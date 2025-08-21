@@ -303,6 +303,132 @@ MASTERS_CONFIG = {
         }
     },
     
+    # NEW: Added Categories master configuration
+    'categories': {
+        'table': 'categories_master',
+        'primary_key': 'category_id',
+        'display_name': 'Categories',
+        'name_field': 'category_name',
+        'fields': {
+            'category_name': {
+                'type': 'text',
+                'required': True,
+                'unique': True,
+                'max_length': 50,
+                'label': 'Category Name'
+            },
+            'requires_subcategory': {
+                'type': 'boolean',
+                'required': False,
+                'default': False,
+                'label': 'Requires Subcategory'
+            },
+            'is_active': {
+                'type': 'boolean',
+                'required': False,
+                'default': True,
+                'label': 'Active Status'
+            }
+        },
+        'list_query': """
+            SELECT 
+                c.*,
+                COUNT(DISTINCT s.subcategory_id) FILTER (WHERE s.is_active = true) as subcategory_count
+            FROM categories_master c
+            LEFT JOIN subcategories_master s ON c.category_id = s.category_id
+            WHERE c.is_active = true
+            GROUP BY c.category_id
+            ORDER BY c.category_name
+        """,
+        'dependencies': {
+            'subcategories_master': {
+                'table': 'subcategories_master',
+                'foreign_key': 'category_id',
+                'display_field': 'subcategory_name',
+                'message': 'Category has {count} associated subcategories'
+            },
+            'materials': {
+                'table': 'materials',
+                'foreign_key': 'category',
+                'display_field': 'material_name',
+                'message': 'Category has {count} associated materials'
+            }
+        }
+    },
+    
+    # NEW: Added Subcategories master configuration
+    'subcategories': {
+        'table': 'subcategories_master',
+        'primary_key': 'subcategory_id',
+        'display_name': 'Subcategories',
+        'name_field': 'subcategory_name',
+        'fields': {
+            'subcategory_name': {
+                'type': 'text',
+                'required': True,
+                'max_length': 100,
+                'label': 'Subcategory Name'
+            },
+            'subcategory_code': {
+                'type': 'text',
+                'required': True,
+                'unique': True,
+                'max_length': 20,
+                'pattern': r'^[A-Z0-9\-]+$',
+                'label': 'Subcategory Code',
+                'transform': 'uppercase'
+            },
+            'category_id': {
+                'type': 'reference',
+                'required': True,
+                'reference_table': 'categories_master',
+                'reference_field': 'category_id',
+                'display_field': 'category_name',
+                'label': 'Category'
+            },
+            'oil_type': {
+                'type': 'text',
+                'required': False,
+                'max_length': 50,
+                'label': 'Oil Type',
+                'help_text': 'Type of oil produced (e.g., Groundnut, Sesame, Deepam Oil)'
+            },
+            'is_active': {
+                'type': 'boolean',
+                'required': False,
+                'default': True,
+                'label': 'Active Status'
+            }
+        },
+        'list_query': """
+            SELECT 
+                s.subcategory_id,
+                s.subcategory_name,
+                s.subcategory_code,
+                s.category_id,
+                c.category_name,
+                s.oil_type,
+                s.is_active,
+                s.created_at,
+                COUNT(DISTINCT m.material_id) FILTER (WHERE m.is_active = true) as material_count
+            FROM subcategories_master s
+            LEFT JOIN categories_master c ON s.category_id = c.category_id
+            LEFT JOIN materials m ON s.subcategory_id = m.subcategory_id
+            WHERE s.is_active = true
+            GROUP BY s.subcategory_id, s.subcategory_name, s.subcategory_code, 
+                     s.category_id, c.category_name, s.oil_type, s.is_active, s.created_at
+            ORDER BY c.category_name, s.subcategory_name
+        """,
+        'dependencies': {
+            'materials': {
+                'table': 'materials',
+                'foreign_key': 'subcategory_id',
+                'display_field': 'material_name',
+                'message': 'Subcategory has {count} associated materials'
+            }
+        }
+    },
+    
     # NEW: Added BOM Category Mapping master
     'bom_category_mapping': {
         'table': 'bom_category_mapping',
