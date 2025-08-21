@@ -1,6 +1,6 @@
 # Feature Pack: CATEGORIES
-Generated: 2025-08-21T04:54:47.275Z
-Routes: 1 | Tables: 2 | Files: 1
+Generated: 2025-08-21T05:10:18.217Z
+Routes: 1 | Tables: 3 | Files: 1
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -20,6 +20,7 @@ GET    /api/categories
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
 | categories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
+| information_schema | masters-crud | 🟡 MEDIUM | Changes affect 1 other modules |
 | subcategories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
 
 ## Backend Implementation
