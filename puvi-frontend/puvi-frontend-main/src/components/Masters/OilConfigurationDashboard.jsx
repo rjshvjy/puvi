@@ -1,9 +1,10 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx
 // Oil Configuration Dashboard - Manages oil type mappings between seeds and products
 // Validates and fixes configuration issues with user review
+// FIXED: Corrected CSS import path
 
 import React, { useState, useEffect } from 'react';
-import './Masters.css'; // Reuse existing Masters styles
+import '../../modules/MastersManagement/MastersManagement.css'; // Fixed path to correct CSS location
 
 // API configuration
 const API_BASE_URL = 'https://puvi-backend.onrender.com';
