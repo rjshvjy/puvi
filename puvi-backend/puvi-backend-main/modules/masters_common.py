@@ -1036,6 +1036,34 @@ def validate_master_data(master_type, data, record_id=None):
 
 
 # =====================================================
+# HELPER FUNCTION TO CHECK COLUMN EXISTENCE
+# =====================================================
+
+def check_column_exists(cur, table_name, column_name):
+    """
+    Check if a column exists in a table
+    
+    Args:
+        cur: Database cursor
+        table_name: Name of the table
+        column_name: Name of the column
+    
+    Returns:
+        bool: True if column exists, False otherwise
+    """
+    try:
+        cur.execute("""
+            SELECT COUNT(*) 
+            FROM information_schema.columns 
+            WHERE table_name = %s 
+            AND column_name = %s
+        """, (table_name, column_name))
+        
+        return cur.fetchone()[0] > 0
+    except:
+        return False
+
+# =====================================================
 # SOFT DELETE AND RESTORE
 # =====================================================
 
@@ -1064,11 +1092,17 @@ def soft_delete_record(conn, cur, master_type, record_id, deleted_by=None):
     
     old_values = dict(zip(columns, row))
     
+    # Build UPDATE query with conditional updated_at
+    set_clauses = [f"{soft_delete_field} = false"]
+    
+    # Check if updated_at column exists before adding it
+    if check_column_exists(cur, table, 'updated_at'):
+        set_clauses.append("updated_at = CURRENT_TIMESTAMP")
+    
     # Soft delete the record
     cur.execute(f"""
         UPDATE {table}
-        SET {soft_delete_field} = false,
-            updated_at = CURRENT_TIMESTAMP
+        SET {', '.join(set_clauses)}
         WHERE {primary_key} = %s
     """, (record_id,))
     
@@ -1098,11 +1132,17 @@ def restore_record(conn, cur, master_type, record_id, restored_by=None):
     primary_key = config['primary_key']
     soft_delete_field = config.get('soft_delete_field', 'is_active')
     
+    # Build UPDATE query with conditional updated_at
+    set_clauses = [f"{soft_delete_field} = true"]
+    
+    # Check if updated_at column exists before adding it
+    if check_column_exists(cur, table, 'updated_at'):
+        set_clauses.append("updated_at = CURRENT_TIMESTAMP")
+    
     # Restore the record
     cur.execute(f"""
         UPDATE {table}
-        SET {soft_delete_field} = true,
-            updated_at = CURRENT_TIMESTAMP
+        SET {', '.join(set_clauses)}
         WHERE {primary_key} = %s
     """, (record_id,))
     
