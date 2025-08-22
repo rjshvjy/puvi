@@ -1,6 +1,6 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js
-// BATCH PRODUCTION WITH STEP-BY-STEP COST MANAGEMENT - ALL FIXES APPLIED
-// Fixed: Auto-save prevention, cost capture for defaults, date display
+// BATCH PRODUCTION WITH OIL TYPE-SPECIFIC THRESHOLDS
+// Added: Dynamic oil yield thresholds based on oil type
 
 import React, { useState, useEffect, useRef } from 'react';
 import api from '../../services/api';
@@ -8,6 +8,130 @@ import CostCapture from '../CostManagement/CostCapture';
 import TimeTracker from '../CostManagement/TimeTracker';
 import { formatDateToDDMMYYYY } from '../../utils/dateUtils';
 import './BatchProduction.css';
+
+// Oil yield threshold configuration based on industry standards
+const OIL_YIELD_THRESHOLDS = {
+  'Groundnut Oil': {
+    optimal: { min: 49.5, max: 52.9 },  // Industry standard range
+    good: { min: 47.5, max: 49.4 },     // Good range
+    acceptable: { min: 46.0, max: 47.4 }, // Acceptable range
+    low: { min: 0.0, max: 45.9 },       // Below standard
+    exceptional: { min: 53.0, max: 55.0 }, // Exceptional performance
+    typical_range: '45–53%',
+    notes: 'Based on decorticated (shelled) groundnuts'
+  },
+  'Coconut Oil': {
+    optimal: { min: 60.5, max: 62.9 },  // Industry standard
+    good: { min: 58.5, max: 60.4 },     // Good range
+    acceptable: { min: 56.0, max: 58.4 }, // Acceptable range
+    low: { min: 0.0, max: 55.9 },       // Below standard
+    exceptional: { min: 63.0, max: 66.0 }, // Exceptional performance
+    typical_range: '58–63%',
+    notes: 'Based on dried copra'
+  },
+  'Sesame Oil': {
+    optimal: { min: 47.0, max: 50.9 },  // Industry standard
+    good: { min: 43.0, max: 46.9 },     // Good range
+    acceptable: { min: 40.0, max: 42.9 }, // Acceptable range
+    low: { min: 0.0, max: 39.9 },       // Below standard
+    exceptional: { min: 51.0, max: 53.0 }, // Exceptional performance
+    typical_range: '40–51%',
+    notes: 'White sesame typically yields higher than black'
+  },
+  'Mustard Oil': {
+    optimal: { min: 36.0, max: 39.9 },  // Industry standard
+    good: { min: 33.0, max: 35.9 },     // Good range
+    acceptable: { min: 31.0, max: 32.9 }, // Acceptable range
+    low: { min: 0.0, max: 30.9 },       // Below standard
+    exceptional: { min: 40.0, max: 42.0 }, // Exceptional performance
+    typical_range: '33–40%',
+    notes: 'Yellow mustard typically yields higher than black'
+  },
+  // Default for unknown oil types
+  'default': {
+    optimal: { min: 35, max: 45 },
+    good: { min: 30, max: 50 },
+    acceptable: { min: 25, max: 55 },
+    low: { min: 0, max: 25 },
+    typical_range: 'Varies by seed type'
+  }
+};
+
+// Helper function to get oil yield status based on oil type and yield percentage
+const getOilYieldStatus = (oilType, yieldPercent) => {
+  // Get thresholds for specific oil type or use default
+  const thresholds = OIL_YIELD_THRESHOLDS[oilType] || OIL_YIELD_THRESHOLDS['default'];
+  
+  // Check for exceptional performance (all oils have exceptional ranges now)
+  if (thresholds.exceptional && yieldPercent >= thresholds.exceptional.min && yieldPercent <= thresholds.exceptional.max) {
+    return {
+      status: 'exceptional',
+      label: 'Exceptional',
+      className: 'good',
+      description: `Exceptional yield (${thresholds.exceptional.min}-${thresholds.exceptional.max}%)`,
+      target: thresholds.typical_range,
+      notes: thresholds.notes
+    };
+  }
+  
+  // Check optimal range
+  if (yieldPercent >= thresholds.optimal.min && yieldPercent <= thresholds.optimal.max) {
+    return {
+      status: 'optimal',
+      label: 'Optimal',
+      className: 'good',
+      description: `Industry standard (${thresholds.optimal.min}-${thresholds.optimal.max}%)`,
+      target: thresholds.typical_range,
+      notes: thresholds.notes
+    };
+  }
+  
+  // Check good range
+  if (yieldPercent >= thresholds.good.min && yieldPercent <= thresholds.good.max) {
+    return {
+      status: 'good',
+      label: 'Good',
+      className: 'good',
+      description: `Good yield`,
+      target: thresholds.typical_range,
+      notes: thresholds.notes
+    };
+  }
+  
+  // Check acceptable range
+  if (yieldPercent >= thresholds.acceptable.min && yieldPercent <= thresholds.acceptable.max) {
+    return {
+      status: 'acceptable',
+      label: 'Acceptable',
+      className: 'normal',
+      description: `Below optimal but acceptable`,
+      target: thresholds.typical_range,
+      notes: thresholds.notes
+    };
+  }
+  
+  // Check if suspiciously high
+  if (yieldPercent > thresholds.acceptable.max) {
+    return {
+      status: 'suspicious',
+      label: 'Check Data',
+      className: 'warning',
+      description: `Unusually high - verify measurement`,
+      target: thresholds.typical_range,
+      notes: thresholds.notes
+    };
+  }
+  
+  // Otherwise it's low
+  return {
+    status: 'low',
+    label: 'Low',
+    className: 'low',
+    description: `Below industry standard (<${thresholds.low.max}%)`,
+    target: thresholds.typical_range,
+    notes: thresholds.notes
+  };
+};
 
 const BatchProduction = () => {
   // Step Management
@@ -911,7 +1035,7 @@ const BatchProduction = () => {
               </>
             )}
 
-            {/* Step 5: Production Output */}
+            {/* Step 5: Production Output - UPDATED WITH OIL TYPE THRESHOLDS */}
             {currentStep === 5 && (
               <div className="form-card">
                 <h3 className="card-title">Step 5: Production Output</h3>
@@ -947,11 +1071,20 @@ const BatchProduction = () => {
                           {batchData.oil_yield ? `${yields.oilPercent.toFixed(2)}%` : '-'}
                         </td>
                         <td>
-                          {batchData.oil_yield && (
-                            <span className={`status-badge ${yields.oilPercent > 30 ? 'good' : 'low'}`}>
-                              {yields.oilPercent > 30 ? 'Good' : 'Low'}
-                            </span>
-                          )}
+                          {batchData.oil_yield && (() => {
+                            const status = getOilYieldStatus(batchData.oil_type, yields.oilPercent);
+                            const thresholds = OIL_YIELD_THRESHOLDS[batchData.oil_type] || OIL_YIELD_THRESHOLDS['default'];
+                            return (
+                              <div>
+                                <span className={`status-badge ${status.className}`}>
+                                  {status.label}
+                                </span>
+                                <div style={{ fontSize: '11px', color: '#666', marginTop: '2px' }}>
+                                  Target: {thresholds.typical_range}
+                                </div>
+                              </div>
+                            );
+                          })()}
                         </td>
                       </tr>
                       <tr>
@@ -1396,7 +1529,7 @@ const BatchProduction = () => {
         </div>
       )}
 
-      {/* History Tab */}
+      {/* History Tab - UPDATED WITH OIL TYPE THRESHOLDS */}
       {activeTab === 'history' && (
         <div className="history-container">
           <div className="history-header">
@@ -1430,31 +1563,34 @@ const BatchProduction = () => {
                     <td colSpan="9" className="text-center">No batches found</td>
                   </tr>
                 ) : (
-                  batchHistory.map((batch) => (
-                    <tr key={batch.batch_id}>
-                      <td className="batch-code">{String(batch.batch_code || '')}</td>
-                      <td className="traceable-code-cell">{String(batch.traceable_code || '')}</td>
-                      <td>{String(batch.oil_type || '')}</td>
-                      <td>{String(batch.production_date || 'N/A')}</td>
-                      <td className="text-right">{Number(batch.seed_quantity_after || batch.seed_quantity_after_drying || 0).toFixed(2)}</td>
-                      <td className="text-right">{Number(batch.oil_yield || 0).toFixed(2)}</td>
-                      <td>
-                        <span className={`yield-badge ${batch.oil_yield_percent > 30 ? 'high' : 'low'}`}>
-                          {Number(batch.oil_yield_percent || 0).toFixed(1)}%
-                        </span>
-                      </td>
-                      <td className="text-right">₹{Number(batch.oil_cost_per_kg || 0).toFixed(2)}</td>
-                      <td className="text-center">
-                        <button 
-                          onClick={() => generateBatchReport(batch.batch_id, batch.batch_code, batch.traceable_code)}
-                          className="btn-view-report"
-                          disabled={loadingReports[batch.batch_id]}
-                        >
-                          {loadingReports[batch.batch_id] ? 'Loading...' : '📄 View Report'}
-                        </button>
-                      </td>
-                    </tr>
-                  ))
+                  batchHistory.map((batch) => {
+                    const yieldStatus = getOilYieldStatus(batch.oil_type, Number(batch.oil_yield_percent || 0));
+                    return (
+                      <tr key={batch.batch_id}>
+                        <td className="batch-code">{String(batch.batch_code || '')}</td>
+                        <td className="traceable-code-cell">{String(batch.traceable_code || '')}</td>
+                        <td>{String(batch.oil_type || '')}</td>
+                        <td>{String(batch.production_date || 'N/A')}</td>
+                        <td className="text-right">{Number(batch.seed_quantity_after || batch.seed_quantity_after_drying || 0).toFixed(2)}</td>
+                        <td className="text-right">{Number(batch.oil_yield || 0).toFixed(2)}</td>
+                        <td className="text-center">
+                          <span className={`yield-badge ${yieldStatus.className}`} title={yieldStatus.description}>
+                            {Number(batch.oil_yield_percent || 0).toFixed(1)}%
+                          </span>
+                        </td>
+                        <td className="text-right">₹{Number(batch.oil_cost_per_kg || 0).toFixed(2)}</td>
+                        <td className="text-center">
+                          <button 
+                            onClick={() => generateBatchReport(batch.batch_id, batch.batch_code, batch.traceable_code)}
+                            className="btn-view-report"
+                            disabled={loadingReports[batch.batch_id]}
+                          >
+                            {loadingReports[batch.batch_id] ? 'Loading...' : '📄 View Report'}
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })
                 )}
               </tbody>
             </table>
