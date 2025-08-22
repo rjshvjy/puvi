@@ -1,7 +1,7 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/index.js
 // Masters Management Module with Categories and Subcategories Support
 // Updated to include Oil Types & Blends management via subcategories
-// MODIFIED: Added Oil Configuration Manager navigation
+// MODIFIED: Added Package Sizes and UOM Management tabs
 
 import React, { useState } from 'react';
 import MastersList from '../../components/Masters/MastersList';
@@ -9,6 +9,7 @@ import MasterForm from '../../components/Masters/MasterForm';
 import SubcategoriesList from '../../components/Masters/SubcategoriesList';
 import SubcategoryForm from '../../components/Masters/SubcategoryForm';
 import OilConfigurationDashboard from '../../components/Masters/OilConfigurationDashboard';
+import PackageSizeManager from './components/PackageSizeManager';
 import './MastersManagement.css';
 
 const MastersManagement = () => {
@@ -18,11 +19,13 @@ const MastersManagement = () => {
   const [editData, setEditData] = useState(null);
   const [showOilConfig, setShowOilConfig] = useState(false);
 
-  // Extended tabs to include categories and subcategories
+  // Extended tabs to include package sizes and UOM
   const masterTabs = [
     { id: 'suppliers', label: 'Suppliers', icon: '🏢' },
     { id: 'materials', label: 'Materials', icon: '📦' },
     { id: 'categories', label: 'Categories', icon: '📂' },
+    { id: 'package_sizes', label: 'Package Sizes', icon: '📏' },
+    { id: 'uom', label: 'UOM', icon: '📐' },
     { id: 'subcategories', label: 'Oil Types & Blends', icon: '🛢️' },
     { id: 'tags', label: 'Tags', icon: '🏷️' },
     { id: 'writeoff_reasons', label: 'Writeoff Reasons', icon: '❌' },
@@ -91,6 +94,24 @@ const MastersManagement = () => {
           </div>
           <OilConfigurationDashboard />
         </div>
+      );
+    }
+
+    // Special handling for package_sizes
+    if (activeTab === 'package_sizes') {
+      return <PackageSizeManager />;
+    }
+
+    // Special handling for UOM
+    if (activeTab === 'uom') {
+      // UOM will use the generic MastersList with special configuration
+      return (
+        <MastersList
+          masterType="uom"
+          onAdd={handleAdd}
+          onEdit={handleEdit}
+          refreshTrigger={refreshTrigger}
+        />
       );
     }
 
