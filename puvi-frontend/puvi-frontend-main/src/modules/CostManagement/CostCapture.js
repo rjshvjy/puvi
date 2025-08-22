@@ -1,8 +1,7 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js
 // Cost Capture Component - ACTIVITY-BASED FILTERING VERSION
-// Fixed: Removed name-based filtering, now uses activity field from backend
+// Fixed: Added package size filtering for SKU packing costs
 // UPDATED: Added hasChanges flag to calculateAllCosts to prevent infinite loops
-// FIXED: Added 'packing' stage mapping for SKU production module
 
 import React, { useState, useEffect, useCallback } from 'react';
 import api from '../../services/api';
@@ -13,7 +12,8 @@ const CostCapture = ({
   quantity = 0,            
   oilYield = 0,            
   crushingHours = 0,       
-  batchId = null,          
+  batchId = null,
+  packageSize = null,      // NEW: Package size for filtering packing costs
   onCostsUpdate = null,    
   showSummary = true,      
   allowOverride = true     
@@ -34,12 +34,12 @@ const CostCapture = ({
       'batch': 'all',  // Get all activities for complete batch
       'sales': 'General',
       'blending': 'Blending',
-      'packing': 'Packing'  // ADDED: Mapping for packing stage in SKU production
+      'packing': 'Packing'  // Added mapping for packing stage
     };
     return stageActivityMap[currentStage] || 'General';
   };
 
-  // Filter elements based on activity (backend already provides activity)
+  // Filter elements based on activity AND package size
   const filterElementsByActivity = (elements, currentStage) => {
     if (currentStage === 'batch') {
       // Show all elements for complete batch view
@@ -62,16 +62,47 @@ const CostCapture = ({
         return true;
       }
       
+      // NEW: For packing stage, filter by package size
+      if (currentStage === 'packing' && packageSize) {
+        // Check if element name contains the package size
+        const elementNameLower = element.element_name.toLowerCase();
+        const packageSizeLower = packageSize.toLowerCase();
+        
+        // Skip if this is a package-specific element that doesn't match current size
+        if (elementNameLower.includes('packing labour')) {
+          // Check if it's for a specific size
+          const hasSpecificSize = elementNameLower.includes('ml') || 
+                                  elementNameLower.includes('1l') || 
+                                  elementNameLower.includes('5l') ||
+                                  elementNameLower.includes('litre') ||
+                                  elementNameLower.includes('liter');
+          
+          if (hasSpecificSize) {
+            // Only include if it matches the current package size
+            const sizeMatch = elementNameLower.includes(packageSizeLower) ||
+                              (packageSize === '1L' && elementNameLower.includes('1l')) ||
+                              (packageSize === '5L' && elementNameLower.includes('5l')) ||
+                              (packageSize === '500ml' && elementNameLower.includes('500ml')) ||
+                              (packageSize === '1L' && elementNameLower.includes('1 l')) ||
+                              (packageSize === '5L' && elementNameLower.includes('5 l'));
+            
+            if (!sizeMatch) {
+              return false; // Exclude non-matching sizes
+            }
+          }
+        }
+      }
+      
       // Match activity for the stage
       return elementActivity === targetActivity;
     });
   };
 
-  // Fetch applicable cost elements on mount or when stage changes
+  // Fetch applicable cost elements on mount or when stage/packageSize changes
   useEffect(() => {
-    console.log(`🔄 CostCapture [${stage}] mounting/updating - fetching cost elements`);
+    console.log(`🔄 CostCapture [${stage}] mounting/updating - fetching cost elements. Package: ${packageSize}`);
     fetchCostElements();
-  }, [stage, module]);
+  }, [stage, module, packageSize]); // Added packageSize to dependencies
 
   // Calculate costs - FIXED VERSION WITH hasChanges FLAG
   const calculateAllCosts = () => {
@@ -88,8 +119,39 @@ const CostCapture = ({
       // Check if input exists, if not create it
       let input = updatedInputs[element.element_id];
       if (!input) {
+        // NEW: Smart default for packing costs based on package size matching
+        let shouldApply = false;
+        
+        if (!element.is_optional) {
+          // Required elements are always applied
+          shouldApply = true;
+        } else if (stage === 'packing' && packageSize) {
+          // For packing stage, only auto-apply if it matches the package size
+          const elementNameLower = element.element_name.toLowerCase();
+          const packageSizeLower = packageSize.toLowerCase();
+          
+          // Check if this element is for the current package size
+          const isForCurrentSize = elementNameLower.includes(packageSizeLower) ||
+                                   (packageSize === '1L' && elementNameLower.includes('1l')) ||
+                                   (packageSize === '5L' && elementNameLower.includes('5l')) ||
+                                   (packageSize === '500ml' && elementNameLower.includes('500ml'));
+          
+          // Check if it's a common cost (not size-specific)
+          const isCommonCost = element.element_name.toLowerCase().includes('common') ||
+                               (!elementNameLower.includes('ml') && 
+                                !elementNameLower.includes('1l') && 
+                                !elementNameLower.includes('5l') &&
+                                !elementNameLower.includes('litre') &&
+                                !elementNameLower.includes('liter'));
+          
+          shouldApply = isForCurrentSize || (isCommonCost && !element.is_optional);
+        } else if (stage === 'drying' && element.activity === 'Drying') {
+          // Auto-apply drying elements in drying stage
+          shouldApply = true;
+        }
+        
         input = {
-          isApplied: !element.is_optional,
+          isApplied: shouldApply,
           overrideRate: null,
           actualCost: null,
           quantity: 0,
@@ -233,7 +295,7 @@ const CostCapture = ({
       }
       
       if (response.success && response.cost_elements) {
-        // Filter elements based on activity
+        // Filter elements based on activity AND package size
         const filteredElements = filterElementsByActivity(response.cost_elements, stage);
         
         // Initialize cost inputs for each element
@@ -243,6 +305,19 @@ const CostCapture = ({
           
           if (!element.is_optional) {
             shouldApply = true;
+          } else if (stage === 'packing' && packageSize) {
+            // For packing, only auto-apply matching package sizes
+            const elementNameLower = element.element_name.toLowerCase();
+            const packageSizeLower = packageSize.toLowerCase();
+            
+            const isForCurrentSize = elementNameLower.includes(packageSizeLower) ||
+                                     (packageSize === '1L' && elementNameLower.includes('1l')) ||
+                                     (packageSize === '5L' && elementNameLower.includes('5l')) ||
+                                     (packageSize === '500ml' && elementNameLower.includes('500ml'));
+            
+            const isCommonCost = element.element_name.toLowerCase().includes('common');
+            
+            shouldApply = isForCurrentSize || isCommonCost;
           } else if (stage === 'drying' && element.activity === 'Drying') {
             // Auto-apply drying elements in drying stage
             shouldApply = true;
@@ -261,7 +336,7 @@ const CostCapture = ({
         setCostInputs(initialInputs);
         
         // Debug logging
-        console.log(`📋 CostCapture [${stage}] loaded ${filteredElements.length} cost elements`);
+        console.log(`📋 CostCapture [${stage}] loaded ${filteredElements.length} cost elements for package: ${packageSize}`);
         
         // Auto-expand categories with costs
         const categories = [...new Set(filteredElements.map(e => e.category))];
@@ -336,6 +411,7 @@ const CostCapture = ({
   const getCategoryColor = (category) => {
     const colors = {
       'Labor': '#d4edda',
+      'Labour': '#d4edda',  // British spelling
       'Utilities': '#cce5ff',
       'Consumables': '#fff3cd',
       'Transport': '#f8d7da',
@@ -371,7 +447,7 @@ const CostCapture = ({
       case 'batch':
         return 'Complete Batch';
       case 'packing':
-        return 'Packing';
+        return packageSize ? `Packing (${packageSize})` : 'Packing';
       default:
         return stage.charAt(0).toUpperCase() + stage.slice(1);
     }
@@ -526,6 +602,17 @@ const CostCapture = ({
       marginBottom: '15px',
       fontSize: '13px',
       color: '#495057'
+    },
+    packageSizeInfo: {
+      padding: '8px 12px',
+      backgroundColor: '#fff3cd',
+      borderRadius: '4px',
+      marginBottom: '10px',
+      fontSize: '13px',
+      color: '#856404',
+      display: 'flex',
+      alignItems: 'center',
+      gap: '8px'
     }
   };
 
@@ -556,16 +643,24 @@ const CostCapture = ({
         <span style={styles.stageBadge}>{getStageDisplayName()}</span>
       </h4>
 
+      {/* Package size filtering info for packing stage */}
+      {stage === 'packing' && packageSize && (
+        <div style={styles.packageSizeInfo}>
+          📦 Showing costs for <strong>{packageSize}</strong> packaging only. Other package sizes are hidden.
+        </div>
+      )}
+
       {/* Activity-based filtering info */}
       <div style={styles.infoBox}>
         ✅ Using activity-based filtering: Showing {costElements.length} elements for {getActivityFromStage(stage)} activity
+        {packageSize && stage === 'packing' && ` (${packageSize} specific)`}
       </div>
 
       {/* Display current quantities for reference */}
       {(quantity > 0 || oilYield > 0 || crushingHours > 0) && (
         <div style={styles.quantityDisplay}>
           📊 Current Values: 
-          {quantity > 0 && ` Seed Qty: ${quantity} kg`}
+          {quantity > 0 && ` ${stage === 'packing' ? 'Bottles' : 'Seed Qty'}: ${quantity} ${stage === 'packing' ? 'units' : 'kg'}`}
           {oilYield > 0 && ` | Oil Yield: ${oilYield} kg`}
           {crushingHours > 0 && ` | Crushing Hours: ${crushingHours}`}
         </div>
