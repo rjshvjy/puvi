@@ -1,5 +1,5 @@
 # Feature Pack: OIL-CAKE-RATES
-Generated: 2025-08-22T18:09:36.599Z
+Generated: 2025-08-22T18:20:38.364Z
 Routes: 1 | Tables: 9 | Files: 1
 
 ## Table of Contents
