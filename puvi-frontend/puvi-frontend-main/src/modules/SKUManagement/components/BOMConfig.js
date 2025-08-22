@@ -227,12 +227,7 @@ const BOMConfig = () => {
       }
     }
     
-    // NEW: When category changes, optionally refresh materials list
-    if (field === 'material_category' && value) {
-      // Fetch filtered materials for this category
-      fetchMaterials(value);
-    }
-    
+        
     // Recalculate total cost if quantity changes
     if (field === 'quantity_per_unit') {
       const material = materials.find(m => m.material_id === parseInt(updated[index].material_id));
@@ -293,7 +288,7 @@ const BOMConfig = () => {
     try {
       const payload = {
         sku_id: parseInt(selectedSKU),
-        details: bomDetails.map(item => ({
+        bom_details: bomDetails.map(item => ({
           material_id: parseInt(item.material_id),
           material_category: item.material_category || 'Other',
           quantity_per_unit: parseFloat(item.quantity_per_unit),
