@@ -1,6 +1,7 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/modules/Purchase/index.js
 // Purchase Module with Category/Subcategory Support for Dynamic Oil Types
 // Enhanced with material creation form and category validation
+// UPDATED: Dynamic UOM fetching from uom_master
 
 import React, { useState, useEffect } from 'react';
 import api, { purchaseAPI, mastersAPI } from '../../services/api';
@@ -16,13 +17,18 @@ const Purchase = () => {
   const [showMaterialForm, setShowMaterialForm] = useState(false);
   const [purchaseHistory, setPurchaseHistory] = useState([]);
   
-  // NEW: Material creation form state
+  // NEW: State for dynamic units
+  const [units, setUnits] = useState([]);
+  const [unitsLoading, setUnitsLoading] = useState(true);
+  const [unitsError, setUnitsError] = useState(null);
+  
+  // NEW: Material creation form state - updated with dynamic unit default
   const [newMaterial, setNewMaterial] = useState({
     material_name: '',
     supplier_id: '',
     category: '',
     subcategory_id: null,
-    unit: 'kg',
+    unit: '', // No default until units load
     current_cost: '',
     gst_rate: '5',
     density: '0.91',
@@ -46,9 +52,10 @@ const Purchase = () => {
     handling_charges: '0'
   }]);
   
+  // UPDATED: Changed L to Litres for transport grouping
   const [uomGroups, setUomGroups] = useState({
     kg: { percentage: 100, items: [] },
-    L: { percentage: 0, items: [] },
+    Litres: { percentage: 0, items: [] },
     Nos: { percentage: 0, items: [] }
   });
   
@@ -58,7 +65,39 @@ const Purchase = () => {
   useEffect(() => {
     fetchSuppliers();
     fetchCategories(); // NEW: Fetch categories on load
+    fetchUnits(); // NEW: Fetch units on load
   }, []);
+
+  // NEW: Fetch units from API
+  const fetchUnits = async () => {
+    setUnitsLoading(true);
+    setUnitsError(null);
+    try {
+      const url = 'https://puvi-backend.onrender.com/api/materials/units';
+      const res = await fetch(url, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      const data = await res.json();
+      
+      if (data?.success && data?.units) {
+        setUnits(data.units); // Use simple array for backward compatibility
+        // Set default unit if available
+        if (data.units.length > 0) {
+          setNewMaterial(prev => ({ ...prev, unit: data.units[0] }));
+        }
+      } else {
+        setUnitsError('Failed to load units from API');
+        setMessage('❌ Error: Unable to load units. Please refresh the page.');
+      }
+    } catch (error) {
+      console.error('Error fetching units:', error);
+      setUnitsError(error.message);
+      setMessage(`❌ Error loading units: ${error.message}`);
+    } finally {
+      setUnitsLoading(false);
+    }
+  };
 
   // NEW: Fetch categories from API  
   const fetchCategories = async () => {
@@ -279,13 +318,13 @@ const Purchase = () => {
           await fetchMaterialsForSupplier(selectedSupplier);
         }
         
-        // Reset form
+        // Reset form with first available unit
         setNewMaterial({
           material_name: '',
           supplier_id: selectedSupplier,
           category: '',
           subcategory_id: null,
-          unit: 'kg',
+          unit: units.length > 0 ? units[0] : '',
           current_cost: '',
           gst_rate: '5',
           density: '0.91',
@@ -372,14 +411,18 @@ const Purchase = () => {
     return display;
   };
 
+  // UPDATED: Transport allocation logic to handle Litres
   const allocateCharges = () => {
     // Group items by UOM
-    const groups = { kg: [], L: [], Nos: [] };
+    const groups = { kg: [], Litres: [], Nos: [] };
     
     items.forEach((item, index) => {
       if (item.material_id && item.quantity) {
         const unit = getMaterialUnit(item.material_id);
-        const groupKey = unit === 'kg' ? 'kg' : unit === 'L' || unit === 'Liters' ? 'L' : 'Nos';
+        // Map units to groups - handle both 'L' and 'Litres'
+        const groupKey = unit === 'kg' ? 'kg' : 
+                        unit === 'Litres' || unit === 'L' || unit === 'Liters' ? 'Litres' : 
+                        'Nos';
         groups[groupKey].push({ index, quantity: parseFloat(item.quantity) || 0 });
       }
     });
@@ -625,6 +668,20 @@ Items: ${response.items_count}`);
         </div>
       )}
 
+      {/* Show error if units failed to load */}
+      {unitsError && !unitsLoading && (
+        <div className="message error">
+          ⚠️ Units failed to load. This may affect material creation and transport allocation.
+          <button 
+            onClick={fetchUnits} 
+            className="btn-secondary"
+            style={{ marginLeft: '10px' }}
+          >
+            Retry
+          </button>
+        </div>
+      )}
+
       {/* NEW: Material Creation Form */}
       {showMaterialForm && selectedSupplier && (
         <div className="form-card material-form">
@@ -682,6 +739,7 @@ Items: ${response.items_count}`);
                 </div>
               )}
               
+              {/* UPDATED: Dynamic unit dropdown */}
               <div className="form-group">
                 <label className="form-label">Unit *</label>
                 <select
@@ -689,12 +747,24 @@ Items: ${response.items_count}`);
                   onChange={(e) => setNewMaterial({...newMaterial, unit: e.target.value})}
                   required
                   className="form-control"
+                  disabled={unitsLoading || units.length === 0}
                 >
-                  <option value="kg">kg</option>
-                  <option value="L">L</option>
-                  <option value="Nos">Nos</option>
-                  <option value="Pcs">Pcs</option>
+                  {unitsLoading ? (
+                    <option value="">Loading units...</option>
+                  ) : units.length === 0 ? (
+                    <option value="">No units available</option>
+                  ) : (
+                    <>
+                      <option value="">Select Unit</option>
+                      {units.map(unit => (
+                        <option key={unit} value={unit}>{unit}</option>
+                      ))}
+                    </>
+                  )}
                 </select>
+                {unitsError && (
+                  <small className="text-danger">Error loading units: {unitsError}</small>
+                )}
               </div>
               
               <div className="form-group">
@@ -985,7 +1055,7 @@ Items: ${response.items_count}`);
                     <ul>
                       <li>Distribute transport & handling costs across different unit types</li>
                       <li>Weight (kg): For seed/grain materials - default 100% allocation</li>
-                      <li>Volume (L): For liquid materials like oil - set if you have liquid items</li>
+                      <li>Volume (Litres): For liquid materials like oil - set if you have liquid items</li>
                       <li>Count (Nos): For packed items/tools - set if you have count-based items</li>
                       <li><strong>⚠️ Total must equal 100% or costs will be lost!</strong></li>
                       <li>Costs are allocated proportionally within each group based on quantity</li>
@@ -1023,6 +1093,7 @@ Items: ${response.items_count}`);
                   return null;
                 })()}
                 
+                {/* UPDATED: UOM groups UI with Litres label */}
                 <div className="uom-groups">
                   <div className="uom-group">
                     <label className="uom-label">Weight (kg)</label>
@@ -1040,12 +1111,12 @@ Items: ${response.items_count}`);
                   </div>
                   
                   <div className="uom-group">
-                    <label className="uom-label">Volume (L)</label>
+                    <label className="uom-label">Volume (Litres)</label>
                     <div className="input-group">
                       <input
                         type="number"
-                        value={uomGroups.L.percentage}
-                        onChange={(e) => handleGroupPercentageChange('L', e.target.value)}
+                        value={uomGroups.Litres.percentage}
+                        onChange={(e) => handleGroupPercentageChange('Litres', e.target.value)}
                         min="0"
                         max="100"
                         step="1"
