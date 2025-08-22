@@ -512,11 +512,17 @@ def create_record(master_type):
         
         for field_name, field_config in config['fields'].items():
             if field_name in data:
-                fields.append(field_name)
-                values.append(data[field_name])
-                placeholders.append('%s')
+                # Special handling for last_updated in materials
+                if master_type == 'materials' and field_name == 'last_updated' and not data[field_name]:
+                    fields.append(field_name)
+                    values.append(get_current_day_number())
+                    placeholders.append('%s')
+                else:
+                    fields.append(field_name)
+                    values.append(data[field_name])
+                    placeholders.append('%s')
         
-        # Add last_updated for materials table
+        # Add last_updated for materials table if not present at all
         if master_type == 'materials' and 'last_updated' not in fields:
             fields.append('last_updated')
             values.append(get_current_day_number())
@@ -622,8 +628,18 @@ def update_record(master_type, record_id):
         
         for field_name in data:
             if field_name in config['fields']:
-                set_clauses.append(f"{field_name} = %s")
-                values.append(data[field_name])
+                # Special handling for last_updated in materials
+                if master_type == 'materials' and field_name == 'last_updated':
+                    set_clauses.append(f"{field_name} = %s")
+                    values.append(get_current_day_number())
+                else:
+                    set_clauses.append(f"{field_name} = %s")
+                    values.append(data[field_name])
+        
+        # Always update last_updated for materials on any update
+        if master_type == 'materials' and 'last_updated' not in data:
+            set_clauses.append("last_updated = %s")
+            values.append(get_current_day_number())
         
         if not set_clauses:
             return jsonify({
