@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-22T16:19:32.908Z",
+  "generatedAt": "2025-08-22T16:25:39.028Z",
   "filesScanned": 61,
   "jsFilesScanned": 38,
   "pyFilesScanned": 23,
@@ -1332,7 +1332,7 @@
       ]
     },
     {
-      "from": "../../../components/CostManagement/CostCapture",
+      "from": "../../CostManagement/CostCapture",
       "usedIn": [
         "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js"
       ]
