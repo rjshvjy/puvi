@@ -1,6 +1,7 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx
 // Professional Master Form Component with Enterprise UI
 // Fixed: Categories dropdown and added produces_oil_type field
+// UPDATED: Fixed unit dropdown to load from /api/materials/units
 
 import React, { useState, useEffect, useRef } from 'react';
 import './MasterForm.css';
@@ -458,7 +459,11 @@ const MasterForm = ({
     materials: 'Material',
     tags: 'Tag',
     writeoff_reasons: 'Writeoff Reason',
-    cost_elements: 'Cost Element'
+    cost_elements: 'Cost Element',
+    uom: 'Unit of Measure',
+    categories: 'Category',
+    subcategories: 'Subcategory',
+    bom_category_mapping: 'BOM Category'
   };
   
   // Load schema and initial data
@@ -548,6 +553,39 @@ const MasterForm = ({
         continue;
       }
       
+      // UPDATED: Special handling for unit field
+      if (field.name === 'unit') {
+        console.log('Loading units from /api/materials/units');
+        setLoadingDynamicOptions(prev => ({ ...prev, unit: true }));
+        
+        try {
+          const response = await apiCall('/api/materials/units');
+          console.log('Units API response:', response);
+          
+          // Handle the response structure properly
+          const unitsData = response.units || response.data || [];
+          
+          console.log('Loaded units:', unitsData);
+          setDynamicOptions(prev => ({
+            ...prev,
+            unit: unitsData
+          }));
+        } catch (error) {
+          console.error('Failed to load units:', error);
+          setDynamicOptions(prev => ({
+            ...prev,
+            unit: []
+          }));
+          setAlert({
+            type: 'warning',
+            message: 'Failed to load units. Please check if UOM master is configured.'
+          });
+        } finally {
+          setLoadingDynamicOptions(prev => ({ ...prev, unit: false }));
+        }
+        continue;
+      }
+      
       // Handle other dynamic fields
       if (field.options === 'dynamic' && field.options_endpoint) {
         console.log(`Loading dynamic options for field: ${field.name} from ${field.options_endpoint}`);
@@ -557,9 +595,11 @@ const MasterForm = ({
         try {
           let optionsData = [];
           
+          // UPDATED: Better handling for units endpoint
           if (field.options_endpoint.includes('/api/materials/units')) {
             const response = await apiCall('/api/materials/units');
-            optionsData = response.units || [];
+            console.log('Units response from options_endpoint:', response);
+            optionsData = response.units || response.data || [];
           } else if (field.options_endpoint.includes('/api/config/gst_rates')) {
             const response = await apiCall('/api/config/gst_rates');
             optionsData = response.values || response.data || [];
@@ -830,6 +870,41 @@ const MasterForm = ({
           options={dynamicOptions.category || []}
           loading={loadingDynamicOptions.category}
           help={field.help || (loadingDynamicOptions.category ? 'Loading categories...' : 'Select material category')}
+        />
+      );
+    }
+    
+    // UPDATED: Handle unit field specifically
+    if (field.name === 'unit') {
+      const unitOptions = dynamicOptions.unit || [];
+      const isLoadingUnits = loadingDynamicOptions.unit;
+      
+      // Show error if no units are available after loading
+      if (!isLoadingUnits && unitOptions.length === 0 && field.required) {
+        return (
+          <div className="field">
+            <label htmlFor={fieldId} className="label">
+              {field.label}
+              {field.required && <span className="required">*</span>}
+            </label>
+            <div className="inline-alert error">
+              <div className="inline-alert-icon"></div>
+              <div className="inline-alert-content">
+                <div className="inline-alert-message">
+                  No units available. Please check if UOM master is configured and the backend is deployed.
+                </div>
+              </div>
+            </div>
+          </div>
+        );
+      }
+      
+      return (
+        <SelectField
+          {...commonProps}
+          options={unitOptions}
+          loading={isLoadingUnits}
+          help={field.help || (isLoadingUnits ? 'Loading units...' : 'Select unit of measure')}
         />
       );
     }
