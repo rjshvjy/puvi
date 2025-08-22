@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-22T08:31:25.009Z",
+  "generatedAt": "2025-08-22T08:43:24.761Z",
   "filesScanned": 59,
   "jsFilesScanned": 37,
   "pyFilesScanned": 22,
@@ -8531,7 +8531,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/BOMConfig.js",
-      "line": 249,
+      "line": 244,
       "name": "handleRemoveMaterial",
       "params": "index",
       "type": "arrow",
@@ -8539,7 +8539,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/BOMConfig.js",
-      "line": 253,
+      "line": 248,
       "name": "validateBOM",
       "params": "",
       "type": "arrow",
@@ -8547,7 +8547,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/BOMConfig.js",
-      "line": 277,
+      "line": 272,
       "name": "handleSaveBOM",
       "params": "",
       "type": "arrow",
@@ -8555,7 +8555,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/BOMConfig.js",
-      "line": 339,
+      "line": 334,
       "name": "calculateTotalCost",
       "params": "",
       "type": "arrow",
@@ -8563,7 +8563,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/BOMConfig.js",
-      "line": 350,
+      "line": 345,
       "name": "calculateCostBreakdown",
       "params": "",
       "type": "arrow",
@@ -17234,13 +17234,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/BOMConfig.js",
-      "line": 293,
+      "line": 288,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/BOMConfig.js",
-      "line": 331,
+      "line": 326,
       "type": "catch",
       "code": "} catch (error) {"
     },
