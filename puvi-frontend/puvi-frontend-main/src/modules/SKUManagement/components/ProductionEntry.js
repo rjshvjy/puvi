@@ -4,7 +4,7 @@
 
 import React, { useState, useEffect } from 'react';
 import api, { skuDateUtils, expiryUtils, formatUtils } from '../../../services/api';
-import CostCapture from '../../../components/CostManagement/CostCapture';
+import CostCapture from '../../CostManagement/CostCapture';
 
 // Add the formatDateForDisplay function as an alias
 const formatDateForDisplay = skuDateUtils.formatForDisplay;
