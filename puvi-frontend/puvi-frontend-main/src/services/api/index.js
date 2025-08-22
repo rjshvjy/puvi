@@ -539,10 +539,59 @@ const api = {
 
   // Masters module  
   masters: {
+    // Existing methods
     getSuppliers: async () => apiCall('/api/masters/suppliers'),
     getMaterials: async () => apiCall('/api/masters/materials'),
     getCategories: async () => apiCall('/api/categories'),
-    getSubcategories: async (categoryId) => apiCall(`/api/subcategories?category_id=${categoryId}`)
+    getSubcategories: async (categoryId) => apiCall(`/api/subcategories?category_id=${categoryId}`),
+    
+    // NEW: Package Sizes Management
+    getPackageSizes: async (includeInactive = false) => {
+      const params = includeInactive ? '?include_inactive=true' : '';
+      return apiCall(`/api/masters/package_sizes${params}`);
+    },
+    
+    getPackageSize: async (sizeId) => {
+      return apiCall(`/api/masters/package_sizes/${sizeId}`);
+    },
+    
+    createPackageSize: async (data) => {
+      return apiCall('/api/masters/package_sizes', {
+        method: 'POST',
+        body: JSON.stringify(data)
+      });
+    },
+    
+    updatePackageSize: async (sizeId, data) => {
+      return apiCall(`/api/masters/package_sizes/${sizeId}`, {
+        method: 'PUT',
+        body: JSON.stringify(data)
+      });
+    },
+    
+    deletePackageSize: async (sizeId) => {
+      return apiCall(`/api/masters/package_sizes/${sizeId}`, {
+        method: 'DELETE'
+      });
+    },
+    
+    getPackageSizesDropdown: async () => {
+      return apiCall('/api/masters/package_sizes/dropdown');
+    },
+    
+    validatePackageSize: async (sizeCode, excludeId = null) => {
+      return apiCall('/api/masters/package_sizes/validate', {
+        method: 'POST',
+        body: JSON.stringify({ size_code: sizeCode, exclude_id: excludeId })
+      });
+    },
+    
+    bulkUpdatePackageSizes: async (updates) => {
+      return apiCall('/api/masters/package_sizes/bulk-update', {
+        method: 'POST',
+        body: JSON.stringify({ updates })
+      });
+    }
   },
 
   // Inventory module
