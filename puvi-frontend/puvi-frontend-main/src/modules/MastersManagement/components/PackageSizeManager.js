@@ -1,6 +1,7 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js
 // Package Size Manager Component with CRUD operations and auto packing cost element creation
 // Follows the pattern of existing masters components in the system
+// FIXED: Corrected all variable references to prevent undefined errors
 
 import React, { useState, useEffect } from 'react';
 import api from '../../../services/api';
@@ -518,7 +519,7 @@ const PackageSizeManager = () => {
                   marginTop: '16px'
                 }}>
                   <strong>Note:</strong> Creating a new package size will automatically create a corresponding 
-                  packing cost element named "Packing Labour {size_code}" with the specified default rate.
+                  packing cost element named "Packing Labour {formData.size_code || '[SIZE_CODE]'}" with the specified default rate.
                 </div>
               )}
             </div>
@@ -554,7 +555,7 @@ const PackageSizeManager = () => {
             
             <div className="masters-form-body">
               <p style={{ marginBottom: '16px' }}>
-                Are you sure you want to delete the package size <strong>{deleteModal.size?.size_code}</strong>?
+                Are you sure you want to delete the package size <strong>{deleteModal.size ? deleteModal.size.size_code : ''}</strong>?
               </p>
               <p style={{ color: '#ef4444', fontSize: '14px' }}>
                 Note: If this package size is used in any SKUs, it will be marked as inactive instead of being deleted.
