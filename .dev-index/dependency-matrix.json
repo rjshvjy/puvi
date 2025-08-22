@@ -1,8 +1,8 @@
 {
   "version": "1.0",
-  "generatedAt": "2025-08-22T01:24:07.585Z",
+  "generatedAt": "2025-08-22T06:39:31.932Z",
   "summary": {
-    "totalTables": 50,
+    "totalTables": 51,
     "sharedTables": 25,
     "hardcodedCategories": 0,
     "migrationOpportunities": 0
@@ -558,6 +558,20 @@
         "opening-balance": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/opening_balance.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "uom_master": {
+      "usedBy": [
+        "masters-common"
+      ],
+      "fileCount": 1,
+      "operations": {
+        "masters-common": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/masters_common.py"
           ],
           "queryCount": 0
         }
