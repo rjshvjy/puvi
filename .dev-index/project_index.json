@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-22T09:25:22.877Z",
+  "generatedAt": "2025-08-22T09:48:56.375Z",
   "filesScanned": 59,
   "jsFilesScanned": 37,
   "pyFilesScanned": 22,
@@ -11,14 +11,6 @@
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialSales/index.js",
       "line": 61,
       "module": "costManagement",
-      "source": "frontend"
-    },
-    {
-      "method": "LIST",
-      "path": "subcategories",
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 161,
-      "module": "masters",
       "source": "frontend"
     },
     {
@@ -8795,7 +8787,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 196,
+      "line": 219,
       "name": "fetchOilSources",
       "params": "",
       "type": "arrow",
@@ -8803,7 +8795,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 251,
+      "line": 276,
       "name": "fetchBOMDetails",
       "params": "skuId",
       "type": "arrow",
@@ -8811,7 +8803,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 265,
+      "line": 290,
       "name": "fetchMaterials",
       "params": "",
       "type": "arrow",
@@ -8819,7 +8811,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 279,
+      "line": 304,
       "name": "fetchLaborRates",
       "params": "",
       "type": "arrow",
@@ -8827,7 +8819,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 303,
+      "line": 328,
       "name": "calculateOilRequired",
       "params": "bottlesPlanned",
       "type": "arrow",
@@ -8835,7 +8827,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 319,
+      "line": 344,
       "name": "calculateMaterialCost",
       "params": "",
       "type": "arrow",
@@ -8843,7 +8835,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 336,
+      "line": 361,
       "name": "calculateOilCost",
       "params": "",
       "type": "arrow",
@@ -8851,7 +8843,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 349,
+      "line": 374,
       "name": "calculateLaborCost",
       "params": "",
       "type": "arrow",
@@ -8859,7 +8851,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 355,
+      "line": 380,
       "name": "updateTotalCosts",
       "params": "",
       "type": "arrow",
@@ -8867,7 +8859,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 370,
+      "line": 395,
       "name": "handleCheckAvailability",
       "params": "",
       "type": "arrow",
@@ -8875,7 +8867,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 425,
+      "line": 450,
       "name": "handleAllocateOil",
       "params": "",
       "type": "arrow",
@@ -8883,7 +8875,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 437,
+      "line": 462,
       "name": "handleSaveProduction",
       "params": "",
       "type": "arrow",
@@ -8891,7 +8883,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 500,
+      "line": 525,
       "name": "resetForm",
       "params": "",
       "type": "arrow",
@@ -15716,13 +15708,6 @@
       "calledFrom": "puvi-frontend/puvi-frontend-main/src/modules/MaterialSales/index.js",
       "line": 61,
       "module": "costManagement"
-    },
-    {
-      "path": "subcategories",
-      "method": "LIST",
-      "calledFrom": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 161,
-      "module": "masters"
     }
   ],
   "apiEndpoints": {
@@ -15732,14 +15717,6 @@
         "path": "sales",
         "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialSales/index.js",
         "line": 61
-      }
-    ],
-    "masters": [
-      {
-        "method": "LIST",
-        "path": "subcategories",
-        "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-        "line": 161
       }
     ],
     "batch_bp": [
@@ -17391,73 +17368,85 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 170,
+      "line": 173,
       "type": "catch",
       "code": "} catch (error) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
+      "line": 177,
+      "type": "try-catch",
+      "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
       "line": 189,
       "type": "catch",
-      "code": "} catch (error) {"
+      "code": "} catch (directError) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 200,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 230,
+      "line": 212,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 252,
+      "line": 223,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 259,
+      "line": 255,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 266,
+      "line": 277,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 273,
+      "line": 284,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 280,
+      "line": 291,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 297,
+      "line": 298,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 444,
+      "line": 305,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 492,
+      "line": 322,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
+      "line": 469,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
+      "line": 517,
       "type": "catch",
       "code": "} catch (error) {"
     },
@@ -19894,7 +19883,7 @@
     "jsFiles": 37,
     "pyFiles": 22,
     "components": 41,
-    "routes": 104,
+    "routes": 103,
     "exports": 41,
     "imports": 51,
     "hardcodedValues": 23,
@@ -19902,7 +19891,7 @@
     "databaseTables": 51,
     "functions": 547,
     "stateHooks": 623,
-    "missingEndpoints": 2,
-    "errorHandlers": 546
+    "missingEndpoints": 1,
+    "errorHandlers": 548
   }
 }
