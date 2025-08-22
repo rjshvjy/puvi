@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-22T16:00:45.114Z",
+  "generatedAt": "2025-08-22T16:06:02.357Z",
   "filesScanned": 60,
   "jsFilesScanned": 37,
   "pyFilesScanned": 23,
@@ -1479,77 +1479,77 @@
     {
       "name": "skuDateUtils",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 565
+      "line": 614
     },
     {
       "name": "expiryUtils",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 655
+      "line": 704
     },
     {
       "name": "formatUtils",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 712
+      "line": 761
     },
     {
       "name": "validationUtils",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 757
+      "line": 806
     },
     {
       "name": "skuAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 792
+      "line": 841
     },
     {
       "name": "configAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 793
+      "line": 842
     },
     {
       "name": "batchAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 794
+      "line": 843
     },
     {
       "name": "mastersAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 795
+      "line": 844
     },
     {
       "name": "inventoryAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 796
+      "line": 845
     },
     {
       "name": "reportsAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 797
+      "line": 846
     },
     {
       "name": "purchaseAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 798
+      "line": 847
     },
     {
       "name": "blendingAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 799
+      "line": 848
     },
     {
       "name": "salesAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 800
+      "line": 849
     },
     {
       "name": "writeoffAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 801
+      "line": 850
     },
     {
       "name": "skuService",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 804
+      "line": 853
     },
     {
       "name": "skuDateUtils",
