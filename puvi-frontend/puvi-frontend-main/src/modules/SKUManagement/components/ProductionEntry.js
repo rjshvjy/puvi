@@ -13,7 +13,6 @@ const ProductionEntry = () => {
   const [oilSources, setOilSources] = useState([]);
   const [bomDetails, setBomDetails] = useState([]);
   const [materials, setMaterials] = useState([]);
-  const [laborRates, setLaborRates] = useState([]);
   const [oilType, setOilType] = useState('');
   const [oilSubcategoryName, setOilSubcategoryName] = useState(''); // Store the subcategory name for API calls
   const [selectedSKU, setSelectedSKU] = useState(null);
@@ -47,8 +46,8 @@ const ProductionEntry = () => {
     material_cost_total: 0,
     labor_cost_total: 0,
     total_production_cost: 0,
-    labor_hours: 0,
-    labor_rate: 0,
+    packing_rate_per_unit: 0, // Per-unit packing cost
+    packing_element_name: '', // Name of the cost element
     // MRP and Expiry fields
     mrp_at_production: 0,
     expiry_date: null,
@@ -64,7 +63,6 @@ const ProductionEntry = () => {
   useEffect(() => {
     fetchSKUs();
     fetchMaterials();
-    fetchLaborRates();
   }, []);
 
   // Update oil type and fetch MRP/shelf life when SKU is selected
@@ -77,6 +75,7 @@ const ProductionEntry = () => {
         setOilSubcategoryName(selected.oil_subcategory_name || selected.oil_type);
         fetchBOMDetails(selected.sku_id);
         fetchSKUDetailsWithMRP(selected.sku_id);
+        fetchPackingCostElement(selected.package_size); // Fetch packing cost for package size
       }
     }
   }, [productionData.sku_id, skuList]);
@@ -309,27 +308,60 @@ const ProductionEntry = () => {
     }
   };
 
-  const fetchLaborRates = async () => {
+  // Fetch packing cost element based on package size
+  const fetchPackingCostElement = async (packageSize) => {
+    if (!packageSize) return;
+    
     try {
       const response = await api.costManagement.getCostElementsMaster();
-      if (response.success) {
-        const laborElements = (response.elements || []).filter(
-          e => e.category === 'Labor' || e.element_name?.includes('Packaging')
+      
+      if (response.success && response.cost_elements) {
+        // Find the packing labor cost element for this package size
+        const packingElement = response.cost_elements.find(element => 
+          element.element_name?.includes(`Packing Labour ${packageSize}`) &&
+          element.calculation_method === 'per_unit' &&
+          element.is_active
         );
         
-        setLaborRates(laborElements);
-        
-        if (laborElements.length > 0) {
-          const packagingLabor = laborElements.find(e => e.element_name?.includes('Packaging')) || laborElements[0];
+        if (packingElement) {
           setProductionData(prev => ({
             ...prev,
-            labor_rate: packagingLabor.default_rate || 0
+            packing_rate_per_unit: packingElement.default_rate || 0,
+            packing_element_name: packingElement.element_name
           }));
+          console.log(`Found packing cost element: ${packingElement.element_name} @ ₹${packingElement.default_rate}/unit`);
+        } else {
+          // Try to find a general packing labor element
+          const generalPacking = response.cost_elements.find(element => 
+            element.element_name?.includes('Packing Labour') &&
+            element.calculation_method === 'per_unit' &&
+            element.is_active
+          );
+          
+          if (generalPacking) {
+            setProductionData(prev => ({
+              ...prev,
+              packing_rate_per_unit: generalPacking.default_rate || 0,
+              packing_element_name: generalPacking.element_name
+            }));
+            console.log(`Using general packing element: ${generalPacking.element_name}`);
+          } else {
+            console.warn(`No packing cost element found for ${packageSize}`);
+            setProductionData(prev => ({
+              ...prev,
+              packing_rate_per_unit: 0,
+              packing_element_name: 'Not configured'
+            }));
+          }
         }
       }
     } catch (error) {
-      console.error('Error fetching labor rates:', error);
-      setLaborRates([]);
+      console.error('Error fetching packing cost element:', error);
+      setProductionData(prev => ({
+        ...prev,
+        packing_rate_per_unit: 0,
+        packing_element_name: 'Error loading'
+      }));
     }
   };
 
@@ -380,9 +412,11 @@ const ProductionEntry = () => {
   };
 
   const calculateLaborCost = () => {
-    const hours = productionData.labor_hours || 0;
-    const rate = productionData.labor_rate || 0;
-    return hours * rate;
+    // Packing cost is now per-unit based on package size
+    // This will be fetched from cost elements master
+    const bottlesProduced = productionData.bottles_produced || productionData.bottles_planned || 0;
+    const packingRate = productionData.packing_rate_per_unit || 0;
+    return bottlesProduced * packingRate;
   };
 
   const updateTotalCosts = () => {
@@ -693,8 +727,6 @@ const ProductionEntry = () => {
           material_cost_per_unit: materials.find(m => m.material_id === item.material_id)?.current_cost || 0,
           total_cost: 0 // Will be calculated by backend
         })),
-        labor_hours: productionData.labor_hours,
-        labor_rate: productionData.labor_rate,
         operator_name: productionData.operator_name,
         shift_number: productionData.shift_number,
         notes: productionData.notes
@@ -747,8 +779,8 @@ const ProductionEntry = () => {
       material_cost_total: 0,
       labor_cost_total: 0,
       total_production_cost: 0,
-      labor_hours: 0,
-      labor_rate: productionData.labor_rate,
+      packing_rate_per_unit: 0,
+      packing_element_name: '',
       mrp_at_production: 0,
       expiry_date: null,
       shelf_life_months: null
@@ -1077,12 +1109,12 @@ const ProductionEntry = () => {
                   <td>{formatUtils.currency(calculateMaterialCost())}</td>
                 </tr>
                 <tr>
-                  <td>Labor Cost (Est. 2 hrs):</td>
-                  <td>{formatUtils.currency(2 * productionData.labor_rate)}</td>
+                  <td>Packing Cost (Est.):</td>
+                  <td>{formatUtils.currency(productionData.bottles_planned * productionData.packing_rate_per_unit)}</td>
                 </tr>
                 <tr className="total-row">
                   <td><strong>Total Estimated Cost:</strong></td>
-                  <td><strong>{formatUtils.currency(calculateOilCost() + calculateMaterialCost() + (2 * productionData.labor_rate))}</strong></td>
+                  <td><strong>{formatUtils.currency(calculateOilCost() + calculateMaterialCost() + (productionData.bottles_planned * productionData.packing_rate_per_unit))}</strong></td>
                 </tr>
               </tbody>
             </table>
@@ -1139,36 +1171,27 @@ const ProductionEntry = () => {
           </div>
           
           <div className="form-group">
-            <label>Actual Labor Hours *</label>
-            <input 
-              type="number"
-              value={productionData.labor_hours}
-              onChange={(e) => {
-                const hours = parseFloat(e.target.value) || 0;
-                setProductionData(prev => ({ ...prev, labor_hours: hours }));
-                updateTotalCosts();
-              }}
-              min="0"
-              step="0.5"
-            />
+            <label>Packing Cost Element</label>
+            <div className="info-display">
+              <strong>{productionData.packing_element_name || 'Not configured'}</strong>
+              {productionData.packing_rate_per_unit > 0 && (
+                <span style={{ marginLeft: '10px', color: '#666' }}>
+                  ₹{productionData.packing_rate_per_unit.toFixed(2)} per bottle
+                </span>
+              )}
+            </div>
           </div>
           
           <div className="form-group">
-            <label>Labor Rate (₹/hr)</label>
-            <select 
-              value={productionData.labor_rate}
-              onChange={(e) => {
-                setProductionData(prev => ({ ...prev, labor_rate: parseFloat(e.target.value) }));
-                updateTotalCosts();
-              }}
-            >
-              {laborRates.map(rate => (
-                <option key={rate.element_id} value={rate.default_rate}>
-                  {rate.element_name} - ₹{rate.default_rate}/hr
-                </option>
-              ))}
-              <option value={productionData.labor_rate}>Custom - ₹{productionData.labor_rate}/hr</option>
-            </select>
+            <label>Total Packing Cost</label>
+            <div className="info-display">
+              <strong>
+                ₹{(productionData.bottles_produced * productionData.packing_rate_per_unit).toFixed(2)}
+              </strong>
+              <span style={{ marginLeft: '10px', color: '#666' }}>
+                ({productionData.bottles_produced || 0} bottles × ₹{productionData.packing_rate_per_unit.toFixed(2)})
+              </span>
+            </div>
           </div>
           
           <div className="form-group">
@@ -1216,7 +1239,7 @@ const ProductionEntry = () => {
                   <td>{formatUtils.currency(productionData.material_cost_total)}</td>
                 </tr>
                 <tr>
-                  <td>Labor Cost ({productionData.labor_hours} hrs × ₹{productionData.labor_rate}):</td>
+                  <td>Packing Cost ({productionData.bottles_produced} bottles × ₹{productionData.packing_rate_per_unit.toFixed(2)}):</td>
                   <td>{formatUtils.currency(productionData.labor_cost_total)}</td>
                 </tr>
                 <tr className="total-row">
