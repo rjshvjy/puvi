@@ -1,8 +1,10 @@
 // Production Entry Component for SKU Management with Enhanced Oil Allocation
 // File Path: puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js
+// MODIFIED: Integrated CostCapture component for Packing activity
 
 import React, { useState, useEffect } from 'react';
 import api, { skuDateUtils, expiryUtils, formatUtils } from '../../../services/api';
+import CostCapture from '../../../components/CostManagement/CostCapture';
 
 // Add the formatDateForDisplay function as an alias
 const formatDateForDisplay = skuDateUtils.formatForDisplay;
@@ -30,6 +32,10 @@ const ProductionEntry = () => {
   const [manualAllocations, setManualAllocations] = useState({});
   const [showAllocationAnalysis, setShowAllocationAnalysis] = useState(false);
   
+  // Packing costs from CostCapture component
+  const [packingCosts, setPackingCosts] = useState([]);
+  const [packingCostTotal, setPackingCostTotal] = useState(0);
+  
   const [productionData, setProductionData] = useState({
     sku_id: '',
     production_date: new Date().toISOString().split('T')[0],
@@ -46,8 +52,6 @@ const ProductionEntry = () => {
     material_cost_total: 0,
     labor_cost_total: 0,
     total_production_cost: 0,
-    packing_rate_per_unit: 0, // Per-unit packing cost
-    packing_element_name: '', // Name of the cost element
     // MRP and Expiry fields
     mrp_at_production: 0,
     expiry_date: null,
@@ -75,7 +79,6 @@ const ProductionEntry = () => {
         setOilSubcategoryName(selected.oil_subcategory_name || selected.oil_type);
         fetchBOMDetails(selected.sku_id);
         fetchSKUDetailsWithMRP(selected.sku_id);
-        fetchPackingCostElement(selected.package_size); // Fetch packing cost for package size
       }
     }
   }, [productionData.sku_id, skuList]);
@@ -308,63 +311,6 @@ const ProductionEntry = () => {
     }
   };
 
-  // Fetch packing cost element based on package size
-  const fetchPackingCostElement = async (packageSize) => {
-    if (!packageSize) return;
-    
-    try {
-      const response = await api.costManagement.getCostElementsMaster();
-      
-      if (response.success && response.cost_elements) {
-        // Find the packing labor cost element for this package size
-        const packingElement = response.cost_elements.find(element => 
-          element.element_name?.includes(`Packing Labour ${packageSize}`) &&
-          element.calculation_method === 'per_unit' &&
-          element.is_active
-        );
-        
-        if (packingElement) {
-          setProductionData(prev => ({
-            ...prev,
-            packing_rate_per_unit: packingElement.default_rate || 0,
-            packing_element_name: packingElement.element_name
-          }));
-          console.log(`Found packing cost element: ${packingElement.element_name} @ ₹${packingElement.default_rate}/unit`);
-        } else {
-          // Try to find a general packing labor element
-          const generalPacking = response.cost_elements.find(element => 
-            element.element_name?.includes('Packing Labour') &&
-            element.calculation_method === 'per_unit' &&
-            element.is_active
-          );
-          
-          if (generalPacking) {
-            setProductionData(prev => ({
-              ...prev,
-              packing_rate_per_unit: generalPacking.default_rate || 0,
-              packing_element_name: generalPacking.element_name
-            }));
-            console.log(`Using general packing element: ${generalPacking.element_name}`);
-          } else {
-            console.warn(`No packing cost element found for ${packageSize}`);
-            setProductionData(prev => ({
-              ...prev,
-              packing_rate_per_unit: 0,
-              packing_element_name: 'Not configured'
-            }));
-          }
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching packing cost element:', error);
-      setProductionData(prev => ({
-        ...prev,
-        packing_rate_per_unit: 0,
-        packing_element_name: 'Error loading'
-      }));
-    }
-  };
-
   const calculateOilRequired = (bottlesPlanned) => {
     if (!selectedSKU || !bottlesPlanned) return 0;
     
@@ -412,17 +358,14 @@ const ProductionEntry = () => {
   };
 
   const calculateLaborCost = () => {
-    // Packing cost is now per-unit based on package size
-    // This will be fetched from cost elements master
-    const bottlesProduced = productionData.bottles_produced || productionData.bottles_planned || 0;
-    const packingRate = productionData.packing_rate_per_unit || 0;
-    return bottlesProduced * packingRate;
+    // Now using packing costs from CostCapture component
+    return packingCostTotal;
   };
 
   const updateTotalCosts = () => {
     const oilCost = calculateOilCost();
     const materialCost = calculateMaterialCost();
-    const laborCost = calculateLaborCost();
+    const laborCost = packingCostTotal; // Use packing costs from CostCapture
     const totalCost = oilCost + materialCost + laborCost;
     
     setProductionData(prev => ({
@@ -433,6 +376,11 @@ const ProductionEntry = () => {
       total_production_cost: totalCost
     }));
   };
+
+  // Update total costs when packing costs change
+  useEffect(() => {
+    updateTotalCosts();
+  }, [packingCostTotal, productionData.oil_allocations]);
 
   // Calculate age of batch in days
   const calculateBatchAge = (productionDate) => {
@@ -727,6 +675,14 @@ const ProductionEntry = () => {
           material_cost_per_unit: materials.find(m => m.material_id === item.material_id)?.current_cost || 0,
           total_cost: 0 // Will be calculated by backend
         })),
+        // Include packing costs from CostCapture
+        packing_costs: packingCosts.map(cost => ({
+          element_id: cost.element_id,
+          element_name: cost.element_name,
+          quantity: cost.quantity,
+          rate: cost.overrideRate || cost.default_rate,
+          total_cost: cost.total_cost
+        })),
         operator_name: productionData.operator_name,
         shift_number: productionData.shift_number,
         notes: productionData.notes
@@ -764,6 +720,8 @@ const ProductionEntry = () => {
     setSelectedBatches(new Set());
     setManualAllocations({});
     setShowAllocationAnalysis(false);
+    setPackingCosts([]);
+    setPackingCostTotal(0);
     setProductionData({
       sku_id: '',
       production_date: new Date().toISOString().split('T')[0],
@@ -779,8 +737,6 @@ const ProductionEntry = () => {
       material_cost_total: 0,
       labor_cost_total: 0,
       total_production_cost: 0,
-      packing_rate_per_unit: 0,
-      packing_element_name: '',
       mrp_at_production: 0,
       expiry_date: null,
       shelf_life_months: null
@@ -1110,11 +1066,11 @@ const ProductionEntry = () => {
                 </tr>
                 <tr>
                   <td>Packing Cost (Est.):</td>
-                  <td>{formatUtils.currency(productionData.bottles_planned * productionData.packing_rate_per_unit)}</td>
+                  <td>Will be calculated in next step</td>
                 </tr>
                 <tr className="total-row">
                   <td><strong>Total Estimated Cost:</strong></td>
-                  <td><strong>{formatUtils.currency(calculateOilCost() + calculateMaterialCost() + (productionData.bottles_planned * productionData.packing_rate_per_unit))}</strong></td>
+                  <td><strong>{formatUtils.currency(calculateOilCost() + calculateMaterialCost())}</strong></td>
                 </tr>
               </tbody>
             </table>
@@ -1170,28 +1126,22 @@ const ProductionEntry = () => {
             />
           </div>
           
-          <div className="form-group">
-            <label>Packing Cost Element</label>
-            <div className="info-display">
-              <strong>{productionData.packing_element_name || 'Not configured'}</strong>
-              {productionData.packing_rate_per_unit > 0 && (
-                <span style={{ marginLeft: '10px', color: '#666' }}>
-                  ₹{productionData.packing_rate_per_unit.toFixed(2)} per bottle
-                </span>
-              )}
-            </div>
-          </div>
-          
-          <div className="form-group">
-            <label>Total Packing Cost</label>
-            <div className="info-display">
-              <strong>
-                ₹{(productionData.bottles_produced * productionData.packing_rate_per_unit).toFixed(2)}
-              </strong>
-              <span style={{ marginLeft: '10px', color: '#666' }}>
-                ({productionData.bottles_produced || 0} bottles × ₹{productionData.packing_rate_per_unit.toFixed(2)})
-              </span>
-            </div>
+          {/* INTEGRATED: CostCapture Component for Packing */}
+          <div className="packing-costs-section">
+            <h4>Packing Costs</h4>
+            <CostCapture
+              module="sku"
+              stage="packing"
+              quantity={productionData.bottles_produced || productionData.bottles_planned}
+              onCostsUpdate={(costs) => {
+                const totalPackingCost = costs.reduce((sum, cost) => sum + cost.total_cost, 0);
+                setPackingCosts(costs);
+                setPackingCostTotal(totalPackingCost);
+                console.log('Packing costs updated:', costs, 'Total:', totalPackingCost);
+              }}
+              showSummary={true}
+              allowOverride={true}
+            />
           </div>
           
           <div className="form-group">
@@ -1239,9 +1189,22 @@ const ProductionEntry = () => {
                   <td>{formatUtils.currency(productionData.material_cost_total)}</td>
                 </tr>
                 <tr>
-                  <td>Packing Cost ({productionData.bottles_produced} bottles × ₹{productionData.packing_rate_per_unit.toFixed(2)}):</td>
+                  <td>Packing Cost:</td>
                   <td>{formatUtils.currency(productionData.labor_cost_total)}</td>
                 </tr>
+                {/* Show packing cost breakdown if available */}
+                {packingCosts.length > 0 && (
+                  <tr>
+                    <td colSpan="2" style={{ paddingLeft: '20px', fontSize: '12px', color: '#666' }}>
+                      {packingCosts.map(cost => (
+                        <div key={cost.element_id}>
+                          • {cost.element_name}: ₹{cost.total_cost.toFixed(2)}
+                          {cost.overrideRate && ' (Override applied)'}
+                        </div>
+                      ))}
+                    </td>
+                  </tr>
+                )}
                 <tr className="total-row">
                   <td><strong>Total Production Cost:</strong></td>
                   <td><strong>{formatUtils.currency(productionData.total_production_cost)}</strong></td>
