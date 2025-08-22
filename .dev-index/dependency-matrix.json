@@ -1,9 +1,9 @@
 {
   "version": "1.0",
-  "generatedAt": "2025-08-22T15:57:43.901Z",
+  "generatedAt": "2025-08-22T16:00:45.919Z",
   "summary": {
-    "totalTables": 53,
-    "sharedTables": 26,
+    "totalTables": 54,
+    "sharedTables": 27,
     "hardcodedCategories": 0,
     "migrationOpportunities": 0
   },
@@ -874,13 +874,20 @@
     },
     "package_sizes_master": {
       "usedBy": [
-        "package-sizes"
+        "package-sizes",
+        "sku-production"
       ],
-      "fileCount": 1,
+      "fileCount": 2,
       "operations": {
         "package-sizes": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/package_sizes.py"
+          ],
+          "queryCount": 0
+        },
+        "sku-production": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_production.py"
           ],
           "queryCount": 0
         }
@@ -1069,6 +1076,20 @@
       }
     },
     "CURRENT_DATE": {
+      "usedBy": [
+        "sku-production"
+      ],
+      "fileCount": 1,
+      "operations": {
+        "sku-production": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_production.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "sku_cost_overrides": {
       "usedBy": [
         "sku-production"
       ],
@@ -1460,6 +1481,17 @@
       "fileCount": 2,
       "risk": "LOW",
       "recommendation": "Changes will affect opening-balance, unknown"
+    },
+    {
+      "table": "package_sizes_master",
+      "sharedBy": [
+        "package-sizes",
+        "sku-production"
+      ],
+      "moduleCount": 2,
+      "fileCount": 2,
+      "risk": "LOW",
+      "recommendation": "Changes will affect package-sizes, sku-production"
     },
     {
       "table": "sku_bom_master",

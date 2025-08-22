@@ -1,6 +1,6 @@
 # Feature Pack: SKU
-Generated: 2025-08-22T15:57:43.966Z
-Routes: 23 | Tables: 18 | Files: 10
+Generated: 2025-08-22T16:00:45.982Z
+Routes: 23 | Tables: 20 | Files: 10
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -73,9 +73,11 @@ POST   /api/sku/production/allocate-oil
 | created_at | sku-production | 🟡 MEDIUM | Changes affect 1 other modules |
 | inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
 | materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
+| package_sizes_master | package-sizes, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
 | query | masters-common, sku-management | 🟡 MEDIUM | Changes affect 2 other modules |
 | sku_bom_details | sku-management, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
 | sku_bom_master | sku-management, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
+| sku_cost_overrides | sku-production | 🟡 MEDIUM | Changes affect 1 other modules |
 | sku_master | masters-crud, package-sizes, sku-management | 🔴 HIGH | Changes affect 6 other modules |
 | sku_material_consumption | sku-production | 🟡 MEDIUM | Changes affect 1 other modules |
 | sku_mrp_history | sku-management, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
@@ -84,7 +86,7 @@ POST   /api/sku/production/allocate-oil
 
 ### ⚠️ Hardcoded Values Detected
 - `ProductionSummaryReport.js:185` - object
-- `sku_production.py:286` - object
+- `sku_production.py:341` - object
 
 ## Backend Implementation
 
