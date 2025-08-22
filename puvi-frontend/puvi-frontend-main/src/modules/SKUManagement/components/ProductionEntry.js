@@ -1,4 +1,4 @@
-// Production Entry Component for SKU Management with MRP and Expiry
+// Production Entry Component for SKU Management with Enhanced Oil Allocation
 // File Path: puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js
 
 import React, { useState, useEffect } from 'react';
@@ -18,17 +18,23 @@ const ProductionEntry = () => {
   const [oilSubcategoryName, setOilSubcategoryName] = useState(''); // Store the subcategory name for API calls
   const [selectedSKU, setSelectedSKU] = useState(null);
   
-  // MRP and Expiry related state - NEW
+  // MRP and Expiry related state
   const [currentMRP, setCurrentMRP] = useState(null);
   const [shelfLife, setShelfLife] = useState(null);
   const [expiryDate, setExpiryDate] = useState(null);
   const [daysToExpiry, setDaysToExpiry] = useState(null);
   const [expiryStatus, setExpiryStatus] = useState('normal');
   
+  // Enhanced allocation state
+  const [allocationStrategy, setAllocationStrategy] = useState('fifo');
+  const [selectedBatches, setSelectedBatches] = useState(new Set());
+  const [manualAllocations, setManualAllocations] = useState({});
+  const [showAllocationAnalysis, setShowAllocationAnalysis] = useState(false);
+  
   const [productionData, setProductionData] = useState({
     sku_id: '',
     production_date: new Date().toISOString().split('T')[0],
-    packing_date: new Date().toISOString().split('T')[0], // NEW - Required for v2.0
+    packing_date: new Date().toISOString().split('T')[0],
     bottles_planned: '',
     oil_required: 0,
     oil_allocations: [],
@@ -43,7 +49,7 @@ const ProductionEntry = () => {
     total_production_cost: 0,
     labor_hours: 0,
     labor_rate: 0,
-    // MRP and Expiry fields - NEW
+    // MRP and Expiry fields
     mrp_at_production: 0,
     expiry_date: null,
     shelf_life_months: null
@@ -70,7 +76,7 @@ const ProductionEntry = () => {
         setOilType(selected.oil_type);
         setOilSubcategoryName(selected.oil_subcategory_name || selected.oil_type);
         fetchBOMDetails(selected.sku_id);
-        fetchSKUDetailsWithMRP(selected.sku_id); // NEW - Fetch MRP and shelf life
+        fetchSKUDetailsWithMRP(selected.sku_id);
       }
     }
   }, [productionData.sku_id, skuList]);
@@ -82,7 +88,7 @@ const ProductionEntry = () => {
     }
   }, [oilSubcategoryName]);
 
-  // Calculate expiry date when production date or shelf life changes - NEW
+  // Calculate expiry date when production date or shelf life changes
   useEffect(() => {
     if (productionData.production_date && shelfLife) {
       const calculatedExpiry = skuDateUtils.calculateExpiryDate(
@@ -108,7 +114,7 @@ const ProductionEntry = () => {
     }
   }, [productionData.production_date, shelfLife]);
 
-  // NEW - Fetch SKU details including MRP and shelf life
+  // Fetch SKU details including MRP and shelf life
   const fetchSKUDetailsWithMRP = async (skuId) => {
     setLoadingMRP(true);
     try {
@@ -238,7 +244,9 @@ const ProductionEntry = () => {
           oil_type: source.oil_type || oilType,
           available: source.available_quantity || 0,
           cost_per_kg: source.cost_per_kg || 0,
-          traceable_code: source.traceable_code || ''
+          traceable_code: source.traceable_code || '',
+          production_date: source.production_date || source.blend_date || null,
+          age_days: source.age_days || 0
         }));
 
         setOilSources(mappedSources);
@@ -392,6 +400,155 @@ const ProductionEntry = () => {
     }));
   };
 
+  // Calculate age of batch in days
+  const calculateBatchAge = (productionDate) => {
+    if (!productionDate) return 0;
+    const prodDate = new Date(productionDate);
+    const today = new Date();
+    const diffTime = Math.abs(today - prodDate);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+  };
+
+  // Strategy-based allocation function
+  const allocateOilByStrategy = (strategy, oilRequired, sources) => {
+    let sortedSources = [...sources];
+    
+    switch(strategy) {
+      case 'fifo':
+        // Sort by production date (oldest first)
+        sortedSources.sort((a, b) => {
+          const dateA = new Date(a.production_date || '9999-12-31');
+          const dateB = new Date(b.production_date || '9999-12-31');
+          return dateA - dateB;
+        });
+        break;
+      case 'fefo':
+        // For FEFO, we'd need expiry dates - for now using age
+        sortedSources.sort((a, b) => b.age_days - a.age_days);
+        break;
+      case 'lowest_cost':
+        sortedSources.sort((a, b) => a.cost_per_kg - b.cost_per_kg);
+        break;
+      case 'highest_cost':
+        sortedSources.sort((a, b) => b.cost_per_kg - a.cost_per_kg);
+        break;
+      case 'manual':
+        // Return empty for manual selection
+        return [];
+      default:
+        break;
+    }
+    
+    // Auto-allocate based on sorted order
+    const allocations = [];
+    let remaining = oilRequired;
+    
+    for (const source of sortedSources) {
+      if (remaining <= 0) break;
+      const qty = Math.min(source.available, remaining);
+      if (qty > 0) {
+        allocations.push({
+          source_id: source.id,
+          source_type: source.type,
+          source_code: source.code,
+          quantity: qty,
+          traceable_code: source.traceable_code
+        });
+        remaining -= qty;
+      }
+    }
+    
+    return allocations;
+  };
+
+  // Toggle batch selection
+  const toggleBatchSelection = (sourceId) => {
+    const newSelected = new Set(selectedBatches);
+    if (newSelected.has(sourceId)) {
+      newSelected.delete(sourceId);
+      // Remove from manual allocations
+      const newAllocations = { ...manualAllocations };
+      delete newAllocations[sourceId];
+      setManualAllocations(newAllocations);
+    } else {
+      newSelected.add(sourceId);
+      // Add to manual allocations with 0 initial value
+      setManualAllocations(prev => ({
+        ...prev,
+        [sourceId]: 0
+      }));
+    }
+    setSelectedBatches(newSelected);
+  };
+
+  // Update manual allocation for a batch
+  const updateManualAllocation = (sourceId, value) => {
+    const source = oilSources.find(s => s.id === sourceId);
+    const maxValue = source ? source.available : 0;
+    const actualValue = Math.min(Math.max(0, parseFloat(value) || 0), maxValue);
+    
+    setManualAllocations(prev => ({
+      ...prev,
+      [sourceId]: actualValue
+    }));
+  };
+
+  // Calculate weighted average cost
+  const calculateWeightedCost = () => {
+    let totalCost = 0;
+    let totalQuantity = 0;
+    
+    productionData.oil_allocations.forEach(allocation => {
+      const source = oilSources.find(s => s.id === allocation.source_id);
+      if (source) {
+        totalCost += allocation.quantity * source.cost_per_kg;
+        totalQuantity += allocation.quantity;
+      }
+    });
+    
+    return totalQuantity > 0 ? (totalCost / totalQuantity) : 0;
+  };
+
+  // Get oldest batch used
+  const getOldestBatch = () => {
+    let oldestDate = null;
+    let oldestCode = '';
+    
+    productionData.oil_allocations.forEach(allocation => {
+      const source = oilSources.find(s => s.id === allocation.source_id);
+      if (source && source.production_date) {
+        const date = new Date(source.production_date);
+        if (!oldestDate || date < oldestDate) {
+          oldestDate = date;
+          oldestCode = source.code;
+        }
+      }
+    });
+    
+    return oldestCode ? `${oldestCode} (${calculateBatchAge(oldestDate)} days old)` : 'N/A';
+  };
+
+  // Compare to optimal cost allocation
+  const calculateOptimalCost = () => {
+    const optimalAllocations = allocateOilByStrategy('lowest_cost', productionData.oil_required, oilSources);
+    let optimalCost = 0;
+    
+    optimalAllocations.forEach(allocation => {
+      const source = oilSources.find(s => s.id === allocation.source_id);
+      if (source) {
+        optimalCost += allocation.quantity * source.cost_per_kg;
+      }
+    });
+    
+    const currentCost = calculateOilCost();
+    const difference = currentCost - optimalCost;
+    
+    if (difference === 0) return 'Using optimal cost allocation';
+    if (difference > 0) return `₹${difference.toFixed(2)} above optimal`;
+    return `₹${Math.abs(difference).toFixed(2)} below optimal`;
+  };
+
   const handleCheckAvailability = async () => {
     if (!productionData.sku_id) {
       setMessage({ type: 'error', text: 'Please select an SKU' });
@@ -416,30 +573,26 @@ const ProductionEntry = () => {
       return;
     }
     
-    // Initialize oil allocations
-    const allocations = [];
-    let remainingRequired = oilRequired;
-    
-    for (const source of oilSources) {
-      if (remainingRequired <= 0) break;
-      
-      const allocation = Math.min(source.available, remainingRequired);
-      if (allocation > 0) {
-        allocations.push({
-          source_id: source.id,
-          source_type: source.type,
-          source_code: source.code,
-          quantity: allocation,
-          traceable_code: source.traceable_code
-        });
-        remainingRequired -= allocation;
-      }
-    }
+    // Initialize allocations based on selected strategy
+    const allocations = allocateOilByStrategy(allocationStrategy, oilRequired, oilSources);
     
     setProductionData(prev => ({ 
       ...prev, 
       oil_allocations: allocations 
     }));
+    
+    // For manual strategy, preselect batches that would be used in FIFO
+    if (allocationStrategy === 'manual') {
+      const fifoAllocations = allocateOilByStrategy('fifo', oilRequired, oilSources);
+      const preselected = new Set(fifoAllocations.map(a => a.source_id));
+      setSelectedBatches(preselected);
+      
+      const initialManual = {};
+      fifoAllocations.forEach(alloc => {
+        initialManual[alloc.source_id] = alloc.quantity;
+      });
+      setManualAllocations(initialManual);
+    }
     
     updateTotalCosts();
     
@@ -447,9 +600,60 @@ const ProductionEntry = () => {
     setStep(2);
   };
 
+  const handleStrategyChange = (e) => {
+    const newStrategy = e.target.value;
+    setAllocationStrategy(newStrategy);
+    
+    // Recalculate allocations based on new strategy
+    if (newStrategy !== 'manual') {
+      const allocations = allocateOilByStrategy(newStrategy, productionData.oil_required, oilSources);
+      setProductionData(prev => ({ 
+        ...prev, 
+        oil_allocations: allocations 
+      }));
+      updateTotalCosts();
+    }
+  };
+
+  const handleApplyManualAllocations = () => {
+    const allocations = [];
+    
+    selectedBatches.forEach(sourceId => {
+      const quantity = manualAllocations[sourceId] || 0;
+      if (quantity > 0) {
+        const source = oilSources.find(s => s.id === sourceId);
+        if (source) {
+          allocations.push({
+            source_id: source.id,
+            source_type: source.type,
+            source_code: source.code,
+            quantity: quantity,
+            traceable_code: source.traceable_code
+          });
+        }
+      }
+    });
+    
+    setProductionData(prev => ({ 
+      ...prev, 
+      oil_allocations: allocations 
+    }));
+    updateTotalCosts();
+    setShowAllocationAnalysis(true);
+  };
+
   const handleAllocateOil = () => {
     if (productionData.oil_allocations.length === 0) {
       setMessage({ type: 'error', text: 'No oil allocations made' });
+      return;
+    }
+    
+    const totalAllocated = productionData.oil_allocations.reduce((sum, a) => sum + a.quantity, 0);
+    if (totalAllocated < productionData.oil_required * 0.99) { // Allow 1% tolerance
+      setMessage({ 
+        type: 'error', 
+        text: `Insufficient allocation. Required: ${productionData.oil_required.toFixed(2)} kg, Allocated: ${totalAllocated.toFixed(2)} kg` 
+      });
       return;
     }
     
@@ -524,6 +728,10 @@ const ProductionEntry = () => {
 
   const resetForm = () => {
     setStep(1);
+    setAllocationStrategy('fifo');
+    setSelectedBatches(new Set());
+    setManualAllocations({});
+    setShowAllocationAnalysis(false);
     setProductionData({
       sku_id: '',
       production_date: new Date().toISOString().split('T')[0],
@@ -589,7 +797,7 @@ const ProductionEntry = () => {
             </select>
           </div>
           
-          {/* MRP and Shelf Life Display - NEW */}
+          {/* MRP and Shelf Life Display */}
           {selectedSKU && (
             <div className="sku-details-panel">
               <div className="detail-row">
@@ -630,7 +838,7 @@ const ProductionEntry = () => {
             />
           </div>
           
-          {/* Expiry Date Display - NEW */}
+          {/* Expiry Date Display */}
           {expiryDate && (
             <div className="expiry-info-panel">
               <div className="detail-row">
@@ -699,7 +907,87 @@ const ProductionEntry = () => {
             <p><strong>Expiry Date:</strong> {formatDateForDisplay(expiryDate)}</p>
           </div>
           
-          <h4>Oil Sources Allocation</h4>
+          {/* Allocation Strategy Selection */}
+          <div className="allocation-strategy">
+            <label>Allocation Strategy:</label>
+            <select value={allocationStrategy} onChange={handleStrategyChange}>
+              <option value="manual">Manual Selection</option>
+              <option value="fifo">FIFO (First In First Out)</option>
+              <option value="fefo">FEFO (First Expiry First Out)</option>
+              <option value="lowest_cost">Lowest Cost First</option>
+              <option value="highest_cost">Highest Cost First</option>
+            </select>
+          </div>
+          
+          {/* Manual Selection Table (shown only for manual strategy) */}
+          {allocationStrategy === 'manual' && (
+            <div className="available-sources">
+              <h4>Available Oil Sources - Select and Allocate</h4>
+              <table className="batch-selection-table">
+                <thead>
+                  <tr>
+                    <th>Select</th>
+                    <th>Batch Code</th>
+                    <th>Production Date</th>
+                    <th>Available (kg)</th>
+                    <th>Cost/kg</th>
+                    <th>Age (days)</th>
+                    <th>Allocate (kg)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {oilSources.map(source => (
+                    <tr key={source.id} className={selectedBatches.has(source.id) ? 'selected' : ''}>
+                      <td>
+                        <input 
+                          type="checkbox" 
+                          checked={selectedBatches.has(source.id)}
+                          onChange={() => toggleBatchSelection(source.id)}
+                        />
+                      </td>
+                      <td>{source.code}</td>
+                      <td>{source.production_date ? formatDateForDisplay(source.production_date) : 'N/A'}</td>
+                      <td>{source.available.toFixed(2)}</td>
+                      <td>₹{source.cost_per_kg.toFixed(2)}</td>
+                      <td>{calculateBatchAge(source.production_date)}</td>
+                      <td>
+                        <input 
+                          type="number"
+                          disabled={!selectedBatches.has(source.id)}
+                          value={manualAllocations[source.id] || ''}
+                          onChange={(e) => updateManualAllocation(source.id, e.target.value)}
+                          min="0"
+                          max={source.available}
+                          step="0.01"
+                          style={{ width: '100px' }}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td colSpan="6"><strong>Total Allocated</strong></td>
+                    <td>
+                      <strong>
+                        {Object.values(manualAllocations).reduce((sum, val) => sum + (val || 0), 0).toFixed(2)} kg
+                      </strong>
+                    </td>
+                  </tr>
+                </tfoot>
+              </table>
+              <button 
+                className="btn-secondary" 
+                onClick={handleApplyManualAllocations}
+                style={{ marginTop: '10px' }}
+              >
+                Apply Manual Allocations
+              </button>
+            </div>
+          )}
+          
+          {/* Current Allocation Table */}
+          <h4>Current Oil Allocation</h4>
           <table className="allocation-table">
             <thead>
               <tr>
@@ -728,6 +1016,7 @@ const ProductionEntry = () => {
                           const newAllocations = [...productionData.oil_allocations];
                           newAllocations[index].quantity = parseFloat(e.target.value) || 0;
                           setProductionData(prev => ({ ...prev, oil_allocations: newAllocations }));
+                          updateTotalCosts();
                         }}
                         min="0"
                         max={source?.available}
@@ -747,6 +1036,33 @@ const ProductionEntry = () => {
               </tr>
             </tfoot>
           </table>
+          
+          {/* Allocation Impact Analysis */}
+          {(showAllocationAnalysis || allocationStrategy !== 'manual') && productionData.oil_allocations.length > 0 && (
+            <div className="allocation-summary" style={{ marginTop: '20px', backgroundColor: '#f0f8ff' }}>
+              <h4>Allocation Impact Analysis</h4>
+              <table>
+                <tbody>
+                  <tr>
+                    <td>Weighted Average Cost:</td>
+                    <td>₹{calculateWeightedCost().toFixed(2)}/kg</td>
+                  </tr>
+                  <tr>
+                    <td>Oldest Batch Used:</td>
+                    <td>{getOldestBatch()}</td>
+                  </tr>
+                  <tr>
+                    <td>Cost Optimization:</td>
+                    <td>{calculateOptimalCost()}</td>
+                  </tr>
+                  <tr>
+                    <td>Total Oil Cost:</td>
+                    <td>{formatUtils.currency(calculateOilCost())}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          )}
           
           <div className="cost-summary">
             <h4>Estimated Production Costs</h4>
