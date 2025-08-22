@@ -1,8 +1,8 @@
 """
-FIle path: puvi-backend/puvi-backend-main/modules/sku_production.py
+File path: puvi-backend/puvi-backend-main/modules/sku_production.py
 SKU Production Module for PUVI Oil Manufacturing System
 Enhanced with MRP and Expiry Date Management
-Version: 2.1 - Fixed route collisions and database column references
+Version: 2.2 - FIXED: Proper per-unit cost element usage for packing labor
 """
 
 from flask import Blueprint, request, jsonify
@@ -161,7 +161,9 @@ def create_sku_production():
                 s.density,
                 s.mrp_current,
                 s.shelf_life_months,
-                b.bom_id
+                b.bom_id,
+                s.sku_code,
+                s.product_name
             FROM sku_master s
             LEFT JOIN sku_bom_master b ON s.sku_id = b.sku_id AND b.is_current = true
             WHERE s.sku_id = %s
@@ -177,6 +179,7 @@ def create_sku_production():
         # Capture current MRP at production time
         mrp_at_production = float(sku_data[2]) if sku_data[2] else 0
         shelf_life_months = sku_data[3]
+        package_size = sku_data[0]  # Store package_size for labor cost lookup
         
         # Calculate expiry date
         expiry_date = None
@@ -220,7 +223,7 @@ def create_sku_production():
         sequence = cur.fetchone()[0]
         traceable_code = f"{variety_codes}{production_month}{sequence:02d}"
         
-        # Calculate costs
+        # Calculate oil costs
         total_oil_quantity = sum(a['quantity_allocated'] for a in oil_allocations)
         weighted_oil_cost = sum(a['quantity_allocated'] * a['oil_cost_per_kg'] 
                                for a in oil_allocations) / total_oil_quantity
@@ -255,20 +258,64 @@ def create_sku_production():
                 'total_cost': cost
             })
         
-        # Get labor cost - FIXED: Changed 'active' to 'is_active'
+        # FIXED: Get per-unit packing labor cost based on package size
+        # Now properly searches for the correct cost element and uses per-unit calculation
         cur.execute("""
-            SELECT default_rate
+            SELECT 
+                element_id,
+                element_name,
+                default_rate,
+                unit_type,
+                calculation_method,
+                activity
             FROM cost_elements_master
             WHERE element_name LIKE %s
-            AND is_active = true
-        """, (f'Packing Labour {sku_data[0]}%',))
+                AND is_active = true
+                AND calculation_method = 'per_unit'
+            LIMIT 1
+        """, (f'Packing Labour {package_size}%',))
         
-        labor_rate = cur.fetchone()
-        labor_cost_total = float(labor_rate[0] if labor_rate else 0) * bottles_produced
+        labor_data = cur.fetchone()
+        
+        # Calculate labor cost using per-unit rate
+        if labor_data:
+            labor_rate_per_unit = float(labor_data[2])
+            labor_cost_total = labor_rate_per_unit * bottles_produced
+            
+            # Log the cost element used for traceability
+            print(f"Using cost element: {labor_data[1]} @ ₹{labor_rate_per_unit}/unit for {bottles_produced} bottles")
+        else:
+            # Fallback: Try to find a general packing labor rate
+            cur.execute("""
+                SELECT default_rate
+                FROM cost_elements_master
+                WHERE element_name LIKE 'Packing Labour%'
+                    AND is_active = true
+                    AND calculation_method = 'per_unit'
+                ORDER BY element_name
+                LIMIT 1
+            """)
+            
+            fallback_rate = cur.fetchone()
+            if fallback_rate:
+                labor_rate_per_unit = float(fallback_rate[0])
+                labor_cost_total = labor_rate_per_unit * bottles_produced
+                print(f"Using fallback packing rate: ₹{labor_rate_per_unit}/unit")
+            else:
+                # If no packing labor cost element found, use 0
+                labor_rate_per_unit = 0
+                labor_cost_total = 0
+                print(f"Warning: No packing labor cost element found for package size {package_size}")
+        
+        # Store the per-unit rate for reporting (optional)
+        if data.get('override_labor_rate'):
+            # Allow manual override if provided
+            labor_rate_per_unit = float(data['override_labor_rate'])
+            labor_cost_total = labor_rate_per_unit * bottles_produced
         
         # Calculate total costs
         total_production_cost = oil_cost_total + material_cost_total + labor_cost_total
-        cost_per_bottle = total_production_cost / bottles_produced
+        cost_per_bottle = total_production_cost / bottles_produced if bottles_produced > 0 else 0
         
         # Insert production record with MRP and expiry
         cur.execute("""
@@ -363,6 +410,7 @@ def create_sku_production():
                 'oil_cost': oil_cost_total,
                 'material_cost': material_cost_total,
                 'labor_cost': labor_cost_total,
+                'labor_rate_per_unit': labor_rate_per_unit,
                 'total_cost': total_production_cost,
                 'cost_per_bottle': cost_per_bottle
             },
@@ -751,7 +799,7 @@ def get_production_summary_report(production_id):
             'cost_breakdown': {
                 'oil_cost': float(prod_data[20]),
                 'material_cost': float(prod_data[21]),
-                'labor_cost': float(prod_data[22]),
+                'packing_cost': float(prod_data[22]),  # Changed from 'labor_cost' to 'packing_cost'
                 'total_cost': float(prod_data[23]),
                 'cost_per_bottle': float(prod_data[24])
             },
@@ -826,6 +874,8 @@ def create_production_plan():
         if not sku_data[7]:
             return jsonify({'success': False, 'error': 'BOM not configured for this SKU'}), 400
         
+        package_size = sku_data[3]
+        
         # Calculate expiry date
         expiry_date = None
         days_to_expiry = None
@@ -834,13 +884,34 @@ def create_production_plan():
             days_to_expiry = get_days_to_expiry(expiry_date)
         
         # Calculate oil requirement
-        package_size = sku_data[3]
         size_in_liters = float(package_size.replace('ml', '').replace('L', ''))
         if 'ml' in package_size:
             size_in_liters = size_in_liters / 1000
         
         oil_per_bottle = size_in_liters * float(sku_data[4])  # kg
         total_oil_required = oil_per_bottle * bottles_planned
+        
+        # Get packing labor cost element for this package size
+        cur.execute("""
+            SELECT 
+                element_name,
+                default_rate,
+                unit_type,
+                calculation_method
+            FROM cost_elements_master
+            WHERE element_name LIKE %s
+                AND is_active = true
+                AND calculation_method = 'per_unit'
+            LIMIT 1
+        """, (f'Packing Labour {package_size}%',))
+        
+        labor_element = cur.fetchone()
+        packing_cost_per_unit = 0
+        packing_element_name = None
+        
+        if labor_element:
+            packing_element_name = labor_element[0]
+            packing_cost_per_unit = float(labor_element[1])
         
         # Check oil availability
         oil_type = sku_data[2]
@@ -955,6 +1026,11 @@ def create_production_plan():
                 'oil_sources': available_sources,
                 'material_requirements': material_requirements,
                 'materials_available': materials_available,
+                'packing_cost': {
+                    'element_name': packing_element_name or 'Not configured',
+                    'cost_per_unit': packing_cost_per_unit,
+                    'total_cost': packing_cost_per_unit * bottles_planned
+                },
                 'can_proceed': (total_available >= total_oil_required) and materials_available
             }
         })
