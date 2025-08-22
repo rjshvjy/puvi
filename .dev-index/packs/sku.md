@@ -1,5 +1,5 @@
 # Feature Pack: SKU
-Generated: 2025-08-22T10:05:37.604Z
+Generated: 2025-08-22T10:18:05.777Z
 Routes: 23 | Tables: 18 | Files: 10
 
 ## Table of Contents
@@ -84,6 +84,7 @@ POST   /api/sku/production/allocate-oil
 
 ### ⚠️ Hardcoded Values Detected
 - `ProductionSummaryReport.js:185` - object
+- `sku_production.py:286` - object
 
 ## Backend Implementation
 

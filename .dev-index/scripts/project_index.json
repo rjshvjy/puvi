@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-22T10:05:36.701Z",
+  "generatedAt": "2025-08-22T10:18:04.872Z",
   "filesScanned": 59,
   "jsFilesScanned": 37,
   "pyFilesScanned": 22,
@@ -782,7 +782,7 @@
       "method": "GET",
       "path": "/api/sku/production/history",
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 385,
+      "line": 433,
       "blueprint": "sku_production_bp",
       "function": "get_production_history",
       "source": "backend"
@@ -791,7 +791,7 @@
       "method": "GET",
       "path": "/api/sku/expiry-alerts",
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 511,
+      "line": 559,
       "blueprint": "sku_production_bp",
       "function": "get_expiry_alerts",
       "source": "backend"
@@ -800,7 +800,7 @@
       "method": "GET",
       "path": "/api/sku/expiry-summary",
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 539,
+      "line": 587,
       "blueprint": "sku_production_bp",
       "function": "get_expiry_summary",
       "source": "backend"
@@ -809,7 +809,7 @@
       "method": "POST",
       "path": "/api/sku/fefo-allocation/<int:sku_id>",
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 566,
+      "line": 614,
       "blueprint": "sku_production_bp",
       "function": "get_fefo_allocation_for_sku",
       "source": "backend"
@@ -818,7 +818,7 @@
       "method": "GET",
       "path": "/api/sku/production-summary/<int:production_id>",
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 600,
+      "line": 648,
       "blueprint": "sku_production_bp",
       "function": "get_production_summary_report",
       "source": "backend"
@@ -827,7 +827,7 @@
       "method": "POST",
       "path": "/api/sku/production/plan",
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 783,
+      "line": 831,
       "blueprint": "sku_production_bp",
       "function": "create_production_plan",
       "source": "backend"
@@ -836,7 +836,7 @@
       "method": "POST",
       "path": "/api/sku/production/allocate-oil",
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 972,
+      "line": 1048,
       "blueprint": "sku_production_bp",
       "function": "allocate_oil_for_production",
       "source": "backend"
@@ -1930,6 +1930,12 @@
       "line": 1098,
       "type": "object",
       "code": "return False, f\"{field_config.get('label', field_name)} must be one of: {', '.join(str(o) for o in o"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
+      "line": 286,
+      "type": "object",
+      "code": "print(f\"Using cost element: {labor_data[1]} @ ₹{labor_rate_per_unit}/unit for {bottles_produced} bot"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/system_config.py",
@@ -5741,7 +5747,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 187,
+      "line": 190,
       "type": "SELECT",
       "tables": [
         "sku_mrp_history",
@@ -5756,7 +5762,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 208,
+      "line": 211,
       "type": "SELECT",
       "tables": [
         "sku_mrp_history",
@@ -5771,7 +5777,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 230,
+      "line": 233,
       "type": "SELECT",
       "tables": [
         "sku_mrp_history",
@@ -5788,7 +5794,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 259,
+      "line": 263,
       "type": "SELECT",
       "tables": [
         "sku_mrp_history",
@@ -5806,7 +5812,25 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 274,
+      "line": 289,
+      "type": "SELECT",
+      "tables": [
+        "sku_mrp_history",
+        "DESC",
+        "sku_master",
+        "sku_bom_master",
+        "sku_production",
+        "created_at",
+        "CURRENT_DATE",
+        "sku_bom_details",
+        "materials",
+        "cost_elements_master"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
+      "line": 321,
       "type": "INSERT",
       "tables": [
         "sku_mrp_history",
@@ -5824,7 +5848,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 311,
+      "line": 358,
       "type": "INSERT",
       "tables": [
         "sku_mrp_history",
@@ -5843,7 +5867,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 329,
+      "line": 376,
       "type": "INSERT",
       "tables": [
         "sku_mrp_history",
@@ -5863,7 +5887,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 455,
+      "line": 503,
       "type": "OTHER",
       "tables": [
         "sku_mrp_history",
@@ -5883,7 +5907,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 608,
+      "line": 656,
       "type": "SELECT",
       "tables": [
         "sku_mrp_history",
@@ -5903,7 +5927,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 645,
+      "line": 693,
       "type": "SELECT",
       "tables": [
         "sku_mrp_history",
@@ -5925,7 +5949,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 678,
+      "line": 726,
       "type": "SELECT",
       "tables": [
         "sku_mrp_history",
@@ -5947,7 +5971,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 807,
+      "line": 855,
       "type": "SELECT",
       "tables": [
         "sku_mrp_history",
@@ -5969,7 +5993,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 848,
+      "line": 895,
       "type": "SELECT",
       "tables": [
         "sku_mrp_history",
@@ -5991,7 +6015,29 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 906,
+      "line": 919,
+      "type": "SELECT",
+      "tables": [
+        "sku_mrp_history",
+        "DESC",
+        "sku_master",
+        "sku_bom_master",
+        "sku_production",
+        "created_at",
+        "CURRENT_DATE",
+        "sku_bom_details",
+        "materials",
+        "cost_elements_master",
+        "sku_oil_allocation",
+        "sku_material_consumption",
+        "batch",
+        "blend_batches"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
+      "line": 977,
       "type": "SELECT",
       "tables": [
         "sku_mrp_history",
@@ -6014,7 +6060,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 985,
+      "line": 1061,
       "type": "SELECT",
       "tables": [
         "sku_mrp_history",
@@ -6037,7 +6083,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 989,
+      "line": 1065,
       "type": "SELECT",
       "tables": [
         "sku_mrp_history",
@@ -11003,7 +11049,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 386,
+      "line": 434,
       "name": "get_production_history",
       "params": "",
       "type": "python",
@@ -11011,7 +11057,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 512,
+      "line": 560,
       "name": "get_expiry_alerts",
       "params": "",
       "type": "python",
@@ -11019,7 +11065,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 540,
+      "line": 588,
       "name": "get_expiry_summary",
       "params": "",
       "type": "python",
@@ -11027,7 +11073,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 567,
+      "line": 615,
       "name": "get_fefo_allocation_for_sku",
       "params": "sku_id",
       "type": "python",
@@ -11035,7 +11081,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 601,
+      "line": 649,
       "name": "get_production_summary_report",
       "params": "production_id",
       "type": "python",
@@ -11043,7 +11089,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 784,
+      "line": 832,
       "name": "create_production_plan",
       "params": "",
       "type": "python",
@@ -11051,7 +11097,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 973,
+      "line": 1049,
       "name": "allocate_oil_for_production",
       "params": "",
       "type": "python",
@@ -16465,49 +16511,49 @@
         "method": "GET",
         "path": "/api/sku/production/history",
         "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-        "line": 385,
+        "line": 433,
         "function": "get_production_history"
       },
       {
         "method": "GET",
         "path": "/api/sku/expiry-alerts",
         "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-        "line": 511,
+        "line": 559,
         "function": "get_expiry_alerts"
       },
       {
         "method": "GET",
         "path": "/api/sku/expiry-summary",
         "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-        "line": 539,
+        "line": 587,
         "function": "get_expiry_summary"
       },
       {
         "method": "POST",
         "path": "/api/sku/fefo-allocation/<int:sku_id>",
         "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-        "line": 566,
+        "line": 614,
         "function": "get_fefo_allocation_for_sku"
       },
       {
         "method": "GET",
         "path": "/api/sku/production-summary/<int:production_id>",
         "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-        "line": 600,
+        "line": 648,
         "function": "get_production_summary_report"
       },
       {
         "method": "POST",
         "path": "/api/sku/production/plan",
         "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-        "line": 783,
+        "line": 831,
         "function": "create_production_plan"
       },
       {
         "method": "POST",
         "path": "/api/sku/production/allocate-oil",
         "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-        "line": 972,
+        "line": 1048,
         "function": "allocate_oil_for_production"
       }
     ],
@@ -19538,98 +19584,98 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 372,
+      "line": 420,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 391,
+      "line": 439,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 501,
+      "line": 549,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 517,
+      "line": 565,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 533,
+      "line": 581,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 545,
+      "line": 593,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 560,
+      "line": 608,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 572,
+      "line": 620,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 590,
+      "line": 638,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 606,
+      "line": 654,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 773,
+      "line": 821,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 789,
+      "line": 837,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 962,
+      "line": 1038,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 978,
+      "line": 1054,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_production.py",
-      "line": 1078,
+      "line": 1154,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
@@ -20014,8 +20060,8 @@
     "routes": 103,
     "exports": 41,
     "imports": 51,
-    "hardcodedValues": 23,
-    "databaseQueries": 343,
+    "hardcodedValues": 24,
+    "databaseQueries": 345,
     "databaseTables": 51,
     "functions": 556,
     "stateHooks": 631,
