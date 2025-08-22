@@ -1,6 +1,6 @@
 # Feature Pack: MATERIALS
-Generated: 2025-08-22T06:39:31.992Z
-Routes: 4 | Tables: 14 | Files: 2
+Generated: 2025-08-22T06:58:35.180Z
+Routes: 4 | Tables: 15 | Files: 2
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -38,10 +38,11 @@ GET    /api/materials/units
 | subcategories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
 | suppliers | opening-balance, purchase, system-config | 🔴 HIGH | Changes affect 4 other modules |
 | tags | purchase | 🟡 MEDIUM | Changes affect 1 other modules |
+| uom_master | masters-common, system-config | 🟡 MEDIUM | Changes affect 2 other modules |
 | writeoff_reasons | material-writeoff, system-config | 🟡 MEDIUM | Changes affect 2 other modules |
 
 ### ⚠️ Hardcoded Values Detected
-- `system_config.py:188` - object
+- `system_config.py:202` - object
 
 ## Backend Implementation
 

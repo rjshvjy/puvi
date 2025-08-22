@@ -1,6 +1,6 @@
 # Feature Pack: CONFIG
-Generated: 2025-08-22T06:39:31.994Z
-Routes: 5 | Tables: 7 | Files: 1
+Generated: 2025-08-22T06:58:35.182Z
+Routes: 5 | Tables: 8 | Files: 1
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -33,10 +33,11 @@ GET    /api/config/labor_rates
 | materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
 | sku_master | masters-crud, sku-management, sku-production | 🔴 HIGH | Changes affect 5 other modules |
 | suppliers | opening-balance, purchase, system-config | 🔴 HIGH | Changes affect 4 other modules |
+| uom_master | masters-common, system-config | 🟡 MEDIUM | Changes affect 2 other modules |
 | writeoff_reasons | material-writeoff, system-config | 🟡 MEDIUM | Changes affect 2 other modules |
 
 ### ⚠️ Hardcoded Values Detected
-- `system_config.py:188` - object
+- `system_config.py:202` - object
 
 ## Backend Implementation
 
