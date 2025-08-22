@@ -735,9 +735,9 @@ MASTERS_CONFIG = {
             'calculation_method': {
                 'type': 'select',
                 'required': True,
-                'options': ['per_kg', 'per_hour', 'fixed', 'actual'],
+                'options': ['per_kg', 'per_hour', 'per_unit', 'fixed', 'actual'],
                 'label': 'Calculation Method',
-                'help_text': 'per_kg: Cost = Quantity(kg) × Rate | per_hour: Cost = Hours × Rate | fixed: Cost = Rate (flat) | actual: Manual cost entry'
+                'help_text': 'per_kg: Cost = Quantity(kg) × Rate | per_hour: Cost = Hours × Rate | per_unit: Cost = Units × Rate | fixed: Cost = Rate (flat) | actual: Manual cost entry'
             },
             'is_optional': {
                 'type': 'boolean',
