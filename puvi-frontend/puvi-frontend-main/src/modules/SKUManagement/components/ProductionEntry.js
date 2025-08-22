@@ -1,6 +1,6 @@
 // Production Entry Component for SKU Management with Enhanced Oil Allocation
 // File Path: puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js
-// MODIFIED: Integrated CostCapture component for Packing activity
+// MODIFIED: Integrated CostCapture component for Packing activity with packageSize prop
 
 import React, { useState, useEffect } from 'react';
 import api, { skuDateUtils, expiryUtils, formatUtils } from '../../../services/api';
@@ -1126,13 +1126,14 @@ const ProductionEntry = () => {
             />
           </div>
           
-          {/* INTEGRATED: CostCapture Component for Packing */}
+          {/* INTEGRATED: CostCapture Component for Packing - WITH packageSize PROP */}
           <div className="packing-costs-section">
             <h4>Packing Costs</h4>
             <CostCapture
               module="sku"
               stage="packing"
               quantity={productionData.bottles_produced || productionData.bottles_planned}
+              packageSize={selectedSKU?.package_size}
               onCostsUpdate={(costs) => {
                 const totalPackingCost = costs.reduce((sum, cost) => sum + cost.total_cost, 0);
                 setPackingCosts(costs);
