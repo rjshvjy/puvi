@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-22T10:20:41.993Z",
+  "generatedAt": "2025-08-22T12:11:50.228Z",
   "filesScanned": 59,
   "jsFilesScanned": 37,
   "pyFilesScanned": 22,
@@ -1246,6 +1246,12 @@
       ]
     },
     {
+      "from": "../../../components/CostManagement/CostCapture",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js"
+      ]
+    },
+    {
       "from": "./SKUMaster.css",
       "usedIn": [
         "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js"
@@ -1613,7 +1619,7 @@
     {
       "name": "ProductionEntry",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 10,
+      "line": 12,
       "type": "const"
     },
     {
@@ -8809,7 +8815,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 10,
+      "line": 12,
       "name": "ProductionEntry",
       "params": "",
       "type": "arrow",
@@ -8817,7 +8823,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 117,
+      "line": 120,
       "name": "fetchSKUDetailsWithMRP",
       "params": "skuId",
       "type": "arrow",
@@ -8825,7 +8831,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 157,
+      "line": 160,
       "name": "fetchSKUs",
       "params": "",
       "type": "arrow",
@@ -8833,7 +8839,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 224,
+      "line": 227,
       "name": "fetchOilSources",
       "params": "",
       "type": "arrow",
@@ -8841,7 +8847,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 283,
+      "line": 286,
       "name": "fetchBOMDetails",
       "params": "skuId",
       "type": "arrow",
@@ -8849,7 +8855,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 297,
+      "line": 300,
       "name": "fetchMaterials",
       "params": "",
       "type": "arrow",
@@ -8857,15 +8863,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 312,
-      "name": "fetchPackingCostElement",
-      "params": "packageSize",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 368,
+      "line": 314,
       "name": "calculateOilRequired",
       "params": "bottlesPlanned",
       "type": "arrow",
@@ -8873,7 +8871,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 384,
+      "line": 330,
       "name": "calculateMaterialCost",
       "params": "",
       "type": "arrow",
@@ -8881,7 +8879,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 401,
+      "line": 347,
       "name": "calculateOilCost",
       "params": "",
       "type": "arrow",
@@ -8889,7 +8887,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 414,
+      "line": 360,
       "name": "calculateLaborCost",
       "params": "",
       "type": "arrow",
@@ -8897,7 +8895,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 422,
+      "line": 365,
       "name": "updateTotalCosts",
       "params": "",
       "type": "arrow",
@@ -8905,7 +8903,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 438,
+      "line": 386,
       "name": "calculateBatchAge",
       "params": "productionDate",
       "type": "arrow",
@@ -8913,7 +8911,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 448,
+      "line": 396,
       "name": "allocateOilByStrategy",
       "params": "strategy, oilRequired, sources",
       "type": "arrow",
@@ -8921,7 +8919,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 500,
+      "line": 448,
       "name": "toggleBatchSelection",
       "params": "sourceId",
       "type": "arrow",
@@ -8929,7 +8927,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 520,
+      "line": 468,
       "name": "updateManualAllocation",
       "params": "sourceId, value",
       "type": "arrow",
@@ -8937,7 +8935,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 532,
+      "line": 480,
       "name": "calculateWeightedCost",
       "params": "",
       "type": "arrow",
@@ -8945,7 +8943,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 548,
+      "line": 496,
       "name": "getOldestBatch",
       "params": "",
       "type": "arrow",
@@ -8953,7 +8951,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 567,
+      "line": 515,
       "name": "calculateOptimalCost",
       "params": "",
       "type": "arrow",
@@ -8961,7 +8959,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 586,
+      "line": 534,
       "name": "handleCheckAvailability",
       "params": "",
       "type": "arrow",
@@ -8969,7 +8967,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 637,
+      "line": 585,
       "name": "handleStrategyChange",
       "params": "e",
       "type": "arrow",
@@ -8977,7 +8975,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 652,
+      "line": 600,
       "name": "handleApplyManualAllocations",
       "params": "",
       "type": "arrow",
@@ -8985,7 +8983,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 679,
+      "line": 627,
       "name": "handleAllocateOil",
       "params": "",
       "type": "arrow",
@@ -8993,7 +8991,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 700,
+      "line": 648,
       "name": "handleSaveProduction",
       "params": "",
       "type": "arrow",
@@ -9001,7 +8999,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 761,
+      "line": 717,
       "name": "resetForm",
       "params": "",
       "type": "arrow",
@@ -13907,7 +13905,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 11,
+      "line": 13,
       "type": "useState",
       "name": "step",
       "setter": "setStep",
@@ -13915,13 +13913,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 11,
+      "line": 13,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 12,
+      "line": 14,
       "type": "useState",
       "name": "skuList",
       "setter": "setSKUList",
@@ -13929,13 +13927,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 12,
+      "line": 14,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 13,
+      "line": 15,
       "type": "useState",
       "name": "oilSources",
       "setter": "setOilSources",
@@ -13943,13 +13941,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 13,
+      "line": 15,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 14,
+      "line": 16,
       "type": "useState",
       "name": "bomDetails",
       "setter": "setBomDetails",
@@ -13957,13 +13955,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 14,
+      "line": 16,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 15,
+      "line": 17,
       "type": "useState",
       "name": "materials",
       "setter": "setMaterials",
@@ -13971,13 +13969,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 15,
+      "line": 17,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 16,
+      "line": 18,
       "type": "useState",
       "name": "oilType",
       "setter": "setOilType",
@@ -13985,13 +13983,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 16,
+      "line": 18,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 17,
+      "line": 19,
       "type": "useState",
       "name": "oilSubcategoryName",
       "setter": "setOilSubcategoryName",
@@ -13999,13 +13997,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 17,
+      "line": 19,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 18,
+      "line": 20,
       "type": "useState",
       "name": "selectedSKU",
       "setter": "setSelectedSKU",
@@ -14013,13 +14011,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 18,
+      "line": 20,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 21,
+      "line": 23,
       "type": "useState",
       "name": "currentMRP",
       "setter": "setCurrentMRP",
@@ -14027,13 +14025,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 21,
+      "line": 23,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 22,
+      "line": 24,
       "type": "useState",
       "name": "shelfLife",
       "setter": "setShelfLife",
@@ -14041,13 +14039,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 22,
+      "line": 24,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 23,
+      "line": 25,
       "type": "useState",
       "name": "expiryDate",
       "setter": "setExpiryDate",
@@ -14055,13 +14053,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 23,
+      "line": 25,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 24,
+      "line": 26,
       "type": "useState",
       "name": "daysToExpiry",
       "setter": "setDaysToExpiry",
@@ -14069,13 +14067,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 24,
+      "line": 26,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 25,
+      "line": 27,
       "type": "useState",
       "name": "expiryStatus",
       "setter": "setExpiryStatus",
@@ -14083,13 +14081,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 25,
+      "line": 27,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 28,
+      "line": 30,
       "type": "useState",
       "name": "allocationStrategy",
       "setter": "setAllocationStrategy",
@@ -14097,13 +14095,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 28,
+      "line": 30,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 29,
+      "line": 31,
       "type": "useState",
       "name": "selectedBatches",
       "setter": "setSelectedBatches",
@@ -14111,13 +14109,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 29,
+      "line": 31,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 30,
+      "line": 32,
       "type": "useState",
       "name": "manualAllocations",
       "setter": "setManualAllocations",
@@ -14125,13 +14123,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 30,
+      "line": 32,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 31,
+      "line": 33,
       "type": "useState",
       "name": "showAllocationAnalysis",
       "setter": "setShowAllocationAnalysis",
@@ -14139,13 +14137,41 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 31,
+      "line": 33,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 33,
+      "line": 36,
+      "type": "useState",
+      "name": "packingCosts",
+      "setter": "setPackingCosts",
+      "initial": "[]"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
+      "line": 36,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
+      "line": 37,
+      "type": "useState",
+      "name": "packingCostTotal",
+      "setter": "setPackingCostTotal",
+      "initial": 0
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
+      "line": 37,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
+      "line": 39,
       "type": "useState",
       "name": "productionData",
       "setter": "setProductionData",
@@ -14153,13 +14179,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 33,
+      "line": 39,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 57,
+      "line": 61,
       "type": "useState",
       "name": "loading",
       "setter": "setLoading",
@@ -14167,13 +14193,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 57,
+      "line": 61,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 58,
+      "line": 62,
       "type": "useState",
       "name": "loadingOilSources",
       "setter": "setLoadingOilSources",
@@ -14181,13 +14207,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 58,
+      "line": 62,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 59,
+      "line": 63,
       "type": "useState",
       "name": "loadingMRP",
       "setter": "setLoadingMRP",
@@ -14195,13 +14221,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 59,
+      "line": 63,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 60,
+      "line": 64,
       "type": "useState",
       "name": "message",
       "setter": "setMessage",
@@ -14209,31 +14235,37 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 60,
+      "line": 64,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 63,
+      "line": 67,
       "type": "useEffect",
       "hook": "useEffect"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 69,
+      "line": 73,
       "type": "useEffect",
       "hook": "useEffect"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 84,
+      "line": 87,
       "type": "useEffect",
       "hook": "useEffect"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 91,
+      "line": 94,
+      "type": "useEffect",
+      "hook": "useEffect"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
+      "line": 381,
       "type": "useEffect",
       "hook": "useEffect"
     },
@@ -17504,109 +17536,97 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 119,
+      "line": 122,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 146,
+      "line": 149,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 158,
+      "line": 161,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 165,
+      "line": 168,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 178,
+      "line": 181,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 182,
+      "line": 185,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 194,
+      "line": 197,
       "type": "catch",
       "code": "} catch (directError) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 217,
+      "line": 220,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 228,
+      "line": 231,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 262,
+      "line": 265,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 284,
+      "line": 287,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 291,
+      "line": 294,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 298,
+      "line": 301,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 305,
+      "line": 308,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 315,
+      "line": 655,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 358,
-      "type": "catch",
-      "code": "} catch (error) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 707,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
-      "line": 753,
+      "line": 709,
       "type": "catch",
       "code": "} catch (error) {"
     },
@@ -20045,13 +20065,13 @@
     "components": 41,
     "routes": 103,
     "exports": 41,
-    "imports": 51,
+    "imports": 52,
     "hardcodedValues": 24,
     "databaseQueries": 345,
     "databaseTables": 51,
-    "functions": 556,
-    "stateHooks": 629,
+    "functions": 555,
+    "stateHooks": 634,
     "missingEndpoints": 1,
-    "errorHandlers": 548
+    "errorHandlers": 546
   }
 }
