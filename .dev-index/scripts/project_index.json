@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-22T16:25:39.028Z",
+  "generatedAt": "2025-08-22T16:32:30.970Z",
   "filesScanned": 61,
   "jsFilesScanned": 38,
   "pyFilesScanned": 23,
@@ -1687,7 +1687,7 @@
     {
       "name": "PackageSizeManager",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 9,
+      "line": 10,
       "type": "const"
     },
     {
@@ -8927,7 +8927,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 9,
+      "line": 10,
       "name": "PackageSizeManager",
       "params": "",
       "type": "arrow",
@@ -8935,7 +8935,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 54,
+      "line": 55,
       "name": "loadPackageSizes",
       "params": "",
       "type": "arrow",
@@ -8943,7 +8943,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 69,
+      "line": 70,
       "name": "showMessage",
       "params": "type, text",
       "type": "arrow",
@@ -8951,7 +8951,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 87,
+      "line": 88,
       "name": "handleAdd",
       "params": "",
       "type": "arrow",
@@ -8959,7 +8959,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 102,
+      "line": 103,
       "name": "handleEdit",
       "params": "size",
       "type": "arrow",
@@ -8967,7 +8967,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 118,
+      "line": 119,
       "name": "validateForm",
       "params": "",
       "type": "arrow",
@@ -8975,7 +8975,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 139,
+      "line": 140,
       "name": "handleSave",
       "params": "",
       "type": "arrow",
@@ -8983,7 +8983,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 164,
+      "line": 165,
       "name": "handleDeleteClick",
       "params": "size",
       "type": "arrow",
@@ -8991,7 +8991,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 173,
+      "line": 174,
       "name": "handleDelete",
       "params": "",
       "type": "arrow",
@@ -8999,7 +8999,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 192,
+      "line": 193,
       "name": "handleBulkOrderUpdate",
       "params": "",
       "type": "arrow",
@@ -13934,7 +13934,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 11,
+      "line": 12,
       "type": "useState",
       "name": "packageSizes",
       "setter": "setPackageSizes",
@@ -13942,13 +13942,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 11,
+      "line": 12,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 12,
+      "line": 13,
       "type": "useState",
       "name": "loading",
       "setter": "setLoading",
@@ -13956,13 +13956,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 12,
+      "line": 13,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 13,
+      "line": 14,
       "type": "useState",
       "name": "message",
       "setter": "setMessage",
@@ -13970,13 +13970,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 13,
+      "line": 14,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 16,
+      "line": 17,
       "type": "useState",
       "name": "showModal",
       "setter": "setShowModal",
@@ -13984,13 +13984,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 16,
+      "line": 17,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 17,
+      "line": 18,
       "type": "useState",
       "name": "modalMode",
       "setter": "setModalMode",
@@ -13998,13 +13998,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 17,
+      "line": 18,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 18,
+      "line": 19,
       "type": "useState",
       "name": "selectedSize",
       "setter": "setSelectedSize",
@@ -14012,13 +14012,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 18,
+      "line": 19,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 21,
+      "line": 22,
       "type": "useState",
       "name": "formData",
       "setter": "setFormData",
@@ -14026,13 +14026,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 21,
+      "line": 22,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 31,
+      "line": 32,
       "type": "useState",
       "name": "errors",
       "setter": "setErrors",
@@ -14040,13 +14040,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 31,
+      "line": 32,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 34,
+      "line": 35,
       "type": "useState",
       "name": "searchTerm",
       "setter": "setSearchTerm",
@@ -14054,13 +14054,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 34,
+      "line": 35,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 35,
+      "line": 36,
       "type": "useState",
       "name": "includeInactive",
       "setter": "setIncludeInactive",
@@ -14068,13 +14068,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 35,
+      "line": 36,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 38,
+      "line": 39,
       "type": "useState",
       "name": "deleteModal",
       "setter": "setDeleteModal",
@@ -14082,13 +14082,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 38,
+      "line": 39,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 45,
+      "line": 46,
       "type": "useState",
       "name": "currentPage",
       "setter": "setCurrentPage",
@@ -14096,26 +14096,26 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 45,
+      "line": 46,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 46,
+      "line": 47,
       "type": "useState",
       "name": "itemsPerPage",
       "initial": 20
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 46,
+      "line": 47,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 49,
+      "line": 50,
       "type": "useEffect",
       "hook": "useEffect"
     },
@@ -18181,49 +18181,49 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 56,
+      "line": 57,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 61,
+      "line": 62,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 143,
+      "line": 144,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 156,
+      "line": 157,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 177,
+      "line": 178,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 184,
+      "line": 185,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 198,
+      "line": 199,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
-      "line": 204,
+      "line": 205,
       "type": "catch",
       "code": "} catch (error) {"
     },
