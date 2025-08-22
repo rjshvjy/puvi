@@ -367,14 +367,14 @@ const MastersList = ({
         <span className="masters-status-badge" style={{ backgroundColor: '#e0e7ff', color: '#3730a3' }}>✏️ Custom</span>;
     }
     
+    // Handle GST rate FIRST (before generic rate check)
+    if (fieldName === 'gst_rate') {
+      return `${value}%`;
+    }
+    
     // Handle currency fields
     if (fieldName.includes('cost') || fieldName.includes('rate') || fieldName.includes('price')) {
       return typeof value === 'number' ? `₹${value.toFixed(2)}` : value;
-    }
-    
-    // Handle GST rate
-    if (fieldName === 'gst_rate') {
-      return `${value}%`;
     }
     
     // Handle arrays (for BOM category mapping)
