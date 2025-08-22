@@ -2,7 +2,7 @@
 System Configuration Service for PUVI
 File Path: puvi-backend/puvi-backend-main/modules/system_config.py
 Returns centralized configuration values from database - NO HARDCODED VALUES
-Updated: All values now fetched from database
+Updated: Units now fetched from uom_master table instead of materials
 """
 
 from flask import Blueprint, request, jsonify
@@ -145,14 +145,28 @@ def get_config(config_type):
             ]
             
         elif config_type == 'units':
-            # Get distinct units from materials table
+            # UPDATED: Get units from uom_master instead of materials
             cur.execute("""
-                SELECT DISTINCT unit 
-                FROM materials 
-                WHERE unit IS NOT NULL 
-                ORDER BY unit
+                SELECT uom_code, uom_name, uom_category, display_order
+                FROM uom_master
+                WHERE is_active = true
+                ORDER BY display_order, uom_code
             """)
-            values = [row[0] for row in cur.fetchall() if row[0]]
+            
+            # Build both simple array and detailed info
+            units = []
+            units_detailed = []
+            for row in cur.fetchall():
+                units.append(row[0])  # Just the code for backward compatibility
+                units_detailed.append({
+                    'code': row[0],
+                    'name': row[1],
+                    'category': row[2],
+                    'display_order': row[3]
+                })
+            
+            # Return simple array for backward compatibility
+            values = units
             
         elif config_type == 'bom_categories':
             # Get BOM category mappings
@@ -240,24 +254,34 @@ def get_material_categories():
 
 @system_config_bp.route('/api/materials/units', methods=['GET'])
 def get_material_units():
-    """Get distinct units from materials table"""
+    """Get units from UOM master"""
     conn = get_db_connection()
     cur = conn.cursor()
     
     try:
-        # Get distinct units actually in use
+        # UPDATED: Get from uom_master instead of materials
         cur.execute("""
-            SELECT DISTINCT unit 
-            FROM materials 
-            WHERE unit IS NOT NULL 
-            ORDER BY unit
+            SELECT uom_code, uom_name, uom_category, display_order
+            FROM uom_master
+            WHERE is_active = true
+            ORDER BY display_order, uom_code
         """)
         
-        units = [row[0] for row in cur.fetchall() if row[0]]
+        units = []
+        units_detailed = []
+        for row in cur.fetchall():
+            units.append(row[0])  # Simple array for backward compatibility
+            units_detailed.append({
+                'code': row[0],
+                'name': row[1],
+                'category': row[2],
+                'display_order': row[3]
+            })
         
         return jsonify({
             'success': True,
-            'units': units,
+            'units': units,  # Simple array for backward compatibility
+            'units_detailed': units_detailed,  # Detailed info with metadata
             'count': len(units)
         })
         
