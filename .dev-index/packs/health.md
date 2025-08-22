@@ -1,5 +1,5 @@
 # Feature Pack: HEALTH
-Generated: 2025-08-22T12:11:51.156Z
+Generated: 2025-08-22T12:25:24.243Z
 Routes: 1 | Tables: 6 | Files: 1
 
 ## Table of Contents
@@ -22,7 +22,7 @@ GET    /api/health
 | batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 8 other modules |
 | materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
 | purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 5 other modules |
-| sku_master | masters-crud, sku-management, sku-production | 🔴 HIGH | Changes affect 5 other modules |
+| sku_master | masters-crud, package-sizes, sku-management | 🔴 HIGH | Changes affect 6 other modules |
 | suppliers | opening-balance, purchase, system-config | 🔴 HIGH | Changes affect 4 other modules |
 | system_configuration | opening-balance, unknown | 🟡 MEDIUM | Changes affect 2 other modules |
 

@@ -1,5 +1,5 @@
 # Feature Pack: SKU
-Generated: 2025-08-22T12:11:51.155Z
+Generated: 2025-08-22T12:25:24.243Z
 Routes: 23 | Tables: 18 | Files: 10
 
 ## Table of Contents
@@ -69,14 +69,14 @@ POST   /api/sku/production/allocate-oil
 | batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 8 other modules |
 | blend_batches | blending, masters-crud, sku-production | 🔴 HIGH | Changes affect 3 other modules |
 | completed | sku-management | 🟡 MEDIUM | Changes affect 1 other modules |
-| cost_elements_master | cost-management, sku-management, sku-production | 🔴 HIGH | Changes affect 4 other modules |
+| cost_elements_master | cost-management, package-sizes, sku-management | 🔴 HIGH | Changes affect 5 other modules |
 | created_at | sku-production | 🟡 MEDIUM | Changes affect 1 other modules |
 | inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
 | materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
 | query | masters-common, sku-management | 🟡 MEDIUM | Changes affect 2 other modules |
 | sku_bom_details | sku-management, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
 | sku_bom_master | sku-management, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
-| sku_master | masters-crud, sku-management, sku-production | 🔴 HIGH | Changes affect 5 other modules |
+| sku_master | masters-crud, package-sizes, sku-management | 🔴 HIGH | Changes affect 6 other modules |
 | sku_material_consumption | sku-production | 🟡 MEDIUM | Changes affect 1 other modules |
 | sku_mrp_history | sku-management, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
 | sku_oil_allocation | sku-production | 🟡 MEDIUM | Changes affect 1 other modules |
@@ -99,7 +99,7 @@ POST   /api/sku/production/allocate-oil
   - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, unknown
   - Impact: Changes will cascade to these modules
 - **cost_elements_master** (HIGH RISK)
-  - Shared with: cost-management, sku-management, sku-production, system-config
+  - Shared with: cost-management, package-sizes, sku-management, sku-production, system-config
   - Impact: Changes will cascade to these modules
 
 ### Integration Points

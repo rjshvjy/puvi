@@ -1,5 +1,5 @@
 # Feature Pack: SUBCATEGORIES
-Generated: 2025-08-22T12:11:51.151Z
+Generated: 2025-08-22T12:25:24.238Z
 Routes: 2 | Tables: 8 | Files: 1
 
 ## Table of Contents
@@ -27,7 +27,7 @@ GET    /api/subcategories/<int:subcategory_id>
 | information_schema | masters-common, masters-crud | 🟡 MEDIUM | Changes affect 2 other modules |
 | inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
 | materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
-| sku_master | masters-crud, sku-management, sku-production | 🔴 HIGH | Changes affect 5 other modules |
+| sku_master | masters-crud, package-sizes, sku-management | 🔴 HIGH | Changes affect 6 other modules |
 | subcategories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
 
 ## Backend Implementation

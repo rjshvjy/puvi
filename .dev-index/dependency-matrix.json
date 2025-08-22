@@ -1,8 +1,8 @@
 {
   "version": "1.0",
-  "generatedAt": "2025-08-22T12:11:51.090Z",
+  "generatedAt": "2025-08-22T12:25:24.175Z",
   "summary": {
-    "totalTables": 51,
+    "totalTables": 53,
     "sharedTables": 26,
     "hardcodedCategories": 0,
     "migrationOpportunities": 0
@@ -454,15 +454,22 @@
     "cost_elements_master": {
       "usedBy": [
         "cost-management",
+        "package-sizes",
         "sku-management",
         "sku-production",
         "system-config"
       ],
-      "fileCount": 4,
+      "fileCount": 5,
       "operations": {
         "cost-management": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/cost_management.py"
+          ],
+          "queryCount": 0
+        },
+        "package-sizes": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/package_sizes.py"
           ],
           "queryCount": 0
         },
@@ -629,16 +636,23 @@
     "sku_master": {
       "usedBy": [
         "masters-crud",
+        "package-sizes",
         "sku-management",
         "sku-production",
         "system-config",
         "unknown"
       ],
-      "fileCount": 5,
+      "fileCount": 6,
       "operations": {
         "masters-crud": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+          ],
+          "queryCount": 0
+        },
+        "package-sizes": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/package_sizes.py"
           ],
           "queryCount": 0
         },
@@ -853,6 +867,34 @@
         "unknown": {
           "files": [
             "puvi-backend/puvi-backend-main/utils/traceability.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "package_sizes_master": {
+      "usedBy": [
+        "package-sizes"
+      ],
+      "fileCount": 1,
+      "operations": {
+        "package-sizes": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/package_sizes.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "cost": {
+      "usedBy": [
+        "package-sizes"
+      ],
+      "fileCount": 1,
+      "operations": {
+        "package-sizes": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/package_sizes.py"
           ],
           "queryCount": 0
         }
@@ -1213,28 +1255,30 @@
       "table": "cost_elements_master",
       "sharedBy": [
         "cost-management",
+        "package-sizes",
         "sku-management",
         "sku-production",
         "system-config"
-      ],
-      "moduleCount": 4,
-      "fileCount": 4,
-      "risk": "HIGH",
-      "recommendation": "⚠️ CRITICAL: Changes require coordination across 4 modules"
-    },
-    {
-      "table": "sku_master",
-      "sharedBy": [
-        "masters-crud",
-        "sku-management",
-        "sku-production",
-        "system-config",
-        "unknown"
       ],
       "moduleCount": 5,
       "fileCount": 5,
       "risk": "HIGH",
       "recommendation": "⚠️ CRITICAL: Changes require coordination across 5 modules"
+    },
+    {
+      "table": "sku_master",
+      "sharedBy": [
+        "masters-crud",
+        "package-sizes",
+        "sku-management",
+        "sku-production",
+        "system-config",
+        "unknown"
+      ],
+      "moduleCount": 6,
+      "fileCount": 6,
+      "risk": "HIGH",
+      "recommendation": "⚠️ CRITICAL: Changes require coordination across 6 modules"
     },
     {
       "table": "suppliers",

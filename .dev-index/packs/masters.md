@@ -1,6 +1,6 @@
 # Feature Pack: MASTERS
-Generated: 2025-08-22T12:11:51.150Z
-Routes: 14 | Tables: 8 | Files: 2
+Generated: 2025-08-22T12:25:24.237Z
+Routes: 22 | Tables: 11 | Files: 3
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -40,6 +40,22 @@ POST   /api/masters/subcategories
 PUT    /api/masters/subcategories/<int:subcategory_id>
 # delete_subcategory
 DELETE /api/masters/subcategories/<int:subcategory_id>
+# get_package_sizes
+GET    /api/masters/package_sizes
+# get_package_size
+GET    /api/masters/package_sizes/<int:size_id>
+# create_package_size
+POST   /api/masters/package_sizes
+# update_package_size
+PUT    /api/masters/package_sizes/<int:size_id>
+# delete_package_size
+DELETE /api/masters/package_sizes/<int:size_id>
+# bulk_update_package_sizes
+POST   /api/masters/package_sizes/bulk-update
+# get_package_sizes_dropdown
+GET    /api/masters/package_sizes/dropdown
+# validate_package_size
+POST   /api/masters/package_sizes/validate
 ```
 
 ## Database Dependencies
@@ -48,10 +64,13 @@ DELETE /api/masters/subcategories/<int:subcategory_id>
 | batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 8 other modules |
 | blend_batches | blending, masters-crud, sku-production | 🔴 HIGH | Changes affect 3 other modules |
 | categories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
+| cost | package-sizes | 🟡 MEDIUM | Changes affect 1 other modules |
+| cost_elements_master | cost-management, package-sizes, sku-management | 🔴 HIGH | Changes affect 5 other modules |
 | information_schema | masters-common, masters-crud | 🟡 MEDIUM | Changes affect 2 other modules |
 | inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
 | materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
-| sku_master | masters-crud, sku-management, sku-production | 🔴 HIGH | Changes affect 5 other modules |
+| package_sizes_master | package-sizes | 🟡 MEDIUM | Changes affect 1 other modules |
+| sku_master | masters-crud, package-sizes, sku-management | 🔴 HIGH | Changes affect 6 other modules |
 | subcategories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
 
 ## Backend Implementation
@@ -65,6 +84,9 @@ DELETE /api/masters/subcategories/<int:subcategory_id>
   - Impact: Changes will cascade to these modules
 - **materials** (HIGH RISK)
   - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, unknown
+  - Impact: Changes will cascade to these modules
+- **cost_elements_master** (HIGH RISK)
+  - Shared with: cost-management, package-sizes, sku-management, sku-production, system-config
   - Impact: Changes will cascade to these modules
 
 ### Integration Points

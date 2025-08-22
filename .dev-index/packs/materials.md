@@ -1,5 +1,5 @@
 # Feature Pack: MATERIALS
-Generated: 2025-08-22T12:11:51.154Z
+Generated: 2025-08-22T12:25:24.242Z
 Routes: 4 | Tables: 15 | Files: 2
 
 ## Table of Contents
@@ -28,13 +28,13 @@ GET    /api/materials/units
 | available_oil_types | batch-production, system-config | 🟡 MEDIUM | Changes affect 2 other modules |
 | bom_category_mapping | system-config | 🟡 MEDIUM | Changes affect 1 other modules |
 | categories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
-| cost_elements_master | cost-management, sku-management, sku-production | 🔴 HIGH | Changes affect 4 other modules |
+| cost_elements_master | cost-management, package-sizes, sku-management | 🔴 HIGH | Changes affect 5 other modules |
 | inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
 | material_tags | purchase | 🟡 MEDIUM | Changes affect 1 other modules |
 | materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
 | purchase_items | batch-production, purchase | 🟡 MEDIUM | Changes affect 2 other modules |
 | purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 5 other modules |
-| sku_master | masters-crud, sku-management, sku-production | 🔴 HIGH | Changes affect 5 other modules |
+| sku_master | masters-crud, package-sizes, sku-management | 🔴 HIGH | Changes affect 6 other modules |
 | subcategories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
 | suppliers | opening-balance, purchase, system-config | 🔴 HIGH | Changes affect 4 other modules |
 | tags | purchase | 🟡 MEDIUM | Changes affect 1 other modules |
@@ -55,7 +55,7 @@ GET    /api/materials/units
   - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, unknown
   - Impact: Changes will cascade to these modules
 - **cost_elements_master** (HIGH RISK)
-  - Shared with: cost-management, sku-management, sku-production, system-config
+  - Shared with: cost-management, package-sizes, sku-management, sku-production, system-config
   - Impact: Changes will cascade to these modules
 - **suppliers** (HIGH RISK)
   - Shared with: opening-balance, purchase, system-config, unknown
