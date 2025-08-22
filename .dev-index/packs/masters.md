@@ -1,6 +1,6 @@
 # Feature Pack: MASTERS
-Generated: 2025-08-21T19:36:29.887Z
-Routes: 11 | Tables: 8 | Files: 2
+Generated: 2025-08-22T01:24:07.642Z
+Routes: 14 | Tables: 8 | Files: 2
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -34,6 +34,12 @@ GET    /api/masters/<master_type>/<record_id>/dependencies
 GET    /api/masters/<master_type>/export
 # import_from_csv
 POST   /api/masters/<master_type>/import
+# create_subcategory
+POST   /api/masters/subcategories
+# update_subcategory
+PUT    /api/masters/subcategories/<int:subcategory_id>
+# delete_subcategory
+DELETE /api/masters/subcategories/<int:subcategory_id>
 ```
 
 ## Database Dependencies
