@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-22T16:32:30.970Z",
+  "generatedAt": "2025-08-22T17:23:28.387Z",
   "filesScanned": 61,
   "jsFilesScanned": 38,
   "pyFilesScanned": 23,
@@ -1603,13 +1603,13 @@
     {
       "name": "BatchProduction",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 12,
+      "line": 136,
       "type": "const"
     },
     {
       "name": "StepIndicator",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 648,
+      "line": 772,
       "type": "const"
     },
     {
@@ -1845,7 +1845,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 1498,
+      "line": 1634,
       "type": "object",
       "code": "Generated: {new Date().toLocaleString('en-IN')}"
     },
@@ -7687,7 +7687,15 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 12,
+      "line": 61,
+      "name": "getOilYieldStatus",
+      "params": "oilType, yieldPercent",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
+      "line": 136,
       "name": "BatchProduction",
       "params": "",
       "type": "arrow",
@@ -7695,7 +7703,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 72,
+      "line": 196,
       "name": "fetchAvailableSeeds",
       "params": "",
       "type": "arrow",
@@ -7703,7 +7711,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 84,
+      "line": 208,
       "name": "fetchOilCakeRates",
       "params": "",
       "type": "arrow",
@@ -7711,7 +7719,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 95,
+      "line": 219,
       "name": "fetchBatchHistory",
       "params": "",
       "type": "arrow",
@@ -7719,7 +7727,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 127,
+      "line": 251,
       "name": "handleSeedSelection",
       "params": "seed",
       "type": "arrow",
@@ -7727,7 +7735,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 145,
+      "line": 269,
       "name": "calculateDryingLoss",
       "params": "",
       "type": "arrow",
@@ -7735,7 +7743,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 153,
+      "line": 277,
       "name": "calculateYieldPercentages",
       "params": "",
       "type": "arrow",
@@ -7743,7 +7751,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 168,
+      "line": 292,
       "name": "handleCostsUpdate",
       "params": "stage, costs",
       "type": "arrow",
@@ -7751,7 +7759,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 185,
+      "line": 309,
       "name": "handleTimeCalculated",
       "params": "timeData",
       "type": "arrow",
@@ -7759,7 +7767,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 190,
+      "line": 314,
       "name": "goToStep",
       "params": "step",
       "type": "arrow",
@@ -7767,7 +7775,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 196,
+      "line": 320,
       "name": "nextStep",
       "params": "",
       "type": "arrow",
@@ -7775,7 +7783,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 203,
+      "line": 327,
       "name": "prevStep",
       "params": "",
       "type": "arrow",
@@ -7783,7 +7791,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 208,
+      "line": 332,
       "name": "validateCurrentStep",
       "params": "",
       "type": "arrow",
@@ -7791,7 +7799,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 264,
+      "line": 388,
       "name": "calculateTotalCost",
       "params": "",
       "type": "arrow",
@@ -7799,7 +7807,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 282,
+      "line": 406,
       "name": "generateCostDetailsForSubmission",
       "params": "",
       "type": "arrow",
@@ -7807,7 +7815,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 323,
+      "line": 447,
       "name": "generateBatchReport",
       "params": "batchId, batchCode, traceableCode = null",
       "type": "arrow",
@@ -7815,7 +7823,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 396,
+      "line": 520,
       "name": "handlePrintReport",
       "params": "",
       "type": "arrow",
@@ -7823,7 +7831,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 522,
+      "line": 646,
       "name": "handleSubmit",
       "params": "e",
       "type": "arrow",
@@ -7831,7 +7839,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 533,
+      "line": 657,
       "name": "saveBatch",
       "params": "",
       "type": "arrow",
@@ -7839,7 +7847,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 615,
+      "line": 739,
       "name": "resetForm",
       "params": "",
       "type": "arrow",
@@ -7847,7 +7855,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 648,
+      "line": 772,
       "name": "StepIndicator",
       "params": "",
       "type": "arrow",
@@ -12155,7 +12163,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 14,
+      "line": 138,
       "type": "useState",
       "name": "currentStep",
       "setter": "setCurrentStep",
@@ -12163,13 +12171,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 14,
+      "line": 138,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 15,
+      "line": 139,
       "type": "useState",
       "name": "completedSteps",
       "setter": "setCompletedSteps",
@@ -12177,13 +12185,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 15,
+      "line": 139,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 18,
+      "line": 142,
       "type": "useState",
       "name": "loading",
       "setter": "setLoading",
@@ -12191,13 +12199,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 18,
+      "line": 142,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 19,
+      "line": 143,
       "type": "useState",
       "name": "message",
       "setter": "setMessage",
@@ -12205,13 +12213,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 19,
+      "line": 143,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 20,
+      "line": 144,
       "type": "useState",
       "name": "activeTab",
       "setter": "setActiveTab",
@@ -12219,13 +12227,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 20,
+      "line": 144,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 23,
+      "line": 147,
       "type": "useState",
       "name": "availableSeeds",
       "setter": "setAvailableSeeds",
@@ -12233,13 +12241,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 23,
+      "line": 147,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 24,
+      "line": 148,
       "type": "useState",
       "name": "selectedSeed",
       "setter": "setSelectedSeed",
@@ -12247,13 +12255,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 24,
+      "line": 148,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 25,
+      "line": 149,
       "type": "useState",
       "name": "batchHistory",
       "setter": "setBatchHistory",
@@ -12261,13 +12269,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 25,
+      "line": 149,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 26,
+      "line": 150,
       "type": "useState",
       "name": "oilCakeRates",
       "setter": "setOilCakeRates",
@@ -12275,13 +12283,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 26,
+      "line": 150,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 29,
+      "line": 153,
       "type": "useState",
       "name": "batchData",
       "setter": "setBatchData",
@@ -12289,13 +12297,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 29,
+      "line": 153,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 46,
+      "line": 170,
       "type": "useState",
       "name": "stageCosts",
       "setter": "setStageCosts",
@@ -12303,13 +12311,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 46,
+      "line": 170,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 54,
+      "line": 178,
       "type": "useState",
       "name": "timeTrackingData",
       "setter": "setTimeTrackingData",
@@ -12317,13 +12325,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 54,
+      "line": 178,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 57,
+      "line": 181,
       "type": "useState",
       "name": "showReport",
       "setter": "setShowReport",
@@ -12331,13 +12339,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 57,
+      "line": 181,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 58,
+      "line": 182,
       "type": "useState",
       "name": "reportData",
       "setter": "setReportData",
@@ -12345,13 +12353,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 58,
+      "line": 182,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 59,
+      "line": 183,
       "type": "useState",
       "name": "loadingReports",
       "setter": "setLoadingReports",
@@ -12359,19 +12367,19 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 59,
+      "line": 183,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 60,
+      "line": 184,
       "type": "useRef",
       "hook": "useRef"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 63,
+      "line": 187,
       "type": "useEffect",
       "hook": "useEffect"
     },
@@ -17539,73 +17547,73 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 73,
+      "line": 197,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 78,
+      "line": 202,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 85,
+      "line": 209,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 90,
+      "line": 214,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 96,
+      "line": 220,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 120,
+      "line": 244,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 326,
+      "line": 450,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 383,
+      "line": 507,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 537,
+      "line": 661,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 581,
+      "line": 705,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 587,
+      "line": 711,
       "type": "catch",
       "code": "} catch (timeError) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-      "line": 607,
+      "line": 731,
       "type": "catch",
       "code": "} catch (error) {"
     },
@@ -21034,7 +21042,7 @@
     "hardcodedValues": 24,
     "databaseQueries": 371,
     "databaseTables": 54,
-    "functions": 573,
+    "functions": 574,
     "stateHooks": 661,
     "missingEndpoints": 1,
     "errorHandlers": 570
