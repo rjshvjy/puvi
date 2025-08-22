@@ -1163,6 +1163,328 @@ def get_subcategory_details(subcategory_id):
 
 
 # =====================================================
+# SUBCATEGORY CREATE/UPDATE/DELETE ENDPOINTS - FIXED
+# =====================================================
+
+@masters_crud_bp.route('/api/masters/subcategories', methods=['POST'])
+def create_subcategory():
+    """Create a new subcategory - FIXED: No created_by column"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        data = request.json
+        
+        # Validate required fields
+        required_fields = ['subcategory_name', 'subcategory_code', 'category_id']
+        missing_fields = [f for f in required_fields if f not in data or data[f] is None]
+        
+        if missing_fields:
+            return jsonify({
+                'success': False,
+                'error': f'Missing required fields: {", ".join(missing_fields)}'
+            }), 400
+        
+        # Validate category exists and is active
+        cur.execute("""
+            SELECT category_id, category_name 
+            FROM categories_master 
+            WHERE category_id = %s AND is_active = true
+        """, (data['category_id'],))
+        
+        category = cur.fetchone()
+        if not category:
+            return jsonify({
+                'success': False,
+                'error': f'Invalid or inactive category_id: {data["category_id"]}'
+            }), 400
+        
+        # Check for duplicate subcategory_code
+        cur.execute("""
+            SELECT subcategory_id 
+            FROM subcategories_master 
+            WHERE subcategory_code = %s
+        """, (data['subcategory_code'],))
+        
+        if cur.fetchone():
+            return jsonify({
+                'success': False,
+                'error': f'Subcategory code "{data["subcategory_code"]}" already exists'
+            }), 400
+        
+        # Insert the subcategory - Only columns that exist in the table
+        cur.execute("""
+            INSERT INTO subcategories_master (
+                category_id,
+                subcategory_name,
+                subcategory_code,
+                oil_type,
+                is_active,
+                created_at
+            ) VALUES (%s, %s, %s, %s, %s, CURRENT_TIMESTAMP)
+            RETURNING subcategory_id
+        """, (
+            data['category_id'],
+            data['subcategory_name'],
+            data['subcategory_code'],
+            data.get('oil_type'),
+            data.get('is_active', True)
+        ))
+        
+        new_subcategory_id = cur.fetchone()[0]
+        
+        # Log audit
+        log_audit(
+            conn, cur, 'subcategories_master', new_subcategory_id, 'INSERT',
+            new_values=data,
+            changed_by='System',
+            reason='Created new subcategory via Oil Configuration'
+        )
+        
+        conn.commit()
+        
+        return jsonify({
+            'success': True,
+            'id': new_subcategory_id,
+            'subcategory_id': new_subcategory_id,
+            'message': f'Subcategory "{data["subcategory_name"]}" created successfully'
+        })
+        
+    except Exception as e:
+        conn.rollback()
+        import traceback
+        traceback.print_exc()
+        
+        error_msg = str(e)
+        
+        # Parse psycopg2 errors
+        if 'unique constraint' in error_msg.lower():
+            if 'subcategory_code' in error_msg:
+                return jsonify({
+                    'success': False,
+                    'error': f'Code "{data.get("subcategory_code")}" already exists. Please use a different code.'
+                }), 400
+            elif 'subcategory_name' in error_msg:
+                return jsonify({
+                    'success': False,
+                    'error': f'Name "{data.get("subcategory_name")}" already exists. Please use a different name.'
+                }), 400
+        elif 'foreign key' in error_msg.lower():
+            return jsonify({
+                'success': False,
+                'error': 'Invalid category selected. Please refresh and try again.'
+            }), 400
+            
+        return jsonify({
+            'success': False,
+            'error': error_msg
+        }), 500
+    finally:
+        close_connection(conn, cur)
+
+
+@masters_crud_bp.route('/api/masters/subcategories/<int:subcategory_id>', methods=['PUT'])
+def update_subcategory(subcategory_id):
+    """Update an existing subcategory - FIXED: No updated_at column"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        data = request.json
+        
+        # Get current record for audit
+        cur.execute("""
+            SELECT * FROM subcategories_master 
+            WHERE subcategory_id = %s
+        """, (subcategory_id,))
+        
+        columns = [desc[0] for desc in cur.description]
+        current_row = cur.fetchone()
+        
+        if not current_row:
+            return jsonify({
+                'success': False,
+                'error': 'Subcategory not found'
+            }), 404
+        
+        old_values = dict(zip(columns, current_row))
+        
+        # Build update query dynamically
+        update_fields = []
+        values = []
+        
+        if 'subcategory_name' in data:
+            update_fields.append('subcategory_name = %s')
+            values.append(data['subcategory_name'])
+            
+        if 'subcategory_code' in data:
+            update_fields.append('subcategory_code = %s')
+            values.append(data['subcategory_code'])
+            
+        if 'category_id' in data:
+            # Validate category exists
+            cur.execute("""
+                SELECT category_id FROM categories_master 
+                WHERE category_id = %s AND is_active = true
+            """, (data['category_id'],))
+            
+            if not cur.fetchone():
+                return jsonify({
+                    'success': False,
+                    'error': f'Invalid or inactive category_id: {data["category_id"]}'
+                }), 400
+                
+            update_fields.append('category_id = %s')
+            values.append(data['category_id'])
+            
+        if 'oil_type' in data:
+            update_fields.append('oil_type = %s')
+            values.append(data['oil_type'])
+            
+        if 'is_active' in data:
+            update_fields.append('is_active = %s')
+            values.append(data['is_active'])
+        
+        if not update_fields:
+            return jsonify({
+                'success': False,
+                'error': 'No fields to update'
+            }), 400
+        
+        # Add subcategory_id to values
+        values.append(subcategory_id)
+        
+        # Execute update
+        query = f"""
+            UPDATE subcategories_master
+            SET {', '.join(update_fields)}
+            WHERE subcategory_id = %s
+            RETURNING subcategory_id
+        """
+        
+        cur.execute(query, values)
+        
+        if cur.rowcount == 0:
+            return jsonify({
+                'success': False,
+                'error': 'No rows updated'
+            }), 400
+        
+        # Log audit
+        log_audit(
+            conn, cur, 'subcategories_master', subcategory_id, 'UPDATE',
+            old_values=old_values,
+            new_values=data,
+            changed_by='System',
+            reason='Updated subcategory via Oil Configuration'
+        )
+        
+        conn.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Subcategory updated successfully'
+        })
+        
+    except Exception as e:
+        conn.rollback()
+        error_msg = str(e)
+        
+        if 'unique constraint' in error_msg.lower():
+            if 'subcategory_code' in error_msg:
+                return jsonify({
+                    'success': False,
+                    'error': f'Code "{data.get("subcategory_code")}" already exists'
+                }), 400
+            elif 'subcategory_name' in error_msg:
+                return jsonify({
+                    'success': False,
+                    'error': f'Name "{data.get("subcategory_name")}" already exists'
+                }), 400
+                
+        return jsonify({
+            'success': False,
+            'error': error_msg
+        }), 500
+    finally:
+        close_connection(conn, cur)
+
+
+@masters_crud_bp.route('/api/masters/subcategories/<int:subcategory_id>', methods=['DELETE'])
+def delete_subcategory(subcategory_id):
+    """Delete or deactivate a subcategory"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        # Check if subcategory has dependent materials
+        cur.execute("""
+            SELECT COUNT(*) 
+            FROM materials 
+            WHERE subcategory_id = %s AND is_active = true
+        """, (subcategory_id,))
+        
+        material_count = cur.fetchone()[0]
+        
+        if material_count > 0:
+            # Soft delete only
+            cur.execute("""
+                UPDATE subcategories_master 
+                SET is_active = false 
+                WHERE subcategory_id = %s
+                RETURNING subcategory_name
+            """, (subcategory_id,))
+            
+            if cur.rowcount == 0:
+                return jsonify({
+                    'success': False,
+                    'error': 'Subcategory not found'
+                }), 404
+            
+            name = cur.fetchone()[0]
+            
+            conn.commit()
+            
+            return jsonify({
+                'success': True,
+                'message': f'Subcategory "{name}" deactivated (has {material_count} active materials)',
+                'soft_delete': True
+            })
+        else:
+            # Hard delete if no dependencies
+            cur.execute("""
+                DELETE FROM subcategories_master 
+                WHERE subcategory_id = %s
+                RETURNING subcategory_name
+            """, (subcategory_id,))
+            
+            if cur.rowcount == 0:
+                return jsonify({
+                    'success': False,
+                    'error': 'Subcategory not found'
+                }), 404
+            
+            name = cur.fetchone()[0]
+            
+            conn.commit()
+            
+            return jsonify({
+                'success': True,
+                'message': f'Subcategory "{name}" deleted permanently',
+                'soft_delete': False
+            })
+            
+    except Exception as e:
+        conn.rollback()
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+    finally:
+        close_connection(conn, cur)
+
+
+# =====================================================
 # OIL CONFIGURATION ENDPOINTS (NEW)
 # =====================================================
 
