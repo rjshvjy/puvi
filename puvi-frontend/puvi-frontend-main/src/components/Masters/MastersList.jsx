@@ -1,6 +1,7 @@
 // MastersList Component - Dynamic table for all master types with CRUD operations
 // File Path: puvi-frontend/puvi-frontend-main/src/components/Masters/MastersList.jsx
 // Handles display, search, sort, pagination, and dependency management
+// UPDATED: Added UOM master display configuration with system protection
 
 import React, { useState, useEffect, useCallback } from 'react';
 
@@ -67,7 +68,7 @@ const MastersList = ({
   // Toast message state
   const [message, setMessage] = useState({ type: '', text: '' });
 
-  // Master type display configuration
+  // Master type display configuration - UPDATED: Added UOM configuration
   const masterDisplayConfig = {
     suppliers: {
       icon: '🏢',
@@ -78,6 +79,26 @@ const MastersList = ({
       icon: '📦',
       primaryField: 'material_name',
       columns: ['material_id', 'material_name', 'category', 'unit', 'current_cost', 'gst_rate', 'short_code', 'is_active']
+    },
+    uom: {
+      icon: '📏',
+      primaryField: 'uom_name',
+      columns: ['uom_id', 'uom_code', 'uom_name', 'uom_symbol', 'uom_category', 'display_order', 'is_system', 'is_active']
+    },
+    categories: {
+      icon: '📂',
+      primaryField: 'category_name',
+      columns: ['category_id', 'category_name', 'requires_subcategory', 'is_active']
+    },
+    subcategories: {
+      icon: '🛢️',
+      primaryField: 'subcategory_name',
+      columns: ['subcategory_id', 'subcategory_name', 'subcategory_code', 'category_name', 'oil_type', 'is_active']
+    },
+    bom_category_mapping: {
+      icon: '📋',
+      primaryField: 'bom_category',
+      columns: ['mapping_id', 'bom_category', 'material_categories', 'keywords', 'display_order', 'is_active']
     },
     tags: {
       icon: '🏷️',
@@ -198,6 +219,12 @@ const MastersList = ({
 
   // Check dependencies before delete
   const checkDependencies = async (record) => {
+    // NEW: Check if it's a system UOM
+    if (masterType === 'uom' && record.is_system) {
+      showToast('error', 'System UOMs cannot be deleted');
+      return;
+    }
+
     setDeleteModal({ 
       show: true, 
       record, 
@@ -317,7 +344,7 @@ const MastersList = ({
     setTimeout(() => setMessage({ type: '', text: '' }), 3000);
   };
 
-  // Format field value for display
+  // Format field value for display - UPDATED: Added handling for UOM fields
   const formatFieldValue = (value, fieldName) => {
     if (value === null || value === undefined) return '-';
     
@@ -333,6 +360,13 @@ const MastersList = ({
         <span className="masters-status-badge masters-status-inactive">❌ Inactive</span>;
     }
     
+    // NEW: Handle is_system field for UOM
+    if (fieldName === 'is_system') {
+      return value ? 
+        <span className="masters-status-badge" style={{ backgroundColor: '#fef3c7', color: '#92400e' }}>🔒 System</span> :
+        <span className="masters-status-badge" style={{ backgroundColor: '#e0e7ff', color: '#3730a3' }}>✏️ Custom</span>;
+    }
+    
     // Handle currency fields
     if (fieldName.includes('cost') || fieldName.includes('rate') || fieldName.includes('price')) {
       return typeof value === 'number' ? `₹${value.toFixed(2)}` : value;
@@ -341,6 +375,11 @@ const MastersList = ({
     // Handle GST rate
     if (fieldName === 'gst_rate') {
       return `${value}%`;
+    }
+    
+    // Handle arrays (for BOM category mapping)
+    if (Array.isArray(value)) {
+      return value.join(', ') || '-';
     }
     
     return value;
@@ -362,10 +401,34 @@ const MastersList = ({
       <span className="masters-sort-indicator active-desc">↓</span>;
   };
 
-  // Get column label
+  // Get column label - UPDATED: Added labels for UOM fields
   const getColumnLabel = (columnKey) => {
     if (columnKey === 'is_active') return 'Status';
+    if (columnKey === 'is_system') return 'Type';
+    if (columnKey === 'uom_code') return 'Code';
+    if (columnKey === 'uom_name') return 'Name';
+    if (columnKey === 'uom_symbol') return 'Symbol';
+    if (columnKey === 'uom_category') return 'Category';
+    if (columnKey === 'display_order') return 'Order';
     return columnKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  };
+
+  // NEW: Check if record can be edited (for system UOMs)
+  const canEdit = (record) => {
+    // System UOMs have restricted editing
+    if (masterType === 'uom' && record.is_system) {
+      return true; // Still allow editing, but form will restrict fields
+    }
+    return true;
+  };
+
+  // NEW: Check if record can be deleted
+  const canDelete = (record) => {
+    // System UOMs cannot be deleted
+    if (masterType === 'uom' && record.is_system) {
+      return false;
+    }
+    return record.is_active;
   };
 
   return (
@@ -468,19 +531,30 @@ const MastersList = ({
                           <button
                             onClick={() => onEdit(record)}
                             className="masters-btn-edit"
-                            title="Edit"
+                            title={masterType === 'uom' && record.is_system ? "Edit (Limited)" : "Edit"}
                           >
                             ✏️
                           </button>
                           
                           {record.is_active ? (
-                            <button
-                              onClick={() => checkDependencies(record)}
-                              className="masters-btn-delete"
-                              title="Delete"
-                            >
-                              🗑️
-                            </button>
+                            canDelete(record) ? (
+                              <button
+                                onClick={() => checkDependencies(record)}
+                                className="masters-btn-delete"
+                                title="Delete"
+                              >
+                                🗑️
+                              </button>
+                            ) : (
+                              <button
+                                className="masters-btn-delete"
+                                title="System UOM - Cannot Delete"
+                                style={{ opacity: 0.5, cursor: 'not-allowed' }}
+                                disabled
+                              >
+                                🔒
+                              </button>
+                            )
                           ) : (
                             <button
                               onClick={() => handleRestore(record)}
