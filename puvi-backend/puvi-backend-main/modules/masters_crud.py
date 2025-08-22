@@ -516,12 +516,7 @@ def create_record(master_type):
                 values.append(data[field_name])
                 placeholders.append('%s')
         
-        # Add created_by if not present
-        if 'created_by' not in fields:
-            fields.append('created_by')
-            values.append(data.get('created_by', 'System'))
-            placeholders.append('%s')
-        
+  
         # Add is_active for new records
         soft_delete_field = config.get('soft_delete_field', 'is_active')
         if master_type == 'cost_elements':
