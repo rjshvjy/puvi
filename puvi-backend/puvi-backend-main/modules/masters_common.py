@@ -57,9 +57,9 @@ def standardize_select_value(field_config, value):
         'PERCENTAGE': 'fixed',
         
         # Old per_unit values map to per_kg
-        'per_unit': 'per_kg',
-        'Per Unit': 'per_kg',
-        'PER_UNIT': 'per_kg',
+        'Per Unit': 'per_unit',
+        'PER_UNIT': 'per_unit',
+        'Per_Unit': 'per_unit',
         
         # Formula-based maps to fixed
         'Formula-based': 'fixed',
