@@ -2,6 +2,7 @@
 // Cost Capture Component - ACTIVITY-BASED FILTERING VERSION
 // Fixed: Removed name-based filtering, now uses activity field from backend
 // UPDATED: Added hasChanges flag to calculateAllCosts to prevent infinite loops
+// FIXED: Added 'packing' stage mapping for SKU production module
 
 import React, { useState, useEffect, useCallback } from 'react';
 import api from '../../services/api';
@@ -32,7 +33,8 @@ const CostCapture = ({
       'filtering': 'Filtering',
       'batch': 'all',  // Get all activities for complete batch
       'sales': 'General',
-      'blending': 'Blending'
+      'blending': 'Blending',
+      'packing': 'Packing'  // ADDED: Mapping for packing stage in SKU production
     };
     return stageActivityMap[currentStage] || 'General';
   };
@@ -119,6 +121,12 @@ const CostCapture = ({
 
         case 'per_hour':
           elementQuantity = crushingHours || 0;
+          elementCost = elementQuantity * rate;
+          break;
+
+        case 'per_unit':
+          // For packing costs, quantity is number of bottles
+          elementQuantity = quantity || 0;
           elementCost = elementQuantity * rate;
           break;
 
@@ -347,7 +355,8 @@ const CostCapture = ({
       'Common': '#28a745',
       'Quality': '#6610f2',
       'Transport': '#dc3545',
-      'General': '#6c757d'
+      'General': '#6c757d',
+      'Packing': '#9c27b0'  // Added color for Packing activity
     };
     return colors[activity] || '#6c757d';
   };
@@ -361,6 +370,8 @@ const CostCapture = ({
         return 'Crushing & Production';
       case 'batch':
         return 'Complete Batch';
+      case 'packing':
+        return 'Packing';
       default:
         return stage.charAt(0).toUpperCase() + stage.slice(1);
     }
@@ -666,6 +677,7 @@ const CostCapture = ({
                           {element.calculation_method === 'per_hour' && ' hrs'}
                           {element.calculation_method === 'per_kg' && ' kg'}
                           {element.calculation_method === 'per_bag' && ' bags'}
+                          {element.calculation_method === 'per_unit' && ' units'}
                           {element.calculation_method === 'fixed' && ' unit'}
                         </div>
 
