@@ -15,7 +15,7 @@ const ProductionEntry = () => {
   const [materials, setMaterials] = useState([]);
   const [laborRates, setLaborRates] = useState([]);
   const [oilType, setOilType] = useState('');
-  const [oilSubcategoryName, setOilSubcategoryName] = useState(''); // NEW - Store subcategory name
+  const [oilSubcategoryName, setOilSubcategoryName] = useState(''); // Store the subcategory name for API calls
   const [selectedSKU, setSelectedSKU] = useState(null);
   
   // MRP and Expiry related state - NEW
@@ -68,7 +68,7 @@ const ProductionEntry = () => {
       if (selected) {
         setSelectedSKU(selected);
         setOilType(selected.oil_type);
-        setOilSubcategoryName(selected.oil_subcategory_name || selected.oil_type); // Use subcategory name if available
+        setOilSubcategoryName(selected.oil_subcategory_name || selected.oil_type);
         fetchBOMDetails(selected.sku_id);
         fetchSKUDetailsWithMRP(selected.sku_id); // NEW - Fetch MRP and shelf life
       }
@@ -154,29 +154,52 @@ const ProductionEntry = () => {
       const response = await api.sku.getMasterList({ is_active: true });
       
       if (response.success && response.skus) {
-        // Fetch subcategories to map oil_type to subcategory_name
-        const subcategoriesMap = {};
+        // Fetch all subcategories to map oil_type to subcategory_name
+        let subcategoriesMap = {};
         
         try {
-          const subcategoriesResponse = await api.masters.list('subcategories');
-          if (subcategoriesResponse.success && subcategoriesResponse.data) {
+          // Use the correct API endpoint to get all subcategories
+          const subcategoriesResponse = await api.masters.getSubcategories();
+          
+          if (subcategoriesResponse.success && subcategoriesResponse.subcategories) {
             // Create a map of oil_type to subcategory_name for Oil category
-            subcategoriesResponse.data.forEach(sub => {
+            subcategoriesResponse.subcategories.forEach(sub => {
               if (sub.oil_type && sub.category_name === 'Oil') {
                 subcategoriesMap[sub.oil_type] = sub.subcategory_name;
               }
             });
+            console.log('Subcategory mapping:', subcategoriesMap);
           }
         } catch (error) {
-          console.warn('Could not fetch subcategories for mapping:', error);
-          // Continue without subcategory mapping - will fallback to oil_type
+          console.warn('Could not fetch subcategories, trying direct endpoint:', error);
+          
+          // If getSubcategories fails, try direct API call
+          try {
+            const response = await fetch(`${process.env.REACT_APP_API_URL || 'https://puvi-backend.onrender.com'}/api/subcategories`);
+            const data = await response.json();
+            
+            if (data.success && data.subcategories) {
+              data.subcategories.forEach(sub => {
+                if (sub.oil_type && sub.category_name === 'Oil') {
+                  subcategoriesMap[sub.oil_type] = sub.subcategory_name;
+                }
+              });
+              console.log('Subcategory mapping (direct):', subcategoriesMap);
+            }
+          } catch (directError) {
+            console.error('Failed to fetch subcategories via direct call:', directError);
+          }
         }
         
         // Enhance SKUs with subcategory_name
-        const enhancedSKUs = response.skus.map(sku => ({
-          ...sku,
-          oil_subcategory_name: subcategoriesMap[sku.oil_type] || sku.oil_type
-        }));
+        const enhancedSKUs = response.skus.map(sku => {
+          // Use the mapping if available, otherwise construct a default
+          const mappedSubcategory = subcategoriesMap[sku.oil_type];
+          return {
+            ...sku,
+            oil_subcategory_name: mappedSubcategory || `${sku.oil_type} Oil`
+          };
+        });
         
         setSKUList(enhancedSKUs);
         
@@ -198,6 +221,8 @@ const ProductionEntry = () => {
     
     setLoadingOilSources(true);
     try {
+      console.log('Fetching oil sources for subcategory:', oilSubcategoryName);
+      
       // Use oil_subcategory_name for the API call
       const response = await api.blending.getBatchesForOilType(oilSubcategoryName);
       
@@ -231,11 +256,11 @@ const ProductionEntry = () => {
       console.error('Error fetching oil sources:', error);
       setOilSources([]);
       
-      // If the error is about oil type not found, provide a more specific message
+      // Provide specific error message
       if (error.message && error.message.includes('not found')) {
         setMessage({ 
           type: 'error', 
-          text: `Oil type configuration issue: ${oilSubcategoryName} not properly configured in subcategories. Please check Masters module.` 
+          text: `Configuration issue: "${oilSubcategoryName}" not found in subcategories. Please check oil type configuration in Masters module.` 
         });
       } else {
         setMessage({ 
