@@ -23,6 +23,7 @@ from modules.sku_production import sku_production_bp
 from modules.masters_crud import masters_crud_bp
 from modules.opening_balance import opening_balance_bp
 from modules.system_config import system_config_bp
+from modules.package_sizes import package_sizes_bp
 
 # Create Flask app
 app = Flask(__name__)
@@ -72,6 +73,7 @@ app.register_blueprint(sku_production_bp)
 app.register_blueprint(masters_crud_bp)
 app.register_blueprint(opening_balance_bp)
 app.register_blueprint(system_config_bp)
+app.register_blueprint(package_sizes_bp)
 
 # Configuration
 app.config['JSON_SORT_KEYS'] = False
