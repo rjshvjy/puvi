@@ -1,8 +1,7 @@
 """
 Common utilities and configurations for Masters CRUD operations
 File Path: puvi-backend/puvi-backend-main/modules/masters_common.py
-Updated: Added self-healing standardization for select fields without hardcoded mappings
-FIXED: Added produces_oil_type field to materials configuration
+Updated: Added UOM master configuration with system UOM protection
 """
 
 import re
@@ -309,6 +308,99 @@ MASTERS_CONFIG = {
                 'table': 'material_writeoffs',
                 'foreign_key': 'material_id',
                 'message': 'Material has {count} writeoff records'
+            }
+        }
+    },
+    
+    # NEW: Added UOM Master configuration
+    'uom': {
+        'table': 'uom_master',
+        'primary_key': 'uom_id',
+        'display_name': 'Unit of Measure',
+        'name_field': 'uom_name',
+        'soft_delete_field': 'is_active',
+        'fields': {
+            'uom_code': {
+                'type': 'text',
+                'required': True,
+                'unique': True,
+                'max_length': 10,
+                'pattern': r'^[A-Za-z]+$',
+                'label': 'UOM Code',
+                'help_text': 'Short code for the unit (e.g., kg, Nos, Litres)'
+            },
+            'uom_name': {
+                'type': 'text',
+                'required': True,
+                'max_length': 50,
+                'label': 'UOM Name',
+                'help_text': 'Full name of the unit (e.g., Kilograms, Numbers, Litres)'
+            },
+            'uom_symbol': {
+                'type': 'text',
+                'required': True,
+                'max_length': 10,
+                'label': 'Symbol',
+                'help_text': 'Display symbol for the unit'
+            },
+            'uom_category': {
+                'type': 'select',
+                'required': True,
+                'options': ['Weight', 'Volume', 'Count', 'Other'],
+                'label': 'Category',
+                'help_text': 'Type of measurement this unit represents'
+            },
+            'display_order': {
+                'type': 'integer',
+                'required': False,
+                'default': 999,
+                'min': 1,
+                'max': 9999,
+                'label': 'Display Order',
+                'help_text': 'Order in which this unit appears in dropdowns'
+            },
+            'is_system': {
+                'type': 'boolean',
+                'required': False,
+                'default': False,
+                'readonly': True,
+                'label': 'System UOM',
+                'help_text': 'System UOMs cannot be modified or deleted'
+            }
+        },
+        'list_query': """
+            SELECT 
+                u.*,
+                COUNT(DISTINCT m.material_id) as material_count,
+                CASE 
+                    WHEN u.uom_category = 'Weight' THEN 'Weight'
+                    WHEN u.uom_category = 'Volume' THEN 'Litres'
+                    WHEN u.uom_category = 'Count' THEN 'Numbers'
+                    ELSE u.uom_category
+                END as transport_group
+            FROM uom_master u
+            LEFT JOIN materials m ON u.uom_code = m.unit
+            WHERE u.is_active = true
+            GROUP BY u.uom_id
+            ORDER BY u.display_order, u.uom_code
+        """,
+        'dependencies': {
+            'materials': {
+                'table': 'materials',
+                'foreign_key': 'unit',
+                'foreign_key_type': 'varchar',
+                'reference_field': 'uom_code',
+                'display_field': 'material_name',
+                'message': 'UOM is used by {count} materials'
+            }
+        },
+        'special_validations': {
+            'system_protection': {
+                'field': 'is_system',
+                'message': 'System UOMs cannot be modified or deleted',
+                'allow_soft_delete': False,
+                'allow_edit': ['display_order'],  # Only allow editing display order for system UOMs
+                'readonly_fields': ['uom_code', 'uom_name', 'uom_symbol', 'uom_category', 'is_system']
             }
         }
     },
@@ -767,12 +859,13 @@ def log_audit(conn, cur, table_name, record_id, action, old_values=None,
 
 
 # =====================================================
-# DEPENDENCY CHECKING
+# DEPENDENCY CHECKING - ENHANCED FOR UOM
 # =====================================================
 
 def check_dependencies(conn, cur, master_type, record_id):
     """
     Check if a record can be deleted by checking dependencies
+    Enhanced to handle UOM special cases
     
     Returns:
         dict: {
@@ -792,6 +885,30 @@ def check_dependencies(conn, cur, master_type, record_id):
             'message': f'Invalid master type: {master_type}'
         }
     
+    # Special handling for UOM master with system protection
+    if master_type == 'uom':
+        # Check if it's a system UOM
+        cur.execute("""
+            SELECT is_system FROM uom_master 
+            WHERE uom_id = %s
+        """, (int(record_id),))
+        
+        result = cur.fetchone()
+        if result and result[0]:  # is_system = True
+            return {
+                'can_delete': False,
+                'can_soft_delete': False,
+                'has_dependencies': True,
+                'dependencies': [{
+                    'table': 'system',
+                    'field': 'is_system',
+                    'count': 1,
+                    'message': 'System UOMs cannot be deleted'
+                }],
+                'total_dependent_records': 1,
+                'message': 'This is a system UOM and cannot be deleted'
+            }
+    
     dependencies = []
     total_dependent_records = 0
     
@@ -800,8 +917,28 @@ def check_dependencies(conn, cur, master_type, record_id):
         table = dep_config['table']
         foreign_key = dep_config['foreign_key']
         
-        # Special handling for different primary key types
-        if config.get('primary_key_type') == 'varchar':
+        # Special handling for different foreign key types
+        if dep_config.get('foreign_key_type') == 'varchar':
+            # For UOM, we need to get the uom_code first
+            if master_type == 'uom':
+                cur.execute("""
+                    SELECT uom_code FROM uom_master 
+                    WHERE uom_id = %s
+                """, (int(record_id),))
+                uom_result = cur.fetchone()
+                if uom_result:
+                    cur.execute(f"""
+                        SELECT COUNT(*) FROM {table} 
+                        WHERE {foreign_key} = %s
+                    """, (uom_result[0],))
+                else:
+                    continue
+            else:
+                cur.execute(f"""
+                    SELECT COUNT(*) FROM {table} 
+                    WHERE {foreign_key} = %s
+                """, (record_id,))
+        elif config.get('primary_key_type') == 'varchar':
             cur.execute(f"""
                 SELECT COUNT(*) FROM {table} 
                 WHERE {foreign_key} = %s
@@ -825,9 +962,32 @@ def check_dependencies(conn, cur, master_type, record_id):
     
     has_dependencies = total_dependent_records > 0
     
+    # Check special validations
+    special_validations = config.get('special_validations', {})
+    if 'system_protection' in special_validations:
+        protection = special_validations['system_protection']
+        field = protection['field']
+        
+        # Check if record has system protection
+        cur.execute(f"""
+            SELECT {field} FROM {config['table']} 
+            WHERE {config['primary_key']} = %s
+        """, (record_id,))
+        
+        result = cur.fetchone()
+        if result and result[0]:  # Protected record
+            return {
+                'can_delete': False,
+                'can_soft_delete': protection.get('allow_soft_delete', False),
+                'has_dependencies': True,
+                'dependencies': dependencies,
+                'total_dependent_records': total_dependent_records,
+                'message': protection.get('message', 'Protected record cannot be deleted')
+            }
+    
     return {
         'can_delete': not has_dependencies,
-        'can_soft_delete': True,  # Always allow soft delete
+        'can_soft_delete': True,  # Always allow soft delete unless protected
         'has_dependencies': has_dependencies,
         'dependencies': dependencies,
         'total_dependent_records': total_dependent_records,
@@ -849,6 +1009,11 @@ def validate_field(field_name, value, field_config, conn=None, cur=None,
     Returns:
         tuple: (is_valid, error_message)
     """
+    # Check if field is readonly
+    if field_config.get('readonly') and record_id:
+        # Skip validation for readonly fields during updates
+        return True, None
+    
     field_type = field_config.get('type')
     
     # Required field check
@@ -983,6 +1148,9 @@ def transform_field_value(field_config, value):
         return str(value).lower()
     elif transform == 'capitalize':
         return str(value).capitalize()
+    elif transform == 'preserve':
+        # Don't transform the value
+        return value
     
     return value
 
@@ -995,6 +1163,7 @@ def validate_master_data(master_type, data, record_id=None):
     """
     Validate all fields in master data
     Also applies self-healing standardization for select fields
+    Enhanced to handle UOM special validations
     
     Args:
         master_type: Type of master
@@ -1016,6 +1185,27 @@ def validate_master_data(master_type, data, record_id=None):
         # Get the primary key field name for this master type
         primary_key = config.get('primary_key')
         table_name = config.get('table')
+        
+        # Handle UOM special validations
+        if master_type == 'uom' and record_id:
+            # Check if it's a system UOM
+            cur.execute("""
+                SELECT is_system FROM uom_master 
+                WHERE uom_id = %s
+            """, (int(record_id),))
+            
+            result = cur.fetchone()
+            if result and result[0]:  # is_system = True
+                special_validations = config.get('special_validations', {})
+                if 'system_protection' in special_validations:
+                    protection = special_validations['system_protection']
+                    readonly_fields = protection.get('readonly_fields', [])
+                    allow_edit = protection.get('allow_edit', [])
+                    
+                    # Check if trying to edit protected fields
+                    for field in data.keys():
+                        if field in readonly_fields and field not in allow_edit:
+                            errors[field] = f"Cannot modify {field} for system UOM"
         
         # Validate and standardize each field
         for field_name, field_config in config['fields'].items():
@@ -1080,6 +1270,7 @@ def check_column_exists(cur, table_name, column_name):
 def soft_delete_record(conn, cur, master_type, record_id, deleted_by=None):
     """
     Soft delete a record by setting is_active to false
+    Enhanced to handle UOM system protection
     
     Returns:
         bool: Success status
@@ -1087,6 +1278,17 @@ def soft_delete_record(conn, cur, master_type, record_id, deleted_by=None):
     config = MASTERS_CONFIG.get(master_type)
     if not config:
         return False
+    
+    # Check special validations for system protection
+    if master_type == 'uom':
+        cur.execute("""
+            SELECT is_system FROM uom_master 
+            WHERE uom_id = %s
+        """, (int(record_id),))
+        
+        result = cur.fetchone()
+        if result and result[0]:  # is_system = True
+            return False  # Cannot delete system UOM
     
     table = config['table']
     primary_key = config['primary_key']
