@@ -472,7 +472,7 @@ def get_single_record(master_type, record_id):
 
 
 # =====================================================
-# CREATE RECORD
+# CREATE RECORD - FIXED: Removed created_by, Added last_updated
 # =====================================================
 
 @masters_crud_bp.route('/api/masters/<master_type>', methods=['POST'])
@@ -516,7 +516,12 @@ def create_record(master_type):
                 values.append(data[field_name])
                 placeholders.append('%s')
         
-  
+        # Add last_updated for materials table
+        if master_type == 'materials' and 'last_updated' not in fields:
+            fields.append('last_updated')
+            values.append(get_current_day_number())
+            placeholders.append('%s')
+        
         # Add is_active for new records
         soft_delete_field = config.get('soft_delete_field', 'is_active')
         if master_type == 'cost_elements':
