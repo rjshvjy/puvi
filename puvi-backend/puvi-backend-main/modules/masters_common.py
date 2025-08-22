@@ -721,9 +721,9 @@ MASTERS_CONFIG = {
             'unit_type': {
                 'type': 'select',
                 'required': True,
-                'options': ['per_kg', 'per_hour', 'fixed', 'actual'],
+                'options': ['per_kg', 'per_hour', 'per_unit', 'fixed', 'actual'],  # Added 'per_unit'
                 'label': 'Unit Type',
-                'help_text': 'per_kg: Rate × Weight | per_hour: Rate × Hours | fixed: Flat amount | actual: Manual entry'
+                'help_text': 'per_kg: Rate × Weight | per_hour: Rate × Hours | per_unit: Rate × Units | fixed: Flat amount | actual: Manual entry'
             },
             'default_rate': {
                 'type': 'decimal',
