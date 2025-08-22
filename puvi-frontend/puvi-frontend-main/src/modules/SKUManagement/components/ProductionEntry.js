@@ -15,6 +15,7 @@ const ProductionEntry = () => {
   const [materials, setMaterials] = useState([]);
   const [laborRates, setLaborRates] = useState([]);
   const [oilType, setOilType] = useState('');
+  const [oilSubcategoryName, setOilSubcategoryName] = useState(''); // NEW - Store subcategory name
   const [selectedSKU, setSelectedSKU] = useState(null);
   
   // MRP and Expiry related state - NEW
@@ -67,18 +68,19 @@ const ProductionEntry = () => {
       if (selected) {
         setSelectedSKU(selected);
         setOilType(selected.oil_type);
+        setOilSubcategoryName(selected.oil_subcategory_name || selected.oil_type); // Use subcategory name if available
         fetchBOMDetails(selected.sku_id);
         fetchSKUDetailsWithMRP(selected.sku_id); // NEW - Fetch MRP and shelf life
       }
     }
   }, [productionData.sku_id, skuList]);
 
-  // Fetch oil sources when oil type is set
+  // Fetch oil sources when oil subcategory name is set
   useEffect(() => {
-    if (oilType) {
+    if (oilSubcategoryName) {
       fetchOilSources();
     }
-  }, [oilType]);
+  }, [oilSubcategoryName]);
 
   // Calculate expiry date when production date or shelf life changes - NEW
   useEffect(() => {
@@ -152,9 +154,33 @@ const ProductionEntry = () => {
       const response = await api.sku.getMasterList({ is_active: true });
       
       if (response.success && response.skus) {
-        setSKUList(response.skus);
+        // Fetch subcategories to map oil_type to subcategory_name
+        const subcategoriesMap = {};
         
-        if (response.skus.length === 0) {
+        try {
+          const subcategoriesResponse = await api.masters.list('subcategories');
+          if (subcategoriesResponse.success && subcategoriesResponse.data) {
+            // Create a map of oil_type to subcategory_name for Oil category
+            subcategoriesResponse.data.forEach(sub => {
+              if (sub.oil_type && sub.category_name === 'Oil') {
+                subcategoriesMap[sub.oil_type] = sub.subcategory_name;
+              }
+            });
+          }
+        } catch (error) {
+          console.warn('Could not fetch subcategories for mapping:', error);
+          // Continue without subcategory mapping - will fallback to oil_type
+        }
+        
+        // Enhance SKUs with subcategory_name
+        const enhancedSKUs = response.skus.map(sku => ({
+          ...sku,
+          oil_subcategory_name: subcategoriesMap[sku.oil_type] || sku.oil_type
+        }));
+        
+        setSKUList(enhancedSKUs);
+        
+        if (enhancedSKUs.length === 0) {
           setMessage({ type: 'warning', text: 'No active SKUs found. Please configure SKUs first.' });
         }
       } else {
@@ -168,11 +194,12 @@ const ProductionEntry = () => {
   };
 
   const fetchOilSources = async () => {
-    if (!oilType) return;
+    if (!oilSubcategoryName) return;
     
     setLoadingOilSources(true);
     try {
-      const response = await api.blending.getBatchesForOilType(oilType);
+      // Use oil_subcategory_name for the API call
+      const response = await api.blending.getBatchesForOilType(oilSubcategoryName);
       
       if (response.success && response.batches) {
         const sources = response.batches.filter(s => s.available_quantity > 0);
@@ -194,7 +221,7 @@ const ProductionEntry = () => {
         if (mappedSources.length === 0) {
           setMessage({ 
             type: 'warning', 
-            text: `No ${oilType} oil available. Please check batch production or blending modules.` 
+            text: `No ${oilSubcategoryName} available. Please check batch production or blending modules.` 
           });
         }
       } else {
@@ -203,10 +230,19 @@ const ProductionEntry = () => {
     } catch (error) {
       console.error('Error fetching oil sources:', error);
       setOilSources([]);
-      setMessage({ 
-        type: 'error', 
-        text: 'Failed to load oil sources. Some features may be limited.' 
-      });
+      
+      // If the error is about oil type not found, provide a more specific message
+      if (error.message && error.message.includes('not found')) {
+        setMessage({ 
+          type: 'error', 
+          text: `Oil type configuration issue: ${oilSubcategoryName} not properly configured in subcategories. Please check Masters module.` 
+        });
+      } else {
+        setMessage({ 
+          type: 'error', 
+          text: 'Failed to load oil sources. Some features may be limited.' 
+        });
+      }
     } finally {
       setLoadingOilSources(false);
     }
@@ -485,6 +521,7 @@ const ProductionEntry = () => {
       shelf_life_months: null
     });
     setOilSources([]);
+    setOilSubcategoryName('');
     setCurrentMRP(null);
     setShelfLife(null);
     setExpiryDate(null);
