@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-22T07:21:53.073Z",
+  "generatedAt": "2025-08-22T07:42:04.394Z",
   "filesScanned": 59,
   "jsFilesScanned": 37,
   "pyFilesScanned": 22,
@@ -1643,61 +1643,61 @@
     {
       "name": "FormSection",
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 38,
+      "line": 39,
       "type": "const"
     },
     {
       "name": "Guidelines",
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 53,
+      "line": 54,
       "type": "const"
     },
     {
       "name": "TextField",
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 144,
+      "line": 145,
       "type": "const"
     },
     {
       "name": "NumberField",
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 168,
+      "line": 169,
       "type": "const"
     },
     {
       "name": "SelectField",
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 192,
+      "line": 193,
       "type": "const"
     },
     {
       "name": "TextareaField",
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 220,
+      "line": 221,
       "type": "const"
     },
     {
       "name": "ReferenceField",
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 242,
+      "line": 243,
       "type": "const"
     },
     {
       "name": "InlineAlert",
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 314,
+      "line": 315,
       "type": "const"
     },
     {
       "name": "FieldSkeleton",
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 330,
+      "line": 331,
       "type": "const"
     },
     {
       "name": "MasterForm",
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 418,
+      "line": 419,
       "type": "const"
     },
     {
@@ -9203,7 +9203,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 12,
+      "line": 13,
       "name": "apiCall",
       "params": "url, options = {}",
       "type": "arrow",
@@ -9211,7 +9211,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 38,
+      "line": 39,
       "name": "FormSection",
       "params": "{ title, description, children, className = '' }",
       "type": "arrow",
@@ -9219,7 +9219,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 53,
+      "line": 54,
       "name": "Guidelines",
       "params": "{ type, category, expanded, onToggle }",
       "type": "arrow",
@@ -9227,7 +9227,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 54,
+      "line": 55,
       "name": "getGuidelines",
       "params": "",
       "type": "arrow",
@@ -9235,7 +9235,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 144,
+      "line": 145,
       "name": "TextField",
       "params": "{ id, label, value, onChange, error, required, disabled, placeholder, help, maxLength, onBlur }",
       "type": "arrow",
@@ -9243,7 +9243,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 168,
+      "line": 169,
       "name": "NumberField",
       "params": "{ id, label, value, onChange, error, required, disabled, min, max, step, help }",
       "type": "arrow",
@@ -9251,7 +9251,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 192,
+      "line": 193,
       "name": "SelectField",
       "params": "{ id, label, value, onChange, options, error, required, disabled, help, loading = false }",
       "type": "arrow",
@@ -9259,7 +9259,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 220,
+      "line": 221,
       "name": "TextareaField",
       "params": "{ id, label, value, onChange, error, required, disabled, placeholder, help, rows = 3 }",
       "type": "arrow",
@@ -9267,7 +9267,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 242,
+      "line": 243,
       "name": "ReferenceField",
       "params": "{ id, label, value, onChange, options, error, required, disabled, help }",
       "type": "arrow",
@@ -9275,7 +9275,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 314,
+      "line": 315,
       "name": "InlineAlert",
       "params": "{ type, title, message, onRetry }",
       "type": "arrow",
@@ -9283,7 +9283,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 330,
+      "line": 331,
       "name": "FieldSkeleton",
       "params": "",
       "type": "arrow",
@@ -9291,7 +9291,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 339,
+      "line": 340,
       "name": "formatSupplierShortCodeOnBlur",
       "params": "value",
       "type": "arrow",
@@ -9299,7 +9299,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 346,
+      "line": 347,
       "name": "formatMaterialShortCodeOnBlur",
       "params": "value",
       "type": "arrow",
@@ -9307,7 +9307,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 357,
+      "line": 358,
       "name": "validateField",
       "params": "field, value, schema",
       "type": "arrow",
@@ -9315,7 +9315,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 495,
+      "line": 500,
       "name": "loadSchema",
       "params": "",
       "type": "arrow",
@@ -9323,7 +9323,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 516,
+      "line": 521,
       "name": "loadDynamicOptions",
       "params": "",
       "type": "arrow",
@@ -9331,7 +9331,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 600,
+      "line": 640,
       "name": "loadOilTypes",
       "params": "",
       "type": "arrow",
@@ -9339,7 +9339,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 614,
+      "line": 654,
       "name": "loadReferences",
       "params": "",
       "type": "arrow",
@@ -9347,7 +9347,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 638,
+      "line": 678,
       "name": "handleFieldChange",
       "params": "fieldName, value",
       "type": "arrow",
@@ -9355,7 +9355,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 667,
+      "line": 707,
       "name": "handleFieldBlur",
       "params": "field",
       "type": "arrow",
@@ -9363,7 +9363,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 699,
+      "line": 739,
       "name": "toggleGuideline",
       "params": "type",
       "type": "arrow",
@@ -9371,7 +9371,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 707,
+      "line": 747,
       "name": "validateForm",
       "params": "",
       "type": "arrow",
@@ -9379,7 +9379,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 722,
+      "line": 762,
       "name": "handleSubmit",
       "params": "e",
       "type": "arrow",
@@ -9387,7 +9387,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 796,
+      "line": 836,
       "name": "renderField",
       "params": "field",
       "type": "arrow",
@@ -9395,7 +9395,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 898,
+      "line": 973,
       "name": "renderProducesOilTypeField",
       "params": "",
       "type": "arrow",
@@ -9403,7 +9403,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 931,
+      "line": 1006,
       "name": "getFieldSections",
       "params": "",
       "type": "arrow",
@@ -14644,7 +14644,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 243,
+      "line": 244,
       "type": "useState",
       "name": "filter",
       "setter": "setFilter",
@@ -14652,13 +14652,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 243,
+      "line": 244,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 426,
+      "line": 427,
       "type": "useState",
       "name": "formData",
       "setter": "setFormData",
@@ -14666,13 +14666,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 426,
+      "line": 427,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 427,
+      "line": 428,
       "type": "useState",
       "name": "schema",
       "setter": "setSchema",
@@ -14680,13 +14680,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 427,
+      "line": 428,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 428,
+      "line": 429,
       "type": "useState",
       "name": "errors",
       "setter": "setErrors",
@@ -14694,13 +14694,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 428,
+      "line": 429,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 429,
+      "line": 430,
       "type": "useState",
       "name": "touchedFields",
       "setter": "setTouchedFields",
@@ -14708,13 +14708,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 429,
+      "line": 430,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 430,
+      "line": 431,
       "type": "useState",
       "name": "loadingSchema",
       "setter": "setLoadingSchema",
@@ -14722,13 +14722,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 430,
+      "line": 431,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 431,
+      "line": 432,
       "type": "useState",
       "name": "saving",
       "setter": "setSaving",
@@ -14736,13 +14736,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 431,
+      "line": 432,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 432,
+      "line": 433,
       "type": "useState",
       "name": "suppliers",
       "setter": "setSuppliers",
@@ -14750,13 +14750,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 432,
+      "line": 433,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 433,
+      "line": 434,
       "type": "useState",
       "name": "alert",
       "setter": "setAlert",
@@ -14764,13 +14764,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 433,
+      "line": 434,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 434,
+      "line": 435,
       "type": "useState",
       "name": "expandedGuidelines",
       "setter": "setExpandedGuidelines",
@@ -14778,13 +14778,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 434,
+      "line": 435,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 441,
+      "line": 442,
       "type": "useState",
       "name": "dynamicOptions",
       "setter": "setDynamicOptions",
@@ -14792,13 +14792,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 441,
+      "line": 442,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 442,
+      "line": 443,
       "type": "useState",
       "name": "loadingDynamicOptions",
       "setter": "setLoadingDynamicOptions",
@@ -14806,13 +14806,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 442,
+      "line": 443,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 445,
+      "line": 446,
       "type": "useState",
       "name": "categories",
       "setter": "setCategories",
@@ -14820,13 +14820,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 445,
+      "line": 446,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 446,
+      "line": 447,
       "type": "useState",
       "name": "oilTypes",
       "setter": "setOilTypes",
@@ -14834,13 +14834,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 446,
+      "line": 447,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 447,
+      "line": 448,
       "type": "useState",
       "name": "showProducesOilType",
       "setter": "setShowProducesOilType",
@@ -14848,15 +14848,9 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 447,
+      "line": 448,
       "type": "useState",
       "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 450,
-      "type": "useRef",
-      "hook": "useRef"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
@@ -14866,13 +14860,19 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 465,
+      "line": 452,
+      "type": "useRef",
+      "hook": "useRef"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 470,
       "type": "useEffect",
       "hook": "useEffect"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 488,
+      "line": 493,
       "type": "useEffect",
       "hook": "useEffect"
     },
@@ -17558,85 +17558,97 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 13,
+      "line": 14,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 29,
+      "line": 30,
       "type": "catch",
       "code": "} catch (error) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 498,
-      "type": "try-catch",
-      "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
       "line": 503,
-      "type": "catch",
-      "code": "} catch (error) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 527,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 539,
+      "line": 508,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 557,
+      "line": 532,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 581,
+      "line": 544,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 601,
+      "line": 561,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 607,
+      "line": 573,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 615,
+      "line": 595,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 628,
+      "line": 621,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 748,
+      "line": 641,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 784,
+      "line": 647,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 655,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 668,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 788,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
+      "line": 824,
       "type": "catch",
       "code": "} catch (error) {"
     },
@@ -19842,6 +19854,6 @@
     "functions": 547,
     "stateHooks": 621,
     "missingEndpoints": 1,
-    "errorHandlers": 542
+    "errorHandlers": 544
   }
 }
