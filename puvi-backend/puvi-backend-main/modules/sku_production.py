@@ -2,7 +2,7 @@
 File path: puvi-backend/puvi-backend-main/modules/sku_production.py
 SKU Production Module for PUVI Oil Manufacturing System
 Enhanced with MRP and Expiry Date Management
-Version: 2.2 - FIXED: Proper per-unit cost element usage for packing labor
+Version: 2.3 - UPDATED: Activity-based packing cost approach
 """
 
 from flask import Blueprint, request, jsonify
@@ -258,60 +258,92 @@ def create_sku_production():
                 'total_cost': cost
             })
         
-        # FIXED: Get per-unit packing labor cost based on package size
-        # Now properly searches for the correct cost element and uses per-unit calculation
-        cur.execute("""
-            SELECT 
-                element_id,
-                element_name,
-                default_rate,
-                unit_type,
-                calculation_method,
-                activity
-            FROM cost_elements_master
-            WHERE element_name LIKE %s
-                AND is_active = true
-                AND calculation_method = 'per_unit'
-            LIMIT 1
-        """, (f'Packing Labour {package_size}%',))
+        # UPDATED: Activity-based packing cost calculation
+        # Handle packing costs from frontend or fetch from database
+        labor_cost_total = 0
+        packing_costs_applied = []
         
-        labor_data = cur.fetchone()
+        # Check if frontend sent packing_costs array (from CostCapture component)
+        packing_costs = data.get('packing_costs', [])
         
-        # Calculate labor cost using per-unit rate
-        if labor_data:
-            labor_rate_per_unit = float(labor_data[2])
-            labor_cost_total = labor_rate_per_unit * bottles_produced
-            
-            # Log the cost element used for traceability
-            print(f"Using cost element: {labor_data[1]} @ ₹{labor_rate_per_unit}/unit for {bottles_produced} bottles")
+        if packing_costs:
+            # Use packing costs from frontend (with potential overrides)
+            for packing_item in packing_costs:
+                if packing_item.get('is_applied', False):
+                    element_id = packing_item.get('element_id')
+                    element_name = packing_item.get('element_name')
+                    default_rate = float(packing_item.get('default_rate', 0))
+                    override_rate = packing_item.get('override_rate')
+                    
+                    # Determine which rate to use
+                    if override_rate is not None and override_rate != '':
+                        rate_used = float(override_rate)
+                        is_override = True
+                        override_reason = packing_item.get('override_reason', 'Manual adjustment during production')
+                    else:
+                        rate_used = default_rate
+                        is_override = False
+                        override_reason = None
+                    
+                    # Calculate cost for this element
+                    element_cost = rate_used * bottles_produced
+                    labor_cost_total += element_cost
+                    
+                    # Track what was applied
+                    packing_costs_applied.append({
+                        'element_id': element_id,
+                        'element_name': element_name,
+                        'original_rate': default_rate,
+                        'rate_used': rate_used,
+                        'quantity': bottles_produced,
+                        'total_cost': element_cost,
+                        'is_override': is_override,
+                        'override_reason': override_reason
+                    })
         else:
-            # Fallback: Try to find a general packing labor rate
+            # Fallback: Fetch packing cost from database using activity-based approach
+            # Get the package size's linked packing cost element
             cur.execute("""
-                SELECT default_rate
-                FROM cost_elements_master
-                WHERE element_name LIKE 'Packing Labour%'
-                    AND is_active = true
-                    AND calculation_method = 'per_unit'
-                ORDER BY element_name
+                SELECT 
+                    ce.element_id,
+                    ce.element_name,
+                    ce.default_rate,
+                    ce.unit_type,
+                    ce.calculation_method
+                FROM cost_elements_master ce
+                JOIN package_sizes_master ps ON ce.package_size_id = ps.size_id
+                WHERE ps.size_code = %s
+                    AND ce.activity = 'Packing'
+                    AND ce.is_active = true
+                    AND ce.calculation_method = 'per_unit'
                 LIMIT 1
-            """)
+            """, (package_size,))
             
-            fallback_rate = cur.fetchone()
-            if fallback_rate:
-                labor_rate_per_unit = float(fallback_rate[0])
+            labor_data = cur.fetchone()
+            
+            if labor_data:
+                element_id = labor_data[0]
+                element_name = labor_data[1]
+                labor_rate_per_unit = float(labor_data[2])
                 labor_cost_total = labor_rate_per_unit * bottles_produced
-                print(f"Using fallback packing rate: ₹{labor_rate_per_unit}/unit")
+                
+                packing_costs_applied.append({
+                    'element_id': element_id,
+                    'element_name': element_name,
+                    'original_rate': labor_rate_per_unit,
+                    'rate_used': labor_rate_per_unit,
+                    'quantity': bottles_produced,
+                    'total_cost': labor_cost_total,
+                    'is_override': False,
+                    'override_reason': None
+                })
+                
+                print(f"Using cost element: {element_name} @ ₹{labor_rate_per_unit}/unit for {bottles_produced} bottles")
             else:
                 # If no packing labor cost element found, use 0
                 labor_rate_per_unit = 0
                 labor_cost_total = 0
                 print(f"Warning: No packing labor cost element found for package size {package_size}")
-        
-        # Store the per-unit rate for reporting (optional)
-        if data.get('override_labor_rate'):
-            # Allow manual override if provided
-            labor_rate_per_unit = float(data['override_labor_rate'])
-            labor_cost_total = labor_rate_per_unit * bottles_produced
         
         # Calculate total costs
         total_production_cost = oil_cost_total + material_cost_total + labor_cost_total
@@ -345,6 +377,26 @@ def create_sku_production():
         ))
         
         production_id = cur.fetchone()[0]
+        
+        # Save packing cost overrides if any
+        for packing_cost in packing_costs_applied:
+            if packing_cost['is_override']:
+                cur.execute("""
+                    INSERT INTO sku_cost_overrides (
+                        production_id, element_id, element_name,
+                        original_rate, override_rate, quantity,
+                        reason, created_by
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
+                """, (
+                    production_id,
+                    packing_cost['element_id'],
+                    packing_cost['element_name'],
+                    packing_cost['original_rate'],
+                    packing_cost['rate_used'],
+                    packing_cost['quantity'],
+                    packing_cost['override_reason'],
+                    data.get('created_by', 'System')
+                ))
         
         # Create expiry tracking record
         if expiry_date and shelf_life_months:
@@ -397,6 +449,16 @@ def create_sku_production():
             days_to_expiry = get_days_to_expiry(expiry_date)
             expiry_status = get_expiry_status(expiry_date)
         
+        # Get the first applied packing rate for response
+        packing_rate_info = {}
+        if packing_costs_applied:
+            first_packing = packing_costs_applied[0]
+            packing_rate_info = {
+                'element_name': first_packing['element_name'],
+                'rate_per_unit': first_packing['rate_used'],
+                'was_override': first_packing['is_override']
+            }
+        
         return jsonify({
             'success': True,
             'production_id': production_id,
@@ -410,7 +472,7 @@ def create_sku_production():
                 'oil_cost': oil_cost_total,
                 'material_cost': material_cost_total,
                 'labor_cost': labor_cost_total,
-                'labor_rate_per_unit': labor_rate_per_unit,
+                'packing_rate_info': packing_rate_info,
                 'total_cost': total_production_cost,
                 'cost_per_bottle': cost_per_bottle
             },
@@ -891,27 +953,30 @@ def create_production_plan():
         oil_per_bottle = size_in_liters * float(sku_data[4])  # kg
         total_oil_required = oil_per_bottle * bottles_planned
         
-        # Get packing labor cost element for this package size
+        # Get packing cost element using activity-based approach
         cur.execute("""
             SELECT 
-                element_name,
-                default_rate,
-                unit_type,
-                calculation_method
-            FROM cost_elements_master
-            WHERE element_name LIKE %s
-                AND is_active = true
-                AND calculation_method = 'per_unit'
+                ce.element_id,
+                ce.element_name,
+                ce.default_rate,
+                ce.unit_type,
+                ce.calculation_method
+            FROM cost_elements_master ce
+            JOIN package_sizes_master ps ON ce.package_size_id = ps.size_id
+            WHERE ps.size_code = %s
+                AND ce.activity = 'Packing'
+                AND ce.is_active = true
+                AND ce.calculation_method = 'per_unit'
             LIMIT 1
-        """, (f'Packing Labour {package_size}%',))
+        """, (package_size,))
         
         labor_element = cur.fetchone()
         packing_cost_per_unit = 0
         packing_element_name = None
         
         if labor_element:
-            packing_element_name = labor_element[0]
-            packing_cost_per_unit = float(labor_element[1])
+            packing_element_name = labor_element[1]
+            packing_cost_per_unit = float(labor_element[2])
         
         # Check oil availability
         oil_type = sku_data[2]
