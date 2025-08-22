@@ -1,6 +1,6 @@
 # Feature Pack: MASTERS
-Generated: 2025-08-22T16:06:03.305Z
-Routes: 22 | Tables: 11 | Files: 3
+Generated: 2025-08-22T16:15:28.168Z
+Routes: 22 | Tables: 11 | Files: 4
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
