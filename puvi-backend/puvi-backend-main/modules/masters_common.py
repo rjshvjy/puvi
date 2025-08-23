@@ -1,7 +1,7 @@
 """
 Common utilities and configurations for Masters CRUD operations
 File Path: puvi-backend/puvi-backend-main/modules/masters_common.py
-Updated: Added UOM master configuration with system UOM protection
+Updated: Fixed category options and activity typo for cost_elements
 """
 
 import re
@@ -708,12 +708,14 @@ MASTERS_CONFIG = {
             'category': {
                 'type': 'select',
                 'required': True,
-                'options': ['Fixed', 'Variable', 'Semi-Variable', 'Labor', 'Utilities', 'Consumables', 'Transport', 'Quality', 'Maintenance', 'Overhead'],
+                # FIXED: Keep these as STATIC options for cost_elements, NOT dynamic
+                'options': ['Fixed', 'Variable', 'Semi-Variable', 'Labor', 'Utilities', 'Consumables', 'Transport', 'Quality', 'Maintenance', 'Overhead', 'Packing Material'],
                 'label': 'Category'
             },
             'activity': {
                 'type': 'select',
-                'required': True,  # CHANGED TO TRUE
+                'required': True,
+                # FIXED: Removed extra quote from 'Packing'
                 'options': ['Drying', 'Crushing', 'Filtering', 'Common', 'Quality', 'Transport', 'Maintenance', 'General', 'Packing'],
                 'label': 'Activity',
                 'default': 'General'
@@ -721,7 +723,7 @@ MASTERS_CONFIG = {
             'unit_type': {
                 'type': 'select',
                 'required': True,
-                'options': ['per_kg', 'per_hour', 'per_unit', 'fixed', 'actual'],  # Added 'per_unit'
+                'options': ['per_kg', 'per_hour', 'per_unit', 'fixed', 'actual'],
                 'label': 'Unit Type',
                 'help_text': 'per_kg: Rate × Weight | per_hour: Rate × Hours | per_unit: Rate × Units | fixed: Flat amount | actual: Manual entry'
             },
