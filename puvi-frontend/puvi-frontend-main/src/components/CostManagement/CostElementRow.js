@@ -1,6 +1,7 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js
 // CostElementRow Component - Reusable cost element UI component
 // Created: Session 3 - UI Standardization Phase
+// FIXED: Added number conversion to prevent .toFixed() errors
 
 import React, { useState, useEffect } from 'react';
 import './CostElementRow.css';
@@ -45,22 +46,26 @@ const CostElementRow = ({
   const [localOverrideRate, setLocalOverrideRate] = useState(overrideRate || '');
   const [showOverrideWarning, setShowOverrideWarning] = useState(false);
   
+  // FIXED: Convert to numbers to prevent .toFixed() errors
+  const numericMasterRate = parseFloat(masterRate) || 0;
+  const numericQuantity = parseFloat(quantity) || 0;
+  
   // Calculate effective rate and total
   const effectiveRate = localOverrideRate && parseFloat(localOverrideRate) > 0 
     ? parseFloat(localOverrideRate) 
-    : masterRate;
+    : numericMasterRate;
   
-  const totalCost = quantity * effectiveRate;
+  const totalCost = numericQuantity * effectiveRate;
   
   // Check for significant override deviation (>20%)
   useEffect(() => {
     if (localOverrideRate && parseFloat(localOverrideRate) > 0) {
-      const deviation = Math.abs((parseFloat(localOverrideRate) - masterRate) / masterRate) * 100;
+      const deviation = Math.abs((parseFloat(localOverrideRate) - numericMasterRate) / numericMasterRate) * 100;
       setShowOverrideWarning(showWarning && deviation > 20);
     } else {
       setShowOverrideWarning(false);
     }
-  }, [localOverrideRate, masterRate, showWarning]);
+  }, [localOverrideRate, numericMasterRate, showWarning]);
   
   // Update local state when prop changes
   useEffect(() => {
@@ -105,19 +110,19 @@ const CostElementRow = ({
         </label>
         
         <div className="inline-rates">
-          <span className="master-rate">₹{masterRate}/{unitType}</span>
+          <span className="master-rate">₹{numericMasterRate}/{unitType}</span>
           <input
             type="number"
             value={localOverrideRate}
             onChange={handleRateChange}
-            placeholder={masterRate.toString()}
+            placeholder={numericMasterRate.toString()}
             step="0.01"
             className="override-input inline"
             disabled={!enabled}
           />
         </div>
         <div className="inline-calculation">
-          <span className="quantity">{quantity.toFixed(2)} {unitType}</span>
+          <span className="quantity">{numericQuantity.toFixed(2)} {unitType}</span>
           <span className="total-cost">₹{enabled ? totalCost.toFixed(2) : '0.00'}</span>
         </div>
       </div>
@@ -144,7 +149,7 @@ const CostElementRow = ({
         <div className="compact-details">
           <div className="rate-group">
             <span className="rate-label">Rate:</span>
-            <span className="master-rate">₹{masterRate}</span>
+            <span className="master-rate">₹{numericMasterRate}</span>
             <input
               type="number"
               value={localOverrideRate}
@@ -158,7 +163,7 @@ const CostElementRow = ({
           </div>
           <div className="quantity-group">
             <span className="quantity-label">Qty:</span>
-            <span className="quantity-value">{quantity.toFixed(2)}</span>
+            <span className="quantity-value">{numericQuantity.toFixed(2)}</span>
           </div>
         </div>
       </div>
@@ -191,7 +196,7 @@ const CostElementRow = ({
           <div className="grid-item">
             <label className="field-label">Master Rate</label>
             <div className="field-value master-rate-display">
-              ₹{masterRate.toFixed(2)}
+              ₹{numericMasterRate.toFixed(2)}
               <span className="unit-suffix">/{unitType}</span>
             </div>
           </div>
@@ -203,7 +208,7 @@ const CostElementRow = ({
                 type="number"
                 value={localOverrideRate}
                 onChange={handleRateChange}
-                placeholder={masterRate.toFixed(2)}
+                placeholder={numericMasterRate.toFixed(2)}
                 step="0.01"
                 className={`override-input ${localOverrideRate ? 'has-override' : ''}`}
                 disabled={!enabled}  // Disable input when checkbox is unchecked
@@ -219,7 +224,7 @@ const CostElementRow = ({
           <div className="grid-item">
             <label className="field-label">Quantity</label>
             <div className="field-value quantity-display">
-              {quantity.toFixed(2)}
+              {numericQuantity.toFixed(2)}
               <span className="unit-suffix">{unitType}</span>
             </div>
           </div>
@@ -236,10 +241,10 @@ const CostElementRow = ({
           <div className="override-info">
             <span className="override-indicator">
               ✓ Using override rate: ₹{parseFloat(localOverrideRate).toFixed(2)} 
-              {masterRate !== parseFloat(localOverrideRate) && (
+              {numericMasterRate !== parseFloat(localOverrideRate) && (
                 <span className="deviation">
-                  ({((parseFloat(localOverrideRate) - masterRate) / masterRate * 100).toFixed(0)}% 
-                  {parseFloat(localOverrideRate) > masterRate ? 'higher' : 'lower'} than master)
+                  ({((parseFloat(localOverrideRate) - numericMasterRate) / numericMasterRate * 100).toFixed(0)}% 
+                  {parseFloat(localOverrideRate) > numericMasterRate ? 'higher' : 'lower'} than master)
                 </span>
               )}
             </span>
