@@ -26,6 +26,45 @@ def calculate_expiry_date(production_date_int, shelf_life_months):
     try:
         if not production_date_int or not shelf_life_months:
             return None
+        
+        from datetime import date
+        
+        # Convert integer to date object (not string)
+        if isinstance(production_date_int, int):
+            production_date = date(1970, 1, 1) + timedelta(days=production_date_int)
+        elif isinstance(production_date_int, str):
+            # If it's a string date, parse it first
+            production_date_int = parse_date(production_date_int)
+            production_date = date(1970, 1, 1) + timedelta(days=production_date_int)
+        else:
+            production_date = production_date_int
+        
+        # Add months using relativedelta for accurate month addition
+        expiry_date = production_date + relativedelta(months=int(shelf_life_months))
+        
+        # Convert back to integer (days since epoch)
+        epoch = date(1970, 1, 1)
+        days_since_epoch = (expiry_date - epoch).days
+        
+        return days_since_epoch
+        
+    except Exception as e:
+        print(f"Error calculating expiry date: {str(e)}")
+        return None
+    """
+    Calculate expiry date from production date and shelf life.
+    Matches the SQL function calculate_expiry_date() in database.
+    
+    Args:
+        production_date_int: Production date as integer (days since epoch)
+        shelf_life_months: Shelf life in months
+        
+    Returns:
+        Integer representing expiry date (days since epoch)
+    """
+    try:
+        if not production_date_int or not shelf_life_months:
+            return None
             
         # Convert integer to date
         production_date = integer_to_date(production_date_int)
