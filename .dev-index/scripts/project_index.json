@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-23T04:43:28.568Z",
+  "generatedAt": "2025-08-23T05:53:27.444Z",
   "filesScanned": 61,
   "jsFilesScanned": 38,
   "pyFilesScanned": 23,
@@ -1493,77 +1493,77 @@
     {
       "name": "skuDateUtils",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 614
+      "line": 635
     },
     {
       "name": "expiryUtils",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 704
+      "line": 725
     },
     {
       "name": "formatUtils",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 761
+      "line": 782
     },
     {
       "name": "validationUtils",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 806
+      "line": 827
     },
     {
       "name": "skuAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 841
+      "line": 862
     },
     {
       "name": "configAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 842
+      "line": 863
     },
     {
       "name": "batchAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 843
+      "line": 864
     },
     {
       "name": "mastersAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 844
+      "line": 865
     },
     {
       "name": "inventoryAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 845
+      "line": 866
     },
     {
       "name": "reportsAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 846
+      "line": 867
     },
     {
       "name": "purchaseAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 847
+      "line": 868
     },
     {
       "name": "blendingAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 848
+      "line": 869
     },
     {
       "name": "salesAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 849
+      "line": 870
     },
     {
       "name": "writeoffAPI",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 850
+      "line": 871
     },
     {
       "name": "skuService",
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 853
+      "line": 874
     },
     {
       "name": "skuDateUtils",
@@ -1983,7 +1983,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 377,
+      "line": 398,
       "type": "object",
       "code": "config: {"
     },
@@ -10719,7 +10719,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 37,
+      "line": 58,
       "name": "get",
       "params": "url, params",
       "type": "arrow",
@@ -10727,7 +10727,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 42,
+      "line": 63,
       "name": "post",
       "params": "url, data",
       "type": "arrow",
@@ -10735,7 +10735,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 43,
+      "line": 64,
       "name": "put",
       "params": "url, data",
       "type": "arrow",
@@ -10743,7 +10743,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 44,
+      "line": 65,
       "name": "del",
       "params": "url",
       "type": "arrow",
@@ -19131,19 +19131,19 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 30,
+      "line": 51,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 426,
+      "line": 447,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/services/api/index.js",
-      "line": 429,
+      "line": 450,
       "type": "catch",
       "code": "} catch (error) {"
     },
