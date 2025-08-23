@@ -546,9 +546,8 @@ const MasterForm = ({
     
     for (const field of schema.fields) {
       // FIXED: Special handling for category field
-      if (field.name === 'category') {
-        console.log('Loading categories from /api/categories');
-        setLoadingDynamicOptions(prev => ({ ...prev, category: true }));
+      if (field.name === 'category' && masterType === 'materials') {
+        console.log('Loading material categories from /api/categories');
         
         try {
           // Use the correct categories endpoint
@@ -884,7 +883,7 @@ const MasterForm = ({
     }
     
     // FIXED: Handle category field specifically
-    if (field.name === 'category') {
+    if (field.name === 'category' && masterType === 'materials') {
       return (
         <SelectField
           {...commonProps}
