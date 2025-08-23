@@ -2,6 +2,7 @@
 // Cost Capture Component - ACTIVITY-BASED FILTERING VERSION
 // Fixed: Added package size filtering for SKU packing costs
 // UPDATED: Added hasChanges flag to calculateAllCosts to prevent infinite loops
+// FIXED: Added parseFloat() to prevent .toFixed() errors
 
 import React, { useState, useEffect, useCallback } from 'react';
 import api from '../../services/api';
@@ -768,7 +769,7 @@ const CostCapture = ({
                         )}
 
                         <div style={styles.calculated}>
-                          {(input.quantity || 0).toFixed(2)}
+                          {(parseFloat(input.quantity) || 0).toFixed(2)}
                           {element.calculation_method === 'per_hour' && ' hrs'}
                           {element.calculation_method === 'per_kg' && ' kg'}
                           {element.calculation_method === 'per_bag' && ' bags'}
@@ -782,7 +783,7 @@ const CostCapture = ({
                           color: input.isApplied ? '#28a745' : '#6c757d',
                           backgroundColor: input.isApplied && input.totalCost > 0 ? '#d4edda' : '#e9ecef'
                         }}>
-                          ₹{input.isApplied && input.totalCost ? input.totalCost.toFixed(2) : '0.00'}
+                          ₹{input.isApplied && input.totalCost ? (parseFloat(input.totalCost) || 0).toFixed(2) : '0.00'}
                         </div>
                       </div>
                     );
