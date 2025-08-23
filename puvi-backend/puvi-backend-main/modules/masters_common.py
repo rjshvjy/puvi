@@ -708,13 +708,13 @@ MASTERS_CONFIG = {
             'category': {
                 'type': 'select',
                 'required': True,
-                'options': ['Fixed', 'Variable', 'Semi-Variable', 'Labor', 'Utilities', 'Consumables', 'Transport', 'Quality', 'Maintenance', 'Overhead', 'Packaging', 'Packing Material'],
+                'options': ['Fixed', 'Variable', 'Semi-Variable', 'Labor', 'Utilities', 'Consumables', 'Transport', 'Quality', 'Maintenance', 'Overhead'],
                 'label': 'Category'
             },
             'activity': {
                 'type': 'select',
                 'required': True,  # CHANGED TO TRUE
-                'options': ['Drying', 'Crushing', 'Filtering', 'Common', 'Quality', 'Transport', 'Maintenance', 'General', ''Packing'],
+                'options': ['Drying', 'Crushing', 'Filtering', 'Common', 'Quality', 'Transport', 'Maintenance', 'General', 'Packing'],
                 'label': 'Activity',
                 'default': 'General'
             },
