@@ -1,6 +1,6 @@
 # Feature Pack: SKU
-Generated: 2025-08-23T21:23:43.355Z
-Routes: 30 | Tables: 20 | Files: 10
+Generated: 2025-08-23T22:06:02.030Z
+Routes: 23 | Tables: 20 | Files: 10
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -46,24 +46,17 @@ GET    /api/sku/current-mrp/<int:sku_id>
 POST   /api/sku/production
 # get_production_history
 GET    /api/sku/production/history
-GET    /api/sku/production/history
 # get_expiry_alerts
-GET    /api/sku/expiry-alerts
 GET    /api/sku/expiry-alerts
 # get_expiry_summary
 GET    /api/sku/expiry-summary
-GET    /api/sku/expiry-summary
 # get_fefo_allocation_for_sku
-POST   /api/sku/fefo-allocation/<int:sku_id>
 POST   /api/sku/fefo-allocation/<int:sku_id>
 # get_production_summary_report
 GET    /api/sku/production-summary/<int:production_id>
-GET    /api/sku/production-summary/<int:production_id>
 # create_production_plan
 POST   /api/sku/production/plan
-POST   /api/sku/production/plan
 # allocate_oil_for_production
-POST   /api/sku/production/allocate-oil
 POST   /api/sku/production/allocate-oil
 ```
 
@@ -93,8 +86,7 @@ POST   /api/sku/production/allocate-oil
 
 ### ⚠️ Hardcoded Values Detected
 - `ProductionSummaryReport.js:185` - object
-- `sku_production.py:388` - object
-- `sku_production.py:1410` - object
+- `sku_production.py:396` - object
 
 ## Backend Implementation
 
