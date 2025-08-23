@@ -23,7 +23,28 @@ const apiCall = async (url, options = {}) => {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.error || `API call failed: ${response.status}`);
+      // Handle both 'error' (string) and 'errors' (object) formats
+      let errorMessage = '';
+      
+      if (data.error) {
+        // Backend sends single error string
+        errorMessage = data.error;
+      } else if (data.errors) {
+        // Backend sends validation errors as object
+        if (typeof data.errors === 'object') {
+          // Convert errors object to readable string
+          const errorMessages = Object.entries(data.errors)
+            .map(([field, message]) => `${field}: ${message}`)
+            .join('; ');
+          errorMessage = errorMessages;
+        } else {
+          errorMessage = data.errors;
+        }
+      } else {
+        errorMessage = `API call failed: ${response.status}`;
+      }
+      
+      throw new Error(errorMessage);
     }
 
     return data;
