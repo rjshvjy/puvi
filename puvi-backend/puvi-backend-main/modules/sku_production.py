@@ -734,7 +734,7 @@ def get_production_summary_report(production_id):
                 p.operator_name,
                 p.shift_number,
                 p.production_line,
-                p.quality_check_status,
+                p.production_status,
                 p.quality_check_by,
                 p.notes,
                 p.oil_cost_total,
@@ -854,7 +854,7 @@ def get_production_summary_report(production_id):
             'materials_consumed': materials_used,
             
             'quality_control': {
-                'status': prod_data[17] or 'Pending',
+                'status': prod_data[17] or 'completed',
                 'checked_by': prod_data[18] or 'N/A'
             },
             
