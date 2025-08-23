@@ -708,7 +708,7 @@ MASTERS_CONFIG = {
             'category': {
                 'type': 'select',
                 'required': True,
-                'options': ['Fixed', 'Variable', 'Semi-Variable', 'Labor', 'Utilities', 'Consumables', 'Transport', 'Quality', 'Maintenance', 'Overhead'],
+                'options': ['Fixed', 'Variable', 'Semi-Variable', 'Labor', 'Utilities', 'Consumables', 'Transport', 'Quality', 'Maintenance', 'Overhead', 'Packaging', 'Packing Material'],
                 'label': 'Category'
             },
             'activity': {
