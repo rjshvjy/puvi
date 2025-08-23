@@ -1,6 +1,7 @@
 // Production Entry Component for SKU Management with Enhanced Oil Allocation
 // File Path: puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js
 // MODIFIED: Integrated CostCapture component for Packing activity with packageSize prop
+// FIXED: Added oil_cost_per_kg to all oil allocations
 
 import React, { useState, useEffect } from 'react';
 import api, { skuDateUtils, expiryUtils, formatUtils } from '../../../services/api';
@@ -392,7 +393,7 @@ const ProductionEntry = () => {
     return diffDays;
   };
 
-  // Strategy-based allocation function
+  // Strategy-based allocation function - FIXED: Added oil_cost_per_kg
   const allocateOilByStrategy = (strategy, oilRequired, sources) => {
     let sortedSources = [...sources];
     
@@ -435,7 +436,9 @@ const ProductionEntry = () => {
           source_type: source.type,
           source_code: source.code,
           quantity: qty,
-          traceable_code: source.traceable_code
+          traceable_code: source.traceable_code,
+          oil_cost_per_kg: source.cost_per_kg,  // FIXED: Added oil_cost_per_kg
+          allocation_cost: qty * source.cost_per_kg  // FIXED: Added allocation_cost
         });
         remaining -= qty;
       }
@@ -597,6 +600,7 @@ const ProductionEntry = () => {
     }
   };
 
+  // Handle Apply Manual Allocations - FIXED: Added oil_cost_per_kg
   const handleApplyManualAllocations = () => {
     const allocations = [];
     
@@ -610,7 +614,9 @@ const ProductionEntry = () => {
             source_type: source.type,
             source_code: source.code,
             quantity: quantity,
-            traceable_code: source.traceable_code
+            traceable_code: source.traceable_code,
+            oil_cost_per_kg: source.cost_per_kg,  // FIXED: Added oil_cost_per_kg
+            allocation_cost: quantity * source.cost_per_kg  // FIXED: Added allocation_cost
           });
         }
       }
@@ -645,6 +651,7 @@ const ProductionEntry = () => {
     setStep(3);
   };
 
+  // Handle Save Production - FIXED: Added oil_cost_per_kg to payload
   const handleSaveProduction = async () => {
     if (!productionData.bottles_produced || !productionData.operator_name) {
       setMessage({ type: 'error', text: 'Please fill all required fields' });
@@ -662,12 +669,20 @@ const ProductionEntry = () => {
         packing_date: productionData.packing_date,
         bottles_planned: parseInt(productionData.bottles_planned),
         bottles_produced: parseInt(productionData.bottles_produced),
-        oil_allocations: productionData.oil_allocations.map(alloc => ({
-          source_id: alloc.source_id,
-          source_type: alloc.source_type,
-          quantity_allocated: alloc.quantity,
-          source_traceable_code: alloc.traceable_code
-        })),
+        oil_allocations: productionData.oil_allocations.map(alloc => {
+          // FIXED: Find the source to get oil_cost_per_kg
+          const source = oilSources.find(s => s.id === alloc.source_id);
+          const oilCostPerKg = alloc.oil_cost_per_kg || (source ? source.cost_per_kg : 0);
+          
+          return {
+            source_id: alloc.source_id,
+            source_type: alloc.source_type,
+            quantity_allocated: alloc.quantity,
+            source_traceable_code: alloc.traceable_code,
+            oil_cost_per_kg: oilCostPerKg,  // FIXED: Added oil_cost_per_kg
+            allocation_cost: alloc.allocation_cost || (alloc.quantity * oilCostPerKg)  // FIXED: Added allocation_cost
+          };
+        }),
         material_consumptions: bomDetails.map(item => ({
           material_id: item.material_id,
           planned_quantity: item.quantity_per_unit * productionData.bottles_planned,
