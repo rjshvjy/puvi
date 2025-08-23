@@ -714,7 +714,7 @@ MASTERS_CONFIG = {
             'activity': {
                 'type': 'select',
                 'required': True,  # CHANGED TO TRUE
-                'options': ['Drying', 'Crushing', 'Filtering', 'Common', 'Quality', 'Transport', 'Maintenance', 'General', 'Packaging'],
+                'options': ['Drying', 'Crushing', 'Filtering', 'Common', 'Quality', 'Transport', 'Maintenance', 'General', ''Packing'],
                 'label': 'Activity',
                 'default': 'General'
             },
