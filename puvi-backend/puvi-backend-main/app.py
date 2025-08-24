@@ -2,14 +2,14 @@
 """
 Main Flask Application for PUVI Oil Manufacturing System
 Integrates all modules including Cost Management, SKU, Masters, and Opening Balance
-Version: 9.0.0 - Complete with Masters and Opening Balance Integration
+Version: 10.0.0 - Enhanced with automatic sequence synchronization at startup
 """
 
 import re
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from datetime import datetime
-from db_utils import get_db_connection, close_connection
+from db_utils import get_db_connection, close_connection, synchronize_all_sequences
 
 # Import all module blueprints
 from modules.purchase import purchase_bp
@@ -79,13 +79,24 @@ app.register_blueprint(package_sizes_bp)
 app.config['JSON_SORT_KEYS'] = False
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
 
+# Store sequence sync results for health endpoint
+sequence_sync_results = {
+    'last_run': None,
+    'status': 'not_run',
+    'summary': {}
+}
+
 # Root endpoint
 @app.route('/', methods=['GET'])
 def home():
     """Root endpoint to verify API is running"""
     return jsonify({
         'status': 'PUVI Backend API is running!',
-        'version': '9.0.0',
+        'version': '10.0.0',
+        'features': {
+            'sequence_sync': 'Automatic sequence synchronization enabled',
+            'self_healing': 'Database sequences auto-repair on startup'
+        },
         'modules': {
             'core': ['Masters', 'Opening Balance'],
             'transactions': ['Purchase', 'Writeoff', 'Batch', 'Blending', 'Sales'],
@@ -101,14 +112,15 @@ def home():
             'blending': '/api/add_blending, /api/blending_history',
             'sales': '/api/add_material_sale, /api/sales_history',
             'cost': '/api/cost_management/*',
-            'sku': '/api/sku/*'
+            'sku': '/api/sku/*',
+            'system': '/api/sequence_status (NEW)'
         },
         'timestamp': datetime.now().isoformat(),
         'database': 'PostgreSQL',
         'status_check': '/api/health'
     })
 
-# Health check endpoint
+# Health check endpoint - Enhanced with sequence sync status
 @app.route('/api/health', methods=['GET'])
 def health_check():
     """Health check endpoint for monitoring"""
@@ -128,10 +140,62 @@ def health_check():
     return jsonify({
         'status': 'running',
         'database': db_status,
+        'sequence_sync': {
+            'enabled': True,
+            'last_run': sequence_sync_results.get('last_run'),
+            'status': sequence_sync_results.get('status'),
+            'sequences_fixed': sequence_sync_results.get('summary', {}).get('sequences_fixed', 0)
+        },
         'timestamp': datetime.now().isoformat(),
         'modules_loaded': 10,
-        'version': '9.0.0'
+        'version': '10.0.0'
     })
+
+# New endpoint to check sequence synchronization status
+@app.route('/api/sequence_status', methods=['GET'])
+def sequence_status():
+    """Get detailed status of sequence synchronization"""
+    return jsonify({
+        'success': True,
+        'sequence_sync': {
+            'enabled': True,
+            'last_run': sequence_sync_results.get('last_run'),
+            'status': sequence_sync_results.get('status'),
+            'summary': sequence_sync_results.get('summary', {}),
+            'description': 'Sequences are automatically synchronized at startup to prevent duplicate key errors'
+        },
+        'timestamp': datetime.now().isoformat()
+    })
+
+# Manual sequence sync endpoint (for emergency fixes)
+@app.route('/api/sync_sequences', methods=['POST'])
+def manual_sync_sequences():
+    """Manually trigger sequence synchronization"""
+    try:
+        print("\n" + "="*60)
+        print("MANUAL SEQUENCE SYNCHRONIZATION TRIGGERED")
+        print("="*60)
+        
+        summary = synchronize_all_sequences()
+        
+        # Update global results
+        sequence_sync_results['last_run'] = datetime.now().isoformat()
+        sequence_sync_results['status'] = 'success' if not summary.get('errors') else 'completed_with_errors'
+        sequence_sync_results['summary'] = summary
+        
+        return jsonify({
+            'success': True,
+            'message': f"Sequence synchronization completed. Fixed {summary.get('sequences_fixed', 0)} sequences.",
+            'summary': summary,
+            'timestamp': datetime.now().isoformat()
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e),
+            'message': 'Failed to synchronize sequences'
+        }), 500
 
 # System info endpoint
 @app.route('/api/system_info', methods=['GET'])
@@ -157,7 +221,8 @@ def system_info():
                 (SELECT COUNT(*) FROM materials WHERE is_active = true) as active_materials,
                 (SELECT COUNT(*) FROM purchases) as total_purchases,
                 (SELECT COUNT(*) FROM batch) as total_batches,
-                (SELECT COUNT(*) FROM sku_master WHERE is_active = true) as active_skus
+                (SELECT COUNT(*) FROM sku_master WHERE is_active = true) as active_skus,
+                (SELECT COUNT(*) FROM sku_production) as total_productions
         """)
         stats = cur.fetchone()
         
@@ -165,7 +230,9 @@ def system_info():
             'success': True,
             'system': {
                 'initialized': is_initialized,
-                'version': '9.0.0',
+                'version': '10.0.0',
+                'sequence_sync_enabled': True,
+                'sequence_sync_status': sequence_sync_results.get('status'),
                 'modules': {
                     'masters': 'active',
                     'opening_balance': 'active',
@@ -180,7 +247,8 @@ def system_info():
                 'materials': stats[1] if stats else 0,
                 'purchases': stats[2] if stats else 0,
                 'batches': stats[3] if stats else 0,
-                'skus': stats[4] if stats else 0
+                'skus': stats[4] if stats else 0,
+                'productions': stats[5] if stats else 0
             },
             'timestamp': datetime.now().isoformat()
         })
@@ -210,5 +278,55 @@ def internal_error(error):
         'message': 'An unexpected error occurred'
     }), 500
 
+def startup_sequence_sync():
+    """
+    Run sequence synchronization at application startup.
+    This ensures all sequences are properly aligned with their table data.
+    """
+    global sequence_sync_results
+    
+    try:
+        print("\n" + "="*60)
+        print("PUVI BACKEND STARTUP SEQUENCE")
+        print("="*60)
+        print("Initializing automatic sequence synchronization...")
+        
+        # Run the synchronization
+        summary = synchronize_all_sequences()
+        
+        # Store results
+        sequence_sync_results['last_run'] = datetime.now().isoformat()
+        sequence_sync_results['status'] = 'success' if not summary.get('errors') else 'completed_with_errors'
+        sequence_sync_results['summary'] = summary
+        
+        if summary.get('sequences_fixed', 0) > 0:
+            print(f"\n✅ STARTUP SUCCESS: Fixed {summary['sequences_fixed']} sequences")
+            print("Your database is now protected against duplicate key errors!")
+        else:
+            print("\n✅ STARTUP SUCCESS: All sequences are properly synchronized")
+            print("No fixes needed - database is healthy!")
+            
+        if summary.get('errors'):
+            print(f"\n⚠️  WARNING: {len(summary['errors'])} errors occurred during sync")
+            for error in summary['errors'][:5]:  # Show first 5 errors
+                print(f"   - {error}")
+                
+        print("="*60)
+        print("Application ready to serve requests")
+        print("="*60 + "\n")
+        
+    except Exception as e:
+        print(f"\n❌ CRITICAL ERROR during startup sequence sync: {str(e)}")
+        print("Application will continue but may experience duplicate key errors")
+        print("Please run manual sync using POST /api/sync_sequences\n")
+        
+        sequence_sync_results['last_run'] = datetime.now().isoformat()
+        sequence_sync_results['status'] = 'failed'
+        sequence_sync_results['summary'] = {'error': str(e)}
+
 if __name__ == '__main__':
+    # Run sequence synchronization before starting the server
+    startup_sequence_sync()
+    
+    # Start the Flask application
     app.run(debug=True, port=5000)
