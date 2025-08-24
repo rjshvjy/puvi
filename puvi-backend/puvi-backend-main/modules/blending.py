@@ -2,6 +2,7 @@
 Blending Module for PUVI Oil Manufacturing System
 Handles multi-oil blending with dynamic ratios and traceability
 File Path: puvi-backend/puvi-backend-main/modules/blending.py
+FIXED: Production date NaN issue in get_batches_for_oil_type using separate queries
 """
 
 from flask import Blueprint, request, jsonify
@@ -66,7 +67,7 @@ def get_oil_types_for_blending():
 
 @blending_bp.route('/api/batches_for_oil_type', methods=['GET'])
 def get_batches_for_oil_type():
-    """Get available batches for a specific oil type"""
+    """Get available batches for a specific oil type - FIXED with separate queries"""
     conn = get_db_connection()
     cur = conn.cursor()
     
@@ -94,44 +95,115 @@ def get_batches_for_oil_type():
         
         batches = []
         
-        # 1. Get from batch production (internal extraction)
+        # ========================================
+        # FIXED SECTION: Get from batch production (internal extraction)
+        # Using separate queries to avoid JOIN issues
+        # ========================================
+        
+        # Step 1: Get basic batch information first
         cur.execute("""
             SELECT 
-                b.batch_id,
-                b.batch_code,
-                b.oil_type,
-                b.production_date,
-                COALESCE(i.closing_stock, b.oil_yield - COALESCE(
-                    (SELECT SUM(quantity_used) 
-                     FROM blend_batch_components 
-                     WHERE source_batch_id = b.batch_id 
-                     AND source_type = 'extraction'), 0
-                )) as available_quantity,
-                b.oil_cost_per_kg,
-                b.traceable_code,
-                'extraction' as source_type
-            FROM batch b
-            LEFT JOIN inventory i ON i.source_reference_id = b.batch_id 
-    AND i.source_type = 'extraction'
-            WHERE b.oil_type = %s
-    AND b.oil_yield > 0
-            ORDER BY b.production_date DESC
+                batch_id,
+                batch_code,
+                oil_type,
+                production_date,
+                oil_yield,
+                oil_cost_per_kg,
+                traceable_code
+            FROM batch
+            WHERE oil_type = %s
+                AND oil_yield > 0
+                AND production_date IS NOT NULL
+            ORDER BY production_date DESC
         """, (oil_type,))
         
-        for row in cur.fetchall():
-            batches.append({
-                'batch_id': row[0],
-                'batch_code': row[1],
-                'oil_type': row[2],
-                'production_date': integer_to_date(row[3]),
-                'available_quantity': float(row[4]) if row[4] else 0,
-                'cost_per_kg': float(row[5]) if row[5] else 0,
-                'traceable_code': row[6],
-                'source_type': row[7],
-                'display_name': f"{row[1]} - {integer_to_date(row[3])}"
-            })
+        batch_rows = cur.fetchall()
         
-        # 2. Get from previous blends
+        # Step 2: Get inventory data separately if we have batches
+        inventory_map = {}
+        consumption_map = {}
+        
+        if batch_rows:
+            batch_ids = [row[0] for row in batch_rows]
+            
+            # Get inventory closing stock
+            cur.execute("""
+                SELECT 
+                    source_reference_id,
+                    closing_stock
+                FROM inventory
+                WHERE source_reference_id = ANY(%s)
+                    AND source_type = 'extraction'
+            """, (batch_ids,))
+            
+            for inv_row in cur.fetchall():
+                inventory_map[inv_row[0]] = float(inv_row[1]) if inv_row[1] else 0
+            
+            # Get consumption from blend_batch_components
+            cur.execute("""
+                SELECT 
+                    source_batch_id,
+                    SUM(quantity_used) as total_used
+                FROM blend_batch_components
+                WHERE source_batch_id = ANY(%s)
+                    AND source_type = 'extraction'
+                GROUP BY source_batch_id
+            """, (batch_ids,))
+            
+            for cons_row in cur.fetchall():
+                consumption_map[cons_row[0]] = float(cons_row[1]) if cons_row[1] else 0
+        
+        # Step 3: Combine the data
+        for row in batch_rows:
+            batch_id = row[0]
+            batch_code = row[1]
+            oil_type_val = row[2]
+            production_date = row[3]  # This should always have a value now
+            oil_yield = float(row[4]) if row[4] else 0
+            oil_cost_per_kg = float(row[5]) if row[5] else 0
+            traceable_code = row[6]
+            
+            # Calculate available quantity
+            # Priority: Use inventory closing_stock if available, 
+            # otherwise calculate from oil_yield minus consumption
+            if batch_id in inventory_map:
+                available_quantity = inventory_map[batch_id]
+            else:
+                consumed = consumption_map.get(batch_id, 0)
+                available_quantity = oil_yield - consumed
+            
+            # Only include if there's available quantity
+            if available_quantity > 0:
+                # Ensure we have a valid production_date before converting
+                production_date_str = ''
+                if production_date is not None:
+                    production_date_str = integer_to_date(production_date)
+                else:
+                    # Fallback: try to extract from batch_code
+                    if batch_code and '-' in batch_code:
+                        parts = batch_code.split('-')
+                        if len(parts) >= 2 and parts[1].isdigit() and len(parts[1]) == 8:
+                            date_str = parts[1]
+                            day = date_str[0:2]
+                            month = date_str[2:4]
+                            year = date_str[4:8]
+                            production_date_str = f"{day}-{month}-{year}"
+                
+                batches.append({
+                    'batch_id': batch_id,
+                    'batch_code': batch_code,
+                    'oil_type': oil_type_val,
+                    'production_date': production_date_str,
+                    'available_quantity': available_quantity,
+                    'cost_per_kg': oil_cost_per_kg,
+                    'traceable_code': traceable_code,
+                    'source_type': 'extraction',
+                    'display_name': f"{batch_code} - {production_date_str}"
+                })
+        
+        # ========================================
+        # 2. Get from previous blends (unchanged)
+        # ========================================
         cur.execute("""
             SELECT 
                 bl.blend_id,
@@ -179,8 +251,9 @@ def get_batches_for_oil_type():
                 'display_name': f"{row[1]} - {integer_to_date(row[3])}"
             })
         
-        # 3. Get from outsourced/purchased bulk oil
-        # Need to match by oil_type or produces_oil_type in materials
+        # ========================================
+        # 3. Get from outsourced/purchased bulk oil (unchanged)
+        # ========================================
         cur.execute("""
             SELECT 
                 i.inventory_id,
