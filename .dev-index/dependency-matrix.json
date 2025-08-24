@@ -1,8 +1,8 @@
 {
   "version": "1.0",
-  "generatedAt": "2025-08-24T09:42:30.552Z",
+  "generatedAt": "2025-08-24T09:59:39.412Z",
   "summary": {
-    "totalTables": 54,
+    "totalTables": 55,
     "sharedTables": 27,
     "hardcodedCategories": 0,
     "migrationOpportunities": 0
@@ -1197,6 +1197,20 @@
         "unknown": {
           "files": [
             "puvi-backend/puvi-backend-main/utils/traceability.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "pg_sequences": {
+      "usedBy": [
+        "unknown"
+      ],
+      "fileCount": 1,
+      "operations": {
+        "unknown": {
+          "files": [
+            "puvi-backend/puvi-backend-main/db_utils.py"
           ],
           "queryCount": 0
         }
