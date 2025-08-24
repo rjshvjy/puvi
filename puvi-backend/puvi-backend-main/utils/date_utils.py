@@ -1,232 +1,396 @@
-# File Path: puvi-backend/utils/date_utils.py
-"""
-Date utilities for PUVI Oil Manufacturing System
-Handles date conversions between different formats and database storage
-"""
+// File Path: puvi-frontend/puvi-frontend-main/src/utils/dateUtils.js
+// Centralized date formatting utilities for PUVI system
+// ENHANCED: Proper DD-MM-YYYY handling for Indian format
 
-from datetime import datetime, date, timedelta
+/**
+ * Parse DD-MM-YYYY string to JavaScript Date object
+ * This is the core fix for the NaN days issue
+ */
+export function parseDDMMYYYYToDate(dateString) {
+  if (!dateString) return null;
+  
+  // If already a Date object, return it
+  if (dateString instanceof Date) {
+    return isNaN(dateString.getTime()) ? null : dateString;
+  }
+  
+  // Convert to string if needed
+  const dateStr = String(dateString).trim();
+  
+  // Handle DD-MM-YYYY format (primary format for India)
+  if (dateStr.match(/^\d{2}-\d{2}-\d{4}$/)) {
+    const [day, month, year] = dateStr.split('-');
+    const date = new Date(year, month - 1, day);
+    return isNaN(date.getTime()) ? null : date;
+  }
+  
+  // Handle DD/MM/YYYY format (alternative Indian format)
+  if (dateStr.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+    const [day, month, year] = dateStr.split('/');
+    const date = new Date(year, month - 1, day);
+    return isNaN(date.getTime()) ? null : date;
+  }
+  
+  // Handle YYYY-MM-DD format (ISO format from date inputs)
+  if (dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
+    const date = new Date(dateStr);
+    return isNaN(date.getTime()) ? null : date;
+  }
+  
+  return null;
+}
 
-def date_to_day_number(date_string):
-    """
-    Convert date string to day number since epoch (1970-01-01)
-    
-    Args:
-        date_string: Date in DD-MM-YYYY or YYYY-MM-DD format
-    
-    Returns:
-        int: Number of days since epoch
-    
-    Examples:
-        date_to_day_number("04-08-2025") -> 20304
-        date_to_day_number("2025-08-04") -> 20304
-    """
-    # Handle both formats for compatibility
-    if '-' in date_string and len(date_string.split('-')[0]) == 4:
-        # YYYY-MM-DD format from HTML date input
-        date_obj = datetime.strptime(date_string, '%Y-%m-%d')
-    else:
-        # DD-MM-YYYY format (Indian standard)
-        date_obj = datetime.strptime(date_string, '%d-%m-%Y')
-    
-    epoch = datetime(1970, 1, 1)
-    return (date_obj - epoch).days
+/**
+ * Calculate age in days from a date
+ * Fixes the NaN issue in batch age calculations
+ */
+export function calculateDaysFromDate(dateInput) {
+  if (!dateInput) return null;
+  
+  const date = parseDDMMYYYYToDate(dateInput);
+  if (!date) return null;
+  
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  date.setHours(0, 0, 0, 0);
+  
+  const diffTime = today.getTime() - date.getTime();
+  const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  
+  return diffDays;
+}
 
+/**
+ * Format any input to DD-MM-YYYY string
+ */
+export function formatDateToDDMMYYYY(input) {
+  if (!input) return 'N/A';
+  
+  let date = null;
+  const strInput = String(input).trim();
+  
+  // Case 1: Already formatted correctly
+  if (strInput.match(/^\d{2}-\d{2}-\d{4}$/)) {
+    return strInput;
+  }
+  
+  // Case 2: YYYY-MM-DD or YYYY/MM/DD (from backend or date inputs)
+  if (strInput.match(/^\d{4}[-\/]\d{2}[-\/]\d{2}$/)) {
+    const separator = strInput.includes('/') ? '/' : '-';
+    const [year, month, day] = strInput.split(separator);
+    return `${day.padStart(2, '0')}-${month.padStart(2, '0')}-${year}`;
+  }
+  
+  // Case 3: Integer string like '20082025' (DDMMYYYY)
+  if (strInput.length === 8 && !isNaN(strInput)) {
+    const day = strInput.substring(0, 2);
+    const month = strInput.substring(2, 4);
+    const year = strInput.substring(4, 8);
+    return `${day}-${month}-${year}`;
+  }
+  
+  // Case 4: Try to parse as Date object
+  date = parseDDMMYYYYToDate(strInput);
+  if (date) {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  }
+  
+  // Fallback
+  return strInput === '' ? 'N/A' : strInput;
+}
 
-def parse_date(date_string):
-    """
-    Parse date from various formats to integer (days since epoch)
-    Accepts: YYYY-MM-DD, DD-MM-YYYY, DD/MM/YYYY, or already an integer
+/**
+ * Extract and format date from batch/blend/production codes
+ */
+export function extractDateFromBatchCode(batchCode) {
+  if (!batchCode) return '';
+  
+  // Extract DDMMYYYY from codes like "BATCH-20082025-Test" or "BLEND-20082025-Oil"
+  const parts = batchCode.split('-');
+  if (parts.length >= 2 && parts[1].length === 8 && !isNaN(parts[1])) {
+    const dateStr = parts[1];
+    // Parse DDMMYYYY format
+    const day = dateStr.substring(0, 2);
+    const month = dateStr.substring(2, 4);
+    const year = dateStr.substring(4, 8);
     
-    Args:
-        date_string: Date in various formats or None
+    // Validate the date components
+    const dayNum = parseInt(day, 10);
+    const monthNum = parseInt(month, 10);
+    const yearNum = parseInt(year, 10);
     
-    Returns:
-        int: Days since epoch, or None if input is None/empty
-    
-    Examples:
-        parse_date("2025-08-04") -> 20304
-        parse_date("04-08-2025") -> 20304
-        parse_date("04/08/2025") -> 20304
-        parse_date(20304) -> 20304
-        parse_date("") -> None
-    """
-    if not date_string:
-        return None
-    
-    # If already an integer, return it
-    try:
-        return int(date_string)
-    except (ValueError, TypeError):
-        pass
-    
-    # Try different date formats
-    formats = [
-        '%Y-%m-%d',  # ISO format (from HTML date inputs)
-        '%d-%m-%Y',  # Indian format with dash
-        '%d/%m/%Y',  # Indian format with slash
-    ]
-    
-    for fmt in formats:
-        try:
-            dt = datetime.strptime(str(date_string), fmt).date()
-            # Convert to days since epoch (1970-01-01)
-            epoch = date(1970, 1, 1)
-            return (dt - epoch).days
-        except ValueError:
-            continue
-    
-    raise ValueError(f"Unable to parse date: {date_string}")
+    if (dayNum >= 1 && dayNum <= 31 && 
+        monthNum >= 1 && monthNum <= 12 && 
+        yearNum >= 2020 && yearNum <= 2099) {
+      return `${day}-${month}-${year}`;
+    }
+  }
+  return '';
+}
 
+/**
+ * Parse any date format to JS Date object
+ * Enhanced version with better error handling
+ */
+export function parseToDate(input) {
+  if (!input) return null;
+  
+  // Use our enhanced parser
+  const date = parseDDMMYYYYToDate(input);
+  if (date && !isNaN(date.getTime())) {
+    return date;
+  }
+  
+  // Try parsing the formatted version
+  const formatted = formatDateToDDMMYYYY(input);
+  if (formatted !== 'N/A' && formatted !== input) {
+    return parseDDMMYYYYToDate(formatted);
+  }
+  
+  return null;
+}
 
-def integer_to_date(days_since_epoch, format='%d-%m-%Y'):
-    """
-    Convert integer (days since epoch) to formatted date string
-    
-    Args:
-        days_since_epoch: Number of days since 1970-01-01
-        format: Output format (default: DD-MM-YYYY)
-    
-    Returns:
-        str: Formatted date string, or empty string if invalid
-    
-    Examples:
-        integer_to_date(20304) -> "04-08-2025"
-        integer_to_date(20304, '%Y-%m-%d') -> "2025-08-04"
-        integer_to_date(None) -> ""
-    """
-    if days_since_epoch is None:
-        return ''
-    
-    try:
-        # Convert integer to date
-        epoch = date(1970, 1, 1)
-        dt = epoch + timedelta(days=int(days_since_epoch))
-        # Format as requested (default: DD-MM-YYYY)
-        return dt.strftime(format)
-    except:
-        return ''
+/**
+ * Extract date from any traceable code
+ */
+export function extractDateFromTraceableCode(traceableCode) {
+  if (!traceableCode) return '';
+  
+  const parts = traceableCode.split('-');
+  
+  // Find the DDMMYYYY date part in the code
+  for (let part of parts) {
+    if (part.length === 8 && !isNaN(part)) {
+      // Found the date part - it's in DDMMYYYY format
+      const day = part.substring(0, 2);
+      const month = part.substring(2, 4);
+      const year = part.substring(4, 8);
+      
+      // Validate it's a reasonable date
+      const dayNum = parseInt(day, 10);
+      const monthNum = parseInt(month, 10);
+      const yearNum = parseInt(year, 10);
+      
+      if (dayNum >= 1 && dayNum <= 31 && 
+          monthNum >= 1 && monthNum <= 12 && 
+          yearNum >= 2020 && yearNum <= 2099) {
+        return `${day}-${month}-${year}`;
+      }
+    }
+  }
+  
+  return '';
+}
 
+/**
+ * Convert DD-MM-YYYY to YYYY-MM-DD for HTML date inputs
+ */
+export function formatForHTMLInput(dateStr) {
+  if (!dateStr) return '';
+  
+  // If already in YYYY-MM-DD format
+  if (dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
+    return dateStr;
+  }
+  
+  // Parse and convert
+  const date = parseDDMMYYYYToDate(dateStr);
+  if (date) {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+  
+  return '';
+}
 
-def get_current_day_number():
-    """
-    Get current date as day number since epoch
-    
-    Returns:
-        int: Current day number
-    """
-    return (datetime.now().date() - date(1970, 1, 1)).days
+/**
+ * Format date with month name
+ */
+export function formatDateWithMonth(input) {
+  const date = parseToDate(input);
+  if (!date) return '';
+  
+  const months = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+  ];
+  
+  const day = date.getDate().toString().padStart(2, '0');
+  const month = months[date.getMonth()];
+  const year = date.getFullYear();
+  
+  return `${day}-${month}-${year}`;
+}
 
+/**
+ * Validate if a string is in DDMMYYYY format
+ */
+export function isValidDDMMYYYY(dateStr) {
+  if (!dateStr || dateStr.length !== 8) return false;
+  
+  const day = parseInt(dateStr.substring(0, 2), 10);
+  const month = parseInt(dateStr.substring(2, 4), 10);
+  const year = parseInt(dateStr.substring(4, 8), 10);
+  
+  return day >= 1 && day <= 31 && 
+         month >= 1 && month <= 12 && 
+         year >= 2020 && year <= 2099;
+}
 
-def format_date_for_display(date_value):
-    """
-    Format any date value for display in Indian format (DD-MM-YYYY)
-    
-    Args:
-        date_value: Can be string, datetime, date, or integer (days since epoch)
-    
-    Returns:
-        str: Date in DD-MM-YYYY format
-    """
-    if isinstance(date_value, int):
-        return integer_to_date(date_value)
-    elif isinstance(date_value, (datetime, date)):
-        return date_value.strftime('%d-%m-%Y')
-    elif isinstance(date_value, str):
-        # Parse and reformat
-        try:
-            days = parse_date(date_value)
-            return integer_to_date(days)
-        except:
-            return date_value
-    return ''
+/**
+ * Get today's date in DDMMYYYY format (no separators)
+ */
+export function getTodayDDMMYYYY() {
+  const today = new Date();
+  const day = today.getDate().toString().padStart(2, '0');
+  const month = (today.getMonth() + 1).toString().padStart(2, '0');
+  const year = today.getFullYear();
+  
+  return `${day}${month}${year}`;
+}
 
+/**
+ * Get today's date in DD-MM-YYYY format (with separators)
+ */
+export function getTodayFormatted() {
+  const today = new Date();
+  const day = today.getDate().toString().padStart(2, '0');
+  const month = (today.getMonth() + 1).toString().padStart(2, '0');
+  const year = today.getFullYear();
+  
+  return `${day}-${month}-${year}`;
+}
 
-def format_date_indian(date_value):
-    """
-    Format date in Indian format (DD-MM-YYYY)
-    This function is used by sku_production module for report formatting
-    
-    Args:
-        date_value: Integer (days since epoch), date object, or string
-    
-    Returns:
-        str: Date formatted as DD-MM-YYYY
-    """
-    if date_value is None:
-        return ''
-    
-    if isinstance(date_value, int):
-        return integer_to_date(date_value, '%d-%m-%Y')
-    elif isinstance(date_value, (datetime, date)):
-        return date_value.strftime('%d-%m-%Y')
-    elif isinstance(date_value, str):
-        try:
-            # Try to parse and reformat
-            days = parse_date(date_value)
-            return integer_to_date(days, '%d-%m-%Y')
-        except:
-            return date_value
-    return ''
+/**
+ * Compare two dates for sorting (useful for FIFO/FEFO)
+ * Returns: -1 if date1 < date2, 1 if date1 > date2, 0 if equal
+ */
+export function compareDates(date1, date2) {
+  const d1 = parseDDMMYYYYToDate(date1);
+  const d2 = parseDDMMYYYYToDate(date2);
+  
+  // Handle null/invalid dates
+  if (!d1 && !d2) return 0;
+  if (!d1) return 1;  // null dates sort to end
+  if (!d2) return -1;
+  
+  const time1 = d1.getTime();
+  const time2 = d2.getTime();
+  
+  if (time1 < time2) return -1;
+  if (time1 > time2) return 1;
+  return 0;
+}
 
+/**
+ * Calculate days between two dates
+ */
+export function daysBetween(date1, date2) {
+  const d1 = parseDDMMYYYYToDate(date1);
+  const d2 = parseDDMMYYYYToDate(date2);
+  
+  if (!d1 || !d2) return null;
+  
+  const diffTime = Math.abs(d2.getTime() - d1.getTime());
+  return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+}
 
-def validate_date_range(start_date, end_date):
-    """
-    Validate that start_date is before or equal to end_date
-    
-    Args:
-        start_date: Start date (string or int)
-        end_date: End date (string or int)
-    
-    Returns:
-        tuple: (is_valid, error_message)
-    """
-    try:
-        start_days = parse_date(start_date) if not isinstance(start_date, int) else start_date
-        end_days = parse_date(end_date) if not isinstance(end_date, int) else end_date
-        
-        if start_days > end_days:
-            return False, "Start date must be before or equal to end date"
-        return True, None
-    except Exception as e:
-        return False, f"Invalid date format: {str(e)}"
+/**
+ * Add days to a date
+ */
+export function addDays(dateInput, days) {
+  const date = parseDDMMYYYYToDate(dateInput);
+  if (!date) return null;
+  
+  const result = new Date(date);
+  result.setDate(result.getDate() + days);
+  return formatDateToDDMMYYYY(result);
+}
 
+/**
+ * Check if a date is in the past
+ */
+export function isPastDate(dateInput) {
+  const date = parseDDMMYYYYToDate(dateInput);
+  if (!date) return false;
+  
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  date.setHours(0, 0, 0, 0);
+  
+  return date < today;
+}
 
-def get_financial_year(date_value=None):
-    """
-    Get financial year for a given date (April to March)
-    
-    Args:
-        date_value: Date to check (default: current date)
-    
-    Returns:
-        str: Financial year in format "YYYY-YY" (e.g., "2025-26")
-    """
-    if date_value is None:
-        dt = datetime.now().date()
-    else:
-        days = parse_date(date_value) if not isinstance(date_value, int) else date_value
-        dt = date(1970, 1, 1) + timedelta(days=days)
-    
-    if dt.month >= 4:
-        return f"{dt.year}-{str(dt.year + 1)[2:]}"
-    else:
-        return f"{dt.year - 1}-{str(dt.year)[2:]}"
+/**
+ * Check if a date is in the future
+ */
+export function isFutureDate(dateInput) {
+  const date = parseDDMMYYYYToDate(dateInput);
+  if (!date) return false;
+  
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  date.setHours(0, 0, 0, 0);
+  
+  return date > today;
+}
 
+/**
+ * Get financial year for Indian format (April to March)
+ */
+export function getFinancialYear(dateInput) {
+  const date = parseDDMMYYYYToDate(dateInput) || new Date();
+  
+  const month = date.getMonth() + 1;
+  const year = date.getFullYear();
+  
+  if (month >= 4) {
+    return `${year}-${(year + 1).toString().slice(2)}`;
+  } else {
+    return `${year - 1}-${year.toString().slice(2)}`;
+  }
+}
 
-def get_month_year(date_value=None):
-    """
-    Get month and year from a date value
-    
-    Args:
-        date_value: Date to check (default: current date)
-    
-    Returns:
-        tuple: (month_name, year) e.g., ("August", 2025)
-    """
-    if date_value is None:
-        dt = datetime.now().date()
-    else:
-        days = parse_date(date_value) if not isinstance(date_value, int) else date_value
-        dt = date(1970, 1, 1) + timedelta(days=days)
-    
-    return dt.strftime('%B'), dt.year
+// Export all functions as a service object for convenience
+export const dateService = {
+  parse: parseDDMMYYYYToDate,
+  format: formatDateToDDMMYYYY,
+  calculateAge: calculateDaysFromDate,
+  parseToDate,
+  extractFromBatch: extractDateFromBatchCode,
+  extractFromTraceable: extractDateFromTraceableCode,
+  toHTMLInput: formatForHTMLInput,
+  withMonth: formatDateWithMonth,
+  validate: isValidDDMMYYYY,
+  today: getTodayDDMMYYYY,
+  todayFormatted: getTodayFormatted,
+  compare: compareDates,
+  daysBetween,
+  addDays,
+  isPast: isPastDate,
+  isFuture: isFutureDate,
+  financialYear: getFinancialYear
+};
+
+// Default export for backward compatibility
+export default {
+  formatDateToDDMMYYYY,
+  extractDateFromBatchCode,
+  parseToDate,
+  extractDateFromTraceableCode,
+  formatForHTMLInput,
+  formatDateWithMonth,
+  isValidDDMMYYYY,
+  getTodayDDMMYYYY,
+  compareDates,
+  daysBetween,
+  // New enhanced functions
+  parseDDMMYYYYToDate,
+  calculateDaysFromDate,
+  dateService
+};
