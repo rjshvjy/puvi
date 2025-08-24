@@ -2,7 +2,7 @@
 # PUVI System - Expiry Management Utilities
 # File: puvi-backend/utils/expiry_utils.py
 # Purpose: Handle expiry date calculations and status checks
-# Version: Fixed - GROUP BY error resolved
+# Version: Fixed - Status mapping for database constraint
 # =====================================================
 
 from datetime import datetime, timedelta
@@ -51,36 +51,6 @@ def calculate_expiry_date(production_date_int, shelf_life_months):
     except Exception as e:
         print(f"Error calculating expiry date: {str(e)}")
         return None
-    """
-    Calculate expiry date from production date and shelf life.
-    Matches the SQL function calculate_expiry_date() in database.
-    
-    Args:
-        production_date_int: Production date as integer (days since epoch)
-        shelf_life_months: Shelf life in months
-        
-    Returns:
-        Integer representing expiry date (days since epoch)
-    """
-    try:
-        if not production_date_int or not shelf_life_months:
-            return None
-            
-        # Convert integer to date
-        production_date = integer_to_date(production_date_int)
-        
-        # Add months using relativedelta for accurate month addition
-        expiry_date = production_date + relativedelta(months=int(shelf_life_months))
-        
-        # Convert back to integer (days since epoch)
-        epoch = datetime(1970, 1, 1)
-        days_since_epoch = (expiry_date - epoch).days
-        
-        return days_since_epoch
-        
-    except Exception as e:
-        print(f"Error calculating expiry date: {str(e)}")
-        return None
 
 
 def get_days_to_expiry(expiry_date_int):
@@ -115,7 +85,7 @@ def get_days_to_expiry(expiry_date_int):
 def get_expiry_status(expiry_date_int):
     """
     Get expiry status based on days remaining.
-    Matches the SQL function get_expiry_status() in database.
+    Returns display status for UI purposes.
     
     Args:
         expiry_date_int: Expiry date as integer (days since epoch)
@@ -143,6 +113,30 @@ def get_expiry_status(expiry_date_int):
     except Exception as e:
         print(f"Error getting expiry status: {str(e)}")
         return 'unknown'
+
+
+def get_database_status(expiry_date_int):
+    """
+    Get database-compatible status based on expiry date.
+    Maps display statuses to allowed database values.
+    
+    Database allows: 'active', 'near_expiry', 'expired', 'consumed'
+    
+    Args:
+        expiry_date_int: Expiry date as integer (days since epoch)
+        
+    Returns:
+        String status compatible with database constraint
+    """
+    display_status = get_expiry_status(expiry_date_int)
+    
+    # Map display status to database status
+    if display_status == 'expired':
+        return 'expired'
+    elif display_status in ['critical', 'warning', 'caution']:
+        return 'near_expiry'
+    else:  # 'normal' or 'unknown'
+        return 'active'
 
 
 def validate_shelf_life(shelf_life_months):
@@ -223,6 +217,7 @@ def update_expiry_tracking(connection, production_id, sku_id, production_date_in
                           expiry_date_int, quantity_produced):
     """
     Create or update expiry tracking record for a production.
+    FIXED: Use database-compatible status values
     
     Args:
         connection: Database connection
@@ -246,6 +241,9 @@ def update_expiry_tracking(connection, production_id, sku_id, production_date_in
         cursor.execute(check_query, (production_id,))
         existing = cursor.fetchone()
         
+        # FIXED: Use database-compatible status
+        status = get_database_status(expiry_date_int)
+        
         if existing:
             # Update existing record
             update_query = """
@@ -258,7 +256,6 @@ def update_expiry_tracking(connection, production_id, sku_id, production_date_in
                 WHERE production_id = %s
                 RETURNING tracking_id
             """
-            status = get_expiry_status(expiry_date_int)
             cursor.execute(update_query, (
                 expiry_date_int,
                 quantity_produced,
@@ -275,7 +272,6 @@ def update_expiry_tracking(connection, production_id, sku_id, production_date_in
                 ) VALUES (%s, %s, %s, %s, %s, %s, %s)
                 RETURNING tracking_id
             """
-            status = get_expiry_status(expiry_date_int)
             cursor.execute(insert_query, (
                 production_id,
                 sku_id,
