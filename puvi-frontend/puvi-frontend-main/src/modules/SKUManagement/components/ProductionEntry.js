@@ -1,11 +1,13 @@
 // Production Entry Component for SKU Management with Enhanced Oil Allocation
 // File Path: puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js
-// MODIFIED: Integrated CostCapture component for Packing activity with packageSize prop
-// FIXED: Added oil_cost_per_kg to all oil allocations
+// MODIFIED: Fixed date parsing for DD-MM-YYYY format to resolve NaN days issue
+// All other functionality remains unchanged
 
 import React, { useState, useEffect } from 'react';
 import api, { skuDateUtils, expiryUtils, formatUtils } from '../../../services/api';
 import CostCapture from '../../CostManagement/CostCapture';
+// FIXED: Import new date utilities for proper DD-MM-YYYY handling
+import { parseDDMMYYYYToDate, calculateDaysFromDate } from '../../../utils/dateUtils';
 
 // Add the formatDateForDisplay function as an alias
 const formatDateForDisplay = skuDateUtils.formatForDisplay;
@@ -383,26 +385,25 @@ const ProductionEntry = () => {
     updateTotalCosts();
   }, [packingCostTotal, productionData.oil_allocations]);
 
-  // Calculate age of batch in days
+  // FIXED: Calculate age of batch in days - now handles DD-MM-YYYY properly
   const calculateBatchAge = (productionDate) => {
     if (!productionDate) return 0;
-    const prodDate = new Date(productionDate);
-    const today = new Date();
-    const diffTime = Math.abs(today - prodDate);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
+    
+    // Use the new function that handles DD-MM-YYYY properly
+    const age = calculateDaysFromDate(productionDate);
+    return age || 0;
   };
 
-  // Strategy-based allocation function - FIXED: Added oil_cost_per_kg
+  // Strategy-based allocation function - FIXED: Date parsing for FIFO
   const allocateOilByStrategy = (strategy, oilRequired, sources) => {
     let sortedSources = [...sources];
     
     switch(strategy) {
       case 'fifo':
-        // Sort by production date (oldest first)
+        // FIXED: Sort by production date using proper DD-MM-YYYY parsing
         sortedSources.sort((a, b) => {
-          const dateA = new Date(a.production_date || '9999-12-31');
-          const dateB = new Date(b.production_date || '9999-12-31');
+          const dateA = parseDDMMYYYYToDate(a.production_date) || new Date('9999-12-31');
+          const dateB = parseDDMMYYYYToDate(b.production_date) || new Date('9999-12-31');
           return dateA - dateB;
         });
         break;
@@ -495,23 +496,27 @@ const ProductionEntry = () => {
     return totalQuantity > 0 ? (totalCost / totalQuantity) : 0;
   };
 
-  // Get oldest batch used
+  // FIXED: Get oldest batch used - now properly parses DD-MM-YYYY dates
   const getOldestBatch = () => {
     let oldestDate = null;
     let oldestCode = '';
+    let oldestAge = 0;
     
     productionData.oil_allocations.forEach(allocation => {
       const source = oilSources.find(s => s.id === allocation.source_id);
       if (source && source.production_date) {
-        const date = new Date(source.production_date);
-        if (!oldestDate || date < oldestDate) {
+        // FIXED: Parse DD-MM-YYYY properly
+        const date = parseDDMMYYYYToDate(source.production_date);
+        if (date && (!oldestDate || date < oldestDate)) {
           oldestDate = date;
           oldestCode = source.code;
+          // FIXED: Calculate age using the proper function
+          oldestAge = calculateDaysFromDate(source.production_date);
         }
       }
     });
     
-    return oldestCode ? `${oldestCode} (${calculateBatchAge(oldestDate)} days old)` : 'N/A';
+    return oldestCode ? `${oldestCode} (${oldestAge} days old)` : 'N/A';
   };
 
   // Compare to optimal cost allocation
