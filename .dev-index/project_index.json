@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-24T07:58:58.997Z",
+  "generatedAt": "2025-08-24T07:59:53.289Z",
   "filesScanned": 61,
   "jsFilesScanned": 38,
   "pyFilesScanned": 23,
@@ -1434,6 +1434,11 @@
       "name": "API_URL",
       "file": "puvi-frontend/puvi-frontend-main/src/index.js",
       "line": 351
+    },
+    {
+      "name": "dateService",
+      "file": "puvi-frontend/puvi-frontend-main/src/utils/dateUtils.js",
+      "line": 360
     },
     {
       "name": "getConfig",
@@ -7577,7 +7582,23 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/utils/dateUtils.js",
-      "line": 5,
+      "line": 9,
+      "name": "parseDDMMYYYYToDate",
+      "params": "dateString",
+      "type": "function",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/utils/dateUtils.js",
+      "line": 47,
+      "name": "calculateDaysFromDate",
+      "params": "dateInput",
+      "type": "function",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/utils/dateUtils.js",
+      "line": 66,
       "name": "formatDateToDDMMYYYY",
       "params": "input",
       "type": "function",
@@ -7585,7 +7606,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/utils/dateUtils.js",
-      "line": 52,
+      "line": 108,
       "name": "extractDateFromBatchCode",
       "params": "batchCode",
       "type": "function",
@@ -7593,7 +7614,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/utils/dateUtils.js",
-      "line": 70,
+      "line": 138,
       "name": "parseToDate",
       "params": "input",
       "type": "function",
@@ -7601,7 +7622,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/utils/dateUtils.js",
-      "line": 81,
+      "line": 159,
       "name": "extractDateFromTraceableCode",
       "params": "traceableCode",
       "type": "function",
@@ -7609,7 +7630,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/utils/dateUtils.js",
-      "line": 111,
+      "line": 191,
       "name": "formatForHTMLInput",
       "params": "dateStr",
       "type": "function",
@@ -7617,7 +7638,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/utils/dateUtils.js",
-      "line": 128,
+      "line": 214,
       "name": "formatDateWithMonth",
       "params": "input",
       "type": "function",
@@ -7625,7 +7646,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/utils/dateUtils.js",
-      "line": 145,
+      "line": 233,
       "name": "isValidDDMMYYYY",
       "params": "dateStr",
       "type": "function",
@@ -7633,7 +7654,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/utils/dateUtils.js",
-      "line": 158,
+      "line": 248,
       "name": "getTodayDDMMYYYY",
       "params": "",
       "type": "function",
@@ -7641,7 +7662,15 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/utils/dateUtils.js",
-      "line": 168,
+      "line": 260,
+      "name": "getTodayFormatted",
+      "params": "",
+      "type": "function",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/utils/dateUtils.js",
+      "line": 273,
       "name": "compareDates",
       "params": "date1, date2",
       "type": "function",
@@ -7649,9 +7678,41 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/utils/dateUtils.js",
-      "line": 180,
+      "line": 293,
       "name": "daysBetween",
       "params": "date1, date2",
+      "type": "function",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/utils/dateUtils.js",
+      "line": 306,
+      "name": "addDays",
+      "params": "dateInput, days",
+      "type": "function",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/utils/dateUtils.js",
+      "line": 318,
+      "name": "isPastDate",
+      "params": "dateInput",
+      "type": "function",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/utils/dateUtils.js",
+      "line": 332,
+      "name": "isFutureDate",
+      "params": "dateInput",
+      "type": "function",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/utils/dateUtils.js",
+      "line": 346,
+      "name": "getFinancialYear",
+      "params": "dateInput",
       "type": "function",
       "isAsync": false
     },
@@ -21044,12 +21105,12 @@
     "pyFiles": 23,
     "components": 42,
     "routes": 111,
-    "exports": 41,
+    "exports": 42,
     "imports": 54,
     "hardcodedValues": 24,
     "databaseQueries": 371,
     "databaseTables": 54,
-    "functions": 575,
+    "functions": 582,
     "stateHooks": 661,
     "missingEndpoints": 1,
     "errorHandlers": 572
