@@ -4,6 +4,24 @@
 import React, { useState, useEffect, useRef } from 'react';
 import api, { skuDateUtils, formatUtils } from '../../../services/api';
 
+// Helper function to safely format dates that may already be in DD-MM-YYYY format
+const safeFormatDate = (dateValue) => {
+  if (!dateValue) return 'N/A';
+  
+  // Check if it's already in DD-MM-YYYY format
+  if (typeof dateValue === 'string' && dateValue.match(/^\d{2}-\d{2}-\d{4}$/)) {
+    return dateValue; // Already formatted, return as-is
+  }
+  
+  // Otherwise, use the standard formatting function
+  try {
+    return skuDateUtils.formatDateForDisplay(dateValue);
+  } catch (error) {
+    console.warn('Date formatting error:', error);
+    return dateValue || 'N/A';
+  }
+};
+
 const ProductionSummaryReport = () => {
   // State management
   const [productions, setProductions] = useState([]);
@@ -157,7 +175,7 @@ const ProductionSummaryReport = () => {
                 <option key={prod.production_id} value={prod.production_id}>
                   {prod.production_code} - {prod.traceable_code} | 
                   {prod.product_name} ({prod.package_size}) | 
-                  Date: {skuDateUtils.formatDateForDisplay(prod.production_date)}
+                  Date: {safeFormatDate(prod.production_date)}
                 </option>
               ))}
             </select>
