@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "generatedAt": "2025-08-24T09:59:39.412Z",
+  "generatedAt": "2025-08-24T10:00:19.432Z",
   "summary": {
     "totalTables": 55,
     "sharedTables": 27,
@@ -959,9 +959,10 @@
     "sku_production": {
       "usedBy": [
         "sku-management",
-        "sku-production"
+        "sku-production",
+        "unknown"
       ],
-      "fileCount": 2,
+      "fileCount": 3,
       "operations": {
         "sku-management": {
           "files": [
@@ -972,6 +973,12 @@
         "sku-production": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/sku_production.py"
+          ],
+          "queryCount": 0
+        },
+        "unknown": {
+          "files": [
+            "puvi-backend/puvi-backend-main/app.py"
           ],
           "queryCount": 0
         }
@@ -1365,6 +1372,18 @@
       "recommendation": "Changes will affect blending, masters-crud, sku-production"
     },
     {
+      "table": "sku_production",
+      "sharedBy": [
+        "sku-management",
+        "sku-production",
+        "unknown"
+      ],
+      "moduleCount": 3,
+      "fileCount": 3,
+      "risk": "MEDIUM",
+      "recommendation": "Changes will affect sku-management, sku-production, unknown"
+    },
+    {
       "table": "purchase_items",
       "sharedBy": [
         "batch-production",
@@ -1509,17 +1528,6 @@
     },
     {
       "table": "sku_bom_master",
-      "sharedBy": [
-        "sku-management",
-        "sku-production"
-      ],
-      "moduleCount": 2,
-      "fileCount": 2,
-      "risk": "LOW",
-      "recommendation": "Changes will affect sku-management, sku-production"
-    },
-    {
-      "table": "sku_production",
       "sharedBy": [
         "sku-management",
         "sku-production"

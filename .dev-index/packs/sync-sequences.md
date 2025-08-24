@@ -1,6 +1,6 @@
-# Feature Pack: CATEGORIES
-Generated: 2025-08-24T10:00:19.493Z
-Routes: 1 | Tables: 8 | Files: 1
+# Feature Pack: SYNC-SEQUENCES
+Generated: 2025-08-24T10:00:19.498Z
+Routes: 1 | Tables: 7 | Files: 1
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -12,21 +12,20 @@ Routes: 1 | Tables: 8 | Files: 1
 
 ## API Endpoints
 ```
-# get_categories
-GET    /api/categories
+# manual_sync_sequences
+POST   /api/sync_sequences
 ```
 
 ## Database Dependencies
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
 | batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 8 other modules |
-| blend_batches | blending, masters-crud, sku-production | 🔴 HIGH | Changes affect 3 other modules |
-| categories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
-| information_schema | masters-common, masters-crud | 🟡 MEDIUM | Changes affect 2 other modules |
-| inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
 | materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
+| purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 5 other modules |
 | sku_master | masters-crud, package-sizes, sku-management | 🔴 HIGH | Changes affect 6 other modules |
-| subcategories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
+| sku_production | sku-management, sku-production, unknown | 🔴 HIGH | Changes affect 3 other modules |
+| suppliers | opening-balance, purchase, system-config | 🔴 HIGH | Changes affect 4 other modules |
+| system_configuration | opening-balance, unknown | 🟡 MEDIUM | Changes affect 2 other modules |
 
 ## Backend Implementation
 
@@ -35,8 +34,8 @@ GET    /api/categories
 - **materials** (HIGH RISK)
   - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, unknown
   - Impact: Changes will cascade to these modules
-- **inventory** (HIGH RISK)
-  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, unknown
+- **suppliers** (HIGH RISK)
+  - Shared with: opening-balance, purchase, system-config, unknown
   - Impact: Changes will cascade to these modules
 
 ### Integration Points

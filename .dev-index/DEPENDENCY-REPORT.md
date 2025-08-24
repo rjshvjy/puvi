@@ -1,6 +1,6 @@
 # PUVI System - Dependency Analysis Report
 
-**Generated:** 2025-08-24T09:59:39.412Z
+**Generated:** 2025-08-24T10:00:19.432Z
 **Version:** 1.0
 
 ## Executive Summary
@@ -75,6 +75,12 @@ Tables used by multiple modules (changes have cascading effects):
 - **Shared By:** blending, masters-crud, sku-production
 - **File Count:** 3
 - **Recommendation:** Changes will affect blending, masters-crud, sku-production
+
+### sku_production
+- **Risk Level:** MEDIUM
+- **Shared By:** sku-management, sku-production, unknown
+- **File Count:** 3
+- **Recommendation:** Changes will affect sku-management, sku-production, unknown
 
 ## Migration Opportunities
 
