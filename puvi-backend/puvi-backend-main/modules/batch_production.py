@@ -17,12 +17,13 @@ batch_bp = Blueprint('batch', __name__)
 
 @batch_bp.route('/api/seeds_for_batch', methods=['GET'])
 def get_seeds_for_batch():
-    """Get available seeds from inventory for batch production with purchase traceable codes"""
+    """Get available seeds from inventory for batch production with CORRECT purchase traceable codes"""
     conn = get_db_connection()
     cur = conn.cursor()
     
     try:
-        # Modified query to include produces_oil_type
+        # FIXED: Properly get the purchase code for each SPECIFIC material
+        # Using a subquery to ensure we get the right purchase for the right material
         cur.execute("""
             SELECT DISTINCT ON (i.material_id)
                 i.inventory_id,
@@ -33,15 +34,22 @@ def get_seeds_for_batch():
                 i.weighted_avg_cost,
                 m.category,
                 m.short_code,
-                p.traceable_code as latest_purchase_code,
+                -- FIXED: Get purchase code for THIS SPECIFIC material only
+                (
+                    SELECT p.traceable_code 
+                    FROM purchases p
+                    JOIN purchase_items pi ON p.purchase_id = pi.purchase_id
+                    WHERE pi.material_id = i.material_id  -- Match specific material
+                        AND p.traceable_code IS NOT NULL
+                    ORDER BY p.purchase_date DESC
+                    LIMIT 1
+                ) as latest_purchase_code,
                 m.produces_oil_type
             FROM inventory i
             JOIN materials m ON i.material_id = m.material_id
-            LEFT JOIN purchases p ON p.supplier_id = m.supplier_id
-            LEFT JOIN purchase_items pi ON pi.purchase_id = p.purchase_id AND pi.material_id = m.material_id
             WHERE m.category = 'Seeds' 
                 AND i.closing_stock > 0
-            ORDER BY i.material_id, p.purchase_date DESC
+            ORDER BY i.material_id
         """)
         
         seeds = []
@@ -49,6 +57,14 @@ def get_seeds_for_batch():
         for row in cur.fetchall():
             value = float(row[4]) * float(row[5])
             total_value += value
+            
+            # Log for debugging if codes don't match
+            if row[7] and row[8]:  # If both short_code and purchase_code exist
+                material_prefix = row[7].split('-')[0] if row[7] else ''
+                purchase_prefix = row[8].split('-')[0] if row[8] else ''
+                if material_prefix and purchase_prefix and material_prefix != purchase_prefix:
+                    print(f"WARNING: Material {row[2]} has code {row[7]} but purchase code {row[8]}")
+            
             seeds.append({
                 'inventory_id': row[0],
                 'material_id': row[1],
@@ -59,7 +75,7 @@ def get_seeds_for_batch():
                 'category': row[6],
                 'short_code': row[7],
                 'latest_purchase_code': row[8],
-                'produces_oil_type': row[9],  # Include oil type it produces
+                'produces_oil_type': row[9],
                 'total_value': value
             })
         
