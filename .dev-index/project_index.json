@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-24T10:12:18.300Z",
+  "generatedAt": "2025-08-24T16:15:25.686Z",
   "filesScanned": 61,
   "jsFilesScanned": 38,
   "pyFilesScanned": 23,
@@ -1752,7 +1752,7 @@
     {
       "name": "ProductionSummaryReport",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
-      "line": 7,
+      "line": 25,
       "type": "const"
     },
     {
@@ -1994,7 +1994,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
-      "line": 185,
+      "line": 203,
       "type": "object",
       "code": "<p className=\"report-date\">Generated: {reportData.generated_at ?"
     },
@@ -9793,7 +9793,15 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
-      "line": 7,
+      "line": 8,
+      "name": "safeFormatDate",
+      "params": "dateValue",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
+      "line": 25,
       "name": "ProductionSummaryReport",
       "params": "",
       "type": "arrow",
@@ -9801,7 +9809,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
-      "line": 28,
+      "line": 46,
       "name": "fetchRecentProductions",
       "params": "",
       "type": "arrow",
@@ -9809,7 +9817,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
-      "line": 53,
+      "line": 71,
       "name": "fetchProductionSummary",
       "params": "productionId",
       "type": "arrow",
@@ -9817,7 +9825,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
-      "line": 72,
+      "line": 90,
       "name": "handleProductionSelect",
       "params": "e",
       "type": "arrow",
@@ -9825,7 +9833,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
-      "line": 83,
+      "line": 101,
       "name": "handlePrint",
       "params": "",
       "type": "arrow",
@@ -9833,7 +9841,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
-      "line": 87,
+      "line": 105,
       "name": "handleDateChange",
       "params": "field, value",
       "type": "arrow",
@@ -9841,7 +9849,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
-      "line": 92,
+      "line": 110,
       "name": "getExpiryStatusColor",
       "params": "status",
       "type": "arrow",
@@ -15422,7 +15430,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
-      "line": 9,
+      "line": 27,
       "type": "useState",
       "name": "productions",
       "setter": "setProductions",
@@ -15430,13 +15438,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
-      "line": 9,
+      "line": 27,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
-      "line": 10,
+      "line": 28,
       "type": "useState",
       "name": "selectedProduction",
       "setter": "setSelectedProduction",
@@ -15444,13 +15452,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
-      "line": 10,
+      "line": 28,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
-      "line": 11,
+      "line": 29,
       "type": "useState",
       "name": "reportData",
       "setter": "setReportData",
@@ -15458,13 +15466,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
-      "line": 11,
+      "line": 29,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
-      "line": 12,
+      "line": 30,
       "type": "useState",
       "name": "loading",
       "setter": "setLoading",
@@ -15472,13 +15480,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
-      "line": 12,
+      "line": 30,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
-      "line": 13,
+      "line": 31,
       "type": "useState",
       "name": "loadingReport",
       "setter": "setLoadingReport",
@@ -15486,13 +15494,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
-      "line": 13,
+      "line": 31,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
-      "line": 14,
+      "line": 32,
       "type": "useState",
       "name": "message",
       "setter": "setMessage",
@@ -15500,19 +15508,19 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
-      "line": 14,
+      "line": 32,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
-      "line": 15,
+      "line": 33,
       "type": "useRef",
       "hook": "useRef"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
-      "line": 18,
+      "line": 36,
       "type": "useState",
       "name": "dateFilter",
       "setter": "setDateFilter",
@@ -15520,13 +15528,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
-      "line": 18,
+      "line": 36,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
-      "line": 24,
+      "line": 42,
       "type": "useEffect",
       "hook": "useEffect"
     },
@@ -18825,25 +18833,37 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
-      "line": 30,
+      "line": 17,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
-      "line": 44,
+      "line": 19,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
-      "line": 55,
+      "line": 48,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
-      "line": 63,
+      "line": 62,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
+      "line": 73,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
+      "line": 81,
       "type": "catch",
       "code": "} catch (error) {"
     },
@@ -21409,9 +21429,9 @@
     "hardcodedValues": 24,
     "databaseQueries": 381,
     "databaseTables": 55,
-    "functions": 592,
+    "functions": 593,
     "stateHooks": 661,
     "missingEndpoints": 1,
-    "errorHandlers": 586
+    "errorHandlers": 588
   }
 }
