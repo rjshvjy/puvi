@@ -1,5 +1,5 @@
 # Feature Pack: ADD-BATCH
-Generated: 2025-08-23T22:06:02.022Z
+Generated: 2025-08-24T05:58:34.053Z
 Routes: 1 | Tables: 9 | Files: 1
 
 ## Table of Contents
@@ -30,20 +30,20 @@ POST   /api/add_batch
 | purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 5 other modules |
 
 ### ⚠️ Hardcoded Values Detected
-- `batch_production.py:216` - object
-- `batch_production.py:217` - object
-- `batch_production.py:218` - object
-- `batch_production.py:219` - object
+- `batch_production.py:232` - object
+- `batch_production.py:233` - object
+- `batch_production.py:234` - object
+- `batch_production.py:235` - object
 
 ## Backend Implementation
 
 ## Data Flow & Integration
 ### 🔗 Cascading Dependencies
-- **inventory** (HIGH RISK)
-  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, unknown
-  - Impact: Changes will cascade to these modules
 - **materials** (HIGH RISK)
   - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, unknown
+  - Impact: Changes will cascade to these modules
+- **inventory** (HIGH RISK)
+  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, unknown
   - Impact: Changes will cascade to these modules
 
 ### Integration Points

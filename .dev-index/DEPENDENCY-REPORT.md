@@ -1,6 +1,6 @@
 # PUVI System - Dependency Analysis Report
 
-**Generated:** 2025-08-23T22:06:01.963Z
+**Generated:** 2025-08-24T05:58:33.994Z
 **Version:** 1.0
 
 ## Executive Summary
@@ -16,11 +16,11 @@
 
 Tables used by multiple modules (changes have cascading effects):
 
-### inventory
+### purchases
 - **Risk Level:** HIGH
-- **Shared By:** batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, unknown
-- **File Count:** 8
-- **Recommendation:** ⚠️ CRITICAL: Changes require coordination across 8 modules
+- **Shared By:** batch-production, blending, opening-balance, purchase, unknown
+- **File Count:** 5
+- **Recommendation:** ⚠️ CRITICAL: Changes require coordination across 5 modules
 
 ### materials
 - **Risk Level:** HIGH
@@ -28,11 +28,11 @@ Tables used by multiple modules (changes have cascading effects):
 - **File Count:** 11
 - **Recommendation:** ⚠️ CRITICAL: Changes require coordination across 10 modules
 
-### purchases
+### inventory
 - **Risk Level:** HIGH
-- **Shared By:** batch-production, blending, opening-balance, purchase, unknown
-- **File Count:** 5
-- **Recommendation:** ⚠️ CRITICAL: Changes require coordination across 5 modules
+- **Shared By:** batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, unknown
+- **File Count:** 8
+- **Recommendation:** ⚠️ CRITICAL: Changes require coordination across 8 modules
 
 ### batch
 - **Risk Level:** HIGH

@@ -1,5 +1,5 @@
 # Feature Pack: SKU
-Generated: 2025-08-23T22:06:02.030Z
+Generated: 2025-08-24T05:58:34.060Z
 Routes: 23 | Tables: 20 | Files: 10
 
 ## Table of Contents
@@ -94,11 +94,11 @@ POST   /api/sku/production/allocate-oil
 
 ## Data Flow & Integration
 ### 🔗 Cascading Dependencies
-- **inventory** (HIGH RISK)
-  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, unknown
-  - Impact: Changes will cascade to these modules
 - **materials** (HIGH RISK)
   - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, unknown
+  - Impact: Changes will cascade to these modules
+- **inventory** (HIGH RISK)
+  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, unknown
   - Impact: Changes will cascade to these modules
 - **cost_elements_master** (HIGH RISK)
   - Shared with: cost-management, package-sizes, sku-management, sku-production, system-config

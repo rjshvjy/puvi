@@ -1,5 +1,5 @@
 # Feature Pack: MATERIALS
-Generated: 2025-08-23T22:06:02.029Z
+Generated: 2025-08-24T05:58:34.059Z
 Routes: 4 | Tables: 15 | Files: 2
 
 ## Table of Contents
@@ -48,11 +48,11 @@ GET    /api/materials/units
 
 ## Data Flow & Integration
 ### 🔗 Cascading Dependencies
-- **inventory** (HIGH RISK)
-  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, unknown
-  - Impact: Changes will cascade to these modules
 - **materials** (HIGH RISK)
   - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, unknown
+  - Impact: Changes will cascade to these modules
+- **inventory** (HIGH RISK)
+  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, unknown
   - Impact: Changes will cascade to these modules
 - **cost_elements_master** (HIGH RISK)
   - Shared with: cost-management, package-sizes, sku-management, sku-production, system-config

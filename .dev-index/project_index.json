@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-23T22:06:01.129Z",
+  "generatedAt": "2025-08-24T05:58:33.078Z",
   "filesScanned": 61,
   "jsFilesScanned": 38,
   "pyFilesScanned": 23,
@@ -26,7 +26,7 @@
       "method": "GET",
       "path": "/api/cost_elements_for_batch",
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 79,
+      "line": 95,
       "blueprint": "batch_bp",
       "function": "get_cost_elements_for_batch",
       "source": "backend"
@@ -35,7 +35,7 @@
       "method": "GET",
       "path": "/api/oil_cake_rates",
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 182,
+      "line": 198,
       "blueprint": "batch_bp",
       "function": "get_oil_cake_rates",
       "source": "backend"
@@ -44,7 +44,7 @@
       "method": "GET",
       "path": "/api/oil_types",
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 234,
+      "line": 250,
       "blueprint": "batch_bp",
       "function": "get_oil_types",
       "source": "backend"
@@ -53,7 +53,7 @@
       "method": "POST",
       "path": "/api/add_batch",
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 266,
+      "line": 282,
       "blueprint": "batch_bp",
       "function": "add_batch",
       "source": "backend"
@@ -62,7 +62,7 @@
       "method": "GET",
       "path": "/api/batch_history",
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 644,
+      "line": 660,
       "blueprint": "batch_bp",
       "function": "get_batch_history",
       "source": "backend"
@@ -1010,9 +1010,9 @@
       "usedIn": [
         "puvi-frontend/puvi-frontend-main/src/App.js",
         "puvi-frontend/puvi-frontend-main/src/index.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
         "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/BatchProductionReport.js",
         "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-        "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
         "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
         "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostElementsManager.js",
         "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
@@ -1595,6 +1595,12 @@
       "type": "default-export"
     },
     {
+      "name": "Blending",
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 9,
+      "type": "const"
+    },
+    {
       "name": "BatchProductionReport",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/BatchProductionReport.js",
       "line": 7,
@@ -1610,12 +1616,6 @@
       "name": "StepIndicator",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
       "line": 772,
-      "type": "const"
-    },
-    {
-      "name": "Blending",
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 9,
       "type": "const"
     },
     {
@@ -1989,25 +1989,25 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 216,
+      "line": 232,
       "type": "object",
       "code": "'Groundnut': {'cake_rate': 30.00, 'sludge_rate': 10.00},"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 217,
+      "line": 233,
       "type": "object",
       "code": "'Sesame': {'cake_rate': 35.00, 'sludge_rate': 12.00},"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 218,
+      "line": 234,
       "type": "object",
       "code": "'Coconut': {'cake_rate': 25.00, 'sludge_rate': 8.00},"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 219,
+      "line": 235,
       "type": "object",
       "code": "'Mustard': {'cake_rate': 28.00, 'sludge_rate': 9.00}"
     },
@@ -2045,11 +2045,9 @@
   "databaseQueries": [
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 26,
+      "line": 27,
       "type": "SELECT",
       "tables": [
-        "inventory",
-        "materials",
         "purchases",
         "purchase_items"
       ],
@@ -2057,11 +2055,9 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 125,
+      "line": 141,
       "type": "OTHER",
       "tables": [
-        "inventory",
-        "materials",
         "purchases",
         "purchase_items"
       ],
@@ -2069,11 +2065,9 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 131,
+      "line": 147,
       "type": "OTHER",
       "tables": [
-        "inventory",
-        "materials",
         "purchases",
         "purchase_items"
       ],
@@ -2081,11 +2075,9 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 134,
+      "line": 150,
       "type": "OTHER",
       "tables": [
-        "inventory",
-        "materials",
         "purchases",
         "purchase_items"
       ],
@@ -2093,11 +2085,9 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 191,
+      "line": 207,
       "type": "SELECT",
       "tables": [
-        "inventory",
-        "materials",
         "purchases",
         "purchase_items",
         "oil_cake_rate_master"
@@ -2106,11 +2096,9 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 245,
+      "line": 261,
       "type": "SELECT",
       "tables": [
-        "inventory",
-        "materials",
         "purchases",
         "purchase_items",
         "oil_cake_rate_master",
@@ -2120,86 +2108,84 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 287,
+      "line": 303,
       "type": "SELECT",
       "tables": [
-        "inventory",
-        "materials",
         "purchases",
         "purchase_items",
         "oil_cake_rate_master",
-        "available_oil_types"
+        "available_oil_types",
+        "materials"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 332,
+      "line": 348,
       "type": "SELECT",
       "tables": [
-        "inventory",
-        "materials",
         "purchases",
         "purchase_items",
         "oil_cake_rate_master",
-        "available_oil_types"
+        "available_oil_types",
+        "materials"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 390,
+      "line": 406,
       "type": "SELECT",
       "tables": [
-        "inventory",
-        "materials",
         "purchases",
         "purchase_items",
         "oil_cake_rate_master",
-        "available_oil_types"
+        "available_oil_types",
+        "materials",
+        "inventory"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 411,
+      "line": 427,
       "type": "OTHER",
       "tables": [
-        "inventory",
-        "materials",
         "purchases",
         "purchase_items",
         "oil_cake_rate_master",
-        "available_oil_types"
+        "available_oil_types",
+        "materials",
+        "inventory"
       ],
       "preview": "cur.execute(\"BEGIN\")"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 414,
+      "line": 430,
       "type": "INSERT",
       "tables": [
-        "inventory",
-        "materials",
         "purchases",
         "purchase_items",
         "oil_cake_rate_master",
         "available_oil_types",
+        "materials",
+        "inventory",
         "batch"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 465,
+      "line": 481,
       "type": "SELECT",
       "tables": [
-        "inventory",
-        "materials",
         "purchases",
         "purchase_items",
         "oil_cake_rate_master",
         "available_oil_types",
+        "materials",
+        "inventory",
         "batch",
         "batch_extended_costs"
       ],
@@ -2207,15 +2193,15 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 474,
+      "line": 490,
       "type": "UPDATE",
       "tables": [
-        "inventory",
-        "materials",
         "purchases",
         "purchase_items",
         "oil_cake_rate_master",
         "available_oil_types",
+        "materials",
+        "inventory",
         "batch",
         "batch_extended_costs"
       ],
@@ -2223,15 +2209,15 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 492,
+      "line": 508,
       "type": "INSERT",
       "tables": [
-        "inventory",
-        "materials",
         "purchases",
         "purchase_items",
         "oil_cake_rate_master",
         "available_oil_types",
+        "materials",
+        "inventory",
         "batch",
         "batch_extended_costs"
       ],
@@ -2239,15 +2225,15 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 518,
+      "line": 534,
       "type": "UPDATE",
       "tables": [
-        "inventory",
-        "materials",
         "purchases",
         "purchase_items",
         "oil_cake_rate_master",
         "available_oil_types",
+        "materials",
+        "inventory",
         "batch",
         "batch_extended_costs"
       ],
@@ -2255,15 +2241,15 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 537,
+      "line": 553,
       "type": "UPDATE",
       "tables": [
-        "inventory",
-        "materials",
         "purchases",
         "purchase_items",
         "oil_cake_rate_master",
         "available_oil_types",
+        "materials",
+        "inventory",
         "batch",
         "batch_extended_costs"
       ],
@@ -2271,15 +2257,15 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 552,
+      "line": 568,
       "type": "SELECT",
       "tables": [
-        "inventory",
-        "materials",
         "purchases",
         "purchase_items",
         "oil_cake_rate_master",
         "available_oil_types",
+        "materials",
+        "inventory",
         "batch",
         "batch_extended_costs"
       ],
@@ -2287,15 +2273,15 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 576,
+      "line": 592,
       "type": "UPDATE",
       "tables": [
-        "inventory",
-        "materials",
         "purchases",
         "purchase_items",
         "oil_cake_rate_master",
         "available_oil_types",
+        "materials",
+        "inventory",
         "batch",
         "batch_extended_costs"
       ],
@@ -2303,15 +2289,15 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 585,
+      "line": 601,
       "type": "INSERT",
       "tables": [
-        "inventory",
-        "materials",
         "purchases",
         "purchase_items",
         "oil_cake_rate_master",
         "available_oil_types",
+        "materials",
+        "inventory",
         "batch",
         "batch_extended_costs"
       ],
@@ -2319,15 +2305,15 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 603,
+      "line": 619,
       "type": "INSERT",
       "tables": [
-        "inventory",
-        "materials",
         "purchases",
         "purchase_items",
         "oil_cake_rate_master",
         "available_oil_types",
+        "materials",
+        "inventory",
         "batch",
         "batch_extended_costs",
         "oil_cake_inventory"
@@ -2336,15 +2322,15 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 702,
+      "line": 718,
       "type": "OTHER",
       "tables": [
-        "inventory",
-        "materials",
         "purchases",
         "purchase_items",
         "oil_cake_rate_master",
         "available_oil_types",
+        "materials",
+        "inventory",
         "batch",
         "batch_extended_costs",
         "oil_cake_inventory"
@@ -2353,15 +2339,15 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 754,
+      "line": 770,
       "type": "OTHER",
       "tables": [
-        "inventory",
-        "materials",
         "purchases",
         "purchase_items",
         "oil_cake_rate_master",
         "available_oil_types",
+        "materials",
+        "inventory",
         "batch",
         "batch_extended_costs",
         "oil_cake_inventory"
@@ -2370,15 +2356,15 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 758,
+      "line": 774,
       "type": "SELECT",
       "tables": [
-        "inventory",
-        "materials",
         "purchases",
         "purchase_items",
         "oil_cake_rate_master",
         "available_oil_types",
+        "materials",
+        "inventory",
         "batch",
         "batch_extended_costs",
         "oil_cake_inventory"
@@ -7102,35 +7088,6 @@
   ],
   "tableReferences": [
     {
-      "name": "inventory",
-      "files": [
-        "puvi-backend/puvi-backend-main/modules/batch_production.py",
-        "puvi-backend/puvi-backend-main/modules/blending.py",
-        "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-        "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-        "puvi-backend/puvi-backend-main/modules/opening_balance.py",
-        "puvi-backend/puvi-backend-main/modules/purchase.py",
-        "puvi-backend/puvi-backend-main/modules/sku_production.py",
-        "puvi-backend/puvi-backend-main/inventory_utils.py"
-      ]
-    },
-    {
-      "name": "materials",
-      "files": [
-        "puvi-backend/puvi-backend-main/modules/batch_production.py",
-        "puvi-backend/puvi-backend-main/modules/blending.py",
-        "puvi-backend/puvi-backend-main/modules/masters_crud.py",
-        "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-        "puvi-backend/puvi-backend-main/modules/opening_balance.py",
-        "puvi-backend/puvi-backend-main/modules/purchase.py",
-        "puvi-backend/puvi-backend-main/modules/sku_management.py",
-        "puvi-backend/puvi-backend-main/modules/sku_production.py",
-        "puvi-backend/puvi-backend-main/modules/system_config.py",
-        "puvi-backend/puvi-backend-main/utils/traceability.py",
-        "puvi-backend/puvi-backend-main/app.py"
-      ]
-    },
-    {
       "name": "purchases",
       "files": [
         "puvi-backend/puvi-backend-main/modules/batch_production.py",
@@ -7158,6 +7115,35 @@
       "files": [
         "puvi-backend/puvi-backend-main/modules/batch_production.py",
         "puvi-backend/puvi-backend-main/modules/system_config.py"
+      ]
+    },
+    {
+      "name": "materials",
+      "files": [
+        "puvi-backend/puvi-backend-main/modules/batch_production.py",
+        "puvi-backend/puvi-backend-main/modules/blending.py",
+        "puvi-backend/puvi-backend-main/modules/masters_crud.py",
+        "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+        "puvi-backend/puvi-backend-main/modules/opening_balance.py",
+        "puvi-backend/puvi-backend-main/modules/purchase.py",
+        "puvi-backend/puvi-backend-main/modules/sku_management.py",
+        "puvi-backend/puvi-backend-main/modules/sku_production.py",
+        "puvi-backend/puvi-backend-main/modules/system_config.py",
+        "puvi-backend/puvi-backend-main/utils/traceability.py",
+        "puvi-backend/puvi-backend-main/app.py"
+      ]
+    },
+    {
+      "name": "inventory",
+      "files": [
+        "puvi-backend/puvi-backend-main/modules/batch_production.py",
+        "puvi-backend/puvi-backend-main/modules/blending.py",
+        "puvi-backend/puvi-backend-main/modules/masters_crud.py",
+        "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+        "puvi-backend/puvi-backend-main/modules/opening_balance.py",
+        "puvi-backend/puvi-backend-main/modules/purchase.py",
+        "puvi-backend/puvi-backend-main/modules/sku_production.py",
+        "puvi-backend/puvi-backend-main/inventory_utils.py"
       ]
     },
     {
@@ -7670,6 +7656,118 @@
       "isAsync": false
     },
     {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 9,
+      "name": "Blending",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 49,
+      "name": "fetchOilTypes",
+      "params": "",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 64,
+      "name": "fetchAvailableResultTypes",
+      "params": "",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 77,
+      "name": "checkResultOilTypeNeeded",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 100,
+      "name": "fetchBatchesForOilType",
+      "params": "oilType, componentId",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 115,
+      "name": "fetchBlendHistory",
+      "params": "",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 127,
+      "name": "handleOilTypeChange",
+      "params": "componentId, oilType",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 147,
+      "name": "handleBatchChange",
+      "params": "componentId, batchId",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 171,
+      "name": "handlePercentageChange",
+      "params": "componentId, percentage",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 181,
+      "name": "addComponent",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 197,
+      "name": "removeComponent",
+      "params": "componentId",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 204,
+      "name": "calculateTotals",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 231,
+      "name": "isDifferentOilsMix",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 237,
+      "name": "handleSubmit",
+      "params": "",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/BatchProductionReport.js",
       "line": 7,
       "name": "BatchProductionReport",
@@ -7860,118 +7958,6 @@
       "params": "",
       "type": "arrow",
       "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 9,
-      "name": "Blending",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 49,
-      "name": "fetchOilTypes",
-      "params": "",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 64,
-      "name": "fetchAvailableResultTypes",
-      "params": "",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 77,
-      "name": "checkResultOilTypeNeeded",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 100,
-      "name": "fetchBatchesForOilType",
-      "params": "oilType, componentId",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 115,
-      "name": "fetchBlendHistory",
-      "params": "",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 127,
-      "name": "handleOilTypeChange",
-      "params": "componentId, oilType",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 147,
-      "name": "handleBatchChange",
-      "params": "componentId, batchId",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 171,
-      "name": "handlePercentageChange",
-      "params": "componentId, percentage",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 181,
-      "name": "addComponent",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 197,
-      "name": "removeComponent",
-      "params": "componentId",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 204,
-      "name": "calculateTotals",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 231,
-      "name": "isDifferentOilsMix",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 237,
-      "name": "handleSubmit",
-      "params": "",
-      "type": "arrow",
-      "isAsync": true
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
@@ -10759,7 +10745,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 80,
+      "line": 96,
       "name": "get_cost_elements_for_batch",
       "params": "",
       "type": "python",
@@ -10767,7 +10753,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 183,
+      "line": 199,
       "name": "get_oil_cake_rates",
       "params": "",
       "type": "python",
@@ -10775,7 +10761,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 235,
+      "line": 251,
       "name": "get_oil_types",
       "params": "",
       "type": "python",
@@ -10783,7 +10769,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 267,
+      "line": 283,
       "name": "add_batch",
       "params": "",
       "type": "python",
@@ -10791,7 +10777,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 645,
+      "line": 661,
       "name": "get_batch_history",
       "params": "",
       "type": "python",
@@ -12164,6 +12150,158 @@
       "hook": "useEffect"
     },
     {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 10,
+      "type": "useState",
+      "name": "oilTypes",
+      "setter": "setOilTypes",
+      "initial": "[]"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 10,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 11,
+      "type": "useState",
+      "name": "blendHistory",
+      "setter": "setBlendHistory",
+      "initial": "[]"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 11,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 12,
+      "type": "useState",
+      "name": "showHistory",
+      "setter": "setShowHistory",
+      "initial": null
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 12,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 13,
+      "type": "useState",
+      "name": "loading",
+      "setter": "setLoading",
+      "initial": null
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 13,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 14,
+      "type": "useState",
+      "name": "message",
+      "setter": "setMessage",
+      "initial": ""
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 14,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 17,
+      "type": "useState",
+      "name": "resultOilType",
+      "setter": "setResultOilType",
+      "initial": ""
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 17,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 18,
+      "type": "useState",
+      "name": "availableResultTypes",
+      "setter": "setAvailableResultTypes",
+      "initial": "[]"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 18,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 21,
+      "type": "useState",
+      "name": "blendData",
+      "setter": "setBlendData",
+      "initial": "{}"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 21,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 29,
+      "type": "useState",
+      "name": "components",
+      "setter": "setComponents",
+      "initial": "[]"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 29,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 35,
+      "type": "useState",
+      "name": "batchesForComponents",
+      "setter": "setBatchesForComponents",
+      "initial": "{}"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 35,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 40,
+      "type": "useEffect",
+      "hook": "useEffect"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 45,
+      "type": "useEffect",
+      "hook": "useEffect"
+    },
+    {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/BatchProductionReport.js",
       "line": 8,
       "type": "useRef",
@@ -12388,158 +12526,6 @@
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
       "line": 187,
-      "type": "useEffect",
-      "hook": "useEffect"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 10,
-      "type": "useState",
-      "name": "oilTypes",
-      "setter": "setOilTypes",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 10,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 11,
-      "type": "useState",
-      "name": "blendHistory",
-      "setter": "setBlendHistory",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 11,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 12,
-      "type": "useState",
-      "name": "showHistory",
-      "setter": "setShowHistory",
-      "initial": null
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 12,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 13,
-      "type": "useState",
-      "name": "loading",
-      "setter": "setLoading",
-      "initial": null
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 13,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 14,
-      "type": "useState",
-      "name": "message",
-      "setter": "setMessage",
-      "initial": ""
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 14,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 17,
-      "type": "useState",
-      "name": "resultOilType",
-      "setter": "setResultOilType",
-      "initial": ""
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 17,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 18,
-      "type": "useState",
-      "name": "availableResultTypes",
-      "setter": "setAvailableResultTypes",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 18,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 21,
-      "type": "useState",
-      "name": "blendData",
-      "setter": "setBlendData",
-      "initial": "{}"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 21,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 29,
-      "type": "useState",
-      "name": "components",
-      "setter": "setComponents",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 29,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 35,
-      "type": "useState",
-      "name": "batchesForComponents",
-      "setter": "setBatchesForComponents",
-      "initial": "{}"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 35,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 40,
-      "type": "useEffect",
-      "hook": "useEffect"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 45,
       "type": "useEffect",
       "hook": "useEffect"
     },
@@ -16694,35 +16680,35 @@
         "method": "GET",
         "path": "/api/cost_elements_for_batch",
         "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-        "line": 79,
+        "line": 95,
         "function": "get_cost_elements_for_batch"
       },
       {
         "method": "GET",
         "path": "/api/oil_cake_rates",
         "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-        "line": 182,
+        "line": 198,
         "function": "get_oil_cake_rates"
       },
       {
         "method": "GET",
         "path": "/api/oil_types",
         "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-        "line": 234,
+        "line": 250,
         "function": "get_oil_types"
       },
       {
         "method": "POST",
         "path": "/api/add_batch",
         "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-        "line": 266,
+        "line": 282,
         "function": "add_batch"
       },
       {
         "method": "GET",
         "path": "/api/batch_history",
         "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-        "line": 644,
+        "line": 660,
         "function": "get_batch_history"
       }
     ],
@@ -17554,6 +17540,66 @@
       "code": "} catch (error) {"
     },
     {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 50,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 58,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 65,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 72,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 101,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 110,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 116,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 122,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 266,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 329,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
       "line": 197,
       "type": "try-catch",
@@ -17622,66 +17668,6 @@
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
       "line": 731,
-      "type": "catch",
-      "code": "} catch (error) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 50,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 58,
-      "type": "catch",
-      "code": "} catch (error) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 65,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 72,
-      "type": "catch",
-      "code": "} catch (error) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 101,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 110,
-      "type": "catch",
-      "code": "} catch (error) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 116,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 122,
-      "type": "catch",
-      "code": "} catch (error) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 266,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 329,
       "type": "catch",
       "code": "} catch (error) {"
     },
@@ -19187,85 +19173,78 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 73,
+      "line": 89,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 88,
+      "line": 104,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 176,
+      "line": 192,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 188,
+      "line": 204,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 190,
+      "line": 206,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 210,
+      "line": 226,
       "type": "except",
       "exception": "generic",
       "code": "except:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 228,
+      "line": 244,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 243,
+      "line": 259,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 255,
+      "line": 271,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 272,
+      "line": 288,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 352,
+      "line": 368,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 359,
-      "type": "except",
-      "exception": "Exception",
-      "code": "except Exception as e:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 634,
+      "line": 375,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
@@ -19273,12 +19252,19 @@
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
       "line": 650,
+      "type": "except",
+      "exception": "Exception",
+      "code": "except Exception as e:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
+      "line": 666,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 798,
+      "line": 814,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"

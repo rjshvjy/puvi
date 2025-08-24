@@ -1,5 +1,5 @@
 # Feature Pack: OIL-TYPES-FOR-BLENDING
-Generated: 2025-08-23T22:06:02.023Z
+Generated: 2025-08-24T05:58:34.053Z
 Routes: 1 | Tables: 8 | Files: 1
 
 ## Table of Contents
@@ -32,11 +32,11 @@ GET    /api/oil_types_for_blending
 
 ## Data Flow & Integration
 ### 🔗 Cascading Dependencies
-- **inventory** (HIGH RISK)
-  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, unknown
-  - Impact: Changes will cascade to these modules
 - **materials** (HIGH RISK)
   - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, unknown
+  - Impact: Changes will cascade to these modules
+- **inventory** (HIGH RISK)
+  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, unknown
   - Impact: Changes will cascade to these modules
 
 ### Integration Points
