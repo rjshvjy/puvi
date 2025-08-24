@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-24T07:52:02.879Z",
+  "generatedAt": "2025-08-24T07:58:58.997Z",
   "filesScanned": 61,
   "jsFilesScanned": 38,
   "pyFilesScanned": 23,
@@ -11728,6 +11728,78 @@
       "isRoute": true
     },
     {
+      "file": "puvi-backend/puvi-backend-main/utils/date_utils.py",
+      "line": 9,
+      "name": "date_to_day_number",
+      "params": "date_string",
+      "type": "python",
+      "isRoute": false
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/utils/date_utils.py",
+      "line": 35,
+      "name": "parse_date",
+      "params": "date_string",
+      "type": "python",
+      "isRoute": false
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/utils/date_utils.py",
+      "line": 81,
+      "name": "integer_to_date",
+      "params": "days_since_epoch, format='%d-%m-%Y'",
+      "type": "python",
+      "isRoute": false
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/utils/date_utils.py",
+      "line": 110,
+      "name": "get_current_day_number",
+      "params": "",
+      "type": "python",
+      "isRoute": false
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/utils/date_utils.py",
+      "line": 120,
+      "name": "format_date_for_display",
+      "params": "date_value",
+      "type": "python",
+      "isRoute": false
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/utils/date_utils.py",
+      "line": 144,
+      "name": "format_date_indian",
+      "params": "date_value",
+      "type": "python",
+      "isRoute": false
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/utils/date_utils.py",
+      "line": 172,
+      "name": "validate_date_range",
+      "params": "start_date, end_date",
+      "type": "python",
+      "isRoute": false
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/utils/date_utils.py",
+      "line": 194,
+      "name": "get_financial_year",
+      "params": "date_value=None",
+      "type": "python",
+      "isRoute": false
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/utils/date_utils.py",
+      "line": 216,
+      "name": "get_month_year",
+      "params": "date_value=None",
+      "type": "python",
+      "isRoute": false
+    },
+    {
       "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
       "line": 14,
       "name": "calculate_expiry_date",
@@ -20673,6 +20745,83 @@
       "code": "except Exception as e:"
     },
     {
+      "file": "puvi-backend/puvi-backend-main/utils/date_utils.py",
+      "line": 57,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/utils/date_utils.py",
+      "line": 59,
+      "type": "except",
+      "code": "except (ValueError, TypeError):"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/utils/date_utils.py",
+      "line": 70,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/utils/date_utils.py",
+      "line": 75,
+      "type": "except",
+      "exception": "ValueError",
+      "code": "except ValueError:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/utils/date_utils.py",
+      "line": 100,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/utils/date_utils.py",
+      "line": 106,
+      "type": "except",
+      "exception": "generic",
+      "code": "except:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/utils/date_utils.py",
+      "line": 136,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/utils/date_utils.py",
+      "line": 139,
+      "type": "except",
+      "exception": "generic",
+      "code": "except:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/utils/date_utils.py",
+      "line": 163,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/utils/date_utils.py",
+      "line": 167,
+      "type": "except",
+      "exception": "generic",
+      "code": "except:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/utils/date_utils.py",
+      "line": 183,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/utils/date_utils.py",
+      "line": 190,
+      "type": "except",
+      "exception": "Exception",
+      "code": "except Exception as e:"
+    },
+    {
       "file": "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
       "line": 26,
       "type": "try-catch",
@@ -20900,9 +21049,9 @@
     "hardcodedValues": 24,
     "databaseQueries": 371,
     "databaseTables": 54,
-    "functions": 566,
+    "functions": 575,
     "stateHooks": 661,
     "missingEndpoints": 1,
-    "errorHandlers": 560
+    "errorHandlers": 572
   }
 }
