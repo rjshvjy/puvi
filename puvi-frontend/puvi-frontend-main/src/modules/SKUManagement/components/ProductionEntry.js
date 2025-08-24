@@ -1,16 +1,34 @@
 // Production Entry Component for SKU Management with Enhanced Oil Allocation
 // File Path: puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js
-// MODIFIED: Fixed date parsing for DD-MM-YYYY format to resolve NaN days issue
+// FIXED: Date display issue - handles pre-formatted DD-MM-YYYY dates from API
 // All other functionality remains unchanged
 
 import React, { useState, useEffect } from 'react';
 import api, { skuDateUtils, expiryUtils, formatUtils } from '../../../services/api';
 import CostCapture from '../../CostManagement/CostCapture';
-// FIXED: Import new date utilities for proper DD-MM-YYYY handling
+// Import date utilities for proper DD-MM-YYYY handling
 import { parseDDMMYYYYToDate, calculateDaysFromDate } from '../../../utils/dateUtils';
 
 // Add the formatDateForDisplay function as an alias
 const formatDateForDisplay = skuDateUtils.formatForDisplay;
+
+// FIXED: Helper function to handle dates that may already be formatted
+const displayProductionDate = (dateValue) => {
+  if (!dateValue) return 'N/A';
+  
+  // If it's already in DD-MM-YYYY format, return as-is
+  if (typeof dateValue === 'string' && dateValue.match(/^\d{2}-\d{2}-\d{4}$/)) {
+    return dateValue;
+  }
+  
+  // Otherwise try to format it
+  try {
+    return formatDateForDisplay(dateValue);
+  } catch (error) {
+    // If formatting fails, return the original value or N/A
+    return dateValue || 'N/A';
+  }
+};
 
 const ProductionEntry = () => {
   const [step, setStep] = useState(1);
@@ -385,22 +403,22 @@ const ProductionEntry = () => {
     updateTotalCosts();
   }, [packingCostTotal, productionData.oil_allocations]);
 
-  // FIXED: Calculate age of batch in days - now handles DD-MM-YYYY properly
+  // Calculate age of batch in days - handles DD-MM-YYYY properly
   const calculateBatchAge = (productionDate) => {
     if (!productionDate) return 0;
     
-    // Use the new function that handles DD-MM-YYYY properly
+    // Use the function that handles DD-MM-YYYY properly
     const age = calculateDaysFromDate(productionDate);
     return age || 0;
   };
 
-  // Strategy-based allocation function - FIXED: Date parsing for FIFO
+  // Strategy-based allocation function - Date parsing for FIFO
   const allocateOilByStrategy = (strategy, oilRequired, sources) => {
     let sortedSources = [...sources];
     
     switch(strategy) {
       case 'fifo':
-        // FIXED: Sort by production date using proper DD-MM-YYYY parsing
+        // Sort by production date using proper DD-MM-YYYY parsing
         sortedSources.sort((a, b) => {
           const dateA = parseDDMMYYYYToDate(a.production_date) || new Date('9999-12-31');
           const dateB = parseDDMMYYYYToDate(b.production_date) || new Date('9999-12-31');
@@ -438,8 +456,8 @@ const ProductionEntry = () => {
           source_code: source.code,
           quantity: qty,
           traceable_code: source.traceable_code,
-          oil_cost_per_kg: source.cost_per_kg,  // FIXED: Added oil_cost_per_kg
-          allocation_cost: qty * source.cost_per_kg  // FIXED: Added allocation_cost
+          oil_cost_per_kg: source.cost_per_kg,
+          allocation_cost: qty * source.cost_per_kg
         });
         remaining -= qty;
       }
@@ -496,7 +514,7 @@ const ProductionEntry = () => {
     return totalQuantity > 0 ? (totalCost / totalQuantity) : 0;
   };
 
-  // FIXED: Get oldest batch used - now properly parses DD-MM-YYYY dates
+  // Get oldest batch used - properly parses DD-MM-YYYY dates
   const getOldestBatch = () => {
     let oldestDate = null;
     let oldestCode = '';
@@ -505,12 +523,12 @@ const ProductionEntry = () => {
     productionData.oil_allocations.forEach(allocation => {
       const source = oilSources.find(s => s.id === allocation.source_id);
       if (source && source.production_date) {
-        // FIXED: Parse DD-MM-YYYY properly
+        // Parse DD-MM-YYYY properly
         const date = parseDDMMYYYYToDate(source.production_date);
         if (date && (!oldestDate || date < oldestDate)) {
           oldestDate = date;
           oldestCode = source.code;
-          // FIXED: Calculate age using the proper function
+          // Calculate age using the proper function
           oldestAge = calculateDaysFromDate(source.production_date);
         }
       }
@@ -605,7 +623,7 @@ const ProductionEntry = () => {
     }
   };
 
-  // Handle Apply Manual Allocations - FIXED: Added oil_cost_per_kg
+  // Handle Apply Manual Allocations
   const handleApplyManualAllocations = () => {
     const allocations = [];
     
@@ -620,8 +638,8 @@ const ProductionEntry = () => {
             source_code: source.code,
             quantity: quantity,
             traceable_code: source.traceable_code,
-            oil_cost_per_kg: source.cost_per_kg,  // FIXED: Added oil_cost_per_kg
-            allocation_cost: quantity * source.cost_per_kg  // FIXED: Added allocation_cost
+            oil_cost_per_kg: source.cost_per_kg,
+            allocation_cost: quantity * source.cost_per_kg
           });
         }
       }
@@ -656,7 +674,7 @@ const ProductionEntry = () => {
     setStep(3);
   };
 
-  // Handle Save Production - FIXED: Added oil_cost_per_kg to payload
+  // Handle Save Production
   const handleSaveProduction = async () => {
     if (!productionData.bottles_produced || !productionData.operator_name) {
       setMessage({ type: 'error', text: 'Please fill all required fields' });
@@ -675,7 +693,7 @@ const ProductionEntry = () => {
         bottles_planned: parseInt(productionData.bottles_planned),
         bottles_produced: parseInt(productionData.bottles_produced),
         oil_allocations: productionData.oil_allocations.map(alloc => {
-          // FIXED: Find the source to get oil_cost_per_kg
+          // Find the source to get oil_cost_per_kg
           const source = oilSources.find(s => s.id === alloc.source_id);
           const oilCostPerKg = alloc.oil_cost_per_kg || (source ? source.cost_per_kg : 0);
           
@@ -684,8 +702,8 @@ const ProductionEntry = () => {
             source_type: alloc.source_type,
             quantity_allocated: alloc.quantity,
             source_traceable_code: alloc.traceable_code,
-            oil_cost_per_kg: oilCostPerKg,  // FIXED: Added oil_cost_per_kg
-            allocation_cost: alloc.allocation_cost || (alloc.quantity * oilCostPerKg)  // FIXED: Added allocation_cost
+            oil_cost_per_kg: oilCostPerKg,
+            allocation_cost: alloc.allocation_cost || (alloc.quantity * oilCostPerKg)
           };
         }),
         material_consumptions: bomDetails.map(item => ({
@@ -954,7 +972,7 @@ const ProductionEntry = () => {
                         />
                       </td>
                       <td>{source.code}</td>
-                      <td>{source.production_date ? formatDateForDisplay(source.production_date) : 'N/A'}</td>
+                      <td>{displayProductionDate(source.production_date)}</td>
                       <td>{source.available.toFixed(2)}</td>
                       <td>₹{source.cost_per_kg.toFixed(2)}</td>
                       <td>{calculateBatchAge(source.production_date)}</td>
