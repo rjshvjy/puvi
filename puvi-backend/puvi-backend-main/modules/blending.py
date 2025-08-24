@@ -112,15 +112,9 @@ def get_batches_for_oil_type():
                 'extraction' as source_type
             FROM batch b
             LEFT JOIN inventory i ON i.source_reference_id = b.batch_id 
-                AND i.source_type = 'extraction'
-                AND i.oil_type = b.oil_type
+    AND i.source_type = 'extraction'
             WHERE b.oil_type = %s
-                AND (i.closing_stock > 0 OR b.oil_yield > COALESCE(
-                    (SELECT SUM(quantity_used) 
-                     FROM blend_batch_components 
-                     WHERE source_batch_id = b.batch_id 
-                     AND source_type = 'extraction'), 0
-                ))
+    AND b.oil_yield > 0
             ORDER BY b.production_date DESC
         """, (oil_type,))
         
