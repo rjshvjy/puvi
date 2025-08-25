@@ -306,7 +306,8 @@ def get_unified_writeoff_inventory():
                             si.quantity_available,
                             si.expiry_date,
                             si.batch_code,
-                            si.mrp
+                            si.mrp,
+                            si.production_id
                         FROM sku_inventory si
                         JOIN sku_master sm ON si.sku_id = sm.sku_id
                         WHERE sm.oil_type = %s 
@@ -317,6 +318,18 @@ def get_unified_writeoff_inventory():
                     """, (oil_type, package_size))
                     
                     for row in cur.fetchall():
+                        # Get production cost if available
+                        production_cost = 0
+                        if row[8]:  # production_id
+                            cur.execute("""
+                                SELECT cost_per_bottle 
+                                FROM sku_production 
+                                WHERE production_id = %s
+                            """, (row[8],))
+                            cost_row = cur.fetchone()
+                            if cost_row:
+                                production_cost = float(cost_row[0])
+                        
                         result['inventory_items'].append({
                             'inventory_id': row[0],
                             'sku_id': row[1],
@@ -326,6 +339,7 @@ def get_unified_writeoff_inventory():
                             'expiry_date': integer_to_date(row[5]) if row[5] else None,
                             'batch_code': row[6],
                             'mrp': float(row[7]) if row[7] else 0,
+                            'production_cost': production_cost,
                             'type': 'sku',
                             'unit': 'bottles'
                         })
@@ -470,10 +484,9 @@ def get_sku_for_writeoff():
                 sm.package_size,
                 si.quantity_available,
                 si.batch_code,
-                si.production_date,
+                si.production_id,
                 si.expiry_date,
-                si.mrp,
-                si.production_cost_per_unit
+                si.mrp
             FROM sku_inventory si
             JOIN sku_master sm ON si.sku_id = sm.sku_id
             WHERE si.quantity_available > 0
@@ -489,12 +502,29 @@ def get_sku_for_writeoff():
             query += " AND sm.package_size = %s"
             params.append(package_size)
             
-        query += " ORDER BY si.expiry_date, si.production_date"
+        query += " ORDER BY si.expiry_date, si.production_id"
         
         cur.execute(query, params)
         
         inventory_items = []
         for row in cur.fetchall():
+            # Get production cost from sku_production
+            production_cost = 0
+            if row[8]:  # production_id
+                cur.execute("""
+                    SELECT cost_per_bottle, production_date
+                    FROM sku_production
+                    WHERE production_id = %s
+                """, (row[8],))
+                prod_row = cur.fetchone()
+                if prod_row:
+                    production_cost = float(prod_row[0])
+                    production_date = integer_to_date(prod_row[1]) if prod_row[1] else None
+                else:
+                    production_date = None
+            else:
+                production_date = None
+            
             inventory_items.append({
                 'inventory_id': row[0],
                 'sku_id': row[1],
@@ -504,10 +534,10 @@ def get_sku_for_writeoff():
                 'package_size': row[5],
                 'quantity_available': float(row[6]),
                 'batch_code': row[7],
-                'production_date': integer_to_date(row[8]) if row[8] else None,
+                'production_date': production_date,
                 'expiry_date': integer_to_date(row[9]) if row[9] else None,
                 'mrp': float(row[10]) if row[10] else 0,
-                'production_cost': float(row[11]) if row[11] else 0,
+                'production_cost': production_cost,
                 'type': 'sku',
                 'unit': 'bottles'
             })
@@ -581,7 +611,7 @@ def add_sku_writeoff():
             SELECT 
                 si.sku_id,
                 si.quantity_available,
-                si.production_cost_per_unit,
+                si.production_id,
                 si.mrp,
                 si.batch_code,
                 sm.sku_code,
@@ -602,13 +632,25 @@ def add_sku_writeoff():
         
         sku_id = sku_row[0]
         quantity_available = float(sku_row[1])
-        production_cost = float(sku_row[2]) if sku_row[2] else 0
+        production_id = sku_row[2]
         mrp = float(sku_row[3]) if sku_row[3] else 0
         batch_code = sku_row[4]
         sku_code = sku_row[5]
         product_name = sku_row[6]
         oil_type = sku_row[7]
         package_size = sku_row[8]
+        
+        # Get production cost if available
+        production_cost = 0
+        if production_id:
+            cur.execute("""
+                SELECT cost_per_bottle
+                FROM sku_production
+                WHERE production_id = %s
+            """, (production_id,))
+            cost_row = cur.fetchone()
+            if cost_row:
+                production_cost = float(cost_row[0])
         
         # Validate quantity
         if writeoff_qty <= 0:
@@ -1538,7 +1580,7 @@ def add_sludge_writeoff():
 
 
 # ============================================
-# IMPACT ANALYTICS ENDPOINTS
+# IMPACT ANALYTICS ENDPOINTS - FIXED
 # ============================================
 
 @writeoff_bp.route('/api/writeoff_impact', methods=['GET'])
@@ -1554,10 +1596,8 @@ def get_writeoff_impact():
                 total_oil_produced_kg,
                 impact_per_kg,
                 writeoff_percentage,
-                impact_level,
-                impact_color,
-                last_updated,
-                note
+                created_at,
+                notes
             FROM writeoff_impact_tracking
             ORDER BY tracking_id DESC
             LIMIT 1
@@ -1565,18 +1605,45 @@ def get_writeoff_impact():
         
         row = cur.fetchone()
         if row:
+            # Calculate impact level and color based on impact_per_kg
+            impact_per_kg = float(row[2])
+            
+            # Determine impact level based on impact_per_kg value
+            if impact_per_kg <= 2:
+                impact_level = 'low'
+                impact_color = '#00FF00'  # Green
+            elif impact_per_kg <= 5:
+                impact_level = 'moderate'
+                impact_color = '#FFFF00'  # Yellow
+            elif impact_per_kg <= 10:
+                impact_level = 'high'
+                impact_color = '#FFA500'  # Orange
+            else:
+                impact_level = 'critical'
+                impact_color = '#FF0000'  # Red
+            
             impact_data = {
                 'total_writeoffs_value': float(row[0]),
                 'total_oil_produced_kg': float(row[1]),
-                'impact_per_kg': float(row[2]),
+                'impact_per_kg': impact_per_kg,
                 'writeoff_percentage': float(row[3]),
-                'impact_level': row[4],
-                'impact_color': row[5],
-                'last_updated': row[6].isoformat() if row[6] else None,
-                'note': row[7]
+                'impact_level': impact_level,
+                'impact_color': impact_color,
+                'last_updated': row[4].isoformat() if row[4] else None,
+                'note': row[5] or 'Impact calculated as total writeoffs divided by total oil production'
             }
         else:
-            impact_data = None
+            # No data yet - return defaults
+            impact_data = {
+                'total_writeoffs_value': 0,
+                'total_oil_produced_kg': 0,
+                'impact_per_kg': 0,
+                'writeoff_percentage': 0,
+                'impact_level': 'low',
+                'impact_color': '#00FF00',
+                'last_updated': None,
+                'note': 'No writeoff data available yet'
+            }
         
         return jsonify({
             'success': True,
@@ -1662,9 +1729,11 @@ def get_writeoff_dashboard():
         
         dashboard['top_reasons'] = top_reasons
         
-        # Get alerts based on impact level
+        # Get alerts based on impact metrics
         cur.execute("""
-            SELECT impact_level, impact_per_kg, writeoff_percentage
+            SELECT 
+                impact_per_kg, 
+                writeoff_percentage
             FROM writeoff_impact_tracking
             ORDER BY tracking_id DESC
             LIMIT 1
@@ -1673,9 +1742,16 @@ def get_writeoff_dashboard():
         alerts = []
         impact_row = cur.fetchone()
         if impact_row:
-            impact_level = impact_row[0]
-            impact_per_kg = float(impact_row[1])
-            writeoff_percentage = float(impact_row[2])
+            impact_per_kg = float(impact_row[0])
+            writeoff_percentage = float(impact_row[1])
+            
+            # Calculate impact level
+            if impact_per_kg > 10:
+                impact_level = 'critical'
+            elif impact_per_kg > 5:
+                impact_level = 'high'
+            else:
+                impact_level = None
             
             if impact_level == 'critical':
                 alerts.append({
@@ -1711,11 +1787,11 @@ def get_writeoff_trends():
         cur.execute("""
             SELECT 
                 month_year,
-                total_count,
-                total_value,
-                material_writeoffs,
-                byproduct_writeoffs,
-                top_reason
+                month_writeoff_count,
+                month_writeoffs,
+                month_material_writeoffs,
+                month_oilcake_writeoffs + month_sludge_writeoffs as byproduct_writeoffs,
+                top_writeoff_reason
             FROM writeoff_monthly_summary
             ORDER BY month_year DESC
             LIMIT 12
@@ -1732,8 +1808,8 @@ def get_writeoff_trends():
                 'month_display': f'{month}/{year}',
                 'total_count': row[1],
                 'total_value': float(row[2]),
-                'material_writeoffs': row[3],
-                'byproduct_writeoffs': row[4],
+                'material_writeoffs': float(row[3]) if row[3] else 0,
+                'byproduct_writeoffs': float(row[4]) if row[4] else 0,
                 'top_reason': row[5]
             })
         
