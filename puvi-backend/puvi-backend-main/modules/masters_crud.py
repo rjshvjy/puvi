@@ -159,7 +159,7 @@ def get_master_schema(master_type):
 
 
 # =====================================================
-# LIST RECORDS (PAGINATED)
+# LIST RECORDS (PAGINATED) - FIXED VERSION
 # =====================================================
 
 @masters_crud_bp.route('/api/masters/<master_type>', methods=['GET'])
@@ -199,9 +199,33 @@ def list_master_records(master_type):
         # Use custom list query if available
         if 'list_query' in config and not include_inactive:
             base_query = config['list_query']
-            count_query = f"""
-                SELECT COUNT(*) FROM ({config['list_query']}) as subquery
-            """
+            
+            # FIX: Check if the list_query already has an ORDER BY clause
+            # If it does, we need to wrap it as a subquery
+            if 'ORDER BY' in base_query.upper():
+                # Remove the ORDER BY clause from the base query for counting
+                # Find the last occurrence of ORDER BY (case-insensitive)
+                order_by_pos = base_query.upper().rfind('ORDER BY')
+                if order_by_pos != -1:
+                    count_base_query = base_query[:order_by_pos].strip()
+                else:
+                    count_base_query = base_query
+                
+                # Create count query without ORDER BY
+                count_query = f"""
+                    SELECT COUNT(*) FROM ({count_base_query}) as subquery
+                """
+                
+                # For the main query, wrap it as a subquery to apply new sorting
+                base_query_wrapped = f"""
+                    SELECT * FROM ({base_query}) as subquery
+                """
+                base_query = base_query_wrapped
+            else:
+                # No ORDER BY in the custom query, proceed as before
+                count_query = f"""
+                    SELECT COUNT(*) FROM ({config['list_query']}) as subquery
+                """
         else:
             # Build default query
             base_query = f"SELECT * FROM {table}"
@@ -246,6 +270,8 @@ def list_master_records(master_type):
         total_pages = (total_count + per_page - 1) // per_page
         
         # Add sorting and pagination to query
+        # FIX: Only add ORDER BY if the base_query doesn't already end with one
+        # (it won't if we wrapped it as a subquery above)
         paginated_query = f"{base_query} ORDER BY {sort_by} {sort_order} LIMIT %s OFFSET %s"
         
         # Execute paginated query
