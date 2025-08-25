@@ -1,6 +1,6 @@
 /**
- * MaterialWriteoff Component v3.0.0
- * Enhanced with Oil Cake, Sludge, and Impact Analytics tabs
+ * MaterialWriteoff Component v4.0.0
+ * Simplified 3-tab version with unified dropdown
  * File Path: puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js
  */
 
@@ -10,28 +10,21 @@ import './MaterialWriteoff.css';
 
 const MaterialWriteoff = () => {
   // ============================================
-  // STATE MANAGEMENT
+  // STATE MANAGEMENT - SIMPLIFIED
   // ============================================
   
-  // Tab navigation
-  const [activeTab, setActiveTab] = useState('materials'); // materials|oilcake|sludge|impact|history
+  // Tab navigation - Only 3 tabs now
+  const [activeTab, setActiveTab] = useState('writeoff'); // writeoff | impact | history
   
-  // Separate inventory states for each type
-  const [materialsInventory, setMaterialsInventory] = useState([]);
-  const [oilCakeInventory, setOilCakeInventory] = useState([]);
-  const [sludgeInventory, setSludgeInventory] = useState([]);
-  
-  // Filtered lists
-  const [filteredMaterials, setFilteredMaterials] = useState([]);
-  const [filteredOilCake, setFilteredOilCake] = useState([]);
-  const [filteredSludge, setFilteredSludge] = useState([]);
-  
-  // Filter states
-  const [categories, setCategories] = useState([]);
-  const [oilTypes, setOilTypes] = useState([]);
+  // Unified inventory management
+  const [inventory, setInventory] = useState([]);
+  const [categories, setCategories] = useState({ 
+    materials: [], 
+    finished_products: [], 
+    byproducts: [] 
+  });
   const [selectedCategory, setSelectedCategory] = useState('');
-  const [selectedOilType, setSelectedOilType] = useState('');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [inventoryType, setInventoryType] = useState(''); // material | sku | oilcake | sludge
   
   // Common states
   const [writeoffReasons, setWriteoffReasons] = useState([]);
@@ -71,118 +64,76 @@ const MaterialWriteoff = () => {
   useEffect(() => {
     resetSelection();
     
-    if (activeTab === 'materials') {
-      fetchMaterialsInventory();
-    } else if (activeTab === 'oilcake') {
-      fetchOilCakeInventory();
-    } else if (activeTab === 'sludge') {
-      fetchSludgeInventory();
+    if (activeTab === 'writeoff') {
+      fetchUnifiedCategories();
     } else if (activeTab === 'impact') {
       fetchImpactData();
     }
   }, [activeTab]);
 
-  // Handle filters for materials
-  useEffect(() => {
-    if (activeTab === 'materials') {
-      if (selectedCategory) {
-        fetchMaterialsInventory(selectedCategory);
-      } else {
-        fetchMaterialsInventory();
-      }
-      setSearchTerm('');
-    }
-  }, [selectedCategory]);
-
-  // Handle filters for oil cake and sludge
-  useEffect(() => {
-    if (activeTab === 'oilcake' && selectedOilType) {
-      const filtered = oilCakeInventory.filter(item => item.oil_type === selectedOilType);
-      setFilteredOilCake(filtered);
-    } else {
-      setFilteredOilCake(oilCakeInventory);
-    }
-    
-    if (activeTab === 'sludge' && selectedOilType) {
-      const filtered = sludgeInventory.filter(item => item.oil_type === selectedOilType);
-      setFilteredSludge(filtered);
-    } else {
-      setFilteredSludge(sludgeInventory);
-    }
-  }, [selectedOilType, oilCakeInventory, sludgeInventory]);
-
-  // Handle search for materials
-  useEffect(() => {
-    if (activeTab === 'materials' && searchTerm) {
-      const filtered = materialsInventory.filter(item =>
-        item.material_name.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setFilteredMaterials(filtered);
-    } else {
-      setFilteredMaterials(materialsInventory);
-    }
-  }, [searchTerm, materialsInventory]);
-
   // ============================================
-  // API CALLS - MATERIALS
+  // API CALLS - UNIFIED
   // ============================================
   
-  const fetchMaterialsInventory = async (category = null) => {
+  const fetchUnifiedCategories = async () => {
     try {
-      const response = await api.writeoff.getMaterials(category);
+      const response = await api.writeoff.getUnifiedInventory();
       if (response.success) {
-        const items = response.inventory_items || response.materials || [];
-        setMaterialsInventory(items);
-        setFilteredMaterials(items);
-        
-        if (!categories.length) {
-          const uniqueCategories = [...new Set(items.map(item => item.category))];
-          const categoryData = uniqueCategories.map(cat => ({
-            category: cat,
-            material_count: items.filter(item => item.category === cat).length
-          }));
-          setCategories(categoryData);
+        setCategories(response.categories || {
+          materials: [],
+          finished_products: [],
+          byproducts: []
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching unified categories:', error);
+      setMessage('Error loading categories');
+    }
+  };
+
+  const handleCategoryChange = async (value) => {
+    setSelectedCategory(value);
+    setSelectedItem(null);
+    setInventory([]);
+    
+    if (!value) {
+      setInventoryType('');
+      return;
+    }
+
+    setLoading(true);
+    setMessage('');
+
+    try {
+      // Determine type from category prefix
+      let response;
+      
+      if (value.startsWith('sku_')) {
+        setInventoryType('sku');
+        // Unified inventory endpoint handles SKU filtering
+        response = await api.writeoff.getUnifiedInventory(value);
+      } else if (value.startsWith('oilcake_')) {
+        setInventoryType('oilcake');
+        response = await api.writeoff.getUnifiedInventory(value);
+      } else if (value.startsWith('sludge_')) {
+        setInventoryType('sludge');
+        response = await api.writeoff.getUnifiedInventory(value);
+      } else {
+        setInventoryType('material');
+        response = await api.writeoff.getUnifiedInventory(value);
+      }
+
+      if (response.success) {
+        setInventory(response.inventory_items || []);
+        if (response.inventory_items?.length === 0) {
+          setMessage('No items available for writeoff in this category');
         }
       }
     } catch (error) {
-      console.error('Error fetching materials:', error);
-      setMessage('Error loading material inventory');
-    }
-  };
-
-  // ============================================
-  // API CALLS - OIL CAKE
-  // ============================================
-  
-  const fetchOilCakeInventory = async () => {
-    try {
-      const response = await api.writeoff.getOilCakeForWriteoff();
-      if (response.success) {
-        setOilCakeInventory(response.inventory_items || []);
-        setFilteredOilCake(response.inventory_items || []);
-        setOilTypes(response.oil_types || []);
-      }
-    } catch (error) {
-      console.error('Error fetching oil cake inventory:', error);
-      setMessage('Error loading oil cake inventory');
-    }
-  };
-
-  // ============================================
-  // API CALLS - SLUDGE
-  // ============================================
-  
-  const fetchSludgeInventory = async () => {
-    try {
-      const response = await api.writeoff.getSludgeForWriteoff();
-      if (response.success) {
-        setSludgeInventory(response.inventory_items || []);
-        setFilteredSludge(response.inventory_items || []);
-        setOilTypes(response.oil_types || []);
-      }
-    } catch (error) {
-      console.error('Error fetching sludge inventory:', error);
-      setMessage('Error loading sludge inventory');
+      console.error('Error fetching inventory:', error);
+      setMessage('Error loading inventory items');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -267,24 +218,7 @@ const MaterialWriteoff = () => {
 
   const handleItemSelect = (item) => {
     setSelectedItem(item);
-    
-    // Set appropriate ID based on type
-    if (activeTab === 'materials') {
-      setWriteoffData(prev => ({
-        ...prev,
-        material_id: item.material_id
-      }));
-    } else if (activeTab === 'oilcake') {
-      setWriteoffData(prev => ({
-        ...prev,
-        cake_inventory_id: item.inventory_id
-      }));
-    } else if (activeTab === 'sludge') {
-      setWriteoffData(prev => ({
-        ...prev,
-        batch_id: item.batch_id
-      }));
-    }
+    setMessage('');
   };
 
   const handleInputChange = (e) => {
@@ -309,7 +243,12 @@ const MaterialWriteoff = () => {
     if (!selectedItem || !writeoffData.quantity) return { total: 0, scrap: 0, net: 0 };
     
     const qty = parseFloat(writeoffData.quantity) || 0;
-    const avgCost = parseFloat(selectedItem.weighted_avg_cost || selectedItem.estimated_rate) || 0;
+    const avgCost = parseFloat(
+      selectedItem.weighted_avg_cost || 
+      selectedItem.estimated_rate || 
+      selectedItem.production_cost || 
+      0
+    ) || 0;
     const scrapValue = parseFloat(writeoffData.scrap_value) || 0;
     
     const totalCost = qty * avgCost;
@@ -323,7 +262,7 @@ const MaterialWriteoff = () => {
   };
 
   // ============================================
-  // SUBMIT HANDLERS
+  // SUBMIT HANDLER - UNIFIED
   // ============================================
   
   const handleSubmit = async (e) => {
@@ -335,10 +274,13 @@ const MaterialWriteoff = () => {
     }
 
     const qty = parseFloat(writeoffData.quantity);
-    const availableQty = selectedItem.available_quantity || selectedItem.quantity_remaining;
+    const availableQty = selectedItem.available_quantity || 
+                        selectedItem.quantity_available || 
+                        selectedItem.quantity_remaining;
     
     if (qty > availableQty) {
-      setMessage(`Cannot write off more than available quantity (${availableQty} ${selectedItem.unit || 'kg'})`);
+      const unit = selectedItem.unit || 'kg';
+      setMessage(`Cannot write off more than available quantity (${availableQty} ${unit})`);
       return;
     }
 
@@ -348,39 +290,44 @@ const MaterialWriteoff = () => {
     try {
       let response;
       
-      if (activeTab === 'materials') {
-        response = await api.writeoff.recordWriteoff({
+      // Call appropriate API based on inventory type
+      if (inventoryType === 'sku') {
+        response = await api.writeoff.addSKUWriteoff({
           ...writeoffData,
-          material_id: selectedItem.material_id
+          sku_inventory_id: selectedItem.inventory_id
         });
-      } else if (activeTab === 'oilcake') {
+      } else if (inventoryType === 'oilcake') {
         response = await api.writeoff.addOilCakeWriteoff({
           ...writeoffData,
           cake_inventory_id: selectedItem.inventory_id
         });
-      } else if (activeTab === 'sludge') {
+      } else if (inventoryType === 'sludge') {
         response = await api.writeoff.addSludgeWriteoff({
           ...writeoffData,
           batch_id: selectedItem.batch_id
         });
+      } else {
+        response = await api.writeoff.recordWriteoff({
+          ...writeoffData,
+          material_id: selectedItem.material_id
+        });
       }
 
       if (response.success) {
-        const itemName = selectedItem.material_name || `${selectedItem.oil_type} ${activeTab === 'oilcake' ? 'Oil Cake' : 'Sludge'}`;
+        const itemName = selectedItem.material_name || 
+                        selectedItem.product_name ||
+                        `${selectedItem.oil_type} ${inventoryType === 'oilcake' ? 'Oil Cake' : 'Sludge'}`;
+        
         setMessage(`✅ Writeoff recorded successfully! 
-          Written off: ${response.quantity_written_off} ${selectedItem.unit || 'kg'} of ${itemName}
+          Written off: ${response.quantity_written_off} ${response.unit || selectedItem.unit || 'kg'} of ${itemName}
           Net Loss: ₹${response.net_loss.toFixed(2)}
-          New Balance: ${response.new_balance || response.new_stock_balance} ${selectedItem.unit || 'kg'}`);
+          New Balance: ${response.new_balance || response.new_stock_balance} ${response.unit || selectedItem.unit || 'kg'}`);
         
         resetSelection();
         
-        // Refresh appropriate inventory
-        if (activeTab === 'materials') {
-          fetchMaterialsInventory();
-        } else if (activeTab === 'oilcake') {
-          fetchOilCakeInventory();
-        } else if (activeTab === 'sludge') {
-          fetchSludgeInventory();
+        // Refresh the current category inventory
+        if (selectedCategory) {
+          handleCategoryChange(selectedCategory);
         }
         
         fetchWriteoffHistory();
@@ -410,255 +357,260 @@ const MaterialWriteoff = () => {
   // RENDER FUNCTIONS
   // ============================================
   
-  const renderInventoryList = () => {
-    let items = [];
-    let title = '';
-    
-    if (activeTab === 'materials') {
-      items = filteredMaterials;
-      title = 'Select Material';
-    } else if (activeTab === 'oilcake') {
-      items = filteredOilCake;
-      title = 'Select Oil Cake Batch';
-    } else if (activeTab === 'sludge') {
-      items = filteredSludge;
-      title = 'Select Sludge Batch';
-    }
-    
-    return (
-      <div className="panel">
-        <h3 className="panel-title">{title}</h3>
-        
-        {/* Filter Controls */}
-        <div className="filter-controls">
-          {activeTab === 'materials' ? (
-            <>
-              <div className="form-group">
-                <label className="filter-label">Category:</label>
-                <select
-                  value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value)}
-                  className="form-select"
-                >
-                  <option value="">All Categories</option>
-                  {categories.map((cat) => (
-                    <option key={cat.category} value={cat.category}>
-                      {cat.category} ({cat.material_count} items)
-                    </option>
-                  ))}
-                </select>
-              </div>
-              
-              <div className="form-group">
-                <label className="filter-label">Search:</label>
-                <input
-                  type="text"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search by material name..."
-                  className="form-input"
-                />
-              </div>
-            </>
-          ) : (
-            <div className="form-group">
-              <label className="filter-label">Oil Type:</label>
-              <select
-                value={selectedOilType}
-                onChange={(e) => setSelectedOilType(e.target.value)}
-                className="form-select"
-              >
-                <option value="">All Oil Types</option>
-                {oilTypes.map((type) => (
-                  <option key={type} value={type}>
-                    {type}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-          
-          <div className="filter-info">
-            Showing {items.length} items
-          </div>
-        </div>
-
-        {items.length === 0 ? (
-          <p className="empty-state">No items available for writeoff</p>
-        ) : (
-          <div className="material-list">
-            {items.map((item) => (
-              <div
-                key={item.inventory_id || item.material_id}
-                onClick={() => handleItemSelect(item)}
-                className={`material-item ${selectedItem?.inventory_id === item.inventory_id || selectedItem?.material_id === item.material_id ? 'selected' : ''}`}
-              >
-                <strong>
-                  {item.material_name || `${item.batch_code} - ${item.oil_type} ${activeTab === 'oilcake' ? 'Oil Cake' : 'Sludge'}`}
-                </strong>
-                <div className="material-details">
-                  {activeTab === 'materials' ? (
-                    <>
-                      Category: {item.category}<br />
-                      Available: {item.available_quantity} {item.unit}<br />
-                      Avg Cost: ₹{item.weighted_avg_cost.toFixed(2)}/{item.unit}<br />
-                      Last Updated: {item.last_updated}
-                    </>
-                  ) : (
-                    <>
-                      Batch: {item.batch_code}<br />
-                      Available: {item.quantity_remaining.toFixed(2)} kg<br />
-                      Est. Rate: ₹{item.estimated_rate.toFixed(2)}/kg<br />
-                      Production Date: {item.production_date}<br />
-                      Age: {item.age_days} days
-                    </>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  const renderWriteoffForm = () => {
-    if (!selectedItem) {
+  const renderInventoryItem = (item) => {
+    if (inventoryType === 'sku') {
       return (
-        <div className="panel">
-          <h3 className="panel-title">Write-off Details</h3>
-          <p className="empty-state-center">
-            Select an item from the left to record write-off
-          </p>
-        </div>
+        <>
+          <strong>{item.product_name || item.sku_code}</strong>
+          <div className="material-details">
+            Batch: {item.batch_code}<br />
+            Available: {item.quantity_available} bottles<br />
+            MRP: ₹{item.mrp?.toFixed(2) || 'N/A'}<br />
+            Expiry: {item.expiry_date || 'N/A'}
+          </div>
+        </>
+      );
+    } else if (inventoryType === 'oilcake' || inventoryType === 'sludge') {
+      return (
+        <>
+          <strong>{item.batch_code} - {item.oil_type}</strong>
+          <div className="material-details">
+            Available: {item.quantity_remaining?.toFixed(2) || 0} kg<br />
+            Rate: ₹{item.estimated_rate?.toFixed(2) || 0}/kg<br />
+            Production: {item.production_date}<br />
+            Traceable: {item.traceable_code}
+          </div>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <strong>{item.material_name}</strong>
+          <div className="material-details">
+            Available: {item.available_quantity} {item.unit}<br />
+            Avg Cost: ₹{item.weighted_avg_cost?.toFixed(2) || 0}/{item.unit}
+          </div>
+        </>
       );
     }
-    
-    const maxQty = selectedItem.available_quantity || selectedItem.quantity_remaining;
-    const unit = selectedItem.unit || 'kg';
-    const cost = selectedItem.weighted_avg_cost || selectedItem.estimated_rate;
-    
+  };
+
+  const renderWriteoffTab = () => {
     return (
-      <div className="panel">
-        <h3 className="panel-title">Write-off Details</h3>
-        <form onSubmit={handleSubmit}>
-          <div className="selected-material-info">
-            <strong>Selected Item:</strong><br />
-            {selectedItem.material_name || `${selectedItem.batch_code} - ${selectedItem.oil_type}`}<br />
-            Available: {maxQty} {unit}<br />
-            Cost: ₹{cost.toFixed(2)}/{unit}
-          </div>
-
+      <div className="writeoff-grid">
+        {/* Left Panel - Selection */}
+        <div className="panel">
+          <h3 className="panel-title">Select Item for Write-off</h3>
+          
+          {/* Enhanced Category Dropdown */}
           <div className="form-group">
-            <label className="form-label">
-              Write-off Quantity ({unit}): *
-            </label>
-            <input
-              type="number"
-              name="quantity"
-              value={writeoffData.quantity}
-              onChange={handleInputChange}
-              step="0.01"
-              min="0"
-              max={maxQty}
-              required
-              className="form-input"
-            />
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Write-off Reason: *</label>
+            <label className="form-label">Category:</label>
             <select
-              name="reason_code"
-              value={writeoffData.reason_code}
-              onChange={handleInputChange}
-              required
+              value={selectedCategory}
+              onChange={(e) => handleCategoryChange(e.target.value)}
               className="form-select"
+              disabled={loading}
             >
-              <option value="">Select Reason</option>
-              {Object.entries(reasonsByCategory).map(([category, reasons]) => (
-                <optgroup key={category} label={category}>
-                  {Array.isArray(reasons) && reasons.map(reason => (
-                    <option key={reason.reason_code} value={reason.reason_code}>
-                      {reason.reason_description}
+              <option value="">-- Select Category --</option>
+              
+              {categories.materials?.length > 0 && (
+                <optgroup label="═══ MATERIALS ═══">
+                  {categories.materials.map(cat => (
+                    <option key={cat.category} value={cat.category}>
+                      {cat.display_name} ({cat.count} {cat.unit})
                     </option>
                   ))}
                 </optgroup>
-              ))}
+              )}
+              
+              {categories.finished_products?.length > 0 && (
+                <optgroup label="═══ FINISHED PRODUCTS ═══">
+                  {categories.finished_products.map(cat => (
+                    <option key={cat.category} value={cat.category}>
+                      {cat.display_name} ({cat.count.toFixed(0)} {cat.unit})
+                    </option>
+                  ))}
+                </optgroup>
+              )}
+              
+              {categories.byproducts?.length > 0 && (
+                <optgroup label="═══ BY-PRODUCTS ═══">
+                  {categories.byproducts.map(cat => (
+                    <option key={cat.category} value={cat.category}>
+                      {cat.display_name} ({cat.count.toFixed(0)} {cat.unit})
+                    </option>
+                  ))}
+                </optgroup>
+              )}
             </select>
           </div>
 
-          <div className="form-group">
-            <label className="form-label">Scrap Recovery Value (₹):</label>
-            <input
-              type="number"
-              name="scrap_value"
-              value={writeoffData.scrap_value}
-              onChange={handleInputChange}
-              step="0.01"
-              min="0"
-              className="form-input"
-            />
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Write-off Date: *</label>
-            <input
-              type="date"
-              name="writeoff_date"
-              value={writeoffData.writeoff_date}
-              onChange={handleInputChange}
-              required
-              className="form-input"
-            />
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Authorized By:</label>
-            <input
-              type="text"
-              name="created_by"
-              value={writeoffData.created_by}
-              onChange={handleInputChange}
-              placeholder="Name of person authorizing"
-              className="form-input"
-            />
-          </div>
-
-          <div className="form-group">
-            <label className="form-label">Notes:</label>
-            <textarea
-              name="notes"
-              value={writeoffData.notes}
-              onChange={handleInputChange}
-              rows="3"
-              className="form-textarea"
-            />
-          </div>
-
-          {writeoffData.quantity && (
-            <div className="value-summary">
-              <div className="value-grid">
-                <span>Material Value:</span>
-                <span className="value-amount">₹{values.total}</span>
-                
-                <span>Less: Scrap Recovery:</span>
-                <span className="value-amount">₹{values.scrap}</span>
-                
-                <span className="value-total">Net Loss:</span>
-                <span className="value-amount value-total">₹{values.net}</span>
-              </div>
+          {/* Single inventory list for all types */}
+          {loading ? (
+            <div className="empty-state-center">Loading inventory...</div>
+          ) : inventory.length === 0 ? (
+            <div className="empty-state-center">
+              {selectedCategory ? 'No items available for writeoff' : 'Select a category to view items'}
+            </div>
+          ) : (
+            <div className="material-list">
+              {inventory.map(item => (
+                <div
+                  key={item.inventory_id || item.material_id}
+                  onClick={() => handleItemSelect(item)}
+                  className={`material-item ${selectedItem === item ? 'selected' : ''}`}
+                >
+                  {renderInventoryItem(item)}
+                </div>
+              ))}
             </div>
           )}
+        </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className={`submit-button ${loading ? 'disabled' : ''}`}
-          >
-            {loading ? 'Recording...' : 'Record Write-off'}
-          </button>
-        </form>
+        {/* Right Panel - Single Form */}
+        <div className="panel">
+          <h3 className="panel-title">Write-off Details</h3>
+          
+          {!selectedItem ? (
+            <p className="empty-state-center">
+              Select an item from the left to record write-off
+            </p>
+          ) : (
+            <form onSubmit={handleSubmit}>
+              <div className="selected-material-info">
+                <strong>Selected Item:</strong><br />
+                {selectedItem.material_name || 
+                 selectedItem.product_name ||
+                 `${selectedItem.batch_code} - ${selectedItem.oil_type}`}<br />
+                Available: {
+                  selectedItem.available_quantity || 
+                  selectedItem.quantity_available || 
+                  selectedItem.quantity_remaining
+                } {selectedItem.unit || 'kg'}<br />
+                Cost: ₹{(
+                  selectedItem.weighted_avg_cost || 
+                  selectedItem.estimated_rate || 
+                  selectedItem.production_cost || 
+                  0
+                ).toFixed(2)}/{selectedItem.unit || 'kg'}
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">
+                  Write-off Quantity ({selectedItem.unit || 'kg'}): *
+                </label>
+                <input
+                  type="number"
+                  name="quantity"
+                  value={writeoffData.quantity}
+                  onChange={handleInputChange}
+                  step="0.01"
+                  min="0"
+                  max={
+                    selectedItem.available_quantity || 
+                    selectedItem.quantity_available || 
+                    selectedItem.quantity_remaining
+                  }
+                  required
+                  className="form-input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Write-off Reason: *</label>
+                <select
+                  name="reason_code"
+                  value={writeoffData.reason_code}
+                  onChange={handleInputChange}
+                  required
+                  className="form-select"
+                >
+                  <option value="">Select Reason</option>
+                  {Object.entries(reasonsByCategory).map(([category, reasons]) => (
+                    <optgroup key={category} label={category}>
+                      {Array.isArray(reasons) && reasons.map(reason => (
+                        <option key={reason.reason_code} value={reason.reason_code}>
+                          {reason.reason_description}
+                        </option>
+                      ))}
+                    </optgroup>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Scrap Recovery Value (₹):</label>
+                <input
+                  type="number"
+                  name="scrap_value"
+                  value={writeoffData.scrap_value}
+                  onChange={handleInputChange}
+                  step="0.01"
+                  min="0"
+                  className="form-input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Write-off Date: *</label>
+                <input
+                  type="date"
+                  name="writeoff_date"
+                  value={writeoffData.writeoff_date}
+                  onChange={handleInputChange}
+                  required
+                  className="form-input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Authorized By:</label>
+                <input
+                  type="text"
+                  name="created_by"
+                  value={writeoffData.created_by}
+                  onChange={handleInputChange}
+                  placeholder="Name of person authorizing"
+                  className="form-input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Notes:</label>
+                <textarea
+                  name="notes"
+                  value={writeoffData.notes}
+                  onChange={handleInputChange}
+                  rows="3"
+                  className="form-textarea"
+                />
+              </div>
+
+              {writeoffData.quantity && (
+                <div className="value-summary">
+                  <div className="value-grid">
+                    <span>Material Value:</span>
+                    <span className="value-amount">₹{values.total}</span>
+                    
+                    <span>Less: Scrap Recovery:</span>
+                    <span className="value-amount">₹{values.scrap}</span>
+                    
+                    <span className="value-total">Net Loss:</span>
+                    <span className="value-amount value-total">₹{values.net}</span>
+                  </div>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={loading}
+                className={`submit-button ${loading ? 'disabled' : ''}`}
+              >
+                {loading ? 'Recording...' : 'Record Write-off'}
+              </button>
+            </form>
+          )}
+        </div>
       </div>
     );
   };
@@ -857,6 +809,7 @@ const MaterialWriteoff = () => {
                     <td>
                       {writeoff.reference_type === 'oil_cake' ? 'Oil Cake' :
                        writeoff.reference_type === 'sludge' ? 'Sludge' :
+                       writeoff.reference_type === 'sku' ? 'SKU' :
                        'Material'}
                     </td>
                     <td>{writeoff.material_name || writeoff.batch_code}</td>
@@ -897,25 +850,13 @@ const MaterialWriteoff = () => {
     <div className="writeoff-container">
       <h2 className="writeoff-title">Material Write-off Module</h2>
 
-      {/* Tab Navigation */}
+      {/* Tab Navigation - Only 3 tabs now */}
       <div className="tab-navigation">
         <button 
-          onClick={() => setActiveTab('materials')}
-          className={`tab-button ${activeTab === 'materials' ? 'active' : ''}`}
+          onClick={() => setActiveTab('writeoff')}
+          className={`tab-button ${activeTab === 'writeoff' ? 'active' : ''}`}
         >
-          Materials
-        </button>
-        <button 
-          onClick={() => setActiveTab('oilcake')}
-          className={`tab-button ${activeTab === 'oilcake' ? 'active' : ''}`}
-        >
-          Oil Cake
-        </button>
-        <button 
-          onClick={() => setActiveTab('sludge')}
-          className={`tab-button ${activeTab === 'sludge' ? 'active' : ''}`}
-        >
-          Sludge
+          Write-off
         </button>
         <button 
           onClick={() => setActiveTab('impact')}
@@ -938,15 +879,8 @@ const MaterialWriteoff = () => {
       )}
 
       {/* Tab Content */}
-      {(activeTab === 'materials' || activeTab === 'oilcake' || activeTab === 'sludge') && (
-        <div className="writeoff-grid">
-          {renderInventoryList()}
-          {renderWriteoffForm()}
-        </div>
-      )}
-
+      {activeTab === 'writeoff' && renderWriteoffTab()}
       {activeTab === 'impact' && renderImpactDashboard()}
-      
       {activeTab === 'history' && renderHistoryTab()}
     </div>
   );
