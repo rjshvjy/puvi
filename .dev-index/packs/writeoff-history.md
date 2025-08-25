@@ -1,6 +1,6 @@
 # Feature Pack: WRITEOFF-HISTORY
-Generated: 2025-08-24T16:15:26.687Z
-Routes: 1 | Tables: 4 | Files: 1
+Generated: 2025-08-25T04:25:59.412Z
+Routes: 1 | Tables: 6 | Files: 1
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -19,9 +19,11 @@ GET    /api/writeoff_history
 ## Database Dependencies
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
+| batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 9 other modules |
 | inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
 | material_writeoffs | material-writeoff, opening-balance | 🟡 MEDIUM | Changes affect 2 other modules |
 | materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
+| oil_cake_inventory | batch-production, material-sales, material-writeoff | 🔴 HIGH | Changes affect 3 other modules |
 | writeoff_reasons | material-writeoff, system-config | 🟡 MEDIUM | Changes affect 2 other modules |
 
 ## Backend Implementation

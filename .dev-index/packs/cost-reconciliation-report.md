@@ -1,5 +1,5 @@
 # Feature Pack: COST-RECONCILIATION-REPORT
-Generated: 2025-08-24T16:15:26.686Z
+Generated: 2025-08-25T04:25:59.411Z
 Routes: 1 | Tables: 5 | Files: 1
 
 ## Table of Contents
@@ -19,9 +19,9 @@ GET    /api/cost_reconciliation_report
 ## Database Dependencies
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
-| batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 8 other modules |
+| batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 9 other modules |
 | batches | material-sales | 🟡 MEDIUM | Changes affect 1 other modules |
-| oil_cake_inventory | batch-production, material-sales | 🟡 MEDIUM | Changes affect 2 other modules |
+| oil_cake_inventory | batch-production, material-sales, material-writeoff | 🔴 HIGH | Changes affect 3 other modules |
 | oil_cake_sale_allocations | material-sales | 🟡 MEDIUM | Changes affect 1 other modules |
 | oil_cake_sales | material-sales | 🟡 MEDIUM | Changes affect 1 other modules |
 

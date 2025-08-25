@@ -1,5 +1,5 @@
 # Feature Pack: OPENING-BALANCE
-Generated: 2025-08-24T16:15:26.687Z
+Generated: 2025-08-25T04:25:59.413Z
 Routes: 8 | Tables: 11 | Files: 1
 
 ## Table of Contents
@@ -33,7 +33,7 @@ POST   /api/opening_balance/import
 ## Database Dependencies
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
-| batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 7 other modules |
+| batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 8 other modules |
 | inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 7 other modules |
 | masters_audit_log | masters-common | 🟡 MEDIUM | Changes affect 1 other modules |
 | material_writeoffs | material-writeoff | 🟡 MEDIUM | Changes affect 1 other modules |

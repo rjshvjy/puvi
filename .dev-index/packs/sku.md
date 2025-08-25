@@ -1,5 +1,5 @@
 # Feature Pack: SKU
-Generated: 2025-08-24T16:15:26.689Z
+Generated: 2025-08-25T04:25:59.414Z
 Routes: 23 | Tables: 20 | Files: 10
 
 ## Table of Contents
@@ -66,7 +66,7 @@ POST   /api/sku/production/allocate-oil
 | BOM | sku-management | 🟡 MEDIUM | Changes affect 1 other modules |
 | CURRENT_DATE | sku-production | 🟡 MEDIUM | Changes affect 1 other modules |
 | DESC | sku-production | 🟡 MEDIUM | Changes affect 1 other modules |
-| batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 8 other modules |
+| batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 9 other modules |
 | blend_batches | blending, masters-crud, sku-production | 🔴 HIGH | Changes affect 3 other modules |
 | completed | sku-management | 🟡 MEDIUM | Changes affect 1 other modules |
 | cost_elements_master | cost-management, package-sizes, sku-management | 🔴 HIGH | Changes affect 5 other modules |

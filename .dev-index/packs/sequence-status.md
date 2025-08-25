@@ -1,5 +1,5 @@
 # Feature Pack: SEQUENCE-STATUS
-Generated: 2025-08-24T16:15:26.689Z
+Generated: 2025-08-25T04:25:59.415Z
 Routes: 1 | Tables: 7 | Files: 1
 
 ## Table of Contents
@@ -19,7 +19,7 @@ GET    /api/sequence_status
 ## Database Dependencies
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
-| batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 8 other modules |
+| batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 9 other modules |
 | materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
 | purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 5 other modules |
 | sku_master | masters-crud, package-sizes, sku-management | 🔴 HIGH | Changes affect 6 other modules |

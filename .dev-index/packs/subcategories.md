@@ -1,5 +1,5 @@
 # Feature Pack: SUBCATEGORIES
-Generated: 2025-08-24T16:15:26.684Z
+Generated: 2025-08-25T04:25:59.410Z
 Routes: 2 | Tables: 8 | Files: 1
 
 ## Table of Contents
@@ -21,7 +21,7 @@ GET    /api/subcategories/<int:subcategory_id>
 ## Database Dependencies
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
-| batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 8 other modules |
+| batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 9 other modules |
 | blend_batches | blending, masters-crud, sku-production | 🔴 HIGH | Changes affect 3 other modules |
 | categories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
 | information_schema | masters-common, masters-crud | 🟡 MEDIUM | Changes affect 2 other modules |

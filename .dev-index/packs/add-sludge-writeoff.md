@@ -1,6 +1,6 @@
-# Feature Pack: ADD-BATCH
-Generated: 2025-08-25T04:25:59.406Z
-Routes: 1 | Tables: 9 | Files: 1
+# Feature Pack: ADD-SLUDGE-WRITEOFF
+Generated: 2025-08-25T04:25:59.413Z
+Routes: 1 | Tables: 6 | Files: 1
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -12,28 +12,19 @@ Routes: 1 | Tables: 9 | Files: 1
 
 ## API Endpoints
 ```
-# add_batch
-POST   /api/add_batch
+# add_sludge_writeoff
+POST   /api/add_sludge_writeoff
 ```
 
 ## Database Dependencies
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
-| available_oil_types | batch-production, system-config | 🟡 MEDIUM | Changes affect 2 other modules |
 | batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 9 other modules |
-| batch_extended_costs | batch-production, cost-management | 🟡 MEDIUM | Changes affect 2 other modules |
 | inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
+| material_writeoffs | material-writeoff, opening-balance | 🟡 MEDIUM | Changes affect 2 other modules |
 | materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
 | oil_cake_inventory | batch-production, material-sales, material-writeoff | 🔴 HIGH | Changes affect 3 other modules |
-| oil_cake_rate_master | batch-production | 🟡 MEDIUM | Changes affect 1 other modules |
-| purchase_items | batch-production, purchase | 🟡 MEDIUM | Changes affect 2 other modules |
-| purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 5 other modules |
-
-### ⚠️ Hardcoded Values Detected
-- `batch_production.py:232` - object
-- `batch_production.py:233` - object
-- `batch_production.py:234` - object
-- `batch_production.py:235` - object
+| writeoff_reasons | material-writeoff, system-config | 🟡 MEDIUM | Changes affect 2 other modules |
 
 ## Backend Implementation
 

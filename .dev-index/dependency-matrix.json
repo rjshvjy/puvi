@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "generatedAt": "2025-08-24T16:15:26.622Z",
+  "generatedAt": "2025-08-25T04:25:59.347Z",
   "summary": {
     "totalTables": 55,
     "sharedTables": 27,
@@ -254,11 +254,12 @@
         "cost-management",
         "masters-crud",
         "material-sales",
+        "material-writeoff",
         "opening-balance",
         "sku-production",
         "unknown"
       ],
-      "fileCount": 9,
+      "fileCount": 10,
       "operations": {
         "batch-production": {
           "files": [
@@ -287,6 +288,12 @@
         "material-sales": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/material_sales.py"
+          ],
+          "queryCount": 0
+        },
+        "material-writeoff": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/material_writeoff.py"
           ],
           "queryCount": 0
         },
@@ -335,9 +342,10 @@
     "oil_cake_inventory": {
       "usedBy": [
         "batch-production",
-        "material-sales"
+        "material-sales",
+        "material-writeoff"
       ],
-      "fileCount": 2,
+      "fileCount": 3,
       "operations": {
         "batch-production": {
           "files": [
@@ -348,6 +356,12 @@
         "material-sales": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/material_sales.py"
+          ],
+          "queryCount": 0
+        },
+        "material-writeoff": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/material_writeoff.py"
           ],
           "queryCount": 0
         }
@@ -1284,14 +1298,15 @@
         "cost-management",
         "masters-crud",
         "material-sales",
+        "material-writeoff",
         "opening-balance",
         "sku-production",
         "unknown"
       ],
-      "moduleCount": 8,
-      "fileCount": 9,
+      "moduleCount": 9,
+      "fileCount": 10,
       "risk": "HIGH",
-      "recommendation": "⚠️ CRITICAL: Changes require coordination across 8 modules"
+      "recommendation": "⚠️ CRITICAL: Changes require coordination across 9 modules"
     },
     {
       "table": "cost_elements_master",
@@ -1334,6 +1349,18 @@
       "fileCount": 5,
       "risk": "HIGH",
       "recommendation": "⚠️ CRITICAL: Changes require coordination across 4 modules"
+    },
+    {
+      "table": "oil_cake_inventory",
+      "sharedBy": [
+        "batch-production",
+        "material-sales",
+        "material-writeoff"
+      ],
+      "moduleCount": 3,
+      "fileCount": 3,
+      "risk": "MEDIUM",
+      "recommendation": "Changes will affect batch-production, material-sales, material-writeoff"
     },
     {
       "table": "subcategories_master",
@@ -1415,17 +1442,6 @@
       "fileCount": 2,
       "risk": "LOW",
       "recommendation": "Changes will affect batch-production, cost-management"
-    },
-    {
-      "table": "oil_cake_inventory",
-      "sharedBy": [
-        "batch-production",
-        "material-sales"
-      ],
-      "moduleCount": 2,
-      "fileCount": 2,
-      "risk": "LOW",
-      "recommendation": "Changes will affect batch-production, material-sales"
     },
     {
       "table": "masters_audit_log",

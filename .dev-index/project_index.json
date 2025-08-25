@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-24T16:15:25.686Z",
+  "generatedAt": "2025-08-25T04:25:58.376Z",
   "filesScanned": 61,
   "jsFilesScanned": 38,
   "pyFilesScanned": 23,
@@ -476,7 +476,7 @@
       "method": "GET",
       "path": "/api/writeoff_reasons",
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 14,
+      "line": 20,
       "blueprint": "writeoff_bp",
       "function": "get_writeoff_reasons",
       "source": "backend"
@@ -485,7 +485,7 @@
       "method": "GET",
       "path": "/api/inventory_for_writeoff",
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 56,
+      "line": 62,
       "blueprint": "writeoff_bp",
       "function": "get_inventory_for_writeoff",
       "source": "backend"
@@ -494,7 +494,7 @@
       "method": "POST",
       "path": "/api/add_writeoff",
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 138,
+      "line": 144,
       "blueprint": "writeoff_bp",
       "function": "add_writeoff",
       "source": "backend"
@@ -503,9 +503,45 @@
       "method": "GET",
       "path": "/api/writeoff_history",
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 280,
+      "line": 293,
       "blueprint": "writeoff_bp",
       "function": "get_writeoff_history",
+      "source": "backend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/oilcake_for_writeoff",
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 439,
+      "blueprint": "writeoff_bp",
+      "function": "get_oilcake_for_writeoff",
+      "source": "backend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/add_oilcake_writeoff",
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 555,
+      "blueprint": "writeoff_bp",
+      "function": "add_oilcake_writeoff",
+      "source": "backend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sludge_for_writeoff",
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 708,
+      "blueprint": "writeoff_bp",
+      "function": "get_sludge_for_writeoff",
+      "source": "backend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/add_sludge_writeoff",
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 825,
+      "blueprint": "writeoff_bp",
+      "function": "add_sludge_writeoff",
       "source": "backend"
     },
     {
@@ -1028,9 +1064,9 @@
       "usedIn": [
         "puvi-frontend/puvi-frontend-main/src/App.js",
         "puvi-frontend/puvi-frontend-main/src/index.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
         "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/BatchProductionReport.js",
         "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-        "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
         "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
         "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostElementsManager.js",
         "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
@@ -1624,6 +1660,12 @@
       "type": "default-export"
     },
     {
+      "name": "Blending",
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 9,
+      "type": "const"
+    },
+    {
       "name": "BatchProductionReport",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/BatchProductionReport.js",
       "line": 7,
@@ -1639,12 +1681,6 @@
       "name": "StepIndicator",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
       "line": 772,
-      "type": "const"
-    },
-    {
-      "name": "Blending",
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 9,
       "type": "const"
     },
     {
@@ -4145,7 +4181,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 21,
+      "line": 27,
       "type": "SELECT",
       "tables": [
         "writeoff_reasons"
@@ -4154,7 +4190,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 88,
+      "line": 94,
       "type": "OTHER",
       "tables": [
         "writeoff_reasons"
@@ -4163,7 +4199,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 105,
+      "line": 111,
       "type": "SELECT",
       "tables": [
         "writeoff_reasons",
@@ -4174,7 +4210,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 163,
+      "line": 169,
       "type": "SELECT",
       "tables": [
         "writeoff_reasons",
@@ -4185,7 +4221,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 204,
+      "line": 210,
       "type": "OTHER",
       "tables": [
         "writeoff_reasons",
@@ -4196,7 +4232,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 207,
+      "line": 213,
       "type": "INSERT",
       "tables": [
         "writeoff_reasons",
@@ -4208,7 +4244,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 236,
+      "line": 242,
       "type": "SELECT",
       "tables": [
         "writeoff_reasons",
@@ -4220,7 +4256,31 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 327,
+      "line": 262,
+      "type": "SELECT",
+      "tables": [
+        "writeoff_reasons",
+        "inventory",
+        "materials",
+        "material_writeoffs"
+      ],
+      "preview": "cur.execute(\"SELECT update_writeoff_impact_tracking()\")"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 266,
+      "type": "SELECT",
+      "tables": [
+        "writeoff_reasons",
+        "inventory",
+        "materials",
+        "material_writeoffs"
+      ],
+      "preview": "cur.execute(\"SELECT update_writeoff_monthly_summary(%s)\", (month_year,))"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 340,
       "type": "OTHER",
       "tables": [
         "writeoff_reasons",
@@ -4232,7 +4292,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 375,
+      "line": 388,
       "type": "OTHER",
       "tables": [
         "writeoff_reasons",
@@ -4244,7 +4304,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 379,
+      "line": 392,
       "type": "SELECT",
       "tables": [
         "writeoff_reasons",
@@ -4253,6 +4313,268 @@
         "material_writeoffs"
       ],
       "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 474,
+      "type": "OTHER",
+      "tables": [
+        "writeoff_reasons",
+        "inventory",
+        "materials",
+        "material_writeoffs"
+      ],
+      "preview": "cur.execute(query, params)"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 505,
+      "type": "SELECT",
+      "tables": [
+        "writeoff_reasons",
+        "inventory",
+        "materials",
+        "material_writeoffs",
+        "oil_cake_inventory"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 515,
+      "type": "SELECT",
+      "tables": [
+        "writeoff_reasons",
+        "inventory",
+        "materials",
+        "material_writeoffs",
+        "oil_cake_inventory"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 581,
+      "type": "SELECT",
+      "tables": [
+        "writeoff_reasons",
+        "inventory",
+        "materials",
+        "material_writeoffs",
+        "oil_cake_inventory",
+        "batch"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 627,
+      "type": "OTHER",
+      "tables": [
+        "writeoff_reasons",
+        "inventory",
+        "materials",
+        "material_writeoffs",
+        "oil_cake_inventory",
+        "batch"
+      ],
+      "preview": "cur.execute(\"BEGIN\")"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 630,
+      "type": "INSERT",
+      "tables": [
+        "writeoff_reasons",
+        "inventory",
+        "materials",
+        "material_writeoffs",
+        "oil_cake_inventory",
+        "batch"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 658,
+      "type": "UPDATE",
+      "tables": [
+        "writeoff_reasons",
+        "inventory",
+        "materials",
+        "material_writeoffs",
+        "oil_cake_inventory",
+        "batch"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 665,
+      "type": "UPDATE",
+      "tables": [
+        "writeoff_reasons",
+        "inventory",
+        "materials",
+        "material_writeoffs",
+        "oil_cake_inventory",
+        "batch"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 672,
+      "type": "SELECT",
+      "tables": [
+        "writeoff_reasons",
+        "inventory",
+        "materials",
+        "material_writeoffs",
+        "oil_cake_inventory",
+        "batch"
+      ],
+      "preview": "cur.execute(\"SELECT update_writeoff_impact_tracking()\")"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 676,
+      "type": "SELECT",
+      "tables": [
+        "writeoff_reasons",
+        "inventory",
+        "materials",
+        "material_writeoffs",
+        "oil_cake_inventory",
+        "batch"
+      ],
+      "preview": "cur.execute(\"SELECT update_writeoff_monthly_summary(%s)\", (month_year,))"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 742,
+      "type": "OTHER",
+      "tables": [
+        "writeoff_reasons",
+        "inventory",
+        "materials",
+        "material_writeoffs",
+        "oil_cake_inventory",
+        "batch"
+      ],
+      "preview": "cur.execute(query, params)"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 773,
+      "type": "SELECT",
+      "tables": [
+        "writeoff_reasons",
+        "inventory",
+        "materials",
+        "material_writeoffs",
+        "oil_cake_inventory",
+        "batch"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 784,
+      "type": "SELECT",
+      "tables": [
+        "writeoff_reasons",
+        "inventory",
+        "materials",
+        "material_writeoffs",
+        "oil_cake_inventory",
+        "batch"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 851,
+      "type": "SELECT",
+      "tables": [
+        "writeoff_reasons",
+        "inventory",
+        "materials",
+        "material_writeoffs",
+        "oil_cake_inventory",
+        "batch"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 894,
+      "type": "OTHER",
+      "tables": [
+        "writeoff_reasons",
+        "inventory",
+        "materials",
+        "material_writeoffs",
+        "oil_cake_inventory",
+        "batch"
+      ],
+      "preview": "cur.execute(\"BEGIN\")"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 897,
+      "type": "INSERT",
+      "tables": [
+        "writeoff_reasons",
+        "inventory",
+        "materials",
+        "material_writeoffs",
+        "oil_cake_inventory",
+        "batch"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 923,
+      "type": "UPDATE",
+      "tables": [
+        "writeoff_reasons",
+        "inventory",
+        "materials",
+        "material_writeoffs",
+        "oil_cake_inventory",
+        "batch"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 930,
+      "type": "SELECT",
+      "tables": [
+        "writeoff_reasons",
+        "inventory",
+        "materials",
+        "material_writeoffs",
+        "oil_cake_inventory",
+        "batch"
+      ],
+      "preview": "cur.execute(\"SELECT update_writeoff_impact_tracking()\")"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 934,
+      "type": "SELECT",
+      "tables": [
+        "writeoff_reasons",
+        "inventory",
+        "materials",
+        "material_writeoffs",
+        "oil_cake_inventory",
+        "batch"
+      ],
+      "preview": "cur.execute(\"SELECT update_writeoff_monthly_summary(%s)\", (month_year,))"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/opening_balance.py",
@@ -7267,6 +7589,7 @@
         "puvi-backend/puvi-backend-main/modules/cost_management.py",
         "puvi-backend/puvi-backend-main/modules/masters_crud.py",
         "puvi-backend/puvi-backend-main/modules/material_sales.py",
+        "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
         "puvi-backend/puvi-backend-main/modules/opening_balance.py",
         "puvi-backend/puvi-backend-main/modules/sku_production.py",
         "puvi-backend/puvi-backend-main/utils/traceability.py",
@@ -7284,7 +7607,8 @@
       "name": "oil_cake_inventory",
       "files": [
         "puvi-backend/puvi-backend-main/modules/batch_production.py",
-        "puvi-backend/puvi-backend-main/modules/material_sales.py"
+        "puvi-backend/puvi-backend-main/modules/material_sales.py",
+        "puvi-backend/puvi-backend-main/modules/material_writeoff.py"
       ]
     },
     {
@@ -7832,6 +8156,118 @@
       "isAsync": false
     },
     {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 9,
+      "name": "Blending",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 49,
+      "name": "fetchOilTypes",
+      "params": "",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 64,
+      "name": "fetchAvailableResultTypes",
+      "params": "",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 77,
+      "name": "checkResultOilTypeNeeded",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 100,
+      "name": "fetchBatchesForOilType",
+      "params": "oilType, componentId",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 115,
+      "name": "fetchBlendHistory",
+      "params": "",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 127,
+      "name": "handleOilTypeChange",
+      "params": "componentId, oilType",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 147,
+      "name": "handleBatchChange",
+      "params": "componentId, batchId",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 171,
+      "name": "handlePercentageChange",
+      "params": "componentId, percentage",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 181,
+      "name": "addComponent",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 197,
+      "name": "removeComponent",
+      "params": "componentId",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 204,
+      "name": "calculateTotals",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 231,
+      "name": "isDifferentOilsMix",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 237,
+      "name": "handleSubmit",
+      "params": "",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/BatchProductionReport.js",
       "line": 7,
       "name": "BatchProductionReport",
@@ -8022,118 +8458,6 @@
       "params": "",
       "type": "arrow",
       "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 9,
-      "name": "Blending",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 49,
-      "name": "fetchOilTypes",
-      "params": "",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 64,
-      "name": "fetchAvailableResultTypes",
-      "params": "",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 77,
-      "name": "checkResultOilTypeNeeded",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 100,
-      "name": "fetchBatchesForOilType",
-      "params": "oilType, componentId",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 115,
-      "name": "fetchBlendHistory",
-      "params": "",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 127,
-      "name": "handleOilTypeChange",
-      "params": "componentId, oilType",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 147,
-      "name": "handleBatchChange",
-      "params": "componentId, batchId",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 171,
-      "name": "handlePercentageChange",
-      "params": "componentId, percentage",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 181,
-      "name": "addComponent",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 197,
-      "name": "removeComponent",
-      "params": "componentId",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 204,
-      "name": "calculateTotals",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 231,
-      "name": "isDifferentOilsMix",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 237,
-      "name": "handleSubmit",
-      "params": "",
-      "type": "arrow",
-      "isAsync": true
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
@@ -11457,7 +11781,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 15,
+      "line": 21,
       "name": "get_writeoff_reasons",
       "params": "",
       "type": "python",
@@ -11465,7 +11789,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 57,
+      "line": 63,
       "name": "get_inventory_for_writeoff",
       "params": "",
       "type": "python",
@@ -11473,7 +11797,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 139,
+      "line": 145,
       "name": "add_writeoff",
       "params": "",
       "type": "python",
@@ -11481,8 +11805,40 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 281,
+      "line": 294,
       "name": "get_writeoff_history",
+      "params": "",
+      "type": "python",
+      "isRoute": true
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 440,
+      "name": "get_oilcake_for_writeoff",
+      "params": "",
+      "type": "python",
+      "isRoute": true
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 556,
+      "name": "add_oilcake_writeoff",
+      "params": "",
+      "type": "python",
+      "isRoute": true
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 709,
+      "name": "get_sludge_for_writeoff",
+      "params": "",
+      "type": "python",
+      "isRoute": true
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 826,
+      "name": "add_sludge_writeoff",
       "params": "",
       "type": "python",
       "isRoute": true
@@ -12414,6 +12770,158 @@
       "hook": "useEffect"
     },
     {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 10,
+      "type": "useState",
+      "name": "oilTypes",
+      "setter": "setOilTypes",
+      "initial": "[]"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 10,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 11,
+      "type": "useState",
+      "name": "blendHistory",
+      "setter": "setBlendHistory",
+      "initial": "[]"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 11,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 12,
+      "type": "useState",
+      "name": "showHistory",
+      "setter": "setShowHistory",
+      "initial": null
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 12,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 13,
+      "type": "useState",
+      "name": "loading",
+      "setter": "setLoading",
+      "initial": null
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 13,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 14,
+      "type": "useState",
+      "name": "message",
+      "setter": "setMessage",
+      "initial": ""
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 14,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 17,
+      "type": "useState",
+      "name": "resultOilType",
+      "setter": "setResultOilType",
+      "initial": ""
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 17,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 18,
+      "type": "useState",
+      "name": "availableResultTypes",
+      "setter": "setAvailableResultTypes",
+      "initial": "[]"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 18,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 21,
+      "type": "useState",
+      "name": "blendData",
+      "setter": "setBlendData",
+      "initial": "{}"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 21,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 29,
+      "type": "useState",
+      "name": "components",
+      "setter": "setComponents",
+      "initial": "[]"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 29,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 35,
+      "type": "useState",
+      "name": "batchesForComponents",
+      "setter": "setBatchesForComponents",
+      "initial": "{}"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 35,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 40,
+      "type": "useEffect",
+      "hook": "useEffect"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 45,
+      "type": "useEffect",
+      "hook": "useEffect"
+    },
+    {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/BatchProductionReport.js",
       "line": 8,
       "type": "useRef",
@@ -12638,158 +13146,6 @@
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
       "line": 187,
-      "type": "useEffect",
-      "hook": "useEffect"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 10,
-      "type": "useState",
-      "name": "oilTypes",
-      "setter": "setOilTypes",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 10,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 11,
-      "type": "useState",
-      "name": "blendHistory",
-      "setter": "setBlendHistory",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 11,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 12,
-      "type": "useState",
-      "name": "showHistory",
-      "setter": "setShowHistory",
-      "initial": null
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 12,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 13,
-      "type": "useState",
-      "name": "loading",
-      "setter": "setLoading",
-      "initial": null
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 13,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 14,
-      "type": "useState",
-      "name": "message",
-      "setter": "setMessage",
-      "initial": ""
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 14,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 17,
-      "type": "useState",
-      "name": "resultOilType",
-      "setter": "setResultOilType",
-      "initial": ""
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 17,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 18,
-      "type": "useState",
-      "name": "availableResultTypes",
-      "setter": "setAvailableResultTypes",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 18,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 21,
-      "type": "useState",
-      "name": "blendData",
-      "setter": "setBlendData",
-      "initial": "{}"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 21,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 29,
-      "type": "useState",
-      "name": "components",
-      "setter": "setComponents",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 29,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 35,
-      "type": "useState",
-      "name": "batchesForComponents",
-      "setter": "setBatchesForComponents",
-      "initial": "{}"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 35,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 40,
-      "type": "useEffect",
-      "hook": "useEffect"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 45,
       "type": "useEffect",
       "hook": "useEffect"
     },
@@ -17304,29 +17660,57 @@
         "method": "GET",
         "path": "/api/writeoff_reasons",
         "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-        "line": 14,
+        "line": 20,
         "function": "get_writeoff_reasons"
       },
       {
         "method": "GET",
         "path": "/api/inventory_for_writeoff",
         "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-        "line": 56,
+        "line": 62,
         "function": "get_inventory_for_writeoff"
       },
       {
         "method": "POST",
         "path": "/api/add_writeoff",
         "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-        "line": 138,
+        "line": 144,
         "function": "add_writeoff"
       },
       {
         "method": "GET",
         "path": "/api/writeoff_history",
         "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-        "line": 280,
+        "line": 293,
         "function": "get_writeoff_history"
+      },
+      {
+        "method": "GET",
+        "path": "/api/oilcake_for_writeoff",
+        "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+        "line": 439,
+        "function": "get_oilcake_for_writeoff"
+      },
+      {
+        "method": "POST",
+        "path": "/api/add_oilcake_writeoff",
+        "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+        "line": 555,
+        "function": "add_oilcake_writeoff"
+      },
+      {
+        "method": "GET",
+        "path": "/api/sludge_for_writeoff",
+        "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+        "line": 708,
+        "function": "get_sludge_for_writeoff"
+      },
+      {
+        "method": "POST",
+        "path": "/api/add_sludge_writeoff",
+        "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+        "line": 825,
+        "function": "add_sludge_writeoff"
       }
     ],
     "opening_balance_bp": [
@@ -17818,6 +18202,66 @@
       "code": "} catch (error) {"
     },
     {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 50,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 58,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 65,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 72,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 101,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 110,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 116,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 122,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 266,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 329,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
       "line": 197,
       "type": "try-catch",
@@ -17886,66 +18330,6 @@
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
       "line": 731,
-      "type": "catch",
-      "code": "} catch (error) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 50,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 58,
-      "type": "catch",
-      "code": "} catch (error) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 65,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 72,
-      "type": "catch",
-      "code": "} catch (error) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 101,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 110,
-      "type": "catch",
-      "code": "} catch (error) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 116,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 122,
-      "type": "catch",
-      "code": "} catch (error) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 266,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 329,
       "type": "catch",
       "code": "} catch (error) {"
     },
@@ -20281,52 +20665,104 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 20,
+      "line": 26,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 50,
+      "line": 56,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 62,
+      "line": 68,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 132,
+      "line": 138,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 144,
+      "line": 150,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 271,
+      "line": 284,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 286,
+      "line": 299,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 416,
+      "line": 429,
+      "type": "except",
+      "exception": "Exception",
+      "code": "except Exception as e:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 446,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 549,
+      "type": "except",
+      "exception": "Exception",
+      "code": "except Exception as e:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 561,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 695,
+      "type": "except",
+      "exception": "Exception",
+      "code": "except Exception as e:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 715,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 819,
+      "type": "except",
+      "exception": "Exception",
+      "code": "except Exception as e:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 831,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 955,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
@@ -21423,15 +21859,15 @@
     "jsFiles": 38,
     "pyFiles": 23,
     "components": 42,
-    "routes": 113,
+    "routes": 117,
     "exports": 42,
     "imports": 55,
     "hardcodedValues": 24,
-    "databaseQueries": 381,
+    "databaseQueries": 402,
     "databaseTables": 55,
-    "functions": 593,
+    "functions": 597,
     "stateHooks": 661,
     "missingEndpoints": 1,
-    "errorHandlers": 588
+    "errorHandlers": 596
   }
 }

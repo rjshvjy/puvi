@@ -1,5 +1,5 @@
 # Feature Pack: BATCHES-FOR-OIL-TYPE
-Generated: 2025-08-24T16:15:26.682Z
+Generated: 2025-08-25T04:25:59.407Z
 Routes: 1 | Tables: 8 | Files: 1
 
 ## Table of Contents
@@ -19,7 +19,7 @@ GET    /api/batches_for_oil_type
 ## Database Dependencies
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
-| batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 8 other modules |
+| batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 9 other modules |
 | blend_batch_components | blending | 🟡 MEDIUM | Changes affect 1 other modules |
 | blend_batches | blending, masters-crud, sku-production | 🔴 HIGH | Changes affect 3 other modules |
 | categories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
