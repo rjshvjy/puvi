@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-25T23:17:24.541Z",
+  "generatedAt": "2025-08-25T23:36:16.444Z",
   "filesScanned": 62,
   "jsFilesScanned": 38,
   "pyFilesScanned": 24,
@@ -11176,7 +11176,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
-      "line": 272,
+      "line": 322,
       "name": "exportToCSV",
       "params": "",
       "type": "arrow",
@@ -11184,7 +11184,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
-      "line": 334,
+      "line": 384,
       "name": "calculateSummary",
       "params": "",
       "type": "arrow",
@@ -11192,7 +11192,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
-      "line": 391,
+      "line": 441,
       "name": "getRowClass",
       "params": "expiryStatus",
       "type": "arrow",
@@ -20563,7 +20563,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
-      "line": 266,
+      "line": 310,
       "type": "catch",
       "code": "} catch (error) {"
     },
