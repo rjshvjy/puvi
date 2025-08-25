@@ -1,6 +1,6 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/services/api/index.js
 // Consolidated API Service for PUVI Oil Manufacturing System
-// Version: 2.3 - Fixed with Material Writeoff Enhancement
+// Version: 2.4 - Enhanced with Unified Material Writeoff
 // This file consolidates all API services and utilities
 
 const API_URL = process.env.REACT_APP_API_URL || 'https://puvi-backend.onrender.com';
@@ -524,13 +524,29 @@ const api = {
   },
 
   // ============================================
-  // MATERIAL WRITEOFF MODULE - ENHANCED
+  // MATERIAL WRITEOFF MODULE - ENHANCED v3.0
   // ============================================
   writeoff: {
     // Get writeoff reason codes
     getReasons: async () => {
       return apiCall('/api/writeoff_reasons');
     },
+    
+    // ============================================
+    // UNIFIED INVENTORY ENDPOINT - NEW
+    // ============================================
+    
+    // Get unified inventory (materials + SKUs + byproducts)
+    getUnifiedInventory: async (category = null) => {
+      const params = new URLSearchParams();
+      if (category) params.append('category', category);
+      const queryString = params.toString();
+      return apiCall(`/api/unified_writeoff_inventory${queryString ? `?${queryString}` : ''}`);
+    },
+    
+    // ============================================
+    // MATERIAL WRITEOFF
+    // ============================================
     
     // Get materials with current inventory for writeoff selection
     getMaterials: async (category = null) => {
@@ -545,17 +561,27 @@ const api = {
       return post('/api/add_writeoff', writeoffData);
     },
     
-    // Get writeoff history with filters
-    getHistory: async (params = {}) => {
+    // ============================================
+    // SKU WRITEOFF - NEW
+    // ============================================
+    
+    // Get SKU products available for writeoff
+    getSKUForWriteoff: async (params = {}) => {
       const queryParams = new URLSearchParams();
-      if (params.limit) queryParams.append('limit', params.limit);
-      if (params.material_id) queryParams.append('material_id', params.material_id);
-      if (params.reason_code) queryParams.append('reason_code', params.reason_code);
-      if (params.start_date) queryParams.append('start_date', params.start_date);
-      if (params.end_date) queryParams.append('end_date', params.end_date);
+      if (params.oil_type) queryParams.append('oil_type', params.oil_type);
+      if (params.package_size) queryParams.append('package_size', params.package_size);
       const queryString = queryParams.toString();
-      return apiCall(`/api/writeoff_history${queryString ? `?${queryString}` : ''}`);
+      return apiCall(`/api/sku_for_writeoff${queryString ? `?${queryString}` : ''}`);
     },
+    
+    // Record a SKU writeoff
+    addSKUWriteoff: async (data) => {
+      return post('/api/add_sku_writeoff', data);
+    },
+    
+    // ============================================
+    // OIL CAKE WRITEOFF
+    // ============================================
     
     // Get available oil cake inventory for writeoff
     getOilCakeForWriteoff: async (params = {}) => {
@@ -570,6 +596,10 @@ const api = {
       return post('/api/add_oilcake_writeoff', data);
     },
     
+    // ============================================
+    // SLUDGE WRITEOFF
+    // ============================================
+    
     // Get available sludge inventory for writeoff
     getSludgeForWriteoff: async (params = {}) => {
       const queryParams = new URLSearchParams();
@@ -582,6 +612,31 @@ const api = {
     addSludgeWriteoff: async (data) => {
       return post('/api/add_sludge_writeoff', data);
     },
+    
+    // ============================================
+    // HISTORY & REPORTS
+    // ============================================
+    
+    // Get writeoff history with filters
+    getHistory: async (params = {}) => {
+      const queryParams = new URLSearchParams();
+      if (params.limit) queryParams.append('limit', params.limit);
+      if (params.material_id) queryParams.append('material_id', params.material_id);
+      if (params.reason_code) queryParams.append('reason_code', params.reason_code);
+      if (params.start_date) queryParams.append('start_date', params.start_date);
+      if (params.end_date) queryParams.append('end_date', params.end_date);
+      const queryString = queryParams.toString();
+      return apiCall(`/api/writeoff_history${queryString ? `?${queryString}` : ''}`);
+    },
+    
+    // Get printable writeoff report
+    getWriteoffReport: async (writeoffId) => {
+      return apiCall(`/api/writeoff_report/${writeoffId}`);
+    },
+    
+    // ============================================
+    // IMPACT ANALYTICS
+    // ============================================
     
     // Get current writeoff impact metrics
     getImpactMetrics: async () => {
@@ -601,11 +656,6 @@ const api = {
     // Manually refresh writeoff metrics
     refreshMetrics: async () => {
       return post('/api/refresh_writeoff_metrics', {});
-    },
-    
-    // Get printable writeoff report
-    getWriteoffReport: async (writeoffId) => {
-      return apiCall(`/api/writeoff_report/${writeoffId}`);
     }
   },
 
@@ -919,7 +969,7 @@ export const reportsAPI = api.reports;
 export const purchaseAPI = api.purchase;
 export const blendingAPI = api.blending;
 export const salesAPI = api.sales;  // NEW EXPORT
-export const writeoffAPI = api.writeoff;  // NEW EXPORT
+export const writeoffAPI = api.writeoff;  // ENHANCED EXPORT
 
 // Export the default skuService object for legacy imports
 export const skuService = {
