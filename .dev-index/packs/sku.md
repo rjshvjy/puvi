@@ -1,6 +1,6 @@
 # Feature Pack: SKU
-Generated: 2025-08-25T23:01:13.930Z
-Routes: 23 | Tables: 20 | Files: 9
+Generated: 2025-08-25T23:04:09.244Z
+Routes: 23 | Tables: 20 | Files: 10
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)

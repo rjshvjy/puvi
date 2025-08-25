@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-25T23:01:12.969Z",
+  "generatedAt": "2025-08-25T23:04:08.297Z",
   "filesScanned": 62,
   "jsFilesScanned": 38,
   "pyFilesScanned": 24,
@@ -1199,6 +1199,7 @@
         "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ExpiryAlert.js",
         "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
         "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
         "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
         "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js",
         "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
@@ -1490,6 +1491,7 @@
         "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ExpiryAlert.js",
         "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/MRPHistory.js",
         "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
         "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
         "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js"
       ]
@@ -1892,6 +1894,12 @@
       "name": "ProductionEntry",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionEntry.js",
       "line": 33,
+      "type": "const"
+    },
+    {
+      "name": "ProductionHistory",
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
+      "line": 7,
       "type": "const"
     },
     {
@@ -16862,6 +16870,144 @@
       "hook": "useEffect"
     },
     {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
+      "line": 8,
+      "type": "useState",
+      "name": "productions",
+      "setter": "setProductions",
+      "initial": "[]"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
+      "line": 8,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
+      "line": 9,
+      "type": "useState",
+      "name": "filteredProductions",
+      "setter": "setFilteredProductions",
+      "initial": "[]"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
+      "line": 9,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
+      "line": 10,
+      "type": "useState",
+      "name": "skuList",
+      "setter": "setSKUList",
+      "initial": "[]"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
+      "line": 10,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
+      "line": 11,
+      "type": "useState",
+      "name": "filters",
+      "setter": "setFilters",
+      "initial": "{}"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
+      "line": 11,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
+      "line": 19,
+      "type": "useState",
+      "name": "selectedProduction",
+      "setter": "setSelectedProduction",
+      "initial": null
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
+      "line": 19,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
+      "line": 20,
+      "type": "useState",
+      "name": "loading",
+      "setter": "setLoading",
+      "initial": null
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
+      "line": 20,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
+      "line": 21,
+      "type": "useState",
+      "name": "message",
+      "setter": "setMessage",
+      "initial": "{}"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
+      "line": 21,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
+      "line": 22,
+      "type": "useState",
+      "name": "sortField",
+      "setter": "setSortField",
+      "initial": "production_date"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
+      "line": 22,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
+      "line": 23,
+      "type": "useState",
+      "name": "sortOrder",
+      "setter": "setSortOrder",
+      "initial": "desc"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
+      "line": 23,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
+      "line": 25,
+      "type": "useEffect",
+      "hook": "useEffect"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
+      "line": 30,
+      "type": "useEffect",
+      "hook": "useEffect"
+    },
+    {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionSummaryReport.js",
       "line": 27,
       "type": "useState",
@@ -23233,7 +23379,7 @@
     "totalFiles": 62,
     "jsFiles": 38,
     "pyFiles": 24,
-    "components": 41,
+    "components": 42,
     "routes": 130,
     "exports": 42,
     "imports": 55,
@@ -23241,7 +23387,7 @@
     "databaseQueries": 447,
     "databaseTables": 61,
     "functions": 618,
-    "stateHooks": 646,
+    "stateHooks": 666,
     "missingEndpoints": 1,
     "errorHandlers": 628
   }
