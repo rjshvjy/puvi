@@ -1,5 +1,5 @@
 # Feature Pack: CONFIG
-Generated: 2025-08-25T04:25:59.415Z
+Generated: 2025-08-25T04:30:24.109Z
 Routes: 5 | Tables: 8 | Files: 1
 
 ## Table of Contents
@@ -30,11 +30,11 @@ GET    /api/config/labor_rates
 | available_oil_types | batch-production, system-config | 🟡 MEDIUM | Changes affect 2 other modules |
 | bom_category_mapping | system-config | 🟡 MEDIUM | Changes affect 1 other modules |
 | cost_elements_master | cost-management, package-sizes, sku-management | 🔴 HIGH | Changes affect 5 other modules |
-| materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
+| materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 11 other modules |
 | sku_master | masters-crud, package-sizes, sku-management | 🔴 HIGH | Changes affect 6 other modules |
 | suppliers | opening-balance, purchase, system-config | 🔴 HIGH | Changes affect 4 other modules |
 | uom_master | masters-common, system-config | 🟡 MEDIUM | Changes affect 2 other modules |
-| writeoff_reasons | material-writeoff, system-config | 🟡 MEDIUM | Changes affect 2 other modules |
+| writeoff_reasons | material-writeoff, system-config, writeoff-analytics | 🔴 HIGH | Changes affect 3 other modules |
 
 ### ⚠️ Hardcoded Values Detected
 - `system_config.py:202` - object
@@ -44,7 +44,7 @@ GET    /api/config/labor_rates
 ## Data Flow & Integration
 ### 🔗 Cascading Dependencies
 - **materials** (HIGH RISK)
-  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, unknown
+  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, writeoff-analytics, unknown
   - Impact: Changes will cascade to these modules
 - **cost_elements_master** (HIGH RISK)
   - Shared with: cost-management, package-sizes, sku-management, sku-production, system-config

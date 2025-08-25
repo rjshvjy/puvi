@@ -1,5 +1,5 @@
 # Feature Pack: OIL-CONFIG
-Generated: 2025-08-25T04:25:59.408Z
+Generated: 2025-08-25T04:30:24.104Z
 Routes: 7 | Tables: 8 | Files: 1
 
 ## Table of Contents
@@ -31,12 +31,12 @@ POST   /api/oil-config/apply-suggestions
 ## Database Dependencies
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
-| batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 9 other modules |
+| batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 10 other modules |
 | blend_batches | blending, masters-crud, sku-production | 🔴 HIGH | Changes affect 3 other modules |
 | categories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
 | information_schema | masters-common, masters-crud | 🟡 MEDIUM | Changes affect 2 other modules |
 | inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
-| materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
+| materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 11 other modules |
 | sku_master | masters-crud, package-sizes, sku-management | 🔴 HIGH | Changes affect 6 other modules |
 | subcategories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
 
@@ -45,7 +45,7 @@ POST   /api/oil-config/apply-suggestions
 ## Data Flow & Integration
 ### 🔗 Cascading Dependencies
 - **materials** (HIGH RISK)
-  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, unknown
+  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, writeoff-analytics, unknown
   - Impact: Changes will cascade to these modules
 - **inventory** (HIGH RISK)
   - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, unknown

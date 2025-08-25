@@ -1,11 +1,11 @@
 # PUVI System - Dependency Analysis Report
 
-**Generated:** 2025-08-25T04:25:59.347Z
+**Generated:** 2025-08-25T04:30:24.044Z
 **Version:** 1.0
 
 ## Executive Summary
 
-- **Total Tables:** 55
+- **Total Tables:** 60
 - **Shared Tables:** 27 (cross-module dependencies)
 - **Hardcoded Categories:** 0
 - **Migration Opportunities:** 0
@@ -24,9 +24,9 @@ Tables used by multiple modules (changes have cascading effects):
 
 ### materials
 - **Risk Level:** HIGH
-- **Shared By:** batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, unknown
-- **File Count:** 11
-- **Recommendation:** ⚠️ CRITICAL: Changes require coordination across 10 modules
+- **Shared By:** batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, writeoff-analytics, unknown
+- **File Count:** 12
+- **Recommendation:** ⚠️ CRITICAL: Changes require coordination across 11 modules
 
 ### inventory
 - **Risk Level:** HIGH
@@ -36,9 +36,9 @@ Tables used by multiple modules (changes have cascading effects):
 
 ### batch
 - **Risk Level:** HIGH
-- **Shared By:** batch-production, blending, cost-management, masters-crud, material-sales, material-writeoff, opening-balance, sku-production, unknown
-- **File Count:** 10
-- **Recommendation:** ⚠️ CRITICAL: Changes require coordination across 9 modules
+- **Shared By:** batch-production, blending, cost-management, masters-crud, material-sales, material-writeoff, opening-balance, sku-production, writeoff-analytics, unknown
+- **File Count:** 11
+- **Recommendation:** ⚠️ CRITICAL: Changes require coordination across 10 modules
 
 ### cost_elements_master
 - **Risk Level:** HIGH
@@ -82,6 +82,18 @@ Tables used by multiple modules (changes have cascading effects):
 - **File Count:** 3
 - **Recommendation:** Changes will affect blending, masters-crud, sku-production
 
+### writeoff_reasons
+- **Risk Level:** MEDIUM
+- **Shared By:** material-writeoff, system-config, writeoff-analytics
+- **File Count:** 3
+- **Recommendation:** Changes will affect material-writeoff, system-config, writeoff-analytics
+
+### material_writeoffs
+- **Risk Level:** MEDIUM
+- **Shared By:** material-writeoff, opening-balance, writeoff-analytics
+- **File Count:** 3
+- **Recommendation:** Changes will affect material-writeoff, opening-balance, writeoff-analytics
+
 ### sku_production
 - **Risk Level:** MEDIUM
 - **Shared By:** sku-management, sku-production, unknown
@@ -94,8 +106,8 @@ Hardcoded values that should be moved to database:
 
 ## Appendix: Detailed Table Usage
 
-- **materials**: Used by batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, unknown (11 files)
-- **batch**: Used by batch-production, blending, cost-management, masters-crud, material-sales, material-writeoff, opening-balance, sku-production, unknown (10 files)
+- **materials**: Used by batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, writeoff-analytics, unknown (12 files)
+- **batch**: Used by batch-production, blending, cost-management, masters-crud, material-sales, material-writeoff, opening-balance, sku-production, writeoff-analytics, unknown (11 files)
 - **inventory**: Used by batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, unknown (8 files)
 - **sku_master**: Used by masters-crud, package-sizes, sku-management, sku-production, system-config, unknown (6 files)
 - **purchases**: Used by batch-production, blending, opening-balance, purchase, unknown (5 files)

@@ -1,5 +1,5 @@
 # Feature Pack: COST-ELEMENTS
-Generated: 2025-08-25T04:25:59.408Z
+Generated: 2025-08-25T04:30:24.103Z
 Routes: 12 | Tables: 7 | Files: 1
 
 ## Table of Contents
@@ -41,7 +41,7 @@ GET    /api/cost_elements/<int:element_id>/rate_history
 ## Database Dependencies
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
-| batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 9 other modules |
+| batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 10 other modules |
 | batch_extended_costs | batch-production, cost-management | 🟡 MEDIUM | Changes affect 2 other modules |
 | batch_time_tracking | cost-management | 🟡 MEDIUM | Changes affect 1 other modules |
 | cost_element_rate_history | cost-management | 🟡 MEDIUM | Changes affect 1 other modules |

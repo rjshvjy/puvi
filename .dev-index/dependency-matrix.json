@@ -1,8 +1,8 @@
 {
   "version": "1.0",
-  "generatedAt": "2025-08-25T04:25:59.347Z",
+  "generatedAt": "2025-08-25T04:30:24.044Z",
   "summary": {
-    "totalTables": 55,
+    "totalTables": 60,
     "sharedTables": 27,
     "hardcodedCategories": 0,
     "migrationOpportunities": 0
@@ -117,9 +117,10 @@
         "sku-management",
         "sku-production",
         "system-config",
+        "writeoff-analytics",
         "unknown"
       ],
-      "fileCount": 11,
+      "fileCount": 12,
       "operations": {
         "batch-production": {
           "files": [
@@ -172,6 +173,12 @@
         "system-config": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/system_config.py"
+          ],
+          "queryCount": 0
+        },
+        "writeoff-analytics": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/writeoff_analytics.py"
           ],
           "queryCount": 0
         },
@@ -257,9 +264,10 @@
         "material-writeoff",
         "opening-balance",
         "sku-production",
+        "writeoff-analytics",
         "unknown"
       ],
-      "fileCount": 10,
+      "fileCount": 11,
       "operations": {
         "batch-production": {
           "files": [
@@ -306,6 +314,12 @@
         "sku-production": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/sku_production.py"
+          ],
+          "queryCount": 0
+        },
+        "writeoff-analytics": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/writeoff_analytics.py"
           ],
           "queryCount": 0
         },
@@ -741,9 +755,10 @@
     "writeoff_reasons": {
       "usedBy": [
         "material-writeoff",
-        "system-config"
+        "system-config",
+        "writeoff-analytics"
       ],
-      "fileCount": 2,
+      "fileCount": 3,
       "operations": {
         "material-writeoff": {
           "files": [
@@ -756,15 +771,22 @@
             "puvi-backend/puvi-backend-main/modules/system_config.py"
           ],
           "queryCount": 0
+        },
+        "writeoff-analytics": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/writeoff_analytics.py"
+          ],
+          "queryCount": 0
         }
       }
     },
     "material_writeoffs": {
       "usedBy": [
         "material-writeoff",
-        "opening-balance"
+        "opening-balance",
+        "writeoff-analytics"
       ],
-      "fileCount": 2,
+      "fileCount": 3,
       "operations": {
         "material-writeoff": {
           "files": [
@@ -775,6 +797,12 @@
         "opening-balance": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/opening_balance.py"
+          ],
+          "queryCount": 0
+        },
+        "writeoff-analytics": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/writeoff_analytics.py"
           ],
           "queryCount": 0
         }
@@ -1166,6 +1194,76 @@
         }
       }
     },
+    "writeoff_impact_tracking": {
+      "usedBy": [
+        "writeoff-analytics"
+      ],
+      "fileCount": 1,
+      "operations": {
+        "writeoff-analytics": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/writeoff_analytics.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "calculate_writeoff_impact": {
+      "usedBy": [
+        "writeoff-analytics"
+      ],
+      "fileCount": 1,
+      "operations": {
+        "writeoff-analytics": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/writeoff_analytics.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "v_writeoff_trends": {
+      "usedBy": [
+        "writeoff-analytics"
+      ],
+      "fileCount": 1,
+      "operations": {
+        "writeoff-analytics": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/writeoff_analytics.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "writeoff_monthly_summary": {
+      "usedBy": [
+        "writeoff-analytics"
+      ],
+      "fileCount": 1,
+      "operations": {
+        "writeoff-analytics": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/writeoff_analytics.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "writeoff": {
+      "usedBy": [
+        "writeoff-analytics"
+      ],
+      "fileCount": 1,
+      "operations": {
+        "writeoff-analytics": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/writeoff_analytics.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
     "existing": {
       "usedBy": [
         "unknown"
@@ -1266,12 +1364,13 @@
         "sku-management",
         "sku-production",
         "system-config",
+        "writeoff-analytics",
         "unknown"
       ],
-      "moduleCount": 10,
-      "fileCount": 11,
+      "moduleCount": 11,
+      "fileCount": 12,
       "risk": "HIGH",
-      "recommendation": "⚠️ CRITICAL: Changes require coordination across 10 modules"
+      "recommendation": "⚠️ CRITICAL: Changes require coordination across 11 modules"
     },
     {
       "table": "inventory",
@@ -1301,12 +1400,13 @@
         "material-writeoff",
         "opening-balance",
         "sku-production",
+        "writeoff-analytics",
         "unknown"
       ],
-      "moduleCount": 9,
-      "fileCount": 10,
+      "moduleCount": 10,
+      "fileCount": 11,
       "risk": "HIGH",
-      "recommendation": "⚠️ CRITICAL: Changes require coordination across 9 modules"
+      "recommendation": "⚠️ CRITICAL: Changes require coordination across 10 modules"
     },
     {
       "table": "cost_elements_master",
@@ -1399,6 +1499,30 @@
       "recommendation": "Changes will affect blending, masters-crud, sku-production"
     },
     {
+      "table": "writeoff_reasons",
+      "sharedBy": [
+        "material-writeoff",
+        "system-config",
+        "writeoff-analytics"
+      ],
+      "moduleCount": 3,
+      "fileCount": 3,
+      "risk": "MEDIUM",
+      "recommendation": "Changes will affect material-writeoff, system-config, writeoff-analytics"
+    },
+    {
+      "table": "material_writeoffs",
+      "sharedBy": [
+        "material-writeoff",
+        "opening-balance",
+        "writeoff-analytics"
+      ],
+      "moduleCount": 3,
+      "fileCount": 3,
+      "risk": "MEDIUM",
+      "recommendation": "Changes will affect material-writeoff, opening-balance, writeoff-analytics"
+    },
+    {
       "table": "sku_production",
       "sharedBy": [
         "sku-management",
@@ -1486,28 +1610,6 @@
       "fileCount": 2,
       "risk": "LOW",
       "recommendation": "Changes will affect masters-common, sku-management"
-    },
-    {
-      "table": "writeoff_reasons",
-      "sharedBy": [
-        "material-writeoff",
-        "system-config"
-      ],
-      "moduleCount": 2,
-      "fileCount": 2,
-      "risk": "LOW",
-      "recommendation": "Changes will affect material-writeoff, system-config"
-    },
-    {
-      "table": "material_writeoffs",
-      "sharedBy": [
-        "material-writeoff",
-        "opening-balance"
-      ],
-      "moduleCount": 2,
-      "fileCount": 2,
-      "risk": "LOW",
-      "recommendation": "Changes will affect material-writeoff, opening-balance"
     },
     {
       "table": "system_configuration",

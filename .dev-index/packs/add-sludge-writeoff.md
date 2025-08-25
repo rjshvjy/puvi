@@ -1,5 +1,5 @@
 # Feature Pack: ADD-SLUDGE-WRITEOFF
-Generated: 2025-08-25T04:25:59.413Z
+Generated: 2025-08-25T04:30:24.108Z
 Routes: 1 | Tables: 6 | Files: 1
 
 ## Table of Contents
@@ -19,19 +19,19 @@ POST   /api/add_sludge_writeoff
 ## Database Dependencies
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
-| batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 9 other modules |
+| batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 10 other modules |
 | inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
-| material_writeoffs | material-writeoff, opening-balance | 🟡 MEDIUM | Changes affect 2 other modules |
-| materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
+| material_writeoffs | material-writeoff, opening-balance, writeoff-analytics | 🔴 HIGH | Changes affect 3 other modules |
+| materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 11 other modules |
 | oil_cake_inventory | batch-production, material-sales, material-writeoff | 🔴 HIGH | Changes affect 3 other modules |
-| writeoff_reasons | material-writeoff, system-config | 🟡 MEDIUM | Changes affect 2 other modules |
+| writeoff_reasons | material-writeoff, system-config, writeoff-analytics | 🔴 HIGH | Changes affect 3 other modules |
 
 ## Backend Implementation
 
 ## Data Flow & Integration
 ### 🔗 Cascading Dependencies
 - **materials** (HIGH RISK)
-  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, unknown
+  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, writeoff-analytics, unknown
   - Impact: Changes will cascade to these modules
 - **inventory** (HIGH RISK)
   - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, unknown

@@ -1,6 +1,6 @@
-# Feature Pack: WRITEOFF-HISTORY
-Generated: 2025-08-25T04:30:24.107Z
-Routes: 1 | Tables: 6 | Files: 1
+# Feature Pack: WRITEOFF-IMPACT
+Generated: 2025-08-25T04:30:24.110Z
+Routes: 1 | Tables: 9 | Files: 1
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -12,18 +12,21 @@ Routes: 1 | Tables: 6 | Files: 1
 
 ## API Endpoints
 ```
-# get_writeoff_history
-GET    /api/writeoff_history
+# get_writeoff_impact
+GET    /api/writeoff_impact
 ```
 
 ## Database Dependencies
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
 | batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 10 other modules |
-| inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
+| calculate_writeoff_impact | writeoff-analytics | 🟡 MEDIUM | Changes affect 1 other modules |
 | material_writeoffs | material-writeoff, opening-balance, writeoff-analytics | 🔴 HIGH | Changes affect 3 other modules |
 | materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 11 other modules |
-| oil_cake_inventory | batch-production, material-sales, material-writeoff | 🔴 HIGH | Changes affect 3 other modules |
+| v_writeoff_trends | writeoff-analytics | 🟡 MEDIUM | Changes affect 1 other modules |
+| writeoff | writeoff-analytics | 🟡 MEDIUM | Changes affect 1 other modules |
+| writeoff_impact_tracking | writeoff-analytics | 🟡 MEDIUM | Changes affect 1 other modules |
+| writeoff_monthly_summary | writeoff-analytics | 🟡 MEDIUM | Changes affect 1 other modules |
 | writeoff_reasons | material-writeoff, system-config, writeoff-analytics | 🔴 HIGH | Changes affect 3 other modules |
 
 ## Backend Implementation
@@ -32,9 +35,6 @@ GET    /api/writeoff_history
 ### 🔗 Cascading Dependencies
 - **materials** (HIGH RISK)
   - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, writeoff-analytics, unknown
-  - Impact: Changes will cascade to these modules
-- **inventory** (HIGH RISK)
-  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, unknown
   - Impact: Changes will cascade to these modules
 
 ### Integration Points
