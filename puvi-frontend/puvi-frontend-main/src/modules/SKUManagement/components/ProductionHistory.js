@@ -255,19 +255,69 @@ const ProductionHistory = () => {
   };
 
   const handleViewDetails = async (productionId) => {
-    try {
-      const response = await api.sku.getProductionDetails(productionId);
+  try {
+    const response = await api.sku.getProductionDetails(productionId);
+    
+    if (response.success && response.summary) {
+      // Transform nested structure to flat structure expected by modal
+      const transformedData = {
+        production_id: productionId,
+        production_code: response.summary.production_details.production_code,
+        traceable_code: response.summary.production_details.traceable_code,
+        production_date: response.summary.production_details.production_date,
+        packing_date: response.summary.production_details.packing_date,
+        operator_name: response.summary.production_details.operator,
+        shift_number: response.summary.production_details.shift,
+        production_line: response.summary.production_details.production_line,
+        
+        // Product details
+        sku_code: response.summary.product_details.sku_code,
+        product_name: response.summary.product_details.product_name,
+        bottles_planned: response.summary.product_details.bottles_planned,
+        bottles_produced: response.summary.product_details.bottles_produced,
+        total_oil_quantity: response.summary.product_details.total_oil_used_kg,
+        
+        // MRP and Expiry
+        mrp_at_production: parseFloat(response.summary.product_details.mrp?.replace('₹', '') || 0),
+        expiry_date: response.summary.expiry_details.expiry_date,
+        days_to_expiry: response.summary.expiry_details.days_to_expiry,
+        expiry_status: response.summary.expiry_details.status,
+        
+        // Costs
+        oil_cost_total: response.summary.cost_breakdown.oil_cost,
+        material_cost_total: response.summary.cost_breakdown.material_cost,
+        labor_cost_total: response.summary.cost_breakdown.packing_cost,
+        total_production_cost: response.summary.cost_breakdown.total_cost,
+        cost_per_bottle: response.summary.cost_breakdown.cost_per_bottle,
+        
+        // Oil allocations
+        oil_allocations: response.summary.oil_traceability,
+        
+        // Notes
+        notes: response.summary.notes
+      };
       
-      if (response.success && response.production) {
-        setSelectedProduction(response.production);
+      setSelectedProduction(transformedData);
+    } else {
+      // Fallback: use local data from table
+      const localProduction = productions.find(p => p.production_id === productionId);
+      if (localProduction) {
+        setSelectedProduction(localProduction);
       } else {
-        setSelectedProduction(response);
+        setMessage({ type: 'error', text: 'Production details not found' });
       }
-    } catch (error) {
-      console.error('Error fetching production details:', error);
+    }
+  } catch (error) {
+    console.error('Error fetching production details:', error);
+    // Use local data as fallback
+    const localProduction = productions.find(p => p.production_id === productionId);
+    if (localProduction) {
+      setSelectedProduction(localProduction);
+    } else {
       setMessage({ type: 'error', text: 'Failed to load production details' });
     }
-  };
+  }
+};
 
   const exportToCSV = () => {
     const headers = [
