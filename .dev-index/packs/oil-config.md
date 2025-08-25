@@ -1,5 +1,5 @@
 # Feature Pack: OIL-CONFIG
-Generated: 2025-08-25T06:22:07.222Z
+Generated: 2025-08-25T06:26:00.995Z
 Routes: 7 | Tables: 8 | Files: 1
 
 ## Table of Contents
