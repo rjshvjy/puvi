@@ -531,29 +531,82 @@ const api = {
     getReasons: async () => {
       return apiCall('/api/writeoff_reasons');
     },
+    
     // Get materials with current inventory for writeoff selection
-  getMaterials: async (category = null) => {
-    const params = new URLSearchParams();
-    if (category) params.append('category', category);
-    const queryString = params.toString();
-    return apiCall(`/api/inventory_for_writeoff${queryString ? `?${queryString}` : ''}`);
-  },
-  
-  // Record a material writeoff
-  recordWriteoff: async (writeoffData) => {
-    return post('/api/add_writeoff', writeoffData);
-  },
-  
-  // Get writeoff history with filters
-  getHistory: async (params = {}) => {
-    const queryParams = new URLSearchParams();
-    if (params.limit) queryParams.append('limit', params.limit);
-    if (params.material_id) queryParams.append('material_id', params.material_id);
-    if (params.reason_code) queryParams.append('reason_code', params.reason_code);
-    if (params.start_date) queryParams.append('start_date', params.start_date);
-    if (params.end_date) queryParams.append('end_date', params.end_date);
-    const queryString = queryParams.toString();
-    return apiCall(`/api/writeoff_history${queryString ? `?${queryString}` : ''}`);
+    getMaterials: async (category = null) => {
+      const params = new URLSearchParams();
+      if (category) params.append('category', category);
+      const queryString = params.toString();
+      return apiCall(`/api/inventory_for_writeoff${queryString ? `?${queryString}` : ''}`);
+    },
+    
+    // Record a material writeoff
+    recordWriteoff: async (writeoffData) => {
+      return post('/api/add_writeoff', writeoffData);
+    },
+    
+    // Get writeoff history with filters
+    getHistory: async (params = {}) => {
+      const queryParams = new URLSearchParams();
+      if (params.limit) queryParams.append('limit', params.limit);
+      if (params.material_id) queryParams.append('material_id', params.material_id);
+      if (params.reason_code) queryParams.append('reason_code', params.reason_code);
+      if (params.start_date) queryParams.append('start_date', params.start_date);
+      if (params.end_date) queryParams.append('end_date', params.end_date);
+      const queryString = queryParams.toString();
+      return apiCall(`/api/writeoff_history${queryString ? `?${queryString}` : ''}`);
+    },
+    
+    // Get available oil cake inventory for writeoff
+    getOilCakeForWriteoff: async (params = {}) => {
+      const queryParams = new URLSearchParams();
+      if (params.oil_type) queryParams.append('oil_type', params.oil_type);
+      const queryString = queryParams.toString();
+      return apiCall(`/api/oilcake_for_writeoff${queryString ? `?${queryString}` : ''}`);
+    },
+    
+    // Record an oil cake writeoff
+    addOilCakeWriteoff: async (data) => {
+      return post('/api/add_oilcake_writeoff', data);
+    },
+    
+    // Get available sludge inventory for writeoff
+    getSludgeForWriteoff: async (params = {}) => {
+      const queryParams = new URLSearchParams();
+      if (params.oil_type) queryParams.append('oil_type', params.oil_type);
+      const queryString = queryParams.toString();
+      return apiCall(`/api/sludge_for_writeoff${queryString ? `?${queryString}` : ''}`);
+    },
+    
+    // Record a sludge writeoff
+    addSludgeWriteoff: async (data) => {
+      return post('/api/add_sludge_writeoff', data);
+    },
+    
+    // Get current writeoff impact metrics
+    getImpactMetrics: async () => {
+      return apiCall('/api/writeoff_impact');
+    },
+    
+    // Get monthly writeoff trends
+    getTrends: async () => {
+      return apiCall('/api/writeoff_trends');
+    },
+    
+    // Get combined dashboard data
+    getDashboard: async () => {
+      return apiCall('/api/writeoff_dashboard');
+    },
+    
+    // Manually refresh writeoff metrics
+    refreshMetrics: async () => {
+      return post('/api/refresh_writeoff_metrics', {});
+    },
+    
+    // Get printable writeoff report
+    getWriteoffReport: async (writeoffId) => {
+      return apiCall(`/api/writeoff_report/${writeoffId}`);
+    }
   },
   
   // ============================================
