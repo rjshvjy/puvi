@@ -1,8 +1,8 @@
 """
 Material Writeoff Module for PUVI Oil Manufacturing System
-Enhanced version with oil cake and sludge writeoff support
+Enhanced version with unified inventory and SKU writeoff support
 File Path: puvi-backend/puvi-backend-main/modules/material_writeoff.py
-Version: 2.1 - User can select any batch for writeoff (not FIFO restricted)
+Version: 3.0 - Unified writeoff with dynamic categories
 """
 
 from flask import Blueprint, request, jsonify
@@ -140,6 +140,580 @@ def get_inventory_for_writeoff():
     finally:
         close_connection(conn, cur)
 
+
+# ============================================
+# NEW UNIFIED INVENTORY ENDPOINT
+# ============================================
+
+@writeoff_bp.route('/api/unified_writeoff_inventory', methods=['GET'])
+def get_unified_writeoff_inventory():
+    """Get all writeoff-able items dynamically from database"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        result = {
+            'success': True,
+            'categories': [],
+            'inventory_items': []
+        }
+        
+        # 1. DYNAMICALLY get all material categories from categories_master
+        cur.execute("""
+            SELECT 
+                cm.category_name,
+                COUNT(DISTINCT CASE WHEN i.closing_stock > 0 THEN m.material_id END) as item_count
+            FROM categories_master cm
+            LEFT JOIN materials m ON (
+                m.category = cm.category_name 
+                OR (cm.category_name = 'Packing Material' AND m.category = 'Packaging')
+            ) AND m.is_active = true
+            LEFT JOIN inventory i ON i.material_id = m.material_id
+            WHERE cm.is_active = true
+            GROUP BY cm.category_name
+            ORDER BY cm.category_name
+        """)
+        
+        material_categories = []
+        for row in cur.fetchall():
+            material_categories.append({
+                'type': 'material',
+                'category': row[0],
+                'display_name': row[0],
+                'count': row[1] or 0,
+                'unit': 'items'
+            })
+        
+        # 2. DYNAMICALLY get all SKU products from sku_master
+        cur.execute("""
+            SELECT 
+                CONCAT('sku_', sm.oil_type, '_', sm.package_size) as category_key,
+                CONCAT(sm.oil_type, ' Oil - ', sm.package_size) as display_name,
+                COUNT(DISTINCT si.inventory_id) as item_count,
+                COALESCE(SUM(si.quantity_available), 0) as total_quantity
+            FROM sku_master sm
+            LEFT JOIN sku_inventory si ON sm.sku_id = si.sku_id 
+                AND si.quantity_available > 0 
+                AND si.status = 'active'
+            WHERE sm.is_active = true
+            GROUP BY sm.oil_type, sm.package_size
+            ORDER BY sm.oil_type, sm.package_size
+        """)
+        
+        sku_categories = []
+        for row in cur.fetchall():
+            sku_categories.append({
+                'type': 'sku',
+                'category': row[0],
+                'display_name': row[1],
+                'count': float(row[3]) if row[3] else 0,
+                'unit': 'bottles'
+            })
+        
+        # 3. DYNAMICALLY get oil cake types from actual inventory
+        cur.execute("""
+            SELECT DISTINCT 
+                oci.oil_type,
+                COUNT(DISTINCT oci.cake_inventory_id) as batch_count,
+                SUM(oci.quantity_remaining) as total_quantity
+            FROM oil_cake_inventory oci
+            WHERE oci.quantity_remaining > 0
+            GROUP BY oci.oil_type
+            ORDER BY oci.oil_type
+        """)
+        
+        oilcake_categories = []
+        for row in cur.fetchall():
+            oilcake_categories.append({
+                'type': 'oilcake',
+                'category': f'oilcake_{row[0]}',
+                'display_name': f'Oil Cake - {row[0]}',
+                'count': float(row[2]) if row[2] else 0,
+                'unit': 'kg'
+            })
+        
+        # 4. DYNAMICALLY get sludge types from batch table
+        cur.execute("""
+            SELECT DISTINCT 
+                b.oil_type,
+                COUNT(DISTINCT b.batch_id) as batch_count,
+                SUM(b.sludge_yield - COALESCE(b.sludge_sold_quantity, 0)) as total_quantity
+            FROM batch b
+            WHERE b.sludge_yield > 0 
+                AND (b.sludge_yield - COALESCE(b.sludge_sold_quantity, 0)) > 0
+            GROUP BY b.oil_type
+            ORDER BY b.oil_type
+        """)
+        
+        sludge_categories = []
+        for row in cur.fetchall():
+            sludge_categories.append({
+                'type': 'sludge',
+                'category': f'sludge_{row[0]}',
+                'display_name': f'Sludge - {row[0]}',
+                'count': float(row[2]) if row[2] else 0,
+                'unit': 'kg'
+            })
+        
+        # 5. Also check for oil cake with zero inventory but exists in batch history
+        cur.execute("""
+            SELECT DISTINCT b.oil_type
+            FROM batch b
+            WHERE b.oil_cake_yield > 0
+                AND b.oil_type NOT IN (
+                    SELECT DISTINCT oil_type 
+                    FROM oil_cake_inventory 
+                    WHERE quantity_remaining > 0
+                )
+            ORDER BY b.oil_type
+        """)
+        
+        for row in cur.fetchall():
+            # Check if not already added
+            exists = any(cat['category'] == f'oilcake_{row[0]}' for cat in oilcake_categories)
+            if not exists:
+                oilcake_categories.append({
+                    'type': 'oilcake',
+                    'category': f'oilcake_{row[0]}',
+                    'display_name': f'Oil Cake - {row[0]}',
+                    'count': 0,
+                    'unit': 'kg'
+                })
+        
+        # Combine all dynamically fetched categories
+        result['categories'] = {
+            'materials': material_categories,
+            'finished_products': sku_categories,
+            'byproducts': oilcake_categories + sludge_categories
+        }
+        
+        # If specific category requested, fetch its items
+        selected_category = request.args.get('category')
+        if selected_category:
+            if selected_category.startswith('sku_'):
+                # Parse dynamically - handle any oil type and package size
+                parts = selected_category.replace('sku_', '').rsplit('_', 1)
+                if len(parts) == 2:
+                    oil_type, package_size = parts
+                    
+                    # Fetch SKU inventory for this combination
+                    cur.execute("""
+                        SELECT 
+                            si.inventory_id,
+                            si.sku_id,
+                            sm.sku_code,
+                            sm.product_name,
+                            si.quantity_available,
+                            si.expiry_date,
+                            si.batch_code,
+                            si.mrp
+                        FROM sku_inventory si
+                        JOIN sku_master sm ON si.sku_id = sm.sku_id
+                        WHERE sm.oil_type = %s 
+                            AND sm.package_size = %s
+                            AND si.quantity_available > 0
+                            AND si.status = 'active'
+                        ORDER BY si.expiry_date
+                    """, (oil_type, package_size))
+                    
+                    for row in cur.fetchall():
+                        result['inventory_items'].append({
+                            'inventory_id': row[0],
+                            'sku_id': row[1],
+                            'sku_code': row[2],
+                            'product_name': row[3],
+                            'quantity_available': float(row[4]),
+                            'expiry_date': integer_to_date(row[5]) if row[5] else None,
+                            'batch_code': row[6],
+                            'mrp': float(row[7]) if row[7] else 0,
+                            'type': 'sku',
+                            'unit': 'bottles'
+                        })
+                        
+            elif selected_category.startswith('oilcake_'):
+                oil_type = selected_category.replace('oilcake_', '')
+                
+                # Existing oil cake logic
+                cur.execute("""
+                    SELECT 
+                        oci.cake_inventory_id,
+                        oci.batch_id,
+                        b.batch_code,
+                        oci.oil_type,
+                        oci.quantity_produced,
+                        oci.quantity_remaining,
+                        oci.estimated_rate,
+                        oci.production_date,
+                        b.traceable_code
+                    FROM oil_cake_inventory oci
+                    JOIN batch b ON oci.batch_id = b.batch_id
+                    WHERE oci.quantity_remaining > 0
+                        AND oci.oil_type = %s
+                    ORDER BY oci.production_date DESC
+                """, (oil_type,))
+                
+                for row in cur.fetchall():
+                    result['inventory_items'].append({
+                        'inventory_id': row[0],
+                        'batch_id': row[1],
+                        'batch_code': row[2],
+                        'oil_type': row[3],
+                        'quantity_produced': float(row[4]),
+                        'quantity_remaining': float(row[5]),
+                        'estimated_rate': float(row[6]),
+                        'production_date': integer_to_date(row[7]),
+                        'traceable_code': row[8],
+                        'type': 'oilcake',
+                        'unit': 'kg',
+                        'available_quantity': float(row[5])
+                    })
+                    
+            elif selected_category.startswith('sludge_'):
+                oil_type = selected_category.replace('sludge_', '')
+                
+                # Existing sludge logic
+                cur.execute("""
+                    SELECT 
+                        b.batch_id,
+                        b.batch_code,
+                        b.oil_type,
+                        b.sludge_yield as quantity_produced,
+                        b.sludge_yield - COALESCE(b.sludge_sold_quantity, 0) as quantity_remaining,
+                        b.sludge_estimated_rate as estimated_rate,
+                        b.production_date,
+                        b.traceable_code
+                    FROM batch b
+                    WHERE b.sludge_yield > 0 
+                        AND (b.sludge_yield - COALESCE(b.sludge_sold_quantity, 0)) > 0
+                        AND b.oil_type = %s
+                    ORDER BY b.production_date DESC
+                """, (oil_type,))
+                
+                for row in cur.fetchall():
+                    quantity_remaining = float(row[4]) if row[4] else 0
+                    result['inventory_items'].append({
+                        'inventory_id': row[0],  # batch_id for sludge
+                        'batch_id': row[0],
+                        'batch_code': row[1],
+                        'oil_type': row[2],
+                        'quantity_produced': float(row[3]) if row[3] else 0,
+                        'quantity_remaining': quantity_remaining,
+                        'estimated_rate': float(row[5]) if row[5] else 0,
+                        'production_date': integer_to_date(row[6]),
+                        'traceable_code': row[7],
+                        'type': 'sludge',
+                        'unit': 'kg',
+                        'available_quantity': quantity_remaining
+                    })
+                    
+            else:
+                # Material category - fetch dynamically
+                cur.execute("""
+                    SELECT 
+                        i.inventory_id,
+                        i.material_id,
+                        m.material_name,
+                        m.unit,
+                        i.closing_stock,
+                        i.weighted_avg_cost
+                    FROM inventory i
+                    JOIN materials m ON i.material_id = m.material_id
+                    WHERE (m.category = %s 
+                        OR (%s = 'Packing Material' AND m.category = 'Packaging'))
+                        AND i.closing_stock > 0
+                    ORDER BY m.material_name
+                """, (selected_category, selected_category))
+                
+                for row in cur.fetchall():
+                    result['inventory_items'].append({
+                        'inventory_id': row[0],
+                        'material_id': row[1],
+                        'material_name': row[2],
+                        'unit': row[3],
+                        'available_quantity': float(row[4]),
+                        'weighted_avg_cost': float(row[5]),
+                        'type': 'material'
+                    })
+        
+        return jsonify(result)
+        
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+# ============================================
+# NEW SKU WRITEOFF ENDPOINTS
+# ============================================
+
+@writeoff_bp.route('/api/sku_for_writeoff', methods=['GET'])
+def get_sku_for_writeoff():
+    """Get available SKU inventory for writeoff selection"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        oil_type = request.args.get('oil_type')
+        package_size = request.args.get('package_size')
+        
+        # Build query with filters
+        query = """
+            SELECT 
+                si.inventory_id,
+                si.sku_id,
+                sm.sku_code,
+                sm.product_name,
+                sm.oil_type,
+                sm.package_size,
+                si.quantity_available,
+                si.batch_code,
+                si.production_date,
+                si.expiry_date,
+                si.mrp,
+                si.production_cost_per_unit
+            FROM sku_inventory si
+            JOIN sku_master sm ON si.sku_id = sm.sku_id
+            WHERE si.quantity_available > 0
+                AND si.status = 'active'
+        """
+        
+        params = []
+        if oil_type:
+            query += " AND sm.oil_type = %s"
+            params.append(oil_type)
+            
+        if package_size:
+            query += " AND sm.package_size = %s"
+            params.append(package_size)
+            
+        query += " ORDER BY si.expiry_date, si.production_date"
+        
+        cur.execute(query, params)
+        
+        inventory_items = []
+        for row in cur.fetchall():
+            inventory_items.append({
+                'inventory_id': row[0],
+                'sku_id': row[1],
+                'sku_code': row[2],
+                'product_name': row[3],
+                'oil_type': row[4],
+                'package_size': row[5],
+                'quantity_available': float(row[6]),
+                'batch_code': row[7],
+                'production_date': integer_to_date(row[8]) if row[8] else None,
+                'expiry_date': integer_to_date(row[9]) if row[9] else None,
+                'mrp': float(row[10]) if row[10] else 0,
+                'production_cost': float(row[11]) if row[11] else 0,
+                'type': 'sku',
+                'unit': 'bottles'
+            })
+        
+        # Get summary
+        cur.execute("""
+            SELECT 
+                sm.oil_type,
+                sm.package_size,
+                COUNT(DISTINCT si.inventory_id) as batch_count,
+                COALESCE(SUM(si.quantity_available), 0) as total_quantity,
+                COALESCE(AVG(si.mrp), 0) as avg_mrp
+            FROM sku_inventory si
+            JOIN sku_master sm ON si.sku_id = sm.sku_id
+            WHERE si.quantity_available > 0
+                AND si.status = 'active'
+            GROUP BY sm.oil_type, sm.package_size
+            ORDER BY sm.oil_type, sm.package_size
+        """)
+        
+        summary = []
+        for row in cur.fetchall():
+            summary.append({
+                'oil_type': row[0],
+                'package_size': row[1],
+                'batch_count': row[2],
+                'total_quantity': float(row[3]),
+                'avg_mrp': float(row[4])
+            })
+        
+        return jsonify({
+            'success': True,
+            'inventory_items': inventory_items,
+            'count': len(inventory_items),
+            'summary': summary
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+@writeoff_bp.route('/api/add_sku_writeoff', methods=['POST'])
+def add_sku_writeoff():
+    """Record a SKU product writeoff"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        data = request.json
+        
+        # Validate required fields
+        is_valid, missing_fields = validate_required_fields(
+            data,
+            ['sku_inventory_id', 'quantity', 'writeoff_date', 'reason_code']
+        )
+        
+        if not is_valid:
+            return jsonify({
+                'success': False,
+                'error': f'Missing required fields: {", ".join(missing_fields)}'
+            }), 400
+        
+        sku_inventory_id = data['sku_inventory_id']
+        writeoff_qty = safe_float(data['quantity'])
+        writeoff_date_int = parse_date(data['writeoff_date'])
+        
+        # Get SKU inventory details
+        cur.execute("""
+            SELECT 
+                si.sku_id,
+                si.quantity_available,
+                si.production_cost_per_unit,
+                si.mrp,
+                si.batch_code,
+                sm.sku_code,
+                sm.product_name,
+                sm.oil_type,
+                sm.package_size
+            FROM sku_inventory si
+            JOIN sku_master sm ON si.sku_id = sm.sku_id
+            WHERE si.inventory_id = %s
+        """, (sku_inventory_id,))
+        
+        sku_row = cur.fetchone()
+        if not sku_row:
+            return jsonify({
+                'success': False,
+                'error': 'SKU inventory not found'
+            }), 404
+        
+        sku_id = sku_row[0]
+        quantity_available = float(sku_row[1])
+        production_cost = float(sku_row[2]) if sku_row[2] else 0
+        mrp = float(sku_row[3]) if sku_row[3] else 0
+        batch_code = sku_row[4]
+        sku_code = sku_row[5]
+        product_name = sku_row[6]
+        oil_type = sku_row[7]
+        package_size = sku_row[8]
+        
+        # Validate quantity
+        if writeoff_qty <= 0:
+            return jsonify({
+                'success': False,
+                'error': 'Writeoff quantity must be greater than 0'
+            }), 400
+            
+        if writeoff_qty > quantity_available:
+            return jsonify({
+                'success': False,
+                'error': f'Insufficient stock. Available: {quantity_available} bottles'
+            }), 400
+        
+        # Calculate costs (use production cost if available, else use MRP * 0.7 as estimate)
+        cost_per_unit = production_cost if production_cost > 0 else mrp * 0.7
+        total_cost = writeoff_qty * cost_per_unit
+        scrap_value = safe_float(data.get('scrap_value', 0))
+        net_loss = total_cost - scrap_value
+        
+        # Begin transaction
+        cur.execute("BEGIN")
+        
+        # Insert writeoff record
+        cur.execute("""
+            INSERT INTO material_writeoffs (
+                material_id, writeoff_date, quantity, weighted_avg_cost,
+                total_cost, scrap_value, net_loss, reason_code,
+                reason_description, reference_type, reference_id,
+                notes, created_by
+            ) VALUES (NULL, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            RETURNING writeoff_id
+        """, (
+            writeoff_date_int,
+            writeoff_qty,
+            cost_per_unit,
+            total_cost,
+            scrap_value,
+            net_loss,
+            data['reason_code'],
+            data.get('reason_description', ''),
+            'sku',
+            sku_inventory_id,
+            data.get('notes', f'SKU writeoff: {product_name} from batch {batch_code}'),
+            data.get('created_by', 'System')
+        ))
+        
+        writeoff_id = cur.fetchone()[0]
+        
+        # Update SKU inventory
+        new_quantity = quantity_available - writeoff_qty
+        
+        if new_quantity == 0:
+            # Mark as fully consumed
+            cur.execute("""
+                UPDATE sku_inventory
+                SET quantity_available = 0,
+                    status = 'consumed'
+                WHERE inventory_id = %s
+            """, (sku_inventory_id,))
+        else:
+            # Update remaining quantity
+            cur.execute("""
+                UPDATE sku_inventory
+                SET quantity_available = %s
+                WHERE inventory_id = %s
+            """, (new_quantity, sku_inventory_id))
+        
+        # Update impact tracking
+        cur.execute("SELECT update_writeoff_impact_tracking()")
+        
+        # Update monthly summary
+        month_year = int(integer_to_date(writeoff_date_int, '%Y%m'))
+        cur.execute("SELECT update_writeoff_monthly_summary(%s)", (month_year,))
+        
+        # Commit transaction
+        conn.commit()
+        
+        return jsonify({
+            'success': True,
+            'writeoff_id': writeoff_id,
+            'sku_code': sku_code,
+            'product_name': f'{oil_type} Oil - {package_size}',
+            'batch_code': batch_code,
+            'quantity_written_off': writeoff_qty,
+            'unit': 'bottles',
+            'total_cost': total_cost,
+            'scrap_value': scrap_value,
+            'net_loss': net_loss,
+            'new_balance': new_quantity,
+            'message': f'SKU writeoff recorded successfully. {writeoff_qty} bottles of {product_name} written off.'
+        }), 201
+        
+    except Exception as e:
+        conn.rollback()
+        import traceback
+        traceback.print_exc()
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+# ============================================
+# EXISTING WRITEOFF ENDPOINTS (UNCHANGED)
+# ============================================
 
 @writeoff_bp.route('/api/add_writeoff', methods=['POST'])
 def add_writeoff():
@@ -341,6 +915,16 @@ def get_writeoff_history():
         
         writeoffs = []
         for row in cur.fetchall():
+            # Determine item name based on reference type
+            if row[10] == 'oil_cake':
+                item_name = 'Oil Cake'
+            elif row[10] == 'sludge':
+                item_name = 'Sludge'
+            elif row[10] == 'sku':
+                item_name = 'SKU Product'
+            else:
+                item_name = row[15] if row[15] else 'Unknown'
+            
             writeoff = {
                 'writeoff_id': row[0],
                 'material_id': row[1],
@@ -358,7 +942,7 @@ def get_writeoff_history():
                 'notes': row[12],
                 'created_by': row[13],
                 'created_at': row[14].isoformat() if row[14] else None,
-                'material_name': row[15] if row[15] else 'Oil Cake/Sludge',
+                'material_name': item_name,
                 'unit': row[16] if row[16] else 'kg',
                 'category': row[17] if row[17] else 'By-product'
             }
@@ -431,10 +1015,6 @@ def get_writeoff_history():
     finally:
         close_connection(conn, cur)
 
-
-# ============================================
-# NEW ENDPOINTS FOR OIL CAKE WRITEOFF
-# ============================================
 
 @writeoff_bp.route('/api/oilcake_for_writeoff', methods=['GET'])
 def get_oilcake_for_writeoff():
@@ -701,10 +1281,6 @@ def add_oilcake_writeoff():
         close_connection(conn, cur)
 
 
-# ============================================
-# NEW ENDPOINTS FOR SLUDGE WRITEOFF
-# ============================================
-
 @writeoff_bp.route('/api/sludge_for_writeoff', methods=['GET'])
 def get_sludge_for_writeoff():
     """Get available sludge inventory for writeoff selection
@@ -956,6 +1532,305 @@ def add_sludge_writeoff():
         conn.rollback()
         import traceback
         traceback.print_exc()
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+# ============================================
+# IMPACT ANALYTICS ENDPOINTS
+# ============================================
+
+@writeoff_bp.route('/api/writeoff_impact', methods=['GET'])
+def get_writeoff_impact():
+    """Get current writeoff impact metrics"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        cur.execute("""
+            SELECT 
+                total_writeoffs_value,
+                total_oil_produced_kg,
+                impact_per_kg,
+                writeoff_percentage,
+                impact_level,
+                impact_color,
+                last_updated,
+                note
+            FROM writeoff_impact_tracking
+            ORDER BY tracking_id DESC
+            LIMIT 1
+        """)
+        
+        row = cur.fetchone()
+        if row:
+            impact_data = {
+                'total_writeoffs_value': float(row[0]),
+                'total_oil_produced_kg': float(row[1]),
+                'impact_per_kg': float(row[2]),
+                'writeoff_percentage': float(row[3]),
+                'impact_level': row[4],
+                'impact_color': row[5],
+                'last_updated': row[6].isoformat() if row[6] else None,
+                'note': row[7]
+            }
+        else:
+            impact_data = None
+        
+        return jsonify({
+            'success': True,
+            'impact_data': impact_data
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+@writeoff_bp.route('/api/writeoff_dashboard', methods=['GET'])
+def get_writeoff_dashboard():
+    """Get combined dashboard data"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        dashboard = {}
+        
+        # Get recent writeoffs
+        cur.execute("""
+            SELECT 
+                w.writeoff_id,
+                w.writeoff_date,
+                COALESCE(m.material_name, 
+                    CASE 
+                        WHEN w.reference_type = 'oil_cake' THEN 'Oil Cake'
+                        WHEN w.reference_type = 'sludge' THEN 'Sludge'
+                        WHEN w.reference_type = 'sku' THEN 'SKU Product'
+                        ELSE 'Unknown'
+                    END
+                ) as item_name,
+                w.quantity,
+                COALESCE(m.unit, 'kg') as unit,
+                w.net_loss,
+                w.reason_description
+            FROM material_writeoffs w
+            LEFT JOIN materials m ON w.material_id = m.material_id
+            ORDER BY w.writeoff_date DESC, w.writeoff_id DESC
+            LIMIT 10
+        """)
+        
+        recent_writeoffs = []
+        for row in cur.fetchall():
+            recent_writeoffs.append({
+                'writeoff_id': row[0],
+                'date': integer_to_date(row[1]),
+                'item_name': row[2],
+                'quantity': float(row[3]),
+                'unit': row[4],
+                'net_loss': float(row[5]),
+                'reason': row[6]
+            })
+        
+        dashboard['recent_writeoffs'] = recent_writeoffs
+        
+        # Get top reasons
+        cur.execute("""
+            SELECT 
+                w.reason_code,
+                COALESCE(wr.reason_description, w.reason_description) as reason,
+                wr.category,
+                COUNT(*) as count,
+                SUM(w.net_loss) as total_loss
+            FROM material_writeoffs w
+            LEFT JOIN writeoff_reasons wr ON w.reason_code = wr.reason_code
+            GROUP BY w.reason_code, wr.reason_description, w.reason_description, wr.category
+            ORDER BY total_loss DESC
+            LIMIT 5
+        """)
+        
+        top_reasons = []
+        for row in cur.fetchall():
+            top_reasons.append({
+                'reason_code': row[0],
+                'reason': row[1],
+                'category': row[2] or 'Other',
+                'count': row[3],
+                'total_loss': float(row[4])
+            })
+        
+        dashboard['top_reasons'] = top_reasons
+        
+        # Get alerts based on impact level
+        cur.execute("""
+            SELECT impact_level, impact_per_kg, writeoff_percentage
+            FROM writeoff_impact_tracking
+            ORDER BY tracking_id DESC
+            LIMIT 1
+        """)
+        
+        alerts = []
+        impact_row = cur.fetchone()
+        if impact_row:
+            impact_level = impact_row[0]
+            impact_per_kg = float(impact_row[1])
+            writeoff_percentage = float(impact_row[2])
+            
+            if impact_level == 'critical':
+                alerts.append({
+                    'level': 'critical',
+                    'message': f'CRITICAL: Writeoff impact at ₹{impact_per_kg:.2f}/kg oil ({writeoff_percentage:.2f}% of production value)'
+                })
+            elif impact_level == 'high':
+                alerts.append({
+                    'level': 'warning',
+                    'message': f'HIGH: Writeoff impact at ₹{impact_per_kg:.2f}/kg oil ({writeoff_percentage:.2f}% of production value)'
+                })
+        
+        dashboard['alerts'] = alerts
+        
+        return jsonify({
+            'success': True,
+            'dashboard': dashboard
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+@writeoff_bp.route('/api/writeoff_trends', methods=['GET'])
+def get_writeoff_trends():
+    """Get monthly writeoff trends"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        cur.execute("""
+            SELECT 
+                month_year,
+                total_count,
+                total_value,
+                material_writeoffs,
+                byproduct_writeoffs,
+                top_reason
+            FROM writeoff_monthly_summary
+            ORDER BY month_year DESC
+            LIMIT 12
+        """)
+        
+        trends = []
+        for row in cur.fetchall():
+            month_str = str(row[0])
+            year = month_str[:4]
+            month = month_str[4:6]
+            
+            trends.append({
+                'month_year': row[0],
+                'month_display': f'{month}/{year}',
+                'total_count': row[1],
+                'total_value': float(row[2]),
+                'material_writeoffs': row[3],
+                'byproduct_writeoffs': row[4],
+                'top_reason': row[5]
+            })
+        
+        return jsonify({
+            'success': True,
+            'trends': trends
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+@writeoff_bp.route('/api/refresh_writeoff_metrics', methods=['POST'])
+def refresh_writeoff_metrics():
+    """Manually refresh writeoff metrics"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        # Update impact tracking
+        cur.execute("SELECT update_writeoff_impact_tracking()")
+        
+        # Update monthly summary for current month
+        current_month = get_current_day_number()
+        month_year = int(integer_to_date(current_month, '%Y%m'))
+        cur.execute("SELECT update_writeoff_monthly_summary(%s)", (month_year,))
+        
+        conn.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Metrics refreshed successfully'
+        })
+        
+    except Exception as e:
+        conn.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+@writeoff_bp.route('/api/writeoff_report/<int:writeoff_id>', methods=['GET'])
+def get_writeoff_report(writeoff_id):
+    """Get printable writeoff report"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        # Get writeoff details
+        cur.execute("""
+            SELECT 
+                w.*,
+                m.material_name,
+                m.unit,
+                m.category
+            FROM material_writeoffs w
+            LEFT JOIN materials m ON w.material_id = m.material_id
+            WHERE w.writeoff_id = %s
+        """, (writeoff_id,))
+        
+        row = cur.fetchone()
+        if not row:
+            return jsonify({
+                'success': False,
+                'error': 'Writeoff not found'
+            }), 404
+        
+        # Build report data
+        report = {
+            'writeoff_id': row[0],
+            'material_id': row[1],
+            'writeoff_date': integer_to_date(row[2]),
+            'quantity': float(row[3]),
+            'weighted_avg_cost': float(row[4]),
+            'total_cost': float(row[5]),
+            'scrap_value': float(row[6]) if row[6] else 0,
+            'net_loss': float(row[7]),
+            'reason_code': row[8],
+            'reason_description': row[9],
+            'reference_type': row[10],
+            'reference_id': row[11],
+            'notes': row[12],
+            'created_by': row[13],
+            'created_at': row[14].isoformat() if row[14] else None,
+            'material_name': row[15] if row[15] else 'N/A',
+            'unit': row[16] if row[16] else 'kg',
+            'category': row[17] if row[17] else 'N/A'
+        }
+        
+        return jsonify({
+            'success': True,
+            'report': report
+        })
+        
+    except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
     finally:
         close_connection(conn, cur)
