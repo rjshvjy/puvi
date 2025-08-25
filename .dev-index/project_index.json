@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-25T23:04:08.297Z",
+  "generatedAt": "2025-08-25T23:17:24.541Z",
   "filesScanned": 62,
   "jsFilesScanned": 38,
   "pyFilesScanned": 24,
@@ -11144,7 +11144,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
-      "line": 229,
+      "line": 233,
       "name": "handleFilterChange",
       "params": "field, value",
       "type": "arrow",
@@ -11152,7 +11152,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
-      "line": 233,
+      "line": 237,
       "name": "handleClearFilters",
       "params": "",
       "type": "arrow",
@@ -11160,7 +11160,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
-      "line": 244,
+      "line": 248,
       "name": "handleSort",
       "params": "field",
       "type": "arrow",
@@ -11168,7 +11168,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
-      "line": 253,
+      "line": 257,
       "name": "handleViewDetails",
       "params": "productionId",
       "type": "arrow",
@@ -11176,7 +11176,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
-      "line": 268,
+      "line": 272,
       "name": "exportToCSV",
       "params": "",
       "type": "arrow",
@@ -11184,7 +11184,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
-      "line": 330,
+      "line": 334,
       "name": "calculateSummary",
       "params": "",
       "type": "arrow",
@@ -11192,7 +11192,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
-      "line": 387,
+      "line": 391,
       "name": "getRowClass",
       "params": "expiryStatus",
       "type": "arrow",
@@ -20545,25 +20545,25 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
-      "line": 220,
+      "line": 225,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
-      "line": 223,
+      "line": 227,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
-      "line": 254,
+      "line": 258,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ProductionHistory.js",
-      "line": 262,
+      "line": 266,
       "type": "catch",
       "code": "} catch (error) {"
     },

@@ -1,5 +1,5 @@
 # Feature Pack: WRITEOFF-IMPACT
-Generated: 2025-08-25T23:04:09.242Z
+Generated: 2025-08-25T23:17:25.465Z
 Routes: 2 | Tables: 15 | Files: 2
 
 ## Table of Contents

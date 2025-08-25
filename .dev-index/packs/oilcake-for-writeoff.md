@@ -1,5 +1,5 @@
 # Feature Pack: OILCAKE-FOR-WRITEOFF
-Generated: 2025-08-25T23:04:09.241Z
+Generated: 2025-08-25T23:17:25.464Z
 Routes: 1 | Tables: 13 | Files: 1
 
 ## Table of Contents
