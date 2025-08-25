@@ -807,45 +807,147 @@ def get_production_summary_report(production_id):
             WHERE p.production_id = %s
         """, (production_id,))
         
-        prod_data = cur.fetchone()
-        if not prod_data:
-            return jsonify({'success': False, 'error': 'Production not found'}), 404
-        
-        # Get oil allocations for traceability
+        # Get oil allocations with FULL traceability
+cur.execute("""
+    SELECT 
+        oa.source_type,
+        oa.source_id,
+        oa.source_traceable_code,
+        oa.quantity_allocated,
+        oa.oil_cost_per_kg,
+        CASE 
+            WHEN oa.source_type = 'batch' THEN b.batch_code
+            WHEN oa.source_type = 'blend' THEN bl.blend_code
+        END as source_code,
+        CASE 
+            WHEN oa.source_type = 'batch' THEN b.oil_type
+            WHEN oa.source_type = 'blend' THEN 'Blended'
+        END as oil_type
+    FROM sku_oil_allocation oa
+    LEFT JOIN batch b ON oa.source_type = 'batch' AND oa.source_id = b.batch_id
+    LEFT JOIN blend_batches bl ON oa.source_type = 'blend' AND oa.source_id = bl.blend_id
+    WHERE oa.production_id = %s
+    ORDER BY oa.allocation_id
+""", (production_id,))
+
+oil_sources = []
+for row in cur.fetchall():
+    source_type = row[0]
+    source_id = row[1]
+    
+    # Build complete traceability chain
+    traceability_chain = []
+    
+    if source_type == 'batch':
+        # Get batch details including seed source
         cur.execute("""
             SELECT 
-                oa.source_type,
-                oa.source_traceable_code,
-                oa.quantity_allocated,
-                oa.oil_cost_per_kg,
-                CASE 
-                    WHEN oa.source_type = 'batch' THEN b.batch_code
-                    WHEN oa.source_type = 'blend' THEN bl.blend_code
-                END as source_code,
-                CASE 
-                    WHEN oa.source_type = 'batch' THEN b.oil_type
-                    WHEN oa.source_type = 'blend' THEN 'Blended'
-                END as oil_type
-            FROM sku_oil_allocation oa
-            LEFT JOIN batch b ON oa.source_type = 'batch' AND oa.source_id = b.batch_id
-            LEFT JOIN blend_batches bl ON oa.source_type = 'blend' AND oa.source_id = bl.blend_id
-            WHERE oa.production_id = %s
-            ORDER BY oa.allocation_id
-        """, (production_id,))
+                b.batch_code,
+                b.traceable_code,
+                b.oil_yield,
+                b.seed_material_id,
+                b.seed_quantity_used,
+                b.seed_purchase_code,
+                m.material_name as seed_name,
+                s.supplier_name
+            FROM batch b
+            LEFT JOIN materials m ON b.seed_material_id = m.material_id
+            LEFT JOIN purchases p ON p.traceable_code = b.seed_purchase_code
+            LEFT JOIN suppliers s ON p.supplier_id = s.supplier_id
+            WHERE b.batch_id = %s
+        """, (source_id,))
         
-        oil_sources = []
-        for row in cur.fetchall():
-            oil_sources.append({
-                'source_type': row[0],
-                'traceable_code': row[1],
-                'quantity_kg': float(row[2]),
-                'cost_per_kg': float(row[3]),
-                'source_code': row[4],
-                'oil_type': row[5]
+        batch_data = cur.fetchone()
+        if batch_data:
+            traceability_chain.append({
+                'level': 'seed_purchase',
+                'code': batch_data[5],  # seed_purchase_code
+                'description': f"Seed: {batch_data[6]} from {batch_data[7] or 'Unknown Supplier'}",
+                'quantity': f"{batch_data[4]} kg seeds"
+            })
+            traceability_chain.append({
+                'level': 'batch',
+                'code': batch_data[1],  # traceable_code
+                'description': f"Batch: {batch_data[0]}",
+                'quantity': f"{batch_data[2]} kg oil produced"
+            })
+    
+    elif source_type == 'blend':
+        # Get blend components
+        cur.execute("""
+            SELECT 
+                bbc.batch_id,
+                bbc.quantity_used,
+                bbc.percentage,
+                b.batch_code,
+                b.traceable_code,
+                b.seed_purchase_code,
+                b.seed_quantity_used,
+                m.material_name as seed_name
+            FROM blend_batch_components bbc
+            JOIN batch b ON bbc.batch_id = b.batch_id
+            LEFT JOIN materials m ON b.seed_material_id = m.material_id
+            WHERE bbc.blend_id = %s
+            ORDER BY bbc.percentage DESC
+        """, (source_id,))
+        
+        blend_components = cur.fetchall()
+        
+        # Add seed sources for each batch in blend
+        seed_sources = []
+        for comp in blend_components:
+            seed_sources.append({
+                'seed_code': comp[5],
+                'seed_name': comp[7],
+                'batch_code': comp[4],
+                'percentage': float(comp[2])
             })
         
-        # Get material consumption
-        cur.execute("""
+        # Group by seed purchase if multiple batches from same seed
+        seed_groups = {}
+        for src in seed_sources:
+            if src['seed_code'] not in seed_groups:
+                seed_groups[src['seed_code']] = {
+                    'code': src['seed_code'],
+                    'name': src['seed_name'],
+                    'batches': [],
+                    'total_percentage': 0
+                }
+            seed_groups[src['seed_code']]['batches'].append(src['batch_code'])
+            seed_groups[src['seed_code']]['total_percentage'] += src['percentage']
+        
+        # Add to traceability chain
+        for seed_code, seed_info in seed_groups.items():
+            traceability_chain.append({
+                'level': 'seed_purchase',
+                'code': seed_code,
+                'description': f"Seed: {seed_info['name']}",
+                'quantity': f"{seed_info['total_percentage']:.1f}% of blend"
+            })
+            for batch_code in seed_info['batches']:
+                traceability_chain.append({
+                    'level': 'batch',
+                    'code': batch_code,
+                    'description': f"Batch from above seed",
+                    'quantity': ""
+                })
+        
+        traceability_chain.append({
+            'level': 'blend',
+            'code': row[2],  # blend traceable_code
+            'description': f"Blended oil from {len(blend_components)} batches",
+            'quantity': f"{float(row[3])} kg used"
+        })
+    
+    oil_sources.append({
+        'source_type': row[0],
+        'traceable_code': row[2],
+        'quantity_kg': float(row[3]),
+        'cost_per_kg': float(row[4]),
+        'source_code': row[5],
+        'oil_type': row[6],
+        'traceability_chain': traceability_chain  # NEW: Full chain
+    })
             SELECT 
                 m.material_name,
                 mc.planned_quantity,
