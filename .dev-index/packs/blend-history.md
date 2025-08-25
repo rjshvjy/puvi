@@ -1,5 +1,5 @@
 # Feature Pack: BLEND-HISTORY
-Generated: 2025-08-25T05:17:12.683Z
+Generated: 2025-08-25T06:18:00.252Z
 Routes: 1 | Tables: 8 | Files: 1
 
 ## Table of Contents
@@ -22,7 +22,7 @@ GET    /api/blend_history
 | batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 10 other modules |
 | blend_batch_components | blending | 🟡 MEDIUM | Changes affect 1 other modules |
 | blend_batches | blending, masters-crud, sku-production | 🔴 HIGH | Changes affect 3 other modules |
-| categories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
+| categories_master | blending, masters-crud, material-writeoff | 🔴 HIGH | Changes affect 4 other modules |
 | inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
 | materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 11 other modules |
 | purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 5 other modules |

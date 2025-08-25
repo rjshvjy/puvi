@@ -1,5 +1,5 @@
 # Feature Pack: MATERIALS
-Generated: 2025-08-25T05:17:12.689Z
+Generated: 2025-08-25T06:18:00.259Z
 Routes: 4 | Tables: 15 | Files: 2
 
 ## Table of Contents
@@ -27,14 +27,14 @@ GET    /api/materials/units
 |-------|-------------|------|--------|
 | available_oil_types | batch-production, system-config | 🟡 MEDIUM | Changes affect 2 other modules |
 | bom_category_mapping | system-config | 🟡 MEDIUM | Changes affect 1 other modules |
-| categories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
+| categories_master | blending, masters-crud, material-writeoff | 🔴 HIGH | Changes affect 4 other modules |
 | cost_elements_master | cost-management, package-sizes, sku-management | 🔴 HIGH | Changes affect 5 other modules |
 | inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
 | material_tags | purchase | 🟡 MEDIUM | Changes affect 1 other modules |
 | materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 11 other modules |
 | purchase_items | batch-production, purchase | 🟡 MEDIUM | Changes affect 2 other modules |
 | purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 5 other modules |
-| sku_master | masters-crud, package-sizes, sku-management | 🔴 HIGH | Changes affect 6 other modules |
+| sku_master | masters-crud, material-writeoff, package-sizes | 🔴 HIGH | Changes affect 7 other modules |
 | subcategories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
 | suppliers | opening-balance, purchase, system-config | 🔴 HIGH | Changes affect 4 other modules |
 | tags | purchase | 🟡 MEDIUM | Changes affect 1 other modules |

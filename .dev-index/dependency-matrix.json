@@ -1,9 +1,9 @@
 {
   "version": "1.0",
-  "generatedAt": "2025-08-25T05:17:12.624Z",
+  "generatedAt": "2025-08-25T06:18:00.193Z",
   "summary": {
-    "totalTables": 60,
-    "sharedTables": 27,
+    "totalTables": 61,
+    "sharedTables": 30,
     "hardcodedCategories": 0,
     "migrationOpportunities": 0
   },
@@ -413,9 +413,10 @@
       "usedBy": [
         "blending",
         "masters-crud",
+        "material-writeoff",
         "purchase"
       ],
-      "fileCount": 3,
+      "fileCount": 4,
       "operations": {
         "blending": {
           "files": [
@@ -426,6 +427,12 @@
         "masters-crud": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+          ],
+          "queryCount": 0
+        },
+        "material-writeoff": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/material_writeoff.py"
           ],
           "queryCount": 0
         },
@@ -664,17 +671,24 @@
     "sku_master": {
       "usedBy": [
         "masters-crud",
+        "material-writeoff",
         "package-sizes",
         "sku-management",
         "sku-production",
         "system-config",
         "unknown"
       ],
-      "fileCount": 6,
+      "fileCount": 7,
       "operations": {
         "masters-crud": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+          ],
+          "queryCount": 0
+        },
+        "material-writeoff": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/material_writeoff.py"
           ],
           "queryCount": 0
         },
@@ -780,6 +794,20 @@
         }
       }
     },
+    "sku_inventory": {
+      "usedBy": [
+        "material-writeoff"
+      ],
+      "fileCount": 1,
+      "operations": {
+        "material-writeoff": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/material_writeoff.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
     "material_writeoffs": {
       "usedBy": [
         "material-writeoff",
@@ -797,6 +825,69 @@
         "opening-balance": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/opening_balance.py"
+          ],
+          "queryCount": 0
+        },
+        "writeoff-analytics": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/writeoff_analytics.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "writeoff_impact_tracking": {
+      "usedBy": [
+        "material-writeoff",
+        "writeoff-analytics"
+      ],
+      "fileCount": 2,
+      "operations": {
+        "material-writeoff": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/material_writeoff.py"
+          ],
+          "queryCount": 0
+        },
+        "writeoff-analytics": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/writeoff_analytics.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "writeoff_monthly_summary": {
+      "usedBy": [
+        "material-writeoff",
+        "writeoff-analytics"
+      ],
+      "fileCount": 2,
+      "operations": {
+        "material-writeoff": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/material_writeoff.py"
+          ],
+          "queryCount": 0
+        },
+        "writeoff-analytics": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/writeoff_analytics.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "writeoff": {
+      "usedBy": [
+        "material-writeoff",
+        "writeoff-analytics"
+      ],
+      "fileCount": 2,
+      "operations": {
+        "material-writeoff": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/material_writeoff.py"
           ],
           "queryCount": 0
         },
@@ -1194,20 +1285,6 @@
         }
       }
     },
-    "writeoff_impact_tracking": {
-      "usedBy": [
-        "writeoff-analytics"
-      ],
-      "fileCount": 1,
-      "operations": {
-        "writeoff-analytics": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/writeoff_analytics.py"
-          ],
-          "queryCount": 0
-        }
-      }
-    },
     "calculate_writeoff_impact": {
       "usedBy": [
         "writeoff-analytics"
@@ -1223,34 +1300,6 @@
       }
     },
     "v_writeoff_trends": {
-      "usedBy": [
-        "writeoff-analytics"
-      ],
-      "fileCount": 1,
-      "operations": {
-        "writeoff-analytics": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/writeoff_analytics.py"
-          ],
-          "queryCount": 0
-        }
-      }
-    },
-    "writeoff_monthly_summary": {
-      "usedBy": [
-        "writeoff-analytics"
-      ],
-      "fileCount": 1,
-      "operations": {
-        "writeoff-analytics": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/writeoff_analytics.py"
-          ],
-          "queryCount": 0
-        }
-      }
-    },
-    "writeoff": {
       "usedBy": [
         "writeoff-analytics"
       ],
@@ -1409,6 +1458,19 @@
       "recommendation": "⚠️ CRITICAL: Changes require coordination across 10 modules"
     },
     {
+      "table": "categories_master",
+      "sharedBy": [
+        "blending",
+        "masters-crud",
+        "material-writeoff",
+        "purchase"
+      ],
+      "moduleCount": 4,
+      "fileCount": 4,
+      "risk": "HIGH",
+      "recommendation": "⚠️ CRITICAL: Changes require coordination across 4 modules"
+    },
+    {
       "table": "cost_elements_master",
       "sharedBy": [
         "cost-management",
@@ -1426,16 +1488,17 @@
       "table": "sku_master",
       "sharedBy": [
         "masters-crud",
+        "material-writeoff",
         "package-sizes",
         "sku-management",
         "sku-production",
         "system-config",
         "unknown"
       ],
-      "moduleCount": 6,
-      "fileCount": 6,
+      "moduleCount": 7,
+      "fileCount": 7,
       "risk": "HIGH",
-      "recommendation": "⚠️ CRITICAL: Changes require coordination across 6 modules"
+      "recommendation": "⚠️ CRITICAL: Changes require coordination across 7 modules"
     },
     {
       "table": "suppliers",
@@ -1464,18 +1527,6 @@
     },
     {
       "table": "subcategories_master",
-      "sharedBy": [
-        "blending",
-        "masters-crud",
-        "purchase"
-      ],
-      "moduleCount": 3,
-      "fileCount": 3,
-      "risk": "MEDIUM",
-      "recommendation": "Changes will affect blending, masters-crud, purchase"
-    },
-    {
-      "table": "categories_master",
       "sharedBy": [
         "blending",
         "masters-crud",
@@ -1610,6 +1661,39 @@
       "fileCount": 2,
       "risk": "LOW",
       "recommendation": "Changes will affect masters-common, sku-management"
+    },
+    {
+      "table": "writeoff_impact_tracking",
+      "sharedBy": [
+        "material-writeoff",
+        "writeoff-analytics"
+      ],
+      "moduleCount": 2,
+      "fileCount": 2,
+      "risk": "LOW",
+      "recommendation": "Changes will affect material-writeoff, writeoff-analytics"
+    },
+    {
+      "table": "writeoff_monthly_summary",
+      "sharedBy": [
+        "material-writeoff",
+        "writeoff-analytics"
+      ],
+      "moduleCount": 2,
+      "fileCount": 2,
+      "risk": "LOW",
+      "recommendation": "Changes will affect material-writeoff, writeoff-analytics"
+    },
+    {
+      "table": "writeoff",
+      "sharedBy": [
+        "material-writeoff",
+        "writeoff-analytics"
+      ],
+      "moduleCount": 2,
+      "fileCount": 2,
+      "risk": "LOW",
+      "recommendation": "Changes will affect material-writeoff, writeoff-analytics"
     },
     {
       "table": "system_configuration",

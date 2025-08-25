@@ -1,5 +1,5 @@
 # Feature Pack: CONFIG
-Generated: 2025-08-25T05:17:12.690Z
+Generated: 2025-08-25T06:18:00.260Z
 Routes: 5 | Tables: 8 | Files: 1
 
 ## Table of Contents
@@ -31,7 +31,7 @@ GET    /api/config/labor_rates
 | bom_category_mapping | system-config | 🟡 MEDIUM | Changes affect 1 other modules |
 | cost_elements_master | cost-management, package-sizes, sku-management | 🔴 HIGH | Changes affect 5 other modules |
 | materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 11 other modules |
-| sku_master | masters-crud, package-sizes, sku-management | 🔴 HIGH | Changes affect 6 other modules |
+| sku_master | masters-crud, material-writeoff, package-sizes | 🔴 HIGH | Changes affect 7 other modules |
 | suppliers | opening-balance, purchase, system-config | 🔴 HIGH | Changes affect 4 other modules |
 | uom_master | masters-common, system-config | 🟡 MEDIUM | Changes affect 2 other modules |
 | writeoff_reasons | material-writeoff, system-config, writeoff-analytics | 🔴 HIGH | Changes affect 3 other modules |

@@ -1,6 +1,6 @@
 # Feature Pack: WRITEOFF-TRENDS
-Generated: 2025-08-25T05:17:12.691Z
-Routes: 1 | Tables: 9 | Files: 1
+Generated: 2025-08-25T06:18:00.258Z
+Routes: 2 | Tables: 14 | Files: 2
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -14,6 +14,7 @@ Routes: 1 | Tables: 9 | Files: 1
 ```
 # get_writeoff_trends
 GET    /api/writeoff_trends
+GET    /api/writeoff_trends
 ```
 
 ## Database Dependencies
@@ -21,12 +22,17 @@ GET    /api/writeoff_trends
 |-------|-------------|------|--------|
 | batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 10 other modules |
 | calculate_writeoff_impact | writeoff-analytics | 🟡 MEDIUM | Changes affect 1 other modules |
+| categories_master | blending, masters-crud, material-writeoff | 🔴 HIGH | Changes affect 4 other modules |
+| inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
 | material_writeoffs | material-writeoff, opening-balance, writeoff-analytics | 🔴 HIGH | Changes affect 3 other modules |
 | materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 11 other modules |
+| oil_cake_inventory | batch-production, material-sales, material-writeoff | 🔴 HIGH | Changes affect 3 other modules |
+| sku_inventory | material-writeoff | 🟡 MEDIUM | Changes affect 1 other modules |
+| sku_master | masters-crud, material-writeoff, package-sizes | 🔴 HIGH | Changes affect 7 other modules |
 | v_writeoff_trends | writeoff-analytics | 🟡 MEDIUM | Changes affect 1 other modules |
-| writeoff | writeoff-analytics | 🟡 MEDIUM | Changes affect 1 other modules |
-| writeoff_impact_tracking | writeoff-analytics | 🟡 MEDIUM | Changes affect 1 other modules |
-| writeoff_monthly_summary | writeoff-analytics | 🟡 MEDIUM | Changes affect 1 other modules |
+| writeoff | material-writeoff, writeoff-analytics | 🟡 MEDIUM | Changes affect 2 other modules |
+| writeoff_impact_tracking | material-writeoff, writeoff-analytics | 🟡 MEDIUM | Changes affect 2 other modules |
+| writeoff_monthly_summary | material-writeoff, writeoff-analytics | 🟡 MEDIUM | Changes affect 2 other modules |
 | writeoff_reasons | material-writeoff, system-config, writeoff-analytics | 🔴 HIGH | Changes affect 3 other modules |
 
 ## Backend Implementation
@@ -35,6 +41,9 @@ GET    /api/writeoff_trends
 ### 🔗 Cascading Dependencies
 - **materials** (HIGH RISK)
   - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, writeoff-analytics, unknown
+  - Impact: Changes will cascade to these modules
+- **inventory** (HIGH RISK)
+  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, unknown
   - Impact: Changes will cascade to these modules
 
 ### Integration Points

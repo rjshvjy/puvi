@@ -1,6 +1,6 @@
 # Feature Pack: SLUDGE-FOR-WRITEOFF
-Generated: 2025-08-25T05:17:12.688Z
-Routes: 1 | Tables: 6 | Files: 1
+Generated: 2025-08-25T06:18:00.257Z
+Routes: 1 | Tables: 12 | Files: 1
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -20,10 +20,16 @@ GET    /api/sludge_for_writeoff
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
 | batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 10 other modules |
+| categories_master | blending, masters-crud, material-writeoff | 🔴 HIGH | Changes affect 4 other modules |
 | inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
 | material_writeoffs | material-writeoff, opening-balance, writeoff-analytics | 🔴 HIGH | Changes affect 3 other modules |
 | materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 11 other modules |
 | oil_cake_inventory | batch-production, material-sales, material-writeoff | 🔴 HIGH | Changes affect 3 other modules |
+| sku_inventory | material-writeoff | 🟡 MEDIUM | Changes affect 1 other modules |
+| sku_master | masters-crud, material-writeoff, package-sizes | 🔴 HIGH | Changes affect 7 other modules |
+| writeoff | material-writeoff, writeoff-analytics | 🟡 MEDIUM | Changes affect 2 other modules |
+| writeoff_impact_tracking | material-writeoff, writeoff-analytics | 🟡 MEDIUM | Changes affect 2 other modules |
+| writeoff_monthly_summary | material-writeoff, writeoff-analytics | 🟡 MEDIUM | Changes affect 2 other modules |
 | writeoff_reasons | material-writeoff, system-config, writeoff-analytics | 🔴 HIGH | Changes affect 3 other modules |
 
 ## Backend Implementation

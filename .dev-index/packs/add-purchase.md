@@ -1,5 +1,5 @@
 # Feature Pack: ADD-PURCHASE
-Generated: 2025-08-25T05:17:12.689Z
+Generated: 2025-08-25T06:18:00.259Z
 Routes: 1 | Tables: 9 | Files: 1
 
 ## Table of Contents
@@ -19,7 +19,7 @@ POST   /api/add_purchase
 ## Database Dependencies
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
-| categories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
+| categories_master | blending, masters-crud, material-writeoff | 🔴 HIGH | Changes affect 4 other modules |
 | inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
 | material_tags | purchase | 🟡 MEDIUM | Changes affect 1 other modules |
 | materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 11 other modules |

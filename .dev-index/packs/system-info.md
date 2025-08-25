@@ -1,5 +1,5 @@
 # Feature Pack: SYSTEM-INFO
-Generated: 2025-08-25T05:17:12.692Z
+Generated: 2025-08-25T06:18:00.261Z
 Routes: 1 | Tables: 7 | Files: 1
 
 ## Table of Contents
@@ -22,7 +22,7 @@ GET    /api/system_info
 | batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 10 other modules |
 | materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 11 other modules |
 | purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 5 other modules |
-| sku_master | masters-crud, package-sizes, sku-management | 🔴 HIGH | Changes affect 6 other modules |
+| sku_master | masters-crud, material-writeoff, package-sizes | 🔴 HIGH | Changes affect 7 other modules |
 | sku_production | sku-management, sku-production, unknown | 🔴 HIGH | Changes affect 3 other modules |
 | suppliers | opening-balance, purchase, system-config | 🔴 HIGH | Changes affect 4 other modules |
 | system_configuration | opening-balance, unknown | 🟡 MEDIUM | Changes affect 2 other modules |
