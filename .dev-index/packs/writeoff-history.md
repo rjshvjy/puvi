@@ -1,6 +1,6 @@
 # Feature Pack: WRITEOFF-HISTORY
-Generated: 2025-08-25T06:26:00.999Z
-Routes: 1 | Tables: 12 | Files: 1
+Generated: 2025-08-25T09:39:43.641Z
+Routes: 1 | Tables: 13 | Files: 1
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -27,6 +27,7 @@ GET    /api/writeoff_history
 | oil_cake_inventory | batch-production, material-sales, material-writeoff | 🔴 HIGH | Changes affect 3 other modules |
 | sku_inventory | material-writeoff | 🟡 MEDIUM | Changes affect 1 other modules |
 | sku_master | masters-crud, material-writeoff, package-sizes | 🔴 HIGH | Changes affect 7 other modules |
+| sku_production | material-writeoff, sku-management, sku-production | 🔴 HIGH | Changes affect 4 other modules |
 | writeoff | material-writeoff, writeoff-analytics | 🟡 MEDIUM | Changes affect 2 other modules |
 | writeoff_impact_tracking | material-writeoff, writeoff-analytics | 🟡 MEDIUM | Changes affect 2 other modules |
 | writeoff_monthly_summary | material-writeoff, writeoff-analytics | 🟡 MEDIUM | Changes affect 2 other modules |

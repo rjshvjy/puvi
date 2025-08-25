@@ -1,5 +1,5 @@
 # Feature Pack: SKU
-Generated: 2025-08-25T06:26:01.002Z
+Generated: 2025-08-25T09:39:43.645Z
 Routes: 23 | Tables: 20 | Files: 10
 
 ## Table of Contents
@@ -82,7 +82,7 @@ POST   /api/sku/production/allocate-oil
 | sku_material_consumption | sku-production | 🟡 MEDIUM | Changes affect 1 other modules |
 | sku_mrp_history | sku-management, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
 | sku_oil_allocation | sku-production | 🟡 MEDIUM | Changes affect 1 other modules |
-| sku_production | sku-management, sku-production, unknown | 🔴 HIGH | Changes affect 3 other modules |
+| sku_production | material-writeoff, sku-management, sku-production | 🔴 HIGH | Changes affect 4 other modules |
 
 ### ⚠️ Hardcoded Values Detected
 - `ProductionSummaryReport.js:203` - object

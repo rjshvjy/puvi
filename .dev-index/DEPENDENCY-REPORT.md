@@ -1,6 +1,6 @@
 # PUVI System - Dependency Analysis Report
 
-**Generated:** 2025-08-25T06:26:00.933Z
+**Generated:** 2025-08-25T09:39:43.578Z
 **Version:** 1.0
 
 ## Executive Summary
@@ -58,6 +58,12 @@ Tables used by multiple modules (changes have cascading effects):
 - **File Count:** 7
 - **Recommendation:** ⚠️ CRITICAL: Changes require coordination across 7 modules
 
+### sku_production
+- **Risk Level:** HIGH
+- **Shared By:** material-writeoff, sku-management, sku-production, unknown
+- **File Count:** 4
+- **Recommendation:** ⚠️ CRITICAL: Changes require coordination across 4 modules
+
 ### suppliers
 - **Risk Level:** HIGH
 - **Shared By:** opening-balance, purchase, system-config, unknown
@@ -94,12 +100,6 @@ Tables used by multiple modules (changes have cascading effects):
 - **File Count:** 3
 - **Recommendation:** Changes will affect material-writeoff, opening-balance, writeoff-analytics
 
-### sku_production
-- **Risk Level:** MEDIUM
-- **Shared By:** sku-management, sku-production, unknown
-- **File Count:** 3
-- **Recommendation:** Changes will affect sku-management, sku-production, unknown
-
 ## Migration Opportunities
 
 Hardcoded values that should be moved to database:
@@ -113,6 +113,6 @@ Hardcoded values that should be moved to database:
 - **purchases**: Used by batch-production, blending, opening-balance, purchase, unknown (5 files)
 - **cost_elements_master**: Used by cost-management, package-sizes, sku-management, sku-production, system-config (5 files)
 - **categories_master**: Used by blending, masters-crud, material-writeoff, purchase (4 files)
+- **sku_production**: Used by material-writeoff, sku-management, sku-production, unknown (4 files)
 - **suppliers**: Used by opening-balance, purchase, system-config, unknown (5 files)
 - **oil_cake_inventory**: Used by batch-production, material-sales, material-writeoff (3 files)
-- **subcategories_master**: Used by blending, masters-crud, purchase (3 files)

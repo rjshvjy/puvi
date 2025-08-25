@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-25T06:26:00.055Z",
+  "generatedAt": "2025-08-25T09:39:42.691Z",
   "filesScanned": 62,
   "jsFilesScanned": 38,
   "pyFilesScanned": 24,
@@ -503,7 +503,7 @@
       "method": "GET",
       "path": "/api/sku_for_writeoff",
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 452,
+      "line": 466,
       "blueprint": "writeoff_bp",
       "function": "get_sku_for_writeoff",
       "source": "backend"
@@ -512,7 +512,7 @@
       "method": "POST",
       "path": "/api/add_sku_writeoff",
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 554,
+      "line": 584,
       "blueprint": "writeoff_bp",
       "function": "add_sku_writeoff",
       "source": "backend"
@@ -521,7 +521,7 @@
       "method": "POST",
       "path": "/api/add_writeoff",
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 718,
+      "line": 760,
       "blueprint": "writeoff_bp",
       "function": "add_writeoff",
       "source": "backend"
@@ -530,7 +530,7 @@
       "method": "GET",
       "path": "/api/writeoff_history",
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 867,
+      "line": 909,
       "blueprint": "writeoff_bp",
       "function": "get_writeoff_history",
       "source": "backend"
@@ -539,7 +539,7 @@
       "method": "GET",
       "path": "/api/oilcake_for_writeoff",
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1019,
+      "line": 1061,
       "blueprint": "writeoff_bp",
       "function": "get_oilcake_for_writeoff",
       "source": "backend"
@@ -548,7 +548,7 @@
       "method": "POST",
       "path": "/api/add_oilcake_writeoff",
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1135,
+      "line": 1177,
       "blueprint": "writeoff_bp",
       "function": "add_oilcake_writeoff",
       "source": "backend"
@@ -557,7 +557,7 @@
       "method": "GET",
       "path": "/api/sludge_for_writeoff",
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1284,
+      "line": 1326,
       "blueprint": "writeoff_bp",
       "function": "get_sludge_for_writeoff",
       "source": "backend"
@@ -566,7 +566,7 @@
       "method": "POST",
       "path": "/api/add_sludge_writeoff",
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1401,
+      "line": 1443,
       "blueprint": "writeoff_bp",
       "function": "add_sludge_writeoff",
       "source": "backend"
@@ -575,7 +575,7 @@
       "method": "GET",
       "path": "/api/writeoff_impact",
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1544,
+      "line": 1586,
       "blueprint": "writeoff_bp",
       "function": "get_writeoff_impact",
       "source": "backend"
@@ -584,7 +584,7 @@
       "method": "GET",
       "path": "/api/writeoff_dashboard",
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1592,
+      "line": 1659,
       "blueprint": "writeoff_bp",
       "function": "get_writeoff_dashboard",
       "source": "backend"
@@ -593,7 +593,7 @@
       "method": "GET",
       "path": "/api/writeoff_trends",
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1704,
+      "line": 1780,
       "blueprint": "writeoff_bp",
       "function": "get_writeoff_trends",
       "source": "backend"
@@ -602,7 +602,7 @@
       "method": "POST",
       "path": "/api/refresh_writeoff_metrics",
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1751,
+      "line": 1827,
       "blueprint": "writeoff_bp",
       "function": "refresh_writeoff_metrics",
       "source": "backend"
@@ -611,7 +611,7 @@
       "method": "GET",
       "path": "/api/writeoff_report/<int:writeoff_id>",
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1780,
+      "line": 1856,
       "blueprint": "writeoff_bp",
       "function": "get_writeoff_report",
       "source": "backend"
@@ -4416,7 +4416,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 337,
+      "line": 324,
       "type": "SELECT",
       "tables": [
         "writeoff_reasons",
@@ -4426,13 +4426,14 @@
         "sku_master",
         "sku_inventory",
         "oil_cake_inventory",
-        "batch"
+        "batch",
+        "sku_production"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 375,
+      "line": 351,
       "type": "SELECT",
       "tables": [
         "writeoff_reasons",
@@ -4442,13 +4443,14 @@
         "sku_master",
         "sku_inventory",
         "oil_cake_inventory",
-        "batch"
+        "batch",
+        "sku_production"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 411,
+      "line": 389,
       "type": "SELECT",
       "tables": [
         "writeoff_reasons",
@@ -4458,13 +4460,31 @@
         "sku_master",
         "sku_inventory",
         "oil_cake_inventory",
-        "batch"
+        "batch",
+        "sku_production"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 494,
+      "line": 425,
+      "type": "SELECT",
+      "tables": [
+        "writeoff_reasons",
+        "inventory",
+        "materials",
+        "categories_master",
+        "sku_master",
+        "sku_inventory",
+        "oil_cake_inventory",
+        "batch",
+        "sku_production"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 507,
       "type": "OTHER",
       "tables": [
         "writeoff_reasons",
@@ -4474,13 +4494,14 @@
         "sku_master",
         "sku_inventory",
         "oil_cake_inventory",
-        "batch"
+        "batch",
+        "sku_production"
       ],
       "preview": "cur.execute(query, params)"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 516,
+      "line": 514,
       "type": "SELECT",
       "tables": [
         "writeoff_reasons",
@@ -4490,13 +4511,14 @@
         "sku_master",
         "sku_inventory",
         "oil_cake_inventory",
-        "batch"
+        "batch",
+        "sku_production"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 580,
+      "line": 546,
       "type": "SELECT",
       "tables": [
         "writeoff_reasons",
@@ -4506,13 +4528,48 @@
         "sku_master",
         "sku_inventory",
         "oil_cake_inventory",
-        "batch"
+        "batch",
+        "sku_production"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 633,
+      "line": 610,
+      "type": "SELECT",
+      "tables": [
+        "writeoff_reasons",
+        "inventory",
+        "materials",
+        "categories_master",
+        "sku_master",
+        "sku_inventory",
+        "oil_cake_inventory",
+        "batch",
+        "sku_production"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 646,
+      "type": "SELECT",
+      "tables": [
+        "writeoff_reasons",
+        "inventory",
+        "materials",
+        "categories_master",
+        "sku_master",
+        "sku_inventory",
+        "oil_cake_inventory",
+        "batch",
+        "sku_production"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 675,
       "type": "OTHER",
       "tables": [
         "writeoff_reasons",
@@ -4522,13 +4579,14 @@
         "sku_master",
         "sku_inventory",
         "oil_cake_inventory",
-        "batch"
+        "batch",
+        "sku_production"
       ],
       "preview": "cur.execute(\"BEGIN\")"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 636,
+      "line": 678,
       "type": "INSERT",
       "tables": [
         "writeoff_reasons",
@@ -4539,13 +4597,14 @@
         "sku_inventory",
         "oil_cake_inventory",
         "batch",
+        "sku_production",
         "material_writeoffs"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 666,
+      "line": 708,
       "type": "UPDATE",
       "tables": [
         "writeoff_reasons",
@@ -4556,13 +4615,14 @@
         "sku_inventory",
         "oil_cake_inventory",
         "batch",
+        "sku_production",
         "material_writeoffs"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 674,
+      "line": 716,
       "type": "UPDATE",
       "tables": [
         "writeoff_reasons",
@@ -4573,13 +4633,14 @@
         "sku_inventory",
         "oil_cake_inventory",
         "batch",
+        "sku_production",
         "material_writeoffs"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 681,
+      "line": 723,
       "type": "SELECT",
       "tables": [
         "writeoff_reasons",
@@ -4590,13 +4651,14 @@
         "sku_inventory",
         "oil_cake_inventory",
         "batch",
+        "sku_production",
         "material_writeoffs"
       ],
       "preview": "cur.execute(\"SELECT update_writeoff_impact_tracking()\")"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 685,
+      "line": 727,
       "type": "SELECT",
       "tables": [
         "writeoff_reasons",
@@ -4607,13 +4669,14 @@
         "sku_inventory",
         "oil_cake_inventory",
         "batch",
+        "sku_production",
         "material_writeoffs"
       ],
       "preview": "cur.execute(\"SELECT update_writeoff_monthly_summary(%s)\", (month_year,))"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 743,
+      "line": 785,
       "type": "SELECT",
       "tables": [
         "writeoff_reasons",
@@ -4624,13 +4687,14 @@
         "sku_inventory",
         "oil_cake_inventory",
         "batch",
+        "sku_production",
         "material_writeoffs"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 784,
+      "line": 826,
       "type": "OTHER",
       "tables": [
         "writeoff_reasons",
@@ -4641,13 +4705,14 @@
         "sku_inventory",
         "oil_cake_inventory",
         "batch",
+        "sku_production",
         "material_writeoffs"
       ],
       "preview": "cur.execute(\"BEGIN\")"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 787,
+      "line": 829,
       "type": "INSERT",
       "tables": [
         "writeoff_reasons",
@@ -4658,13 +4723,14 @@
         "sku_inventory",
         "oil_cake_inventory",
         "batch",
+        "sku_production",
         "material_writeoffs"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 816,
+      "line": 858,
       "type": "SELECT",
       "tables": [
         "writeoff_reasons",
@@ -4675,13 +4741,14 @@
         "sku_inventory",
         "oil_cake_inventory",
         "batch",
+        "sku_production",
         "material_writeoffs"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 836,
+      "line": 878,
       "type": "SELECT",
       "tables": [
         "writeoff_reasons",
@@ -4692,13 +4759,14 @@
         "sku_inventory",
         "oil_cake_inventory",
         "batch",
+        "sku_production",
         "material_writeoffs"
       ],
       "preview": "cur.execute(\"SELECT update_writeoff_impact_tracking()\")"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 840,
+      "line": 882,
       "type": "SELECT",
       "tables": [
         "writeoff_reasons",
@@ -4709,13 +4777,14 @@
         "sku_inventory",
         "oil_cake_inventory",
         "batch",
+        "sku_production",
         "material_writeoffs"
       ],
       "preview": "cur.execute(\"SELECT update_writeoff_monthly_summary(%s)\", (month_year,))"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 914,
+      "line": 956,
       "type": "OTHER",
       "tables": [
         "writeoff_reasons",
@@ -4726,13 +4795,14 @@
         "sku_inventory",
         "oil_cake_inventory",
         "batch",
+        "sku_production",
         "material_writeoffs"
       ],
       "preview": "cur.execute(query, params)"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 972,
+      "line": 1014,
       "type": "OTHER",
       "tables": [
         "writeoff_reasons",
@@ -4743,13 +4813,14 @@
         "sku_inventory",
         "oil_cake_inventory",
         "batch",
+        "sku_production",
         "material_writeoffs"
       ],
       "preview": "cur.execute(summary_query, summary_params)"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 976,
+      "line": 1018,
       "type": "SELECT",
       "tables": [
         "writeoff_reasons",
@@ -4760,13 +4831,14 @@
         "sku_inventory",
         "oil_cake_inventory",
         "batch",
+        "sku_production",
         "material_writeoffs"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1054,
+      "line": 1096,
       "type": "OTHER",
       "tables": [
         "writeoff_reasons",
@@ -4777,13 +4849,14 @@
         "sku_inventory",
         "oil_cake_inventory",
         "batch",
+        "sku_production",
         "material_writeoffs"
       ],
       "preview": "cur.execute(query, params)"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1085,
+      "line": 1127,
       "type": "SELECT",
       "tables": [
         "writeoff_reasons",
@@ -4794,13 +4867,14 @@
         "sku_inventory",
         "oil_cake_inventory",
         "batch",
+        "sku_production",
         "material_writeoffs"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1095,
+      "line": 1137,
       "type": "SELECT",
       "tables": [
         "writeoff_reasons",
@@ -4811,13 +4885,14 @@
         "sku_inventory",
         "oil_cake_inventory",
         "batch",
+        "sku_production",
         "material_writeoffs"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1161,
+      "line": 1203,
       "type": "SELECT",
       "tables": [
         "writeoff_reasons",
@@ -4828,13 +4903,14 @@
         "sku_inventory",
         "oil_cake_inventory",
         "batch",
+        "sku_production",
         "material_writeoffs"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1207,
+      "line": 1249,
       "type": "OTHER",
       "tables": [
         "writeoff_reasons",
@@ -4845,183 +4921,14 @@
         "sku_inventory",
         "oil_cake_inventory",
         "batch",
+        "sku_production",
         "material_writeoffs"
       ],
       "preview": "cur.execute(\"BEGIN\")"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1210,
-      "type": "INSERT",
-      "tables": [
-        "writeoff_reasons",
-        "inventory",
-        "materials",
-        "categories_master",
-        "sku_master",
-        "sku_inventory",
-        "oil_cake_inventory",
-        "batch",
-        "material_writeoffs"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1238,
-      "type": "UPDATE",
-      "tables": [
-        "writeoff_reasons",
-        "inventory",
-        "materials",
-        "categories_master",
-        "sku_master",
-        "sku_inventory",
-        "oil_cake_inventory",
-        "batch",
-        "material_writeoffs"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1245,
-      "type": "UPDATE",
-      "tables": [
-        "writeoff_reasons",
-        "inventory",
-        "materials",
-        "categories_master",
-        "sku_master",
-        "sku_inventory",
-        "oil_cake_inventory",
-        "batch",
-        "material_writeoffs"
-      ],
-      "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
       "line": 1252,
-      "type": "SELECT",
-      "tables": [
-        "writeoff_reasons",
-        "inventory",
-        "materials",
-        "categories_master",
-        "sku_master",
-        "sku_inventory",
-        "oil_cake_inventory",
-        "batch",
-        "material_writeoffs"
-      ],
-      "preview": "cur.execute(\"SELECT update_writeoff_impact_tracking()\")"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1256,
-      "type": "SELECT",
-      "tables": [
-        "writeoff_reasons",
-        "inventory",
-        "materials",
-        "categories_master",
-        "sku_master",
-        "sku_inventory",
-        "oil_cake_inventory",
-        "batch",
-        "material_writeoffs"
-      ],
-      "preview": "cur.execute(\"SELECT update_writeoff_monthly_summary(%s)\", (month_year,))"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1318,
-      "type": "OTHER",
-      "tables": [
-        "writeoff_reasons",
-        "inventory",
-        "materials",
-        "categories_master",
-        "sku_master",
-        "sku_inventory",
-        "oil_cake_inventory",
-        "batch",
-        "material_writeoffs"
-      ],
-      "preview": "cur.execute(query, params)"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1349,
-      "type": "SELECT",
-      "tables": [
-        "writeoff_reasons",
-        "inventory",
-        "materials",
-        "categories_master",
-        "sku_master",
-        "sku_inventory",
-        "oil_cake_inventory",
-        "batch",
-        "material_writeoffs"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1360,
-      "type": "SELECT",
-      "tables": [
-        "writeoff_reasons",
-        "inventory",
-        "materials",
-        "categories_master",
-        "sku_master",
-        "sku_inventory",
-        "oil_cake_inventory",
-        "batch",
-        "material_writeoffs"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1427,
-      "type": "SELECT",
-      "tables": [
-        "writeoff_reasons",
-        "inventory",
-        "materials",
-        "categories_master",
-        "sku_master",
-        "sku_inventory",
-        "oil_cake_inventory",
-        "batch",
-        "material_writeoffs"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1470,
-      "type": "OTHER",
-      "tables": [
-        "writeoff_reasons",
-        "inventory",
-        "materials",
-        "categories_master",
-        "sku_master",
-        "sku_inventory",
-        "oil_cake_inventory",
-        "batch",
-        "material_writeoffs"
-      ],
-      "preview": "cur.execute(\"BEGIN\")"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1473,
       "type": "INSERT",
       "tables": [
         "writeoff_reasons",
@@ -5032,13 +4939,14 @@
         "sku_inventory",
         "oil_cake_inventory",
         "batch",
+        "sku_production",
         "material_writeoffs"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1499,
+      "line": 1280,
       "type": "UPDATE",
       "tables": [
         "writeoff_reasons",
@@ -5049,13 +4957,32 @@
         "sku_inventory",
         "oil_cake_inventory",
         "batch",
+        "sku_production",
         "material_writeoffs"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1506,
+      "line": 1287,
+      "type": "UPDATE",
+      "tables": [
+        "writeoff_reasons",
+        "inventory",
+        "materials",
+        "categories_master",
+        "sku_master",
+        "sku_inventory",
+        "oil_cake_inventory",
+        "batch",
+        "sku_production",
+        "material_writeoffs"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 1294,
       "type": "SELECT",
       "tables": [
         "writeoff_reasons",
@@ -5066,13 +4993,14 @@
         "sku_inventory",
         "oil_cake_inventory",
         "batch",
+        "sku_production",
         "material_writeoffs"
       ],
       "preview": "cur.execute(\"SELECT update_writeoff_impact_tracking()\")"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1510,
+      "line": 1298,
       "type": "SELECT",
       "tables": [
         "writeoff_reasons",
@@ -5083,13 +5011,32 @@
         "sku_inventory",
         "oil_cake_inventory",
         "batch",
+        "sku_production",
         "material_writeoffs"
       ],
       "preview": "cur.execute(\"SELECT update_writeoff_monthly_summary(%s)\", (month_year,))"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1551,
+      "line": 1360,
+      "type": "OTHER",
+      "tables": [
+        "writeoff_reasons",
+        "inventory",
+        "materials",
+        "categories_master",
+        "sku_master",
+        "sku_inventory",
+        "oil_cake_inventory",
+        "batch",
+        "sku_production",
+        "material_writeoffs"
+      ],
+      "preview": "cur.execute(query, params)"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 1391,
       "type": "SELECT",
       "tables": [
         "writeoff_reasons",
@@ -5100,6 +5047,151 @@
         "sku_inventory",
         "oil_cake_inventory",
         "batch",
+        "sku_production",
+        "material_writeoffs"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 1402,
+      "type": "SELECT",
+      "tables": [
+        "writeoff_reasons",
+        "inventory",
+        "materials",
+        "categories_master",
+        "sku_master",
+        "sku_inventory",
+        "oil_cake_inventory",
+        "batch",
+        "sku_production",
+        "material_writeoffs"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 1469,
+      "type": "SELECT",
+      "tables": [
+        "writeoff_reasons",
+        "inventory",
+        "materials",
+        "categories_master",
+        "sku_master",
+        "sku_inventory",
+        "oil_cake_inventory",
+        "batch",
+        "sku_production",
+        "material_writeoffs"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 1512,
+      "type": "OTHER",
+      "tables": [
+        "writeoff_reasons",
+        "inventory",
+        "materials",
+        "categories_master",
+        "sku_master",
+        "sku_inventory",
+        "oil_cake_inventory",
+        "batch",
+        "sku_production",
+        "material_writeoffs"
+      ],
+      "preview": "cur.execute(\"BEGIN\")"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 1515,
+      "type": "INSERT",
+      "tables": [
+        "writeoff_reasons",
+        "inventory",
+        "materials",
+        "categories_master",
+        "sku_master",
+        "sku_inventory",
+        "oil_cake_inventory",
+        "batch",
+        "sku_production",
+        "material_writeoffs"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 1541,
+      "type": "UPDATE",
+      "tables": [
+        "writeoff_reasons",
+        "inventory",
+        "materials",
+        "categories_master",
+        "sku_master",
+        "sku_inventory",
+        "oil_cake_inventory",
+        "batch",
+        "sku_production",
+        "material_writeoffs"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 1548,
+      "type": "SELECT",
+      "tables": [
+        "writeoff_reasons",
+        "inventory",
+        "materials",
+        "categories_master",
+        "sku_master",
+        "sku_inventory",
+        "oil_cake_inventory",
+        "batch",
+        "sku_production",
+        "material_writeoffs"
+      ],
+      "preview": "cur.execute(\"SELECT update_writeoff_impact_tracking()\")"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 1552,
+      "type": "SELECT",
+      "tables": [
+        "writeoff_reasons",
+        "inventory",
+        "materials",
+        "categories_master",
+        "sku_master",
+        "sku_inventory",
+        "oil_cake_inventory",
+        "batch",
+        "sku_production",
+        "material_writeoffs"
+      ],
+      "preview": "cur.execute(\"SELECT update_writeoff_monthly_summary(%s)\", (month_year,))"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 1593,
+      "type": "SELECT",
+      "tables": [
+        "writeoff_reasons",
+        "inventory",
+        "materials",
+        "categories_master",
+        "sku_master",
+        "sku_inventory",
+        "oil_cake_inventory",
+        "batch",
+        "sku_production",
         "material_writeoffs",
         "writeoff_impact_tracking"
       ],
@@ -5107,7 +5199,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1602,
+      "line": 1669,
       "type": "SELECT",
       "tables": [
         "writeoff_reasons",
@@ -5118,6 +5210,7 @@
         "sku_inventory",
         "oil_cake_inventory",
         "batch",
+        "sku_production",
         "material_writeoffs",
         "writeoff_impact_tracking"
       ],
@@ -5125,7 +5218,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1639,
+      "line": 1706,
       "type": "SELECT",
       "tables": [
         "writeoff_reasons",
@@ -5136,6 +5229,7 @@
         "sku_inventory",
         "oil_cake_inventory",
         "batch",
+        "sku_production",
         "material_writeoffs",
         "writeoff_impact_tracking"
       ],
@@ -5143,7 +5237,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1666,
+      "line": 1733,
       "type": "SELECT",
       "tables": [
         "writeoff_reasons",
@@ -5154,6 +5248,7 @@
         "sku_inventory",
         "oil_cake_inventory",
         "batch",
+        "sku_production",
         "material_writeoffs",
         "writeoff_impact_tracking"
       ],
@@ -5161,7 +5256,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1711,
+      "line": 1787,
       "type": "SELECT",
       "tables": [
         "writeoff_reasons",
@@ -5172,6 +5267,7 @@
         "sku_inventory",
         "oil_cake_inventory",
         "batch",
+        "sku_production",
         "material_writeoffs",
         "writeoff_impact_tracking",
         "writeoff_monthly_summary"
@@ -5180,7 +5276,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1759,
+      "line": 1835,
       "type": "SELECT",
       "tables": [
         "writeoff_reasons",
@@ -5191,6 +5287,7 @@
         "sku_inventory",
         "oil_cake_inventory",
         "batch",
+        "sku_production",
         "material_writeoffs",
         "writeoff_impact_tracking",
         "writeoff_monthly_summary"
@@ -5199,7 +5296,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1764,
+      "line": 1840,
       "type": "SELECT",
       "tables": [
         "writeoff_reasons",
@@ -5210,6 +5307,7 @@
         "sku_inventory",
         "oil_cake_inventory",
         "batch",
+        "sku_production",
         "material_writeoffs",
         "writeoff_impact_tracking",
         "writeoff_monthly_summary",
@@ -5219,7 +5317,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1788,
+      "line": 1864,
       "type": "SELECT",
       "tables": [
         "writeoff_reasons",
@@ -5230,6 +5328,7 @@
         "sku_inventory",
         "oil_cake_inventory",
         "batch",
+        "sku_production",
         "material_writeoffs",
         "writeoff_impact_tracking",
         "writeoff_monthly_summary",
@@ -8625,6 +8724,15 @@
       ]
     },
     {
+      "name": "sku_production",
+      "files": [
+        "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+        "puvi-backend/puvi-backend-main/modules/sku_management.py",
+        "puvi-backend/puvi-backend-main/modules/sku_production.py",
+        "puvi-backend/puvi-backend-main/app.py"
+      ]
+    },
+    {
       "name": "material_writeoffs",
       "files": [
         "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
@@ -8719,14 +8827,6 @@
       "files": [
         "puvi-backend/puvi-backend-main/modules/sku_management.py",
         "puvi-backend/puvi-backend-main/modules/sku_production.py"
-      ]
-    },
-    {
-      "name": "sku_production",
-      "files": [
-        "puvi-backend/puvi-backend-main/modules/sku_management.py",
-        "puvi-backend/puvi-backend-main/modules/sku_production.py",
-        "puvi-backend/puvi-backend-main/app.py"
       ]
     },
     {
@@ -12788,7 +12888,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 453,
+      "line": 467,
       "name": "get_sku_for_writeoff",
       "params": "",
       "type": "python",
@@ -12796,7 +12896,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 555,
+      "line": 585,
       "name": "add_sku_writeoff",
       "params": "",
       "type": "python",
@@ -12804,7 +12904,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 719,
+      "line": 761,
       "name": "add_writeoff",
       "params": "",
       "type": "python",
@@ -12812,7 +12912,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 868,
+      "line": 910,
       "name": "get_writeoff_history",
       "params": "",
       "type": "python",
@@ -12820,7 +12920,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1020,
+      "line": 1062,
       "name": "get_oilcake_for_writeoff",
       "params": "",
       "type": "python",
@@ -12828,7 +12928,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1136,
+      "line": 1178,
       "name": "add_oilcake_writeoff",
       "params": "",
       "type": "python",
@@ -12836,7 +12936,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1285,
+      "line": 1327,
       "name": "get_sludge_for_writeoff",
       "params": "",
       "type": "python",
@@ -12844,7 +12944,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1402,
+      "line": 1444,
       "name": "add_sludge_writeoff",
       "params": "",
       "type": "python",
@@ -12852,7 +12952,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1545,
+      "line": 1587,
       "name": "get_writeoff_impact",
       "params": "",
       "type": "python",
@@ -12860,7 +12960,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1593,
+      "line": 1660,
       "name": "get_writeoff_dashboard",
       "params": "",
       "type": "python",
@@ -12868,7 +12968,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1705,
+      "line": 1781,
       "name": "get_writeoff_trends",
       "params": "",
       "type": "python",
@@ -12876,7 +12976,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1752,
+      "line": 1828,
       "name": "refresh_writeoff_metrics",
       "params": "",
       "type": "python",
@@ -12884,7 +12984,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1781,
+      "line": 1857,
       "name": "get_writeoff_report",
       "params": "writeoff_id",
       "type": "python",
@@ -18804,91 +18904,91 @@
         "method": "GET",
         "path": "/api/sku_for_writeoff",
         "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-        "line": 452,
+        "line": 466,
         "function": "get_sku_for_writeoff"
       },
       {
         "method": "POST",
         "path": "/api/add_sku_writeoff",
         "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-        "line": 554,
+        "line": 584,
         "function": "add_sku_writeoff"
       },
       {
         "method": "POST",
         "path": "/api/add_writeoff",
         "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-        "line": 718,
+        "line": 760,
         "function": "add_writeoff"
       },
       {
         "method": "GET",
         "path": "/api/writeoff_history",
         "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-        "line": 867,
+        "line": 909,
         "function": "get_writeoff_history"
       },
       {
         "method": "GET",
         "path": "/api/oilcake_for_writeoff",
         "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-        "line": 1019,
+        "line": 1061,
         "function": "get_oilcake_for_writeoff"
       },
       {
         "method": "POST",
         "path": "/api/add_oilcake_writeoff",
         "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-        "line": 1135,
+        "line": 1177,
         "function": "add_oilcake_writeoff"
       },
       {
         "method": "GET",
         "path": "/api/sludge_for_writeoff",
         "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-        "line": 1284,
+        "line": 1326,
         "function": "get_sludge_for_writeoff"
       },
       {
         "method": "POST",
         "path": "/api/add_sludge_writeoff",
         "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-        "line": 1401,
+        "line": 1443,
         "function": "add_sludge_writeoff"
       },
       {
         "method": "GET",
         "path": "/api/writeoff_impact",
         "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-        "line": 1544,
+        "line": 1586,
         "function": "get_writeoff_impact"
       },
       {
         "method": "GET",
         "path": "/api/writeoff_dashboard",
         "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-        "line": 1592,
+        "line": 1659,
         "function": "get_writeoff_dashboard"
       },
       {
         "method": "GET",
         "path": "/api/writeoff_trends",
         "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-        "line": 1704,
+        "line": 1780,
         "function": "get_writeoff_trends"
       },
       {
         "method": "POST",
         "path": "/api/refresh_writeoff_metrics",
         "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-        "line": 1751,
+        "line": 1827,
         "function": "refresh_writeoff_metrics"
       },
       {
         "method": "GET",
         "path": "/api/writeoff_report/<int:writeoff_id>",
         "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-        "line": 1780,
+        "line": 1856,
         "function": "get_writeoff_report"
       }
     ],
@@ -21949,163 +22049,137 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 440,
+      "line": 454,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 458,
+      "line": 472,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 548,
+      "line": 578,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 560,
+      "line": 590,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 705,
+      "line": 747,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 724,
+      "line": 766,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 858,
+      "line": 900,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 873,
+      "line": 915,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1013,
+      "line": 1055,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1026,
+      "line": 1068,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1129,
+      "line": 1171,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1141,
+      "line": 1183,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1275,
+      "line": 1317,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1291,
+      "line": 1333,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1395,
+      "line": 1437,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1407,
+      "line": 1449,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1531,
+      "line": 1573,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1550,
+      "line": 1592,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1586,
+      "line": 1653,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1598,
+      "line": 1665,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1698,
-      "type": "except",
-      "exception": "Exception",
-      "code": "except Exception as e:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1710,
-      "type": "try-catch",
-      "code": "try:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1745,
-      "type": "except",
-      "exception": "Exception",
-      "code": "except Exception as e:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1757,
-      "type": "try-catch",
-      "code": "try:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
-      "line": 1773,
+      "line": 1774,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
@@ -22118,7 +22192,33 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 1821,
+      "type": "except",
+      "exception": "Exception",
+      "code": "except Exception as e:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
       "line": 1833,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 1849,
+      "type": "except",
+      "exception": "Exception",
+      "code": "except Exception as e:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 1862,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
+      "line": 1909,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
@@ -23284,7 +23384,7 @@
     "exports": 42,
     "imports": 55,
     "hardcodedValues": 24,
-    "databaseQueries": 444,
+    "databaseQueries": 447,
     "databaseTables": 61,
     "functions": 618,
     "stateHooks": 666,
