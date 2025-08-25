@@ -11,9 +11,11 @@ from flask_cors import CORS
 from datetime import datetime
 from db_utils import get_db_connection, close_connection, synchronize_all_sequences
 
+
 # Import all module blueprints
 from modules.purchase import purchase_bp
 from modules.material_writeoff import writeoff_bp
+from modules.writeoff_analytics import writeoff_analytics_bp
 from modules.batch_production import batch_bp
 from modules.blending import blending_bp
 from modules.material_sales import material_sales_bp
@@ -64,6 +66,7 @@ def handle_preflight():
 # Register all blueprints
 app.register_blueprint(purchase_bp)
 app.register_blueprint(writeoff_bp)
+app.register_blueprint(writeoff_analytics_bp)
 app.register_blueprint(batch_bp)
 app.register_blueprint(blending_bp)
 app.register_blueprint(material_sales_bp)
