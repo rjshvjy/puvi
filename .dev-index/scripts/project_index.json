@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-25T05:01:52.897Z",
+  "generatedAt": "2025-08-25T05:04:19.914Z",
   "filesScanned": 62,
   "jsFilesScanned": 38,
   "pyFilesScanned": 24,
@@ -1061,7 +1061,7 @@
       "method": "GET",
       "path": "/",
       "file": "puvi-backend/puvi-backend-main/app.py",
-      "line": 90,
+      "line": 93,
       "blueprint": "app",
       "function": "home",
       "source": "backend"
@@ -1070,7 +1070,7 @@
       "method": "GET",
       "path": "/api/health",
       "file": "puvi-backend/puvi-backend-main/app.py",
-      "line": 124,
+      "line": 127,
       "blueprint": "app",
       "function": "health_check",
       "source": "backend"
@@ -1079,7 +1079,7 @@
       "method": "GET",
       "path": "/api/sequence_status",
       "file": "puvi-backend/puvi-backend-main/app.py",
-      "line": 155,
+      "line": 158,
       "blueprint": "app",
       "function": "sequence_status",
       "source": "backend"
@@ -1088,7 +1088,7 @@
       "method": "POST",
       "path": "/api/sync_sequences",
       "file": "puvi-backend/puvi-backend-main/app.py",
-      "line": 171,
+      "line": 174,
       "blueprint": "app",
       "function": "manual_sync_sequences",
       "source": "backend"
@@ -1097,7 +1097,7 @@
       "method": "GET",
       "path": "/api/system_info",
       "file": "puvi-backend/puvi-backend-main/app.py",
-      "line": 201,
+      "line": 204,
       "blueprint": "app",
       "function": "system_info",
       "source": "backend"
@@ -7584,14 +7584,14 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/app.py",
-      "line": 132,
+      "line": 135,
       "type": "SELECT",
       "tables": [],
       "preview": "cur.execute(\"SELECT 1\")"
     },
     {
       "file": "puvi-backend/puvi-backend-main/app.py",
-      "line": 209,
+      "line": 212,
       "type": "SELECT",
       "tables": [
         "system_configuration"
@@ -7600,7 +7600,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/app.py",
-      "line": 218,
+      "line": 221,
       "type": "SELECT",
       "tables": [
         "system_configuration",
@@ -12894,7 +12894,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/app.py",
-      "line": 54,
+      "line": 56,
       "name": "handle_preflight",
       "params": "",
       "type": "python",
@@ -12902,7 +12902,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/app.py",
-      "line": 91,
+      "line": 94,
       "name": "home",
       "params": "",
       "type": "python",
@@ -12910,7 +12910,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/app.py",
-      "line": 125,
+      "line": 128,
       "name": "health_check",
       "params": "",
       "type": "python",
@@ -12918,7 +12918,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/app.py",
-      "line": 156,
+      "line": 159,
       "name": "sequence_status",
       "params": "",
       "type": "python",
@@ -12926,7 +12926,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/app.py",
-      "line": 172,
+      "line": 175,
       "name": "manual_sync_sequences",
       "params": "",
       "type": "python",
@@ -12934,7 +12934,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/app.py",
-      "line": 202,
+      "line": 205,
       "name": "system_info",
       "params": "",
       "type": "python",
@@ -12942,7 +12942,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/app.py",
-      "line": 266,
+      "line": 269,
       "name": "not_found",
       "params": "error",
       "type": "python",
@@ -12950,7 +12950,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/app.py",
-      "line": 274,
+      "line": 277,
       "name": "internal_error",
       "params": "error",
       "type": "python",
@@ -12958,7 +12958,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/app.py",
-      "line": 281,
+      "line": 284,
       "name": "startup_sequence_sync",
       "params": "",
       "type": "python",
@@ -18612,35 +18612,35 @@
         "method": "GET",
         "path": "/",
         "file": "puvi-backend/puvi-backend-main/app.py",
-        "line": 90,
+        "line": 93,
         "function": "home"
       },
       {
         "method": "GET",
         "path": "/api/health",
         "file": "puvi-backend/puvi-backend-main/app.py",
-        "line": 124,
+        "line": 127,
         "function": "health_check"
       },
       {
         "method": "GET",
         "path": "/api/sequence_status",
         "file": "puvi-backend/puvi-backend-main/app.py",
-        "line": 155,
+        "line": 158,
         "function": "sequence_status"
       },
       {
         "method": "POST",
         "path": "/api/sync_sequences",
         "file": "puvi-backend/puvi-backend-main/app.py",
-        "line": 171,
+        "line": 174,
         "function": "manual_sync_sequences"
       },
       {
         "method": "GET",
         "path": "/api/system_info",
         "file": "puvi-backend/puvi-backend-main/app.py",
-        "line": 201,
+        "line": 204,
         "function": "system_info"
       }
     ]
@@ -22368,52 +22368,52 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/app.py",
-      "line": 128,
+      "line": 131,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/app.py",
-      "line": 135,
+      "line": 138,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/app.py",
-      "line": 174,
+      "line": 177,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/app.py",
-      "line": 193,
+      "line": 196,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/app.py",
-      "line": 207,
+      "line": 210,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/app.py",
-      "line": 256,
+      "line": 259,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/app.py",
-      "line": 288,
+      "line": 291,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/app.py",
-      "line": 318,
+      "line": 321,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
