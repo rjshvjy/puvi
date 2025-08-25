@@ -476,5 +476,124 @@
     page-break-after: avoid;
   }
 }
+/* ADD TO: MaterialWriteoff.css */
+/* Impact Dashboard Styles */
 
-/* End of MaterialWriteoff Styles v2.0.0 - August 8, 2025 */
+.impact-dashboard {
+  padding: 20px 0;
+}
+
+/* Impact level color classes */
+.impact-low {
+  background-color: #d4edda !important;
+  border: 1px solid #c3e6cb;
+}
+
+.impact-moderate {
+  background-color: #fff3cd !important;
+  border: 1px solid #ffeaa7;
+}
+
+.impact-high {
+  background-color: #ffeaa7 !important;
+  border: 1px solid #fdcb6e;
+}
+
+.impact-critical {
+  background-color: #f8d7da !important;
+  border: 1px solid #f5c6cb;
+}
+
+/* Warning message style */
+.message-alert.warning {
+  background-color: #fff3cd;
+  color: #856404;
+  border: 1px solid #ffeaa7;
+}
+
+/* Enhanced tab button styles for 5 tabs */
+.tab-navigation {
+  display: flex;
+  gap: 5px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+  overflow-x: auto;
+}
+
+.tab-button {
+  flex: 0 0 auto;
+  min-width: 100px;
+  white-space: nowrap;
+}
+
+/* Responsive adjustments for 5 tabs */
+@media (max-width: 768px) {
+  .tab-navigation {
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+  }
+  
+  .tab-button {
+    font-size: 14px;
+    padding: 8px 12px;
+    min-width: 80px;
+  }
+}
+
+/* Impact metrics specific styles */
+.impact-dashboard .summary-card {
+  transition: all 0.3s ease;
+}
+
+.impact-dashboard .summary-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Trend chart placeholder (if using recharts) */
+.trend-chart-container {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin: 20px 0;
+  min-height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #dee2e6;
+}
+
+/* Print styles for writeoff report */
+@media print {
+  .tab-navigation,
+  .filter-controls,
+  .submit-button,
+  .material-list {
+    display: none !important;
+  }
+  
+  .writeoff-report {
+    page-break-inside: avoid;
+  }
+  
+  .writeoff-report-header {
+    text-align: center;
+    border-bottom: 2px solid #000;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .signature-section {
+    margin-top: 50px;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .signature-line {
+    width: 200px;
+    border-top: 1px solid #000;
+    text-align: center;
+    padding-top: 5px;
+  }
+}
+/* End of MaterialWriteoff Styles v2.1.0 - August 25, 2025 */
