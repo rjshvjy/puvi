@@ -1,5 +1,5 @@
 # Feature Pack: MATERIALS
-Generated: 2025-08-25T23:36:17.400Z
+Generated: 2025-08-25T23:49:38.150Z
 Routes: 4 | Tables: 15 | Files: 2
 
 ## Table of Contents
@@ -33,10 +33,10 @@ GET    /api/materials/units
 | material_tags | purchase | 🟡 MEDIUM | Changes affect 1 other modules |
 | materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 11 other modules |
 | purchase_items | batch-production, purchase | 🟡 MEDIUM | Changes affect 2 other modules |
-| purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 5 other modules |
+| purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 6 other modules |
 | sku_master | masters-crud, material-writeoff, package-sizes | 🔴 HIGH | Changes affect 7 other modules |
 | subcategories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
-| suppliers | opening-balance, purchase, system-config | 🔴 HIGH | Changes affect 4 other modules |
+| suppliers | opening-balance, purchase, sku-production | 🔴 HIGH | Changes affect 5 other modules |
 | tags | purchase | 🟡 MEDIUM | Changes affect 1 other modules |
 | uom_master | masters-common, system-config | 🟡 MEDIUM | Changes affect 2 other modules |
 | writeoff_reasons | material-writeoff, system-config, writeoff-analytics | 🔴 HIGH | Changes affect 3 other modules |
@@ -58,7 +58,7 @@ GET    /api/materials/units
   - Shared with: cost-management, package-sizes, sku-management, sku-production, system-config
   - Impact: Changes will cascade to these modules
 - **suppliers** (HIGH RISK)
-  - Shared with: opening-balance, purchase, system-config, unknown
+  - Shared with: opening-balance, purchase, sku-production, system-config, unknown
   - Impact: Changes will cascade to these modules
 
 ### Integration Points

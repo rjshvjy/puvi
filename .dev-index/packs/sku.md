@@ -1,6 +1,6 @@
 # Feature Pack: SKU
-Generated: 2025-08-25T23:36:17.401Z
-Routes: 23 | Tables: 20 | Files: 10
+Generated: 2025-08-25T23:49:38.152Z
+Routes: 23 | Tables: 23 | Files: 10
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -67,6 +67,7 @@ POST   /api/sku/production/allocate-oil
 | CURRENT_DATE | sku-production | 🟡 MEDIUM | Changes affect 1 other modules |
 | DESC | sku-production | 🟡 MEDIUM | Changes affect 1 other modules |
 | batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 10 other modules |
+| blend_batch_components | blending, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
 | blend_batches | blending, masters-crud, sku-production | 🔴 HIGH | Changes affect 3 other modules |
 | completed | sku-management | 🟡 MEDIUM | Changes affect 1 other modules |
 | cost_elements_master | cost-management, package-sizes, sku-management | 🔴 HIGH | Changes affect 5 other modules |
@@ -74,6 +75,7 @@ POST   /api/sku/production/allocate-oil
 | inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
 | materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 11 other modules |
 | package_sizes_master | package-sizes, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
+| purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 6 other modules |
 | query | masters-common, sku-management | 🟡 MEDIUM | Changes affect 2 other modules |
 | sku_bom_details | sku-management, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
 | sku_bom_master | sku-management, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
@@ -83,6 +85,7 @@ POST   /api/sku/production/allocate-oil
 | sku_mrp_history | sku-management, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
 | sku_oil_allocation | sku-production | 🟡 MEDIUM | Changes affect 1 other modules |
 | sku_production | material-writeoff, sku-management, sku-production | 🔴 HIGH | Changes affect 4 other modules |
+| suppliers | opening-balance, purchase, sku-production | 🔴 HIGH | Changes affect 5 other modules |
 
 ### ⚠️ Hardcoded Values Detected
 - `ProductionSummaryReport.js:203` - object
@@ -102,6 +105,9 @@ POST   /api/sku/production/allocate-oil
   - Impact: Changes will cascade to these modules
 - **cost_elements_master** (HIGH RISK)
   - Shared with: cost-management, package-sizes, sku-management, sku-production, system-config
+  - Impact: Changes will cascade to these modules
+- **suppliers** (HIGH RISK)
+  - Shared with: opening-balance, purchase, sku-production, system-config, unknown
   - Impact: Changes will cascade to these modules
 
 ### Integration Points

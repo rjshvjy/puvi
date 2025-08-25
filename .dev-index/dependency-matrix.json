@@ -1,9 +1,9 @@
 {
   "version": "1.0",
-  "generatedAt": "2025-08-25T23:36:17.331Z",
+  "generatedAt": "2025-08-25T23:49:38.084Z",
   "summary": {
     "totalTables": 61,
-    "sharedTables": 30,
+    "sharedTables": 31,
     "hardcodedCategories": 0,
     "migrationOpportunities": 0
   },
@@ -14,9 +14,10 @@
         "blending",
         "opening-balance",
         "purchase",
+        "sku-production",
         "unknown"
       ],
-      "fileCount": 5,
+      "fileCount": 6,
       "operations": {
         "batch-production": {
           "files": [
@@ -39,6 +40,12 @@
         "purchase": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/purchase.py"
+          ],
+          "queryCount": 0
+        },
+        "sku-production": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_production.py"
           ],
           "queryCount": 0
         },
@@ -446,13 +453,20 @@
     },
     "blend_batch_components": {
       "usedBy": [
-        "blending"
+        "blending",
+        "sku-production"
       ],
-      "fileCount": 1,
+      "fileCount": 2,
       "operations": {
         "blending": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/blending.py"
+          ],
+          "queryCount": 0
+        },
+        "sku-production": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_production.py"
           ],
           "queryCount": 0
         }
@@ -973,10 +987,11 @@
       "usedBy": [
         "opening-balance",
         "purchase",
+        "sku-production",
         "system-config",
         "unknown"
       ],
-      "fileCount": 5,
+      "fileCount": 6,
       "operations": {
         "opening-balance": {
           "files": [
@@ -987,6 +1002,12 @@
         "purchase": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/purchase.py"
+          ],
+          "queryCount": 0
+        },
+        "sku-production": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_production.py"
           ],
           "queryCount": 0
         },
@@ -1401,12 +1422,13 @@
         "blending",
         "opening-balance",
         "purchase",
+        "sku-production",
         "unknown"
       ],
-      "moduleCount": 5,
-      "fileCount": 5,
+      "moduleCount": 6,
+      "fileCount": 6,
       "risk": "HIGH",
-      "recommendation": "⚠️ CRITICAL: Changes require coordination across 5 modules"
+      "recommendation": "⚠️ CRITICAL: Changes require coordination across 6 modules"
     },
     {
       "table": "materials",
@@ -1525,13 +1547,14 @@
       "sharedBy": [
         "opening-balance",
         "purchase",
+        "sku-production",
         "system-config",
         "unknown"
       ],
-      "moduleCount": 4,
-      "fileCount": 5,
+      "moduleCount": 5,
+      "fileCount": 6,
       "risk": "HIGH",
-      "recommendation": "⚠️ CRITICAL: Changes require coordination across 4 modules"
+      "recommendation": "⚠️ CRITICAL: Changes require coordination across 5 modules"
     },
     {
       "table": "oil_cake_inventory",
@@ -1625,6 +1648,17 @@
       "fileCount": 2,
       "risk": "LOW",
       "recommendation": "Changes will affect batch-production, cost-management"
+    },
+    {
+      "table": "blend_batch_components",
+      "sharedBy": [
+        "blending",
+        "sku-production"
+      ],
+      "moduleCount": 2,
+      "fileCount": 2,
+      "risk": "LOW",
+      "recommendation": "Changes will affect blending, sku-production"
     },
     {
       "table": "masters_audit_log",

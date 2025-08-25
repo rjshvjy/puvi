@@ -1,5 +1,5 @@
 # Feature Pack: COST-ELEMENTS-FOR-BATCH
-Generated: 2025-08-25T23:36:17.391Z
+Generated: 2025-08-25T23:49:38.141Z
 Routes: 1 | Tables: 9 | Files: 1
 
 ## Table of Contents
@@ -27,7 +27,7 @@ GET    /api/cost_elements_for_batch
 | oil_cake_inventory | batch-production, material-sales, material-writeoff | 🔴 HIGH | Changes affect 3 other modules |
 | oil_cake_rate_master | batch-production | 🟡 MEDIUM | Changes affect 1 other modules |
 | purchase_items | batch-production, purchase | 🟡 MEDIUM | Changes affect 2 other modules |
-| purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 5 other modules |
+| purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 6 other modules |
 
 ### ⚠️ Hardcoded Values Detected
 - `batch_production.py:232` - object
