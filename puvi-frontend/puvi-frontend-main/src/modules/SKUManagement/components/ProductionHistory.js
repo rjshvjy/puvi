@@ -215,16 +215,20 @@ const ProductionHistory = () => {
   };
 
   const formatDate = (dateValue) => {
-    if (!dateValue) return 'N/A';
-    
-    try {
-      // Use the utility function for consistent formatting
-      return skuDateUtils.formatForDisplay(dateValue);
-    } catch (error) {
-      console.error('Date formatting error:', error);
-      return 'N/A';
-    }
-  };
+  if (!dateValue) return 'N/A';
+  
+  // Check if already in DD-MM-YYYY format
+  if (typeof dateValue === 'string' && dateValue.match(/^\d{2}-\d{2}-\d{4}$/)) {
+    return dateValue; // Already formatted, return as-is
+  }
+  
+  try {
+    return skuDateUtils.formatForDisplay(dateValue);
+  } catch (error) {
+    console.error('Date formatting error:', error);
+    return 'N/A';
+  }
+};
 
   const handleFilterChange = (field, value) => {
     setFilters(prev => ({ ...prev, [field]: value }));
