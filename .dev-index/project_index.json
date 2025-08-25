@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-25T06:17:59.302Z",
+  "generatedAt": "2025-08-25T06:22:06.308Z",
   "filesScanned": 62,
   "jsFilesScanned": 38,
   "pyFilesScanned": 24,
@@ -10020,31 +10020,23 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 130,
-      "name": "fetchMaterialsInventory",
-      "params": "category = null",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 157,
-      "name": "fetchOilCakeInventory",
+      "line": 78,
+      "name": "fetchUnifiedCategories",
       "params": "",
       "type": "arrow",
       "isAsync": true
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 175,
-      "name": "fetchSludgeInventory",
-      "params": "",
+      "line": 94,
+      "name": "handleCategoryChange",
+      "params": "value",
       "type": "arrow",
       "isAsync": true
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 193,
+      "line": 144,
       "name": "fetchImpactData",
       "params": "",
       "type": "arrow",
@@ -10052,7 +10044,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 210,
+      "line": 161,
       "name": "refreshMetrics",
       "params": "",
       "type": "arrow",
@@ -10060,7 +10052,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 227,
+      "line": 178,
       "name": "fetchWriteoffReasons",
       "params": "",
       "type": "arrow",
@@ -10068,7 +10060,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 238,
+      "line": 189,
       "name": "fetchWriteoffHistory",
       "params": "",
       "type": "arrow",
@@ -10076,7 +10068,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 254,
+      "line": 205,
       "name": "resetSelection",
       "params": "",
       "type": "arrow",
@@ -10084,7 +10076,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 268,
+      "line": 219,
       "name": "handleItemSelect",
       "params": "item",
       "type": "arrow",
@@ -10092,7 +10084,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 290,
+      "line": 224,
       "name": "handleInputChange",
       "params": "e",
       "type": "arrow",
@@ -10100,7 +10092,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 308,
+      "line": 242,
       "name": "calculateWriteoffValue",
       "params": "",
       "type": "arrow",
@@ -10108,7 +10100,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 329,
+      "line": 268,
       "name": "handleSubmit",
       "params": "e",
       "type": "arrow",
@@ -10116,23 +10108,23 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 413,
-      "name": "renderInventoryList",
+      "line": 360,
+      "name": "renderInventoryItem",
+      "params": "item",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
+      "line": 398,
+      "name": "renderWriteoffTab",
       "params": "",
       "type": "arrow",
       "isAsync": false
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 525,
-      "name": "renderWriteoffForm",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 666,
+      "line": 618,
       "name": "renderImpactDashboard",
       "params": "",
       "type": "arrow",
@@ -10140,7 +10132,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 800,
+      "line": 752,
       "name": "renderHistoryTab",
       "params": "",
       "type": "arrow",
@@ -15129,7 +15121,7 @@
       "type": "useState",
       "name": "activeTab",
       "setter": "setActiveTab",
-      "initial": "materials"
+      "initial": "writeoff"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
@@ -15141,8 +15133,8 @@
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
       "line": 20,
       "type": "useState",
-      "name": "materialsInventory",
-      "setter": "setMaterialsInventory",
+      "name": "inventory",
+      "setter": "setInventory",
       "initial": "[]"
     },
     {
@@ -15155,9 +15147,9 @@
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
       "line": 21,
       "type": "useState",
-      "name": "oilCakeInventory",
-      "setter": "setOilCakeInventory",
-      "initial": "[]"
+      "name": "categories",
+      "setter": "setCategories",
+      "initial": "{}"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
@@ -15167,91 +15159,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 22,
-      "type": "useState",
-      "name": "sludgeInventory",
-      "setter": "setSludgeInventory",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 22,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 25,
-      "type": "useState",
-      "name": "filteredMaterials",
-      "setter": "setFilteredMaterials",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 25,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
       "line": 26,
-      "type": "useState",
-      "name": "filteredOilCake",
-      "setter": "setFilteredOilCake",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 26,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 27,
-      "type": "useState",
-      "name": "filteredSludge",
-      "setter": "setFilteredSludge",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 27,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 30,
-      "type": "useState",
-      "name": "categories",
-      "setter": "setCategories",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 30,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 31,
-      "type": "useState",
-      "name": "oilTypes",
-      "setter": "setOilTypes",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 31,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 32,
       "type": "useState",
       "name": "selectedCategory",
       "setter": "setSelectedCategory",
@@ -15259,6 +15167,62 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
+      "line": 26,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
+      "line": 27,
+      "type": "useState",
+      "name": "inventoryType",
+      "setter": "setInventoryType",
+      "initial": ""
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
+      "line": 27,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
+      "line": 30,
+      "type": "useState",
+      "name": "writeoffReasons",
+      "setter": "setWriteoffReasons",
+      "initial": "[]"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
+      "line": 30,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
+      "line": 31,
+      "type": "useState",
+      "name": "writeoffHistory",
+      "setter": "setWriteoffHistory",
+      "initial": "[]"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
+      "line": 31,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
+      "line": 32,
+      "type": "useState",
+      "name": "selectedItem",
+      "setter": "setSelectedItem",
+      "initial": null
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
       "line": 32,
       "type": "useState",
       "hook": "useState"
@@ -15267,9 +15231,9 @@
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
       "line": 33,
       "type": "useState",
-      "name": "selectedOilType",
-      "setter": "setSelectedOilType",
-      "initial": ""
+      "name": "loading",
+      "setter": "setLoading",
+      "initial": null
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
@@ -15281,8 +15245,8 @@
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
       "line": 34,
       "type": "useState",
-      "name": "searchTerm",
-      "setter": "setSearchTerm",
+      "name": "message",
+      "setter": "setMessage",
       "initial": ""
     },
     {
@@ -15293,77 +15257,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 37,
-      "type": "useState",
-      "name": "writeoffReasons",
-      "setter": "setWriteoffReasons",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 37,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 38,
-      "type": "useState",
-      "name": "writeoffHistory",
-      "setter": "setWriteoffHistory",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 38,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 39,
-      "type": "useState",
-      "name": "selectedItem",
-      "setter": "setSelectedItem",
-      "initial": null
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 39,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 40,
-      "type": "useState",
-      "name": "loading",
-      "setter": "setLoading",
-      "initial": null
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 40,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 41,
-      "type": "useState",
-      "name": "message",
-      "setter": "setMessage",
-      "initial": ""
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 41,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 42,
+      "line": 35,
       "type": "useState",
       "name": "summary",
       "setter": "setSummary",
@@ -15371,13 +15265,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 42,
+      "line": 35,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 45,
+      "line": 38,
       "type": "useState",
       "name": "impactData",
       "setter": "setImpactData",
@@ -15385,13 +15279,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 45,
+      "line": 38,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 46,
+      "line": 39,
       "type": "useState",
       "name": "dashboardData",
       "setter": "setDashboardData",
@@ -15399,13 +15293,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 46,
+      "line": 39,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 47,
+      "line": 40,
       "type": "useState",
       "name": "trendsData",
       "setter": "setTrendsData",
@@ -15413,13 +15307,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 47,
+      "line": 40,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 48,
+      "line": 41,
       "type": "useState",
       "name": "refreshingMetrics",
       "setter": "setRefreshingMetrics",
@@ -15427,13 +15321,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 48,
+      "line": 41,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 51,
+      "line": 44,
       "type": "useState",
       "name": "writeoffData",
       "setter": "setWriteoffData",
@@ -15441,37 +15335,19 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 51,
+      "line": 44,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 65,
+      "line": 58,
       "type": "useEffect",
       "hook": "useEffect"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 71,
-      "type": "useEffect",
-      "hook": "useEffect"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 86,
-      "type": "useEffect",
-      "hook": "useEffect"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 98,
-      "type": "useEffect",
-      "hook": "useEffect"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 115,
+      "line": 64,
       "type": "useEffect",
       "hook": "useEffect"
     },
@@ -20029,97 +19905,85 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 131,
+      "line": 79,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 147,
+      "line": 88,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 158,
+      "line": 107,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 165,
+      "line": 132,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 176,
+      "line": 145,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 183,
+      "line": 155,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 194,
+      "line": 163,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 204,
+      "line": 167,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 212,
+      "line": 179,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 216,
+      "line": 184,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 228,
+      "line": 190,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 233,
+      "line": 196,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 239,
+      "line": 290,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 245,
-      "type": "catch",
-      "code": "} catch (error) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 348,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/MaterialWriteoff/index.js",
-      "line": 390,
+      "line": 337,
       "type": "catch",
       "code": "} catch (error) {"
     },
@@ -23422,9 +23286,9 @@
     "hardcodedValues": 24,
     "databaseQueries": 444,
     "databaseTables": 61,
-    "functions": 619,
-    "stateHooks": 683,
+    "functions": 618,
+    "stateHooks": 666,
     "missingEndpoints": 1,
-    "errorHandlers": 630
+    "errorHandlers": 628
   }
 }
