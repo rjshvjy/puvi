@@ -219,7 +219,7 @@ const ProductionHistory = () => {
     
     try {
       // Use the utility function for consistent formatting
-      return skuDateUtils.formatDateForDisplay(dateValue);
+      return return skuDateUtils.formatForDisplay(dateValue);
     } catch (error) {
       console.error('Date formatting error:', error);
       return 'N/A';
