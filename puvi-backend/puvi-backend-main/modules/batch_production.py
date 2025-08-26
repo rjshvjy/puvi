@@ -450,7 +450,7 @@ def add_batch():
             float(sludge_yield_percent),
             production_date,
             None,  # recipe_id - can be added later
-            batch_traceable_code
+            batch_traceable_code,
             seed_purchase_code,
             material_id
         ))
