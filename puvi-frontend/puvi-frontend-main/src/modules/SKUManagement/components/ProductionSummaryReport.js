@@ -1,5 +1,6 @@
 // Production Summary Report Component - Printable format for regulatory filing
 // File Path: puvi-frontend/src/modules/SKUManagement/components/ProductionSummaryReport.js
+// Enhanced with complete traceability chain display
 
 import React, { useState, useEffect, useRef } from 'react';
 import api, { skuDateUtils, formatUtils } from '../../../services/api';
@@ -116,6 +117,79 @@ const ProductionSummaryReport = () => {
       normal: '#00FF00'
     };
     return colors[status] || '#808080';
+  };
+
+  // Render complete traceability chain
+  const renderTraceabilityChain = (oilSource) => {
+    // If traceability chain data is available, render hierarchical view
+    if (oilSource.traceability_chain && oilSource.traceability_chain.length > 0) {
+      return (
+        <div className="traceability-chain-container">
+          <div className="oil-source-header">
+            <span className="source-label">Source {oilSource.source_type === 'blend' ? '(Blended)' : '(Direct)'}: </span>
+            <span className="source-code">{oilSource.traceable_code || oilSource.source_code}</span>
+            <span className="source-quantity"> - {oilSource.quantity_kg} kg @ {formatUtils.currency(oilSource.cost_per_kg)}/kg</span>
+          </div>
+          
+          <div className="traceability-chain">
+            {oilSource.traceability_chain.map((step, stepIdx) => (
+              <div 
+                key={stepIdx} 
+                className={`trace-step trace-level-${step.level}`}
+                style={{
+                  marginLeft: step.level === 'batch' ? '25px' : 
+                             step.level === 'blend' ? '50px' : '0px',
+                  padding: '8px 0',
+                  borderLeft: stepIdx > 0 ? '2px solid #ddd' : 'none',
+                  paddingLeft: stepIdx > 0 ? '15px' : '0'
+                }}
+              >
+                <span className="trace-arrow" style={{ color: '#888', marginRight: '5px' }}>
+                  {stepIdx > 0 ? '↳ ' : ''}
+                </span>
+                <span className="trace-code" style={{ fontWeight: 'bold', color: '#2c5aa0' }}>
+                  {step.code}
+                </span>
+                <span className="trace-desc" style={{ marginLeft: '10px', color: '#555' }}>
+                  - {step.description}
+                </span>
+                {step.quantity && (
+                  <span className="trace-qty" style={{ marginLeft: '10px', color: '#888', fontStyle: 'italic' }}>
+                    ({step.quantity})
+                  </span>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    } else {
+      // Fallback to simple display if no chain data
+      return (
+        <div className="oil-source-simple">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Source Code</th>
+                <th>Type</th>
+                <th>Quantity (kg)</th>
+                <th>Cost/kg</th>
+                <th>Total Cost</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>{oilSource.source_code || oilSource.traceable_code}</td>
+                <td>{oilSource.source_type}</td>
+                <td className="number">{oilSource.quantity_kg}</td>
+                <td className="number">{formatUtils.currency(oilSource.cost_per_kg)}</td>
+                <td className="number">{formatUtils.currency(oilSource.quantity_kg * oilSource.cost_per_kg)}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      );
+    }
   };
 
   return (
@@ -309,34 +383,48 @@ const ProductionSummaryReport = () => {
               </table>
             </div>
 
-            {/* Oil Traceability */}
+            {/* Complete Oil Traceability - ENHANCED SECTION */}
             {reportData.oil_traceability && reportData.oil_traceability.length > 0 && (
               <div className="report-section">
-                <h3>Oil Source Traceability</h3>
-                <table className="data-table">
-                  <thead>
-                    <tr>
-                      <th>Source</th>
-                      <th>Type</th>
-                      <th>Oil Type</th>
-                      <th>Quantity (kg)</th>
-                      <th>Cost/kg</th>
-                      <th>Total Cost</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {reportData.oil_traceability.map((source, idx) => (
-                      <tr key={idx}>
-                        <td>{source.source_code || source.traceable_code}</td>
-                        <td>{source.source_type}</td>
-                        <td>{source.oil_type}</td>
-                        <td className="number">{source.quantity_kg}</td>
-                        <td className="number">{formatUtils.currency(source.cost_per_kg)}</td>
-                        <td className="number">{formatUtils.currency(source.quantity_kg * source.cost_per_kg)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+                <h3>Complete Oil Source Traceability</h3>
+                <div className="oil-traceability-container">
+                  {reportData.oil_traceability.map((source, idx) => (
+                    <div key={idx} className="oil-source-section" style={{ 
+                      marginBottom: '20px',
+                      padding: '15px',
+                      border: '1px solid #ddd',
+                      borderRadius: '4px',
+                      backgroundColor: '#fafafa'
+                    }}>
+                      <h4 style={{ 
+                        margin: '0 0 15px 0',
+                        color: '#2c5aa0',
+                        fontSize: '14px'
+                      }}>
+                        Oil Source {idx + 1}: {source.source_type === 'blend' ? 'Blended Oil' : 'Direct Batch'}
+                      </h4>
+                      {renderTraceabilityChain(source)}
+                    </div>
+                  ))}
+                  
+                  {/* Summary of oil sources */}
+                  <div className="oil-summary" style={{
+                    marginTop: '20px',
+                    padding: '10px',
+                    backgroundColor: '#f0f0f0',
+                    borderRadius: '4px'
+                  }}>
+                    <strong>Total Oil Used: </strong>
+                    {reportData.oil_traceability.reduce((sum, s) => sum + parseFloat(s.quantity_kg || 0), 0).toFixed(2)} kg
+                    <span style={{ marginLeft: '20px' }}>
+                      <strong>Weighted Cost: </strong>
+                      {formatUtils.currency(
+                        reportData.oil_traceability.reduce((sum, s) => sum + (parseFloat(s.quantity_kg || 0) * parseFloat(s.cost_per_kg || 0)), 0) /
+                        reportData.oil_traceability.reduce((sum, s) => sum + parseFloat(s.quantity_kg || 0), 1)
+                      )}/kg
+                    </span>
+                  </div>
+                </div>
               </div>
             )}
 
@@ -401,7 +489,7 @@ const ProductionSummaryReport = () => {
                   </tr>
                   <tr>
                     <td className="label">Labor Cost:</td>
-                    <td className="value">{formatUtils.currency(reportData.cost_breakdown?.labor_cost)}</td>
+                    <td className="value">{formatUtils.currency(reportData.cost_breakdown?.packing_cost)}</td>
                   </tr>
                   <tr className="total-row">
                     <td className="label">Total Production Cost:</td>
@@ -797,6 +885,77 @@ const ProductionSummaryReport = () => {
           display: inline-block;
         }
 
+        /* Traceability Chain Styles */
+        .oil-traceability-container {
+          margin: 15px 0;
+        }
+
+        .traceability-chain-container {
+          margin: 10px 0;
+        }
+
+        .oil-source-header {
+          font-weight: bold;
+          margin-bottom: 10px;
+          padding: 8px;
+          background: #e8f5e9;
+          border-radius: 4px;
+        }
+
+        .source-label {
+          color: #555;
+        }
+
+        .source-code {
+          color: #2c5aa0;
+        }
+
+        .source-quantity {
+          color: #666;
+          font-weight: normal;
+        }
+
+        .traceability-chain {
+          margin: 10px 0;
+        }
+
+        .trace-step {
+          font-size: 13px;
+          line-height: 1.6;
+          position: relative;
+        }
+
+        .trace-level-seed_purchase {
+          font-weight: bold;
+          background: #fff3cd;
+          padding: 5px 8px !important;
+          border-radius: 4px;
+          margin-bottom: 5px;
+        }
+
+        .trace-level-batch {
+          background: #e3f2fd;
+          padding: 5px 8px !important;
+          border-radius: 4px;
+          margin-bottom: 5px;
+        }
+
+        .trace-level-blend {
+          background: #f3e5f5;
+          padding: 5px 8px !important;
+          border-radius: 4px;
+          margin-bottom: 5px;
+        }
+
+        .oil-source-simple {
+          margin: 10px 0;
+        }
+
+        .oil-summary {
+          font-size: 14px;
+          font-weight: bold;
+        }
+
         /* Notes Section */
         .notes-content {
           padding: 10px;
@@ -869,6 +1028,14 @@ const ProductionSummaryReport = () => {
           }
 
           .report-section {
+            page-break-inside: avoid;
+          }
+
+          .oil-source-section {
+            page-break-inside: avoid;
+          }
+
+          .traceability-chain {
             page-break-inside: avoid;
           }
 
