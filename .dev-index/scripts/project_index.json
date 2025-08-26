@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-26T00:02:34.660Z",
+  "generatedAt": "2025-08-26T04:43:27.352Z",
   "filesScanned": 62,
   "jsFilesScanned": 38,
   "pyFilesScanned": 24,
@@ -62,7 +62,7 @@
       "method": "GET",
       "path": "/api/batch_history",
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 660,
+      "line": 662,
       "blueprint": "batch_bp",
       "function": "get_batch_history",
       "source": "backend"
@@ -2359,7 +2359,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 481,
+      "line": 483,
       "type": "SELECT",
       "tables": [
         "purchases",
@@ -2375,7 +2375,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 490,
+      "line": 492,
       "type": "UPDATE",
       "tables": [
         "purchases",
@@ -2391,7 +2391,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 508,
+      "line": 510,
       "type": "INSERT",
       "tables": [
         "purchases",
@@ -2407,7 +2407,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 534,
+      "line": 536,
       "type": "UPDATE",
       "tables": [
         "purchases",
@@ -2423,7 +2423,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 553,
+      "line": 555,
       "type": "UPDATE",
       "tables": [
         "purchases",
@@ -2439,7 +2439,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 568,
+      "line": 570,
       "type": "SELECT",
       "tables": [
         "purchases",
@@ -2455,7 +2455,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 592,
+      "line": 594,
       "type": "UPDATE",
       "tables": [
         "purchases",
@@ -2471,7 +2471,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 601,
+      "line": 603,
       "type": "INSERT",
       "tables": [
         "purchases",
@@ -2487,7 +2487,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 619,
+      "line": 621,
       "type": "INSERT",
       "tables": [
         "purchases",
@@ -2504,7 +2504,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 718,
+      "line": 720,
       "type": "OTHER",
       "tables": [
         "purchases",
@@ -2521,7 +2521,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 770,
+      "line": 772,
       "type": "OTHER",
       "tables": [
         "purchases",
@@ -2538,7 +2538,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 774,
+      "line": 776,
       "type": "SELECT",
       "tables": [
         "purchases",
@@ -12426,7 +12426,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 661,
+      "line": 663,
       "name": "get_batch_history",
       "params": "",
       "type": "python",
@@ -18601,7 +18601,7 @@
         "method": "GET",
         "path": "/api/batch_history",
         "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-        "line": 660,
+        "line": 662,
         "function": "get_batch_history"
       }
     ],
@@ -21339,20 +21339,20 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 650,
+      "line": 652,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 666,
+      "line": 668,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/batch_production.py",
-      "line": 814,
+      "line": 816,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
