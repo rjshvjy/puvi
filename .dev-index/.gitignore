@@ -1,0 +1,15 @@
+# Dependencies - only needed during build, not in repo
+node_modules/
+package-lock.json
+
+# Temporary/duplicate files from build process  
+scripts/project_index.json
+scripts/dependency-matrix.json
+scripts/DEPENDENCY-REPORT.md
+scripts/packs/
+
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
