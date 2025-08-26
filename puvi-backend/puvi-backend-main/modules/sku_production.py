@@ -846,7 +846,7 @@ for row in cur.fetchall():
                 b.traceable_code,
                 b.oil_yield,
                 b.seed_material_id,
-                b.seed_quantity_used,
+                b.seed_quantity_before_drying,
                 b.seed_purchase_code,
                 m.material_name as seed_name,
                 s.supplier_name
@@ -882,7 +882,7 @@ for row in cur.fetchall():
                 b.batch_code,
                 b.traceable_code,
                 b.seed_purchase_code,
-                b.seed_quantity_used,
+                b.seed_quantity_before_drying,
                 m.material_name as seed_name
             FROM blend_batch_components bbc
             JOIN batch b ON bbc.batch_id = b.batch_id
