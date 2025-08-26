@@ -95,9 +95,21 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
           
-      - name: Add and commit all changes
+      - name: Add and commit only generated files
         run: |
-          git add -A .dev-index/
-          git status
+          # Add only the files we want to keep (not node_modules!)
+          git add .dev-index/project_index.json 2>/dev/null || true
+          git add .dev-index/dependency-matrix.json 2>/dev/null || true
+          git add .dev-index/DEPENDENCY-REPORT.md 2>/dev/null || true
+          git add .dev-index/packs/*.md 2>/dev/null || true
+          git add .dev-index/package.json 2>/dev/null || true
+          git add .dev-index/scripts/*.mjs 2>/dev/null || true
+          git add .dev-index/.gitignore 2>/dev/null || true
+          
+          # Check what will be committed
+          echo "=== Files to be committed ==="
+          git status --short
+          
+          # Commit and push
           git commit -m "chore: update dev index, feature packs, and dependency analysis" || echo "No changes to commit"
           git push || echo "Nothing to push"
