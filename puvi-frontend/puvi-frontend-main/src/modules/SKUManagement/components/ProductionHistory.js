@@ -822,29 +822,66 @@ const ProductionHistory = () => {
               
               {selectedProduction.oil_allocations && selectedProduction.oil_allocations.length > 0 && (
                 <div className="detail-section full-width">
-                  <h4>Oil Sources Used</h4>
-                  <table className="allocation-detail">
-                    <thead>
-                      <tr>
-                        <th>Source</th>
-                        <th>Type</th>
-                        <th>Quantity (kg)</th>
-                        <th>Cost/kg</th>
-                        <th>Total Cost</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {selectedProduction.oil_allocations.map((alloc, idx) => (
-                        <tr key={idx}>
-                          <td>{alloc.source_code || alloc.source_traceable_code}</td>
-                          <td>{alloc.source_type}</td>
-                          <td>{(alloc.quantity_allocated || alloc.quantity || 0).toFixed(2)}</td>
-                          <td>{formatUtils.currency(alloc.oil_cost_per_kg || alloc.cost_per_kg || 0)}</td>
-                          <td>{formatUtils.currency((alloc.quantity_allocated || alloc.quantity || 0) * (alloc.oil_cost_per_kg || alloc.cost_per_kg || 0))}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                  <h4>Complete Oil Traceability</h4>
+                  {selectedProduction.oil_allocations.map((alloc, idx) => (
+                    <div key={idx} className="traceability-section" style={{ marginBottom: '20px', borderLeft: '3px solid #ddd', paddingLeft: '15px' }}>
+                      <h5>Source {idx + 1}: {alloc.source_type === 'blend' ? 'Blended Oil' : 'Direct Batch'}</h5>
+                      
+                      {/* Show full traceability chain if available */}
+                      {alloc.traceability_chain && alloc.traceability_chain.length > 0 ? (
+                        <div className="traceability-chain">
+                          {alloc.traceability_chain.map((step, stepIdx) => (
+                            <div 
+                              key={stepIdx} 
+                              className={`trace-step level-${step.level}`}
+                              style={{
+                                marginLeft: step.level === 'batch' ? '20px' : step.level === 'blend' ? '40px' : '0px',
+                                padding: '5px 0',
+                                borderBottom: '1px dotted #eee'
+                              }}
+                            >
+                              <span className="trace-arrow" style={{ color: '#888' }}>
+                                {stepIdx > 0 ? '↳ ' : ''}
+                              </span>
+                              <span className="trace-code" style={{ fontWeight: 'bold', color: '#2c5aa0' }}>
+                                {step.code}
+                              </span>
+                              <span className="trace-desc" style={{ marginLeft: '10px', color: '#555' }}>
+                                {step.description}
+                              </span>
+                              {step.quantity && (
+                                <span className="trace-qty" style={{ marginLeft: '10px', color: '#888', fontStyle: 'italic' }}>
+                                  ({step.quantity})
+                                </span>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      ) : (
+                        /* Fallback to simple display if no traceability chain */
+                        <table className="allocation-detail">
+                          <thead>
+                            <tr>
+                              <th>Source</th>
+                              <th>Type</th>
+                              <th>Quantity (kg)</th>
+                              <th>Cost/kg</th>
+                              <th>Total Cost</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr>
+                              <td>{alloc.source_code || alloc.source_traceable_code || alloc.traceable_code || 'N/A'}</td>
+                              <td>{alloc.source_type || 'N/A'}</td>
+                              <td>{(alloc.quantity_allocated || alloc.quantity || 0).toFixed(2)}</td>
+                              <td>{formatUtils.currency(alloc.oil_cost_per_kg || alloc.cost_per_kg || 0)}</td>
+                              <td>{formatUtils.currency((alloc.quantity_allocated || alloc.quantity || 0) * (alloc.oil_cost_per_kg || alloc.cost_per_kg || 0))}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      )}
+                    </div>
+                  ))}
                 </div>
               )}
               
