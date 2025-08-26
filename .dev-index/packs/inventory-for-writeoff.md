@@ -1,5 +1,5 @@
 # Feature Pack: INVENTORY-FOR-WRITEOFF
-Generated: 2025-08-26T05:11:57.233Z
+Generated: 2025-08-26T06:33:50.875Z
 Routes: 1 | Tables: 13 | Files: 1
 
 ## Table of Contents
