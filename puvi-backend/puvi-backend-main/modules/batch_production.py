@@ -433,8 +433,8 @@ def add_batch():
                 seed_quantity_after_drying, drying_loss, oil_yield,
                 oil_yield_percent, oil_cake_yield, oil_cake_yield_percent,
                 sludge_yield, sludge_yield_percent, production_date, recipe_id,
-                traceable_code
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                traceable_code, seed_purchase_code, seed_material_id
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
             RETURNING batch_id
         """, (
             batch_code,
@@ -451,6 +451,8 @@ def add_batch():
             production_date,
             None,  # recipe_id - can be added later
             batch_traceable_code
+            seed_purchase_code,
+            material_id
         ))
         
         batch_id = cur.fetchone()[0]
