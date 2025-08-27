@@ -107,35 +107,45 @@ jobs:
               GROUP BY kcu.table_name
           ),
           unique_constraints AS (
-              SELECT 
-                  kcu.table_name,
+              -- First aggregate columns per constraint, then JSON aggregate per table
+              SELECT
+                  sub.table_name,
                   json_agg(
                       json_build_object(
-                          'columns', array_agg(kcu.column_name),
-                          'constraint_name', tc.constraint_name
+                          'columns', sub.columns,
+                          'constraint_name', sub.constraint_name
                       )
-                  ) as unique_keys
-              FROM information_schema.table_constraints tc
-              JOIN information_schema.key_column_usage kcu
-                  ON tc.constraint_name = kcu.constraint_name
-              WHERE tc.constraint_type = 'UNIQUE'
-                  AND tc.table_schema = 'public'
-              GROUP BY kcu.table_name, tc.constraint_name
+                  ) AS unique_keys
+              FROM (
+                  SELECT
+                      kcu.table_name,
+                      tc.constraint_name,
+                      array_agg(kcu.column_name ORDER BY kcu.ordinal_position) AS columns
+                  FROM information_schema.table_constraints tc
+                  JOIN information_schema.key_column_usage kcu
+                      ON tc.constraint_name = kcu.constraint_name
+                      AND tc.constraint_schema = kcu.constraint_schema
+                  WHERE tc.constraint_type = 'UNIQUE'
+                      AND tc.table_schema = 'public'
+                  GROUP BY kcu.table_name, tc.constraint_name
+              ) sub
+              GROUP BY sub.table_name
           ),
           check_constraints AS (
-              SELECT 
-                  cc.table_name,
+              SELECT
+                  tc.table_name,
                   json_agg(
                       json_build_object(
-                          'constraint_name', cc.constraint_name,
+                          'constraint_name', tc.constraint_name,
                           'check_clause', cc.check_clause
                       )
-                  ) as check_constraints
+                  ) AS check_constraints
               FROM information_schema.check_constraints cc
               JOIN information_schema.table_constraints tc
                   ON cc.constraint_name = tc.constraint_name
+                  AND cc.constraint_schema = tc.constraint_schema
               WHERE tc.table_schema = 'public'
-              GROUP BY cc.table_name
+              GROUP BY tc.table_name
           ),
           indexes AS (
               SELECT 
