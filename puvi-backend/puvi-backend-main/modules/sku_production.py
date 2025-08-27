@@ -465,6 +465,29 @@ def create_sku_production():
             )
             print(f"DEBUG: Created expiry tracking record ID={tracking_id}")
         
+        # CREATE SKU INVENTORY RECORD - THIS WAS MISSING!
+        cur.execute("""
+            INSERT INTO sku_inventory (
+                sku_id,
+                production_id,
+                quantity_available,
+                mrp,
+                status,
+                expiry_date,
+                created_at
+            ) VALUES (%s, %s, %s, %s, 'active', %s, CURRENT_TIMESTAMP)
+            RETURNING inventory_id
+        """, (
+            sku_id,
+            production_id,
+            bottles_produced,
+            mrp_at_production,
+            expiry_date
+        ))
+        
+        inventory_id = cur.fetchone()[0]
+        print(f"DEBUG: Created SKU inventory record ID={inventory_id} with {bottles_produced} bottles")
+        
         # Insert oil allocations
         for allocation in oil_allocations:
             cur.execute("""
