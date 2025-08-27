@@ -449,7 +449,8 @@ jobs:
               
               large_tables.sort(key=lambda x: x[1], reverse=True)
               for table, count, size in large_tables:
-                  f.write(f"- **{table}**: {count:,} rows ({size})\n")
+                  count_str = f"{count:,}" if count is not None else "N/A"
+                  f.write(f"- **{table}**: {count_str} rows ({size})\n")
           
           # Generate readable documentation
           with open('.dev-index/database_documentation.md', 'w') as f:
@@ -477,10 +478,12 @@ jobs:
                   
                   # Table stats
                   f.write(f"**Statistics:**\n")
-                  f.write(f"- Rows: {info.get('row_count', 'N/A'):,}\n")
-                  f.write(f"- Total Size: {info.get('total_size', 'N/A')}\n")
-                  f.write(f"- Table Size: {info.get('table_size', 'N/A')}\n")
-                  f.write(f"- Indexes Size: {info.get('indexes_size', 'N/A')}\n")
+                  row_count = info.get('row_count', 0)
+                  row_count_str = f"{row_count:,}" if row_count is not None else "N/A"
+                  f.write(f"- Rows: {row_count_str}\n")
+                  f.write(f"- Total Size: {info.get('total_size', 'N/A') or 'N/A'}\n")
+                  f.write(f"- Table Size: {info.get('table_size', 'N/A') or 'N/A'}\n")
+                  f.write(f"- Indexes Size: {info.get('indexes_size', 'N/A') or 'N/A'}\n")
                   if info.get('last_vacuum'):
                       f.write(f"- Last Vacuum: {info['last_vacuum']}\n")
                   f.write("\n")
