@@ -1,0 +1,964 @@
+# PUVI Database Schema
+# Generated: 2025-08-27 01:37:34.961131
+# Total Tables: 72
+
+=== available_oil_types ===
+oil_type: character varying(50)
+
+=== batch ===
+batch_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('batch_batch_id_seq'::regclass)
+batch_code: character varying(50) [UQ] NOT NULL
+recipe_id: integer(32,0) [FK] -> recipes.recipe_id
+oil_type: character varying(50) NOT NULL
+seed_quantity_before_drying: numeric(10,2)
+seed_quantity_after_drying: numeric(10,2)
+drying_loss: numeric(10,2)
+oil_yield: numeric(10,2)
+oil_yield_percent: numeric(5,2)
+oil_cake_yield: numeric(10,2)
+oil_cake_yield_percent: numeric(5,2)
+production_date: integer(32,0)
+sludge_yield: numeric(10,2)
+sludge_yield_percent: numeric(5,2)
+labor_hours: numeric(10,2)
+labor_cost: numeric(10,2)
+electricity_units: numeric(10,2)
+electricity_cost: numeric(10,2)
+total_overhead_cost: numeric(10,2)
+total_production_cost: numeric(10,2)
+net_oil_cost: numeric(10,2)
+oil_cost_per_kg: numeric(10,2)
+cake_estimated_rate: numeric(10,2)
+cake_actual_rate: numeric(10,2)
+sludge_estimated_rate: numeric(10,2)
+sludge_actual_rate: numeric(10,2)
+cake_sold_quantity: numeric(10,2) DEFAULT 0
+sludge_sold_quantity: numeric(10,2) DEFAULT 0
+traceable_code: character varying(50) [UQ]
+seed_purchase_code: character varying(50)
+seed_material_id: integer(32,0) [FK] -> materials.material_id
+
+=== batch_cost_details ===
+cost_detail_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('batch_cost_details_cost_detail_id_seq'::regclass)
+batch_id: integer(32,0) [FK] -> batch.batch_id NOT NULL
+cost_element: character varying(100) NOT NULL
+master_rate: numeric(10,2)
+override_rate: numeric(10,2)
+quantity: numeric(10,2)
+total_cost: numeric(10,2)
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+
+=== batch_cost_details_backup ===
+cost_detail_id: integer(32,0)
+batch_id: integer(32,0)
+cost_element: character varying(100)
+master_rate: numeric(10,2)
+override_rate: numeric(10,2)
+quantity: numeric(10,2)
+total_cost: numeric(10,2)
+created_at: timestamp without time zone
+
+=== batch_cost_summary ===
+batch_id: integer(32,0)
+batch_code: character varying(50)
+oil_type: character varying(50)
+production_date: integer(32,0)
+oil_yield: numeric(10,2)
+original_cost: numeric(10,2)
+extended_costs: numeric
+total_cost_with_extended: numeric
+net_oil_cost: numeric(10,2)
+oil_cost_per_kg: numeric(10,2)
+time_tracking_entries: bigint(64,0)
+total_tracked_hours: numeric
+
+=== batch_extended_costs ===
+cost_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('batch_extended_costs_cost_id_seq'::regclass)
+batch_id: integer(32,0) [FK] -> batch.batch_id
+element_id: integer(32,0) [FK] -> cost_elements_master.element_id
+element_name: character varying(100)
+quantity_or_hours: numeric(10,2)
+rate_used: numeric(10,2)
+total_cost: numeric(10,2)
+is_applied: boolean DEFAULT true
+override_reason: text
+created_by: character varying(100)
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+
+=== batch_summary ===
+batch_id: integer(32,0)
+batch_code: character varying(50)
+oil_type: character varying(50)
+production_date: integer(32,0)
+seed_quantity_after_drying: numeric(10,2)
+oil_yield: numeric(10,2)
+oil_yield_percent: numeric(5,2)
+oil_cake_yield: numeric(10,2)
+oil_cake_yield_percent: numeric(5,2)
+sludge_yield: numeric(10,2)
+total_production_cost: numeric(10,2)
+net_oil_cost: numeric(10,2)
+oil_cost_per_kg: numeric(10,2)
+cake_estimated_rate: numeric(10,2)
+sludge_estimated_rate: numeric(10,2)
+cake_stock_remaining: numeric(10,2)
+
+=== batch_time_tracking ===
+tracking_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('batch_time_tracking_tracking_id_seq'::regclass)
+batch_id: integer(32,0) [FK] -> batch.batch_id
+process_type: character varying(50)
+start_datetime: timestamp without time zone NOT NULL
+end_datetime: timestamp without time zone
+total_hours: numeric(5,2)
+rounded_hours: integer(32,0)
+operator_name: character varying(100)
+notes: text
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+
+=== blend_batch_components ===
+component_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('blend_batch_components_component_id_seq'::regclass)
+blend_id: integer(32,0) [FK] -> blend_batches.blend_id
+oil_type: character varying(50) NOT NULL
+source_type: character varying(20) NOT NULL
+source_batch_id: integer(32,0)
+source_batch_code: character varying(100)
+source_inventory_id: integer(32,0)
+quantity_used: numeric(10,2) NOT NULL
+percentage: numeric(5,2) NOT NULL
+cost_per_unit: numeric(10,2) NOT NULL
+traceable_code: character varying(100)
+
+=== blend_batches ===
+blend_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('blend_batches_blend_id_seq'::regclass)
+blend_code: character varying(100) [UQ] NOT NULL
+blend_description: character varying(100)
+blend_date: integer(32,0) NOT NULL
+total_quantity: numeric(10,2) NOT NULL
+weighted_avg_cost: numeric(10,2) NOT NULL
+traceable_code: character varying(100)
+created_by: character varying(100)
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+result_oil_type: character varying(50)
+
+=== bom_category_mapping ===
+mapping_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('bom_category_mapping_mapping_id_seq'::regclass)
+bom_category: character varying(50) [UQ] NOT NULL
+material_categories: ARRAY
+keywords: ARRAY
+display_order: integer(32,0) DEFAULT 0
+is_active: boolean DEFAULT true
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+
+=== categories_master ===
+category_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('categories_master_category_id_seq'::regclass)
+category_name: character varying(50) [UQ] NOT NULL
+requires_subcategory: boolean DEFAULT false
+is_active: boolean DEFAULT true
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+
+=== cost_element_rate_history ===
+history_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('cost_element_rate_history_history_id_seq'::regclass)
+element_id: integer(32,0) [FK] -> cost_elements_master.element_id
+old_rate: numeric(10,2)
+new_rate: numeric(10,2)
+effective_from: date
+effective_to: date
+changed_by: character varying(100)
+change_reason: text
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+
+=== cost_element_usage_stats ===
+element_id: integer(32,0)
+element_name: character varying(100)
+category: character varying(50)
+default_rate: numeric(10,2)
+times_used: bigint(64,0)
+avg_rate_used: numeric
+total_cost_incurred: numeric
+override_count: bigint(64,0)
+
+=== cost_elements_backup ===
+element_id: integer(32,0)
+element_name: character varying(255)
+category: character varying(50)
+unit_type: character varying(50)
+default_rate: numeric(10,2)
+gst_rate: numeric(5,2)
+calculation_method: character varying(50)
+
+=== cost_elements_master ===
+element_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('cost_elements_master_element_id_seq'::regclass)
+element_name: character varying(100) [UQ] NOT NULL
+category: character varying(50)
+unit_type: character varying(50)
+default_rate: numeric(10,2) NOT NULL
+calculation_method: character varying(50)
+is_optional: boolean DEFAULT false
+applicable_to: character varying(50)
+display_order: integer(32,0)
+is_active: boolean DEFAULT true
+notes: text
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+updated_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+created_by: character varying(100)
+activity: character varying(50)
+module_specific: character varying(100)
+package_size_id: integer(32,0) [FK] -> package_sizes_master.size_id
+
+=== cost_override_log ===
+log_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('cost_override_log_log_id_seq'::regclass)
+module_name: character varying(50)
+record_id: integer(32,0)
+element_id: integer(32,0) [FK] -> cost_elements_master.element_id
+element_name: character varying(100)
+original_rate: numeric(10,2)
+override_rate: numeric(10,2)
+reason: text
+overridden_by: character varying(100)
+override_datetime: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+
+=== inventory ===
+inventory_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('inventory_inventory_id_seq'::regclass)
+material_id: integer(32,0) [FK] -> materials.material_id
+product_id: integer(32,0) [FK] -> products.product_id
+opening_stock: numeric(10,2) DEFAULT 0
+purchases: numeric(10,2) DEFAULT 0
+consumption: numeric(10,2) DEFAULT 0
+closing_stock: numeric(10,2) DEFAULT 0
+weighted_avg_cost: numeric(10,2) DEFAULT 0
+last_updated: integer(32,0)
+oil_type: character varying(50)
+is_bulk_oil: boolean DEFAULT false
+source_type: character varying(50)
+source_reference_id: integer(32,0)
+
+=== inventory_by_tags ===
+tag_name: character varying(100)
+tag_category: character varying(50)
+material_count: bigint(64,0)
+total_quantity: numeric
+total_value: numeric
+units: text
+
+=== masters_audit_log ===
+audit_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('masters_audit_log_audit_id_seq'::regclass)
+table_name: character varying(50) NOT NULL
+record_id: integer(32,0) NOT NULL
+action: character varying(20) NOT NULL
+old_values: jsonb
+new_values: jsonb
+changed_fields: ARRAY
+changed_by: character varying(100)
+changed_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+ip_address: character varying(45)
+user_agent: text
+reason: text
+session_id: character varying(100)
+
+=== material_tags ===
+material_id: integer(32,0) [PK] -> materials.material_id NOT NULL
+tag_id: integer(32,0) [PK] -> tags.tag_id NOT NULL
+
+=== material_tags_view ===
+material_id: integer(32,0)
+material_name: character varying(255)
+category: character varying(50)
+unit: character varying(50)
+current_cost: numeric(10,2)
+supplier_name: character varying(255)
+tags: text
+tag_array: ARRAY
+
+=== material_writeoffs ===
+writeoff_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('material_writeoffs_writeoff_id_seq'::regclass)
+material_id: integer(32,0) [FK] -> materials.material_id
+writeoff_date: integer(32,0) NOT NULL
+quantity: numeric(10,2) NOT NULL
+weighted_avg_cost: numeric(10,2) NOT NULL
+total_cost: numeric(10,2) NOT NULL
+scrap_value: numeric(10,2) DEFAULT 0
+net_loss: numeric(10,2) NOT NULL
+reason_code: character varying(50)
+reason_description: text
+reference_type: character varying(50)
+reference_id: integer(32,0)
+notes: text
+created_by: character varying(255)
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+
+=== materials ===
+material_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('materials_material_id_seq'::regclass)
+material_name: character varying(255) NOT NULL
+category: character varying(50)
+unit: character varying(50) [FK] -> uom_master.uom_code NOT NULL
+current_cost: numeric(10,2) NOT NULL
+gst_rate: numeric(5,2) DEFAULT 5.00
+density: numeric(5,2) DEFAULT 0.91
+last_updated: integer(32,0) NOT NULL
+notes: text
+supplier_id: integer(32,0) [FK] -> suppliers.supplier_id
+short_code: character varying(6) [UQ]
+material_type: character varying(20)
+is_active: boolean DEFAULT true
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+updated_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+subcategory_id: integer(32,0) [FK] -> subcategories_master.subcategory_id
+produces_oil_type: character varying(50)
+
+=== oil_cake_inventory ===
+cake_inventory_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('oil_cake_inventory_cake_inventory_id_seq'::regclass)
+batch_id: integer(32,0) [FK] -> batch.batch_id
+oil_type: character varying(50)
+quantity_produced: numeric(10,2)
+quantity_remaining: numeric(10,2)
+estimated_rate: numeric(10,2)
+production_date: integer(32,0)
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+
+=== oil_cake_sale_allocations ===
+allocation_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('oil_cake_sale_allocations_allocation_id_seq'::regclass)
+sale_id: integer(32,0) [FK] -> oil_cake_sales.sale_id
+batch_id: integer(32,0) [FK] -> batch.batch_id
+quantity_allocated: numeric(10,2)
+original_estimate_rate: numeric(10,2)
+actual_sale_rate: numeric(10,2)
+cost_adjustment_per_kg: numeric(10,2)
+oil_cost_adjustment: numeric(10,2)
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+
+=== oil_cake_sales ===
+sale_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('oil_cake_sales_sale_id_seq'::regclass)
+sale_date: integer(32,0) NOT NULL
+invoice_number: character varying(100)
+buyer_name: character varying(255)
+oil_type: character varying(50)
+grade: character varying(20)
+quantity_sold: numeric(10,2)
+sale_rate: numeric(10,2)
+total_amount: numeric(10,2)
+transport_cost: numeric(10,2) DEFAULT 0
+net_rate: numeric(10,2)
+notes: text
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+packing_cost: numeric(10,2) DEFAULT 0
+
+=== opening_balances ===
+balance_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('opening_balances_balance_id_seq'::regclass)
+material_id: integer(32,0) [FK] -> materials.material_id
+balance_date: integer(32,0) [UQ] NOT NULL
+quantity: numeric(10,2) NOT NULL DEFAULT 0
+rate_per_unit: numeric(10,2) NOT NULL DEFAULT 0
+total_value: numeric(12,2)
+entry_type: character varying(20) DEFAULT 'initial'::character varying
+financial_year: character varying(7)
+notes: text
+entered_by: character varying(100)
+entered_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+is_processed: boolean DEFAULT false
+processed_at: timestamp without time zone
+
+=== package_sizes_master ===
+size_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('package_sizes_master_size_id_seq'::regclass)
+size_code: character varying(20) [UQ] NOT NULL
+size_name: character varying(50) NOT NULL
+size_in_ml: integer(32,0) NOT NULL
+size_in_liters: numeric(5,3) NOT NULL
+display_order: integer(32,0) DEFAULT 0
+is_active: boolean DEFAULT true
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+updated_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+created_by: character varying(100)
+
+=== production_units ===
+unit_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('production_units_unit_id_seq'::regclass)
+unit_name: character varying(100) NOT NULL
+short_code: character varying(3) [UQ] NOT NULL
+location: character varying(255)
+is_own_unit: boolean DEFAULT false
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+
+=== products ===
+product_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('products_product_id_seq'::regclass)
+product_name: character varying(255) NOT NULL
+oil_type: character varying(50)
+package_size: character varying(50)
+density: numeric(5,2) DEFAULT 0.91
+weight: numeric(10,2)
+
+=== purchase_details_view ===
+purchase_id: integer(32,0)
+invoice_ref: character varying(50)
+purchase_date: integer(32,0)
+supplier_name: character varying(255)
+transport_cost: numeric(10,2)
+handling_charges: numeric(10,2)
+subtotal: numeric(10,2)
+total_gst_amount: numeric(10,2)
+total_cost: numeric(10,2)
+item_id: integer(32,0)
+material_name: character varying(255)
+unit: character varying(50)
+quantity: numeric(10,2)
+rate: numeric(10,2)
+amount: numeric(10,2)
+gst_rate: numeric(5,2)
+gst_amount: numeric(10,2)
+item_transport: numeric(10,2)
+item_handling: numeric(10,2)
+landed_cost_per_unit: numeric(10,2)
+
+=== purchase_items ===
+item_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('purchase_items_item_id_seq'::regclass)
+purchase_id: integer(32,0) [FK] -> purchases.purchase_id
+material_id: integer(32,0) [FK] -> materials.material_id
+quantity: numeric(10,2) NOT NULL
+rate: numeric(10,2) NOT NULL
+amount: numeric(10,2) NOT NULL
+gst_rate: numeric(5,2) NOT NULL
+gst_amount: numeric(10,2) NOT NULL
+transport_charges: numeric(10,2) DEFAULT 0
+handling_charges: numeric(10,2) DEFAULT 0
+total_amount: numeric(10,2) NOT NULL
+landed_cost_per_unit: numeric(10,2) NOT NULL
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+
+=== purchases ===
+purchase_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('purchases_purchase_id_seq'::regclass)
+material_id: integer(32,0) [FK] -> materials.material_id
+quantity: numeric(10,2)
+cost_per_unit: numeric(10,2)
+gst_rate: numeric(5,2)
+invoice_ref: character varying(50)
+purchase_date: integer(32,0)
+supplier_name: character varying(255)
+batch_number: character varying(100)
+transport_cost: numeric(10,2) DEFAULT 0
+loading_charges: numeric(10,2) DEFAULT 0
+total_cost: numeric(10,2)
+landed_cost_per_unit: numeric(10,2)
+supplier_id: integer(32,0) [FK] -> suppliers.supplier_id
+subtotal: numeric(10,2)
+total_gst_amount: numeric(10,2)
+edited_by: character varying(255)
+edited_at: timestamp without time zone
+status: character varying(20) DEFAULT 'active'::character varying
+traceable_code: character varying(50) [UQ]
+
+=== purchases_backup ===
+purchase_id: integer(32,0)
+material_id: integer(32,0)
+quantity: numeric(10,2)
+cost_per_unit: numeric(10,2)
+gst_rate: numeric(5,2)
+invoice_ref: character varying(50)
+purchase_date: integer(32,0)
+supplier_name: character varying(255)
+batch_number: character varying(100)
+transport_cost: numeric(10,2)
+loading_charges: numeric(10,2)
+total_cost: numeric(10,2)
+landed_cost_per_unit: numeric(10,2)
+
+=== recipes ===
+recipe_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('recipes_recipe_id_seq'::regclass)
+recipe_name: character varying(255) NOT NULL
+type: character varying(50)
+oil_type: character varying(50)
+material_id: integer(32,0) [FK] -> materials.material_id
+quantity: numeric(10,2)
+expected_yield: numeric(5,4)
+
+=== seed_batch_tracking ===
+seed_purchase_code: character varying(100) [PK] NOT NULL
+material_id: integer(32,0)
+last_batch_serial: integer(32,0) DEFAULT 0
+last_updated: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+
+=== serial_number_tracking ===
+id: integer(32,0) [PK] NOT NULL DEFAULT nextval('serial_number_tracking_id_seq'::regclass)
+material_id: integer(32,0) [FK] -> materials.material_id
+supplier_id: integer(32,0) [FK] -> suppliers.supplier_id
+financial_year: character varying(7) [UQ]
+current_serial: integer(32,0) DEFAULT 0
+last_updated: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+
+=== sku_bom_details ===
+detail_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('sku_bom_details_detail_id_seq'::regclass)
+bom_id: integer(32,0) [FK] -> sku_bom_master.bom_id NOT NULL
+material_id: integer(32,0) [FK] -> materials.material_id NOT NULL
+material_category: character varying(50) NOT NULL
+quantity_per_unit: numeric(10,4) NOT NULL DEFAULT 1
+is_shared: boolean DEFAULT false
+applicable_sizes: ARRAY
+notes: text
+
+=== sku_bom_master ===
+bom_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('sku_bom_master_bom_id_seq'::regclass)
+sku_id: integer(32,0) [FK] -> sku_master.sku_id NOT NULL
+version_number: integer(32,0) [UQ] NOT NULL
+effective_from: integer(32,0) NOT NULL
+effective_to: integer(32,0)
+is_current: boolean DEFAULT true
+notes: text
+created_by: character varying(100)
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+
+=== sku_cost_overrides ===
+override_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('sku_cost_overrides_override_id_seq'::regclass)
+production_id: integer(32,0) [FK] -> sku_production.production_id NOT NULL
+element_id: integer(32,0) [FK] -> cost_elements_master.element_id
+element_name: character varying(100) NOT NULL
+original_rate: numeric(10,2) NOT NULL
+override_rate: numeric(10,2) NOT NULL
+quantity: numeric(10,2) NOT NULL
+reason: text NOT NULL
+approved_by: character varying(100)
+created_by: character varying(100)
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+
+=== sku_expiry_tracking ===
+tracking_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('sku_expiry_tracking_tracking_id_seq'::regclass)
+production_id: integer(32,0) [FK] -> sku_production.production_id NOT NULL
+sku_id: integer(32,0) [FK] -> sku_master.sku_id NOT NULL
+production_date: integer(32,0) NOT NULL
+expiry_date: integer(32,0) NOT NULL
+quantity_produced: numeric(10,2) NOT NULL
+quantity_remaining: numeric(10,2) NOT NULL
+status: character varying(50) DEFAULT 'active'::character varying
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+updated_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+
+=== sku_inventory ===
+inventory_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('sku_inventory_inventory_id_seq'::regclass)
+sku_id: integer(32,0) [FK] -> sku_master.sku_id
+production_id: integer(32,0) [FK] -> sku_production.production_id
+quantity_available: numeric(10,2) NOT NULL DEFAULT 0
+expiry_date: integer(32,0)
+mrp: numeric(10,2)
+location: character varying(100)
+batch_code: character varying(50)
+status: character varying(20) DEFAULT 'active'::character varying
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+updated_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+
+=== sku_master ===
+sku_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('sku_master_sku_id_seq'::regclass)
+sku_code: character varying(50) [UQ] NOT NULL
+product_name: character varying(100) NOT NULL
+oil_type: character varying(50) NOT NULL
+package_size: character varying(20) NOT NULL
+bottle_type: character varying(50) DEFAULT 'PET'::character varying
+density: numeric(5,3) NOT NULL DEFAULT 0.91
+is_active: boolean DEFAULT true
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+created_by: character varying(100)
+mrp_current: numeric(10,2)
+shelf_life_months: integer(32,0)
+mrp_effective_date: integer(32,0)
+updated_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+
+=== sku_material_consumption ===
+consumption_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('sku_material_consumption_consumption_id_seq'::regclass)
+production_id: integer(32,0) [FK] -> sku_production.production_id NOT NULL
+material_id: integer(32,0) [FK] -> materials.material_id NOT NULL
+planned_quantity: numeric(10,4) NOT NULL
+actual_quantity: numeric(10,4) NOT NULL
+variance_quantity: numeric(10,4)
+material_cost_per_unit: numeric(10,2) NOT NULL
+total_cost: numeric(10,2) NOT NULL
+notes: text
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+
+=== sku_mrp_history ===
+mrp_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('sku_mrp_history_mrp_id_seq'::regclass)
+sku_id: integer(32,0) [FK] -> sku_master.sku_id NOT NULL
+mrp_amount: numeric(10,2) NOT NULL
+effective_from: integer(32,0) NOT NULL
+effective_to: integer(32,0)
+changed_by: character varying(100)
+change_reason: text
+is_current: boolean DEFAULT false
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+
+=== sku_oil_allocation ===
+allocation_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('sku_oil_allocation_allocation_id_seq'::regclass)
+production_id: integer(32,0) [FK] -> sku_production.production_id NOT NULL
+source_type: character varying(20) NOT NULL
+source_id: integer(32,0) NOT NULL
+source_traceable_code: character varying(50) NOT NULL
+quantity_allocated: numeric(10,2) NOT NULL
+oil_cost_per_kg: numeric(10,2) NOT NULL
+allocation_cost: numeric(10,2) NOT NULL
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+
+=== sku_production ===
+production_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('sku_production_production_id_seq'::regclass)
+production_code: character varying(50) [UQ] NOT NULL
+traceable_code: character varying(10) [UQ] NOT NULL
+sku_id: integer(32,0) [FK] -> sku_master.sku_id NOT NULL
+bom_id: integer(32,0) [FK] -> sku_bom_master.bom_id NOT NULL
+production_date: integer(32,0) NOT NULL
+packing_date: integer(32,0) NOT NULL
+total_oil_quantity: numeric(10,2) NOT NULL
+weighted_oil_cost: numeric(10,2) NOT NULL
+bottles_planned: integer(32,0) NOT NULL
+bottles_produced: integer(32,0) NOT NULL
+bottles_rejected: integer(32,0) DEFAULT 0
+oil_cost_total: numeric(10,2)
+material_cost_total: numeric(10,2)
+labor_cost_total: numeric(10,2)
+overhead_cost_total: numeric(10,2) DEFAULT 0
+total_production_cost: numeric(10,2) NOT NULL
+cost_per_bottle: numeric(10,2) NOT NULL
+production_status: character varying(20) DEFAULT 'completed'::character varying
+operator_name: character varying(100)
+shift_number: integer(32,0)
+production_line: character varying(20)
+quality_check_by: character varying(100)
+notes: text
+created_by: character varying(100)
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+expiry_date: integer(32,0)
+mrp_at_production: numeric(10,2)
+
+=== subcategories_master ===
+subcategory_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('subcategories_master_subcategory_id_seq'::regclass)
+category_id: integer(32,0) [FK] -> categories_master.category_id
+subcategory_name: character varying(100) [UQ] NOT NULL
+subcategory_code: character varying(20) [UQ] NOT NULL
+oil_type: character varying(50)
+is_active: boolean DEFAULT true
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+
+=== suppliers ===
+supplier_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('suppliers_supplier_id_seq'::regclass)
+supplier_name: character varying(255) [UQ] NOT NULL
+contact_person: character varying(255)
+phone: character varying(50)
+email: character varying(255)
+address: text
+gst_number: character varying(50)
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+updated_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+short_code: character varying(3) [UQ]
+is_active: boolean DEFAULT true
+
+=== system_configuration ===
+config_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('system_configuration_config_id_seq'::regclass)
+config_key: character varying(50) [UQ] NOT NULL
+config_value: text
+config_type: character varying(20)
+description: text
+updated_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+updated_by: character varying(100)
+
+=== tags ===
+tag_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('tags_tag_id_seq'::regclass)
+tag_name: character varying(100) [UQ] NOT NULL
+tag_category: character varying(50)
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+is_active: boolean DEFAULT true
+
+=== uom_master ===
+uom_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('uom_master_uom_id_seq'::regclass)
+uom_code: character varying(10) [UQ] NOT NULL
+uom_name: character varying(50) NOT NULL
+uom_symbol: character varying(10) NOT NULL
+uom_category: character varying(20) NOT NULL
+display_order: integer(32,0) DEFAULT 999
+is_active: boolean DEFAULT true
+is_system: boolean DEFAULT false
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+updated_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+
+=== v_active_materials ===
+material_id: integer(32,0)
+material_name: character varying(255)
+category: character varying(50)
+unit: character varying(50)
+current_cost: numeric(10,2)
+gst_rate: numeric(5,2)
+density: numeric(5,2)
+last_updated: integer(32,0)
+notes: text
+supplier_id: integer(32,0)
+short_code: character varying(6)
+material_type: character varying(20)
+is_active: boolean
+created_at: timestamp without time zone
+updated_at: timestamp without time zone
+supplier_name: character varying(255)
+supplier_short_code: character varying(3)
+
+=== v_active_suppliers ===
+supplier_id: integer(32,0)
+supplier_name: character varying(255)
+contact_person: character varying(255)
+phone: character varying(50)
+email: character varying(255)
+gst_number: character varying(50)
+short_code: character varying(3)
+is_active: boolean
+active_material_count: bigint(64,0)
+created_at: timestamp without time zone
+updated_at: timestamp without time zone
+
+=== v_cost_elements_by_activity ===
+element_id: integer(32,0)
+element_name: character varying(100)
+category: character varying(50)
+activity: character varying(50)
+module_specific: character varying(100)
+unit_type: character varying(50)
+default_rate: numeric(10,2)
+calculation_method: character varying(50)
+is_optional: boolean
+applicable_to: character varying(50)
+display_order: integer(32,0)
+is_active: boolean
+activity_order: integer(32,0)
+
+=== v_current_sku_bom ===
+sku_id: integer(32,0)
+sku_code: character varying(50)
+product_name: character varying(100)
+oil_type: character varying(50)
+package_size: character varying(20)
+bom_id: integer(32,0)
+version_number: integer(32,0)
+effective_from: integer(32,0)
+material_id: integer(32,0)
+material_name: character varying(255)
+short_code: character varying(6)
+material_category: character varying(50)
+quantity_per_unit: numeric(10,4)
+is_shared: boolean
+applicable_sizes: ARRAY
+material_unit_cost: numeric(10,2)
+material_total_cost: numeric
+
+=== v_materials_at_risk ===
+note: text
+
+=== v_sku_current_mrp ===
+sku_id: integer(32,0)
+sku_code: character varying(50)
+product_name: character varying(100)
+oil_type: character varying(50)
+package_size: character varying(20)
+mrp_current: numeric(10,2)
+shelf_life_months: integer(32,0)
+latest_mrp_from_history: numeric(10,2)
+effective_from: integer(32,0)
+changed_by: character varying(100)
+change_reason: text
+is_active: boolean
+
+=== v_sku_expiry_status ===
+tracking_id: integer(32,0)
+production_id: integer(32,0)
+production_code: character varying(50)
+traceable_code: character varying(10)
+sku_code: character varying(50)
+product_name: character varying(100)
+package_size: character varying(20)
+production_date: integer(32,0)
+expiry_date: integer(32,0)
+quantity_produced: numeric(10,2)
+quantity_remaining: numeric(10,2)
+status: character varying(50)
+days_to_expiry: integer(32,0)
+urgency_level: character varying
+
+=== v_sku_oil_traceability ===
+production_code: character varying(50)
+sku_traceable_code: character varying(10)
+product_name: character varying(100)
+sku_oil_type: character varying(50)
+source_type: character varying(20)
+oil_traceable_code: character varying(50)
+quantity_allocated: numeric(10,2)
+oil_cost_per_kg: numeric(10,2)
+allocation_cost: numeric(10,2)
+oil_source_name: character varying
+oil_production_date: integer(32,0)
+source_code: character varying
+
+=== v_sku_production_summary ===
+production_id: integer(32,0)
+production_code: character varying(50)
+traceable_code: character varying(10)
+production_date: integer(32,0)
+packing_date: integer(32,0)
+sku_code: character varying(50)
+product_name: character varying(100)
+oil_type: character varying(50)
+package_size: character varying(20)
+bottles_produced: integer(32,0)
+total_oil_quantity: numeric(10,2)
+oil_cost_total: numeric(10,2)
+material_cost_total: numeric(10,2)
+labor_cost_total: numeric(10,2)
+total_production_cost: numeric(10,2)
+cost_per_bottle: numeric(10,2)
+production_status: character varying(20)
+operator_name: character varying(100)
+created_at: timestamp without time zone
+
+=== v_sku_production_summary_enhanced ===
+production_id: integer(32,0)
+production_code: character varying(50)
+traceable_code: character varying(10)
+production_date: integer(32,0)
+packing_date: integer(32,0)
+expiry_date: integer(32,0)
+mrp_at_production: numeric(10,2)
+sku_code: character varying(50)
+product_name: character varying(100)
+oil_type: character varying(50)
+package_size: character varying(20)
+shelf_life_months: integer(32,0)
+current_mrp: numeric(10,2)
+bottles_planned: integer(32,0)
+bottles_produced: integer(32,0)
+total_oil_quantity: numeric(10,2)
+oil_cost_total: numeric(10,2)
+material_cost_total: numeric(10,2)
+labor_cost_total: numeric(10,2)
+total_production_cost: numeric(10,2)
+cost_per_bottle: numeric(10,2)
+operator_name: character varying(100)
+shift_number: integer(32,0)
+created_at: timestamp without time zone
+days_to_expiry: integer(32,0)
+expiry_status: character varying
+
+=== v_uom_transport_groups ===
+uom_code: character varying(10)
+uom_name: character varying(50)
+transport_group: text
+display_order: integer(32,0)
+
+=== v_writeoff_details ===
+writeoff_id: integer(32,0)
+writeoff_date: integer(32,0)
+writeoff_date_display: text
+material_id: integer(32,0)
+material_name: character varying(255)
+material_category: character varying(50)
+unit: character varying(50)
+quantity: numeric(10,2)
+weighted_avg_cost: numeric(10,2)
+total_cost: numeric(10,2)
+scrap_value: numeric(10,2)
+net_loss: numeric(10,2)
+reason_code: character varying(50)
+reason_description: character varying(255)
+reason_category: character varying(50)
+tracking_column: text
+reference_type: character varying(50)
+reference_id: integer(32,0)
+notes: text
+created_by: character varying(255)
+created_at: timestamp without time zone
+days_since_writeoff: interval
+
+=== v_writeoff_impact_current ===
+tracking_id: integer(32,0)
+calculation_date: integer(32,0)
+calculation_date_display: text
+total_writeoffs_value: numeric(12,2)
+total_oil_produced_kg: numeric(12,2)
+impact_per_kg: numeric(10,4)
+writeoff_percentage: numeric(5,2)
+created_at: timestamp without time zone
+
+=== v_writeoff_trends ===
+month_year: integer(32,0)
+month_display: text
+month_writeoffs: numeric(12,2)
+month_oil_production: numeric(12,2)
+month_impact_per_kg: numeric(10,4)
+cumulative_impact_per_kg: numeric(10,4)
+month_writeoff_count: integer(32,0)
+top_writeoff_reason: character varying(50)
+top_reason_value: numeric(12,2)
+prev_month_writeoffs: numeric
+month_change_percent: numeric
+
+=== writeoff_impact_tracking ===
+tracking_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('writeoff_impact_tracking_tracking_id_seq'::regclass)
+calculation_date: integer(32,0) NOT NULL
+total_writeoffs_value: numeric(12,2) DEFAULT 0
+total_oil_produced_kg: numeric(12,2) DEFAULT 0
+impact_per_kg: numeric(10,4) DEFAULT 0
+writeoff_percentage: numeric(5,2) DEFAULT 0
+material_writeoffs: numeric(12,2) DEFAULT 0
+oilcake_writeoffs: numeric(12,2) DEFAULT 0
+sludge_writeoffs: numeric(12,2) DEFAULT 0
+sku_writeoffs: numeric(12,2) DEFAULT 0
+damage_writeoffs: numeric(12,2) DEFAULT 0
+expiry_writeoffs: numeric(12,2) DEFAULT 0
+quality_writeoffs: numeric(12,2) DEFAULT 0
+process_loss_writeoffs: numeric(12,2) DEFAULT 0
+other_writeoffs: numeric(12,2) DEFAULT 0
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+notes: text
+
+=== writeoff_monthly_summary ===
+summary_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('writeoff_monthly_summary_summary_id_seq'::regclass)
+month_year: integer(32,0) [UQ] NOT NULL
+month_writeoffs: numeric(12,2) DEFAULT 0
+month_oil_production: numeric(12,2) DEFAULT 0
+month_writeoff_count: integer(32,0) DEFAULT 0
+month_impact_per_kg: numeric(10,4) DEFAULT 0
+cumulative_writeoffs: numeric(12,2) DEFAULT 0
+cumulative_production: numeric(12,2) DEFAULT 0
+cumulative_impact_per_kg: numeric(10,4) DEFAULT 0
+month_material_writeoffs: numeric(12,2) DEFAULT 0
+month_oilcake_writeoffs: numeric(12,2) DEFAULT 0
+month_sludge_writeoffs: numeric(12,2) DEFAULT 0
+top_writeoff_reason: character varying(50)
+top_reason_count: integer(32,0)
+top_reason_value: numeric(12,2)
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+
+=== writeoff_reasons ===
+reason_code: character varying(50) [PK] NOT NULL
+reason_description: character varying(255)
+category: character varying(50)
+is_active: boolean DEFAULT true
+created_by: character varying(100)
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+updated_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+
+=== year_end_closing ===
+closing_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('year_end_closing_closing_id_seq'::regclass)
+financial_year: character varying(7) NOT NULL
+closing_date: integer(32,0) NOT NULL
+material_id: integer(32,0) [FK] -> materials.material_id
+material_name: character varying(255)
+category: character varying(50)
+unit: character varying(50)
+closing_quantity: numeric(10,2)
+weighted_avg_cost: numeric(10,2)
+closing_value: numeric(12,2)
+carried_forward: boolean DEFAULT false
+new_year_opening_id: integer(32,0)
+closed_by: character varying(100)
+closed_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+reopened_by: character varying(100)
+reopened_at: timestamp without time zone
+status: character varying(20) DEFAULT 'closed'::character varying
+notes: text
+
+=== yield_ranges ===
+yield_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('yield_ranges_yield_id_seq'::regclass)
+oil_type: character varying(50)
+product_type: character varying(20)
+min_yield_percent: numeric(5,2)
+max_yield_percent: numeric(5,2)
+avg_yield_percent: numeric(5,2)
+active: boolean DEFAULT true
+

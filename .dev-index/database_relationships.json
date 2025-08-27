@@ -1,0 +1,374 @@
+{
+  "generated_at": "2025-08-27 01:37:34.976628",
+  "relationships": [
+    {
+      "from_table": "batch",
+      "from_column": "recipe_id",
+      "to_table": "recipes",
+      "to_column": "recipe_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "batch",
+      "from_column": "seed_material_id",
+      "to_table": "materials",
+      "to_column": "material_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "batch_cost_details",
+      "from_column": "batch_id",
+      "to_table": "batch",
+      "to_column": "batch_id",
+      "on_delete": "CASCADE",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "batch_extended_costs",
+      "from_column": "batch_id",
+      "to_table": "batch",
+      "to_column": "batch_id",
+      "on_delete": "CASCADE",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "batch_extended_costs",
+      "from_column": "element_id",
+      "to_table": "cost_elements_master",
+      "to_column": "element_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "batch_time_tracking",
+      "from_column": "batch_id",
+      "to_table": "batch",
+      "to_column": "batch_id",
+      "on_delete": "CASCADE",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "blend_batch_components",
+      "from_column": "blend_id",
+      "to_table": "blend_batches",
+      "to_column": "blend_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "cost_element_rate_history",
+      "from_column": "element_id",
+      "to_table": "cost_elements_master",
+      "to_column": "element_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "cost_elements_master",
+      "from_column": "package_size_id",
+      "to_table": "package_sizes_master",
+      "to_column": "size_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "cost_override_log",
+      "from_column": "element_id",
+      "to_table": "cost_elements_master",
+      "to_column": "element_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "inventory",
+      "from_column": "material_id",
+      "to_table": "materials",
+      "to_column": "material_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "inventory",
+      "from_column": "product_id",
+      "to_table": "products",
+      "to_column": "product_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "material_tags",
+      "from_column": "tag_id",
+      "to_table": "tags",
+      "to_column": "tag_id",
+      "on_delete": "CASCADE",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "material_tags",
+      "from_column": "material_id",
+      "to_table": "materials",
+      "to_column": "material_id",
+      "on_delete": "CASCADE",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "material_writeoffs",
+      "from_column": "material_id",
+      "to_table": "materials",
+      "to_column": "material_id",
+      "on_delete": "RESTRICT",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "materials",
+      "from_column": "subcategory_id",
+      "to_table": "subcategories_master",
+      "to_column": "subcategory_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "materials",
+      "from_column": "supplier_id",
+      "to_table": "suppliers",
+      "to_column": "supplier_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "materials",
+      "from_column": "unit",
+      "to_table": "uom_master",
+      "to_column": "uom_code",
+      "on_delete": "RESTRICT",
+      "on_update": "CASCADE"
+    },
+    {
+      "from_table": "oil_cake_inventory",
+      "from_column": "batch_id",
+      "to_table": "batch",
+      "to_column": "batch_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "oil_cake_sale_allocations",
+      "from_column": "sale_id",
+      "to_table": "oil_cake_sales",
+      "to_column": "sale_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "oil_cake_sale_allocations",
+      "from_column": "batch_id",
+      "to_table": "batch",
+      "to_column": "batch_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "opening_balances",
+      "from_column": "material_id",
+      "to_table": "materials",
+      "to_column": "material_id",
+      "on_delete": "RESTRICT",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "purchase_items",
+      "from_column": "purchase_id",
+      "to_table": "purchases",
+      "to_column": "purchase_id",
+      "on_delete": "CASCADE",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "purchase_items",
+      "from_column": "material_id",
+      "to_table": "materials",
+      "to_column": "material_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "purchases",
+      "from_column": "material_id",
+      "to_table": "materials",
+      "to_column": "material_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "purchases",
+      "from_column": "supplier_id",
+      "to_table": "suppliers",
+      "to_column": "supplier_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "recipes",
+      "from_column": "material_id",
+      "to_table": "materials",
+      "to_column": "material_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "serial_number_tracking",
+      "from_column": "material_id",
+      "to_table": "materials",
+      "to_column": "material_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "serial_number_tracking",
+      "from_column": "supplier_id",
+      "to_table": "suppliers",
+      "to_column": "supplier_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "sku_bom_details",
+      "from_column": "bom_id",
+      "to_table": "sku_bom_master",
+      "to_column": "bom_id",
+      "on_delete": "CASCADE",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "sku_bom_details",
+      "from_column": "material_id",
+      "to_table": "materials",
+      "to_column": "material_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "sku_bom_master",
+      "from_column": "sku_id",
+      "to_table": "sku_master",
+      "to_column": "sku_id",
+      "on_delete": "CASCADE",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "sku_cost_overrides",
+      "from_column": "element_id",
+      "to_table": "cost_elements_master",
+      "to_column": "element_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "sku_cost_overrides",
+      "from_column": "production_id",
+      "to_table": "sku_production",
+      "to_column": "production_id",
+      "on_delete": "CASCADE",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "sku_expiry_tracking",
+      "from_column": "sku_id",
+      "to_table": "sku_master",
+      "to_column": "sku_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "sku_expiry_tracking",
+      "from_column": "production_id",
+      "to_table": "sku_production",
+      "to_column": "production_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "sku_inventory",
+      "from_column": "sku_id",
+      "to_table": "sku_master",
+      "to_column": "sku_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "sku_inventory",
+      "from_column": "production_id",
+      "to_table": "sku_production",
+      "to_column": "production_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "sku_material_consumption",
+      "from_column": "material_id",
+      "to_table": "materials",
+      "to_column": "material_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "sku_material_consumption",
+      "from_column": "production_id",
+      "to_table": "sku_production",
+      "to_column": "production_id",
+      "on_delete": "CASCADE",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "sku_mrp_history",
+      "from_column": "sku_id",
+      "to_table": "sku_master",
+      "to_column": "sku_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "sku_oil_allocation",
+      "from_column": "production_id",
+      "to_table": "sku_production",
+      "to_column": "production_id",
+      "on_delete": "CASCADE",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "sku_production",
+      "from_column": "bom_id",
+      "to_table": "sku_bom_master",
+      "to_column": "bom_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "sku_production",
+      "from_column": "sku_id",
+      "to_table": "sku_master",
+      "to_column": "sku_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "subcategories_master",
+      "from_column": "category_id",
+      "to_table": "categories_master",
+      "to_column": "category_id",
+      "on_delete": "CASCADE",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "year_end_closing",
+      "from_column": "material_id",
+      "to_table": "materials",
+      "to_column": "material_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    }
+  ],
+  "relationship_count": 46
+}
