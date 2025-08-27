@@ -393,7 +393,7 @@ jobs:
           fi
       
       - name: Upload schema as artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: database-schema
           path: |
