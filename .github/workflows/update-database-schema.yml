@@ -1,4 +1,3 @@
-# .github/workflows/update-database-schema.yml
 name: Update Database Schema
 
 on:
@@ -8,8 +7,8 @@ on:
   push:
     paths:
       - '.github/workflows/update-database-schema.yml'
-      - 'puvi-backend/**/*.py'  # Trigger on ANY Python file change
-      - 'puvi-backend/**/*.sql'  # Trigger on SQL migrations
+      - 'puvi-backend/**/*.py'
+      - 'puvi-backend/**/*.sql'
 
 jobs:
   update-schema:
@@ -44,61 +43,8 @@ jobs:
           conn = psycopg2.connect(os.environ['DATABASE_URL'])
           cur = conn.cursor()
           
-          # Enhanced schema extraction with more details
-          enhanced_query = """
-          WITH foreign_key_details AS (
-              SELECT
-                  kcu.table_name,
-                  kcu.column_name,
-                  ccu.table_name AS foreign_table,
-                  ccu.column_name AS foreign_column,
-                  rc.update_rule,
-                  rc.delete_rule
-              FROM information_schema.table_constraints tc
-              JOIN information_schema.key_column_usage kcu 
-                  ON tc.constraint_name = kcu.constraint_name
-              JOIN information_schema.constraint_column_usage ccu 
-                  ON ccu.constraint_name = tc.constraint_name
-              JOIN information_schema.referential_constraints rc
-                  ON rc.constraint_name = tc.constraint_name
-              WHERE tc.constraint_type = 'FOREIGN KEY'
-          ),
-          index_info AS (
-              SELECT
-                  tablename,
-                  indexname,
-                  indexdef
-              FROM pg_indexes
-              WHERE schemaname = 'public'
-          ),
-          trigger_info AS (
-              SELECT 
-                  trigger_name,
-                  event_object_table,
-                  action_timing,
-                  event_manipulation
-              FROM information_schema.triggers
-              WHERE trigger_schema = 'public'
-          )
-          SELECT json_build_object(
-              'generated_at', now(),
-              'database', current_database(),
-              'tables', json_object_agg(
-                  tc.table_name,
-                  json_build_object(
-                      'columns', tc.columns,
-                      'primary_keys', pk.pk_columns,
-                      'foreign_keys', fk.fk_relationships,
-                      'indexes', idx.indexes,
-                      'triggers', trg.triggers,
-                      'row_count', ts.row_count,
-                      'size', ts.total_size,
-                      'usage_in_code', '[]'::json  -- Will be populated by code scan
-                  )
-              )
-          ) as schema
-          -- Rest of the existing query...
-          """
+          # Enhanced schema extraction with indexes, triggers, and constraints
+          schema_query = """
           WITH table_columns AS (
               SELECT 
                   c.table_name,
@@ -111,7 +57,9 @@ jobs:
                           'scale', c.numeric_scale,
                           'nullable', c.is_nullable = 'YES',
                           'default', c.column_default,
-                          'position', c.ordinal_position
+                          'position', c.ordinal_position,
+                          'is_generated', c.is_generated,
+                          'generation_expression', c.generation_expression
                       ) ORDER BY c.ordinal_position
                   ) as columns
               FROM information_schema.columns c
@@ -121,7 +69,12 @@ jobs:
           primary_keys AS (
               SELECT 
                   kcu.table_name,
-                  json_agg(kcu.column_name) as pk_columns
+                  json_agg(
+                      json_build_object(
+                          'column', kcu.column_name,
+                          'constraint_name', tc.constraint_name
+                      )
+                  ) as pk_columns
               FROM information_schema.table_constraints tc
               JOIN information_schema.key_column_usage kcu 
                   ON tc.constraint_name = kcu.constraint_name
@@ -137,7 +90,9 @@ jobs:
                           'column', kcu.column_name,
                           'references_table', ccu.table_name,
                           'references_column', ccu.column_name,
-                          'constraint_name', tc.constraint_name
+                          'constraint_name', tc.constraint_name,
+                          'on_delete', rc.delete_rule,
+                          'on_update', rc.update_rule
                       )
                   ) as fk_relationships
               FROM information_schema.table_constraints tc
@@ -145,42 +100,141 @@ jobs:
                   ON tc.constraint_name = kcu.constraint_name
               JOIN information_schema.constraint_column_usage ccu
                   ON tc.constraint_name = ccu.constraint_name
+              LEFT JOIN information_schema.referential_constraints rc
+                  ON tc.constraint_name = rc.constraint_name
               WHERE tc.constraint_type = 'FOREIGN KEY'
                   AND tc.table_schema = 'public'
               GROUP BY kcu.table_name
+          ),
+          unique_constraints AS (
+              SELECT 
+                  kcu.table_name,
+                  json_agg(
+                      json_build_object(
+                          'columns', array_agg(kcu.column_name),
+                          'constraint_name', tc.constraint_name
+                      )
+                  ) as unique_keys
+              FROM information_schema.table_constraints tc
+              JOIN information_schema.key_column_usage kcu
+                  ON tc.constraint_name = kcu.constraint_name
+              WHERE tc.constraint_type = 'UNIQUE'
+                  AND tc.table_schema = 'public'
+              GROUP BY kcu.table_name, tc.constraint_name
+          ),
+          check_constraints AS (
+              SELECT 
+                  cc.table_name,
+                  json_agg(
+                      json_build_object(
+                          'constraint_name', cc.constraint_name,
+                          'check_clause', cc.check_clause
+                      )
+                  ) as check_constraints
+              FROM information_schema.check_constraints cc
+              JOIN information_schema.table_constraints tc
+                  ON cc.constraint_name = tc.constraint_name
+              WHERE tc.table_schema = 'public'
+              GROUP BY cc.table_name
+          ),
+          indexes AS (
+              SELECT 
+                  tablename as table_name,
+                  json_agg(
+                      json_build_object(
+                          'index_name', indexname,
+                          'is_unique', indexdef ILIKE '%unique%',
+                          'is_primary', indexdef ILIKE '%primary%',
+                          'definition', indexdef,
+                          'columns', regexp_replace(
+                              regexp_replace(indexdef, '.*\\((.*)\\).*', '\\1'),
+                              ' ', '', 'g'
+                          )
+                      )
+                  ) as indexes
+              FROM pg_indexes
+              WHERE schemaname = 'public'
+              GROUP BY tablename
+          ),
+          triggers AS (
+              SELECT 
+                  event_object_table as table_name,
+                  json_agg(
+                      json_build_object(
+                          'trigger_name', trigger_name,
+                          'event', event_manipulation,
+                          'timing', action_timing,
+                          'orientation', action_orientation,
+                          'statement', action_statement
+                      )
+                  ) as triggers
+              FROM information_schema.triggers
+              WHERE event_object_schema = 'public'
+              GROUP BY event_object_table
           ),
           table_sizes AS (
               SELECT 
                   relname as table_name,
                   n_live_tup as row_count,
-                  pg_size_pretty(pg_total_relation_size(relid)) as total_size
+                  n_dead_tup as dead_rows,
+                  last_vacuum,
+                  last_autovacuum,
+                  pg_size_pretty(pg_total_relation_size(relid)) as total_size,
+                  pg_size_pretty(pg_relation_size(relid)) as table_size,
+                  pg_size_pretty(pg_indexes_size(relid)) as indexes_size
               FROM pg_stat_user_tables
               WHERE schemaname = 'public'
+          ),
+          sequences AS (
+              SELECT 
+                  sequence_name,
+                  start_value,
+                  minimum_value,
+                  maximum_value,
+                  increment,
+                  cycle_option
+              FROM information_schema.sequences
+              WHERE sequence_schema = 'public'
           )
           SELECT json_build_object(
               'generated_at', now(),
               'database', current_database(),
+              'version', version(),
               'tables', json_object_agg(
                   tc.table_name,
                   json_build_object(
                       'columns', tc.columns,
                       'primary_keys', pk.pk_columns,
                       'foreign_keys', fk.fk_relationships,
+                      'unique_constraints', uc.unique_keys,
+                      'check_constraints', cc.check_constraints,
+                      'indexes', idx.indexes,
+                      'triggers', trg.triggers,
                       'row_count', ts.row_count,
-                      'size', ts.total_size
+                      'dead_rows', ts.dead_rows,
+                      'last_vacuum', ts.last_vacuum,
+                      'last_autovacuum', ts.last_autovacuum,
+                      'total_size', ts.total_size,
+                      'table_size', ts.table_size,
+                      'indexes_size', ts.indexes_size
                   )
-              )
+              ),
+              'sequences', (SELECT json_agg(s.*) FROM sequences s)
           ) as schema
           FROM table_columns tc
           LEFT JOIN primary_keys pk ON tc.table_name = pk.table_name
           LEFT JOIN foreign_keys fk ON tc.table_name = fk.table_name
+          LEFT JOIN unique_constraints uc ON tc.table_name = uc.table_name
+          LEFT JOIN check_constraints cc ON tc.table_name = cc.table_name
+          LEFT JOIN indexes idx ON tc.table_name = idx.table_name
+          LEFT JOIN triggers trg ON tc.table_name = trg.table_name
           LEFT JOIN table_sizes ts ON tc.table_name = ts.table_name
           """
           
           cur.execute(schema_query)
           schema = cur.fetchone()[0]
           
-          # Also run your exact query for text format output
+          # Generate the text format for coding sessions
           text_query = """
           WITH table_info AS (
               SELECT 
@@ -194,16 +248,46 @@ jobs:
                   c.is_nullable,
                   c.column_default,
                   CASE 
-                      WHEN tc.constraint_type = 'PRIMARY KEY' THEN 'PK'
-                      WHEN tc.constraint_type = 'FOREIGN KEY' THEN 'FK'
+                      WHEN EXISTS (
+                          SELECT 1 FROM information_schema.table_constraints tc
+                          JOIN information_schema.key_column_usage kcu 
+                          ON tc.constraint_name = kcu.constraint_name
+                          WHERE kcu.table_name = c.table_name 
+                          AND kcu.column_name = c.column_name
+                          AND tc.constraint_type = 'PRIMARY KEY'
+                      ) THEN 'PK'
+                      WHEN EXISTS (
+                          SELECT 1 FROM information_schema.table_constraints tc
+                          JOIN information_schema.key_column_usage kcu
+                          ON tc.constraint_name = kcu.constraint_name
+                          WHERE kcu.table_name = c.table_name
+                          AND kcu.column_name = c.column_name
+                          AND tc.constraint_type = 'FOREIGN KEY'
+                      ) THEN 'FK'
+                      WHEN EXISTS (
+                          SELECT 1 FROM information_schema.table_constraints tc
+                          JOIN information_schema.key_column_usage kcu
+                          ON tc.constraint_name = kcu.constraint_name
+                          WHERE kcu.table_name = c.table_name
+                          AND kcu.column_name = c.column_name
+                          AND tc.constraint_type = 'UNIQUE'
+                      ) THEN 'UQ'
                       ELSE ''
-                  END as key_type
+                  END as key_type,
+                  -- Get foreign key reference if exists
+                  (
+                      SELECT ccu.table_name || '.' || ccu.column_name
+                      FROM information_schema.table_constraints tc
+                      JOIN information_schema.key_column_usage kcu
+                          ON tc.constraint_name = kcu.constraint_name
+                      JOIN information_schema.constraint_column_usage ccu
+                          ON tc.constraint_name = ccu.constraint_name
+                      WHERE kcu.table_name = c.table_name
+                          AND kcu.column_name = c.column_name
+                          AND tc.constraint_type = 'FOREIGN KEY'
+                      LIMIT 1
+                  ) as fk_reference
               FROM information_schema.columns c
-              LEFT JOIN information_schema.key_column_usage kcu 
-                  ON c.table_name = kcu.table_name 
-                  AND c.column_name = kcu.column_name
-              LEFT JOIN information_schema.table_constraints tc 
-                  ON kcu.constraint_name = tc.constraint_name
               WHERE c.table_schema = 'public'
           )
           SELECT 
@@ -217,6 +301,7 @@ jobs:
                       ELSE ''
                   END ||
                   CASE WHEN key_type != '' THEN ' [' || key_type || ']' ELSE '' END ||
+                  CASE WHEN fk_reference IS NOT NULL THEN ' -> ' || fk_reference ELSE '' END ||
                   CASE WHEN is_nullable = 'NO' THEN ' NOT NULL' ELSE '' END ||
                   CASE WHEN column_default IS NOT NULL THEN ' DEFAULT ' || column_default ELSE '' END,
                   E'\\n'
@@ -230,9 +315,10 @@ jobs:
           cur.execute(text_query)
           text_schema = cur.fetchall()
           
-          # Save the text format you use for coding sessions
+          # Save the text format for coding sessions
+          os.makedirs('.dev-index', exist_ok=True)
           with open('.dev-index/database_schema.txt', 'w') as f:
-              f.write(f"# Database Schema\n")
+              f.write(f"# PUVI Database Schema\n")
               f.write(f"# Generated: {datetime.now()}\n")
               f.write(f"# Total Tables: {len(schema['tables'])}\n\n")
               
@@ -241,14 +327,9 @@ jobs:
                   f.write(row[1] + "\n")  # Columns
                   f.write("\n")
           
-          # Save main schema file
-          with open('.dev-index/database_schema.json', 'w') as f:
-              json.dump(schema, f, indent=2, default=str)
-          
           # Track schema changes
-          changes = {'added': [], 'removed': [], 'modified': []}
+          changes = {'added': [], 'removed': [], 'modified': [], 'index_changes': []}
           try:
-              # Load previous schema if exists
               with open('.dev-index/database_schema.json', 'r') as f:
                   old_schema = json.load(f)
                   old_tables = set(old_schema.get('tables', {}).keys())
@@ -257,12 +338,24 @@ jobs:
                   changes['added'] = list(new_tables - old_tables)
                   changes['removed'] = list(old_tables - new_tables)
                   
-                  # Check for modified tables (column count changed)
+                  # Check for modified tables
                   for table in old_tables & new_tables:
-                      old_cols = len(old_schema['tables'][table].get('columns', []))
-                      new_cols = len(schema['tables'][table].get('columns', []))
+                      old_cols = [c['name'] for c in old_schema['tables'][table].get('columns', [])]
+                      new_cols = [c['name'] for c in schema['tables'][table].get('columns', [])]
+                      
                       if old_cols != new_cols:
-                          changes['modified'].append(table)
+                          changes['modified'].append({
+                              'table': table,
+                              'added_columns': list(set(new_cols) - set(old_cols)),
+                              'removed_columns': list(set(old_cols) - set(new_cols))
+                          })
+                      
+                      # Check for index changes
+                      old_indexes = old_schema['tables'][table].get('indexes', [])
+                      new_indexes = schema['tables'][table].get('indexes', [])
+                      if old_indexes != new_indexes:
+                          changes['index_changes'].append(table)
+                          
           except FileNotFoundError:
               # First run
               changes['added'] = list(schema['tables'].keys())
@@ -275,89 +368,174 @@ jobs:
                       'changes': changes
                   }, f, indent=2)
           
-          # Save main schema file (after comparison)
+          # Save main schema file
           with open('.dev-index/database_schema.json', 'w') as f:
               json.dump(schema, f, indent=2, default=str)
           
-          # Create simplified summary - just facts, no module guessing
-          summary = {
-              'generated_at': str(datetime.now()),
-              'total_tables': len(schema['tables']),
-              'table_list': sorted(schema['tables'].keys()),
-              'new_tables_since_last_run': []
-          }
+          # Generate relationship graph (for visualization)
+          relationships = []
+          for table_name, info in schema['tables'].items():
+              fks = info.get('foreign_keys', [])
+              if fks:
+                  for fk in fks:
+                      relationships.append({
+                          'from_table': table_name,
+                          'from_column': fk['column'],
+                          'to_table': fk['references_table'],
+                          'to_column': fk['references_column'],
+                          'on_delete': fk.get('on_delete', 'NO ACTION'),
+                          'on_update': fk.get('on_update', 'NO ACTION')
+                      })
           
-          # Check for new tables since last run
-          try:
-              with open('.dev-index/database_summary.json', 'r') as f:
-                  old_summary = json.load(f)
-                  old_tables = set(old_summary.get('table_list', []))
-                  current_tables = set(summary['table_list'])
-                  summary['new_tables_since_last_run'] = list(current_tables - old_tables)
-          except FileNotFoundError:
-              pass  # First run
-          
-          with open('.dev-index/database_summary.json', 'w') as f:
-              json.dump(summary, f, indent=2)
+          with open('.dev-index/database_relationships.json', 'w') as f:
+              json.dump({
+                  'generated_at': str(datetime.now()),
+                  'relationships': relationships,
+                  'relationship_count': len(relationships)
+              }, f, indent=2)
           
           # Generate dependency risk report
-          risk_report = []
-          for table_name, info in schema['tables'].items():
-              fk_count = len(info.get('foreign_keys', []) or [])
-              if fk_count > 3:
-                  risk_report.append(f"⚠️ {table_name}: High dependency risk - {fk_count} foreign keys")
-              elif fk_count > 1:
-                  risk_report.append(f"🟡 {table_name}: Medium risk - {fk_count} foreign keys")
-          
           with open('.dev-index/database_risks.md', 'w') as f:
               f.write(f"# Database Dependency Risk Report\n\n")
               f.write(f"Generated: {datetime.now()}\n\n")
-              f.write(f"## Risk Assessment\n\n")
-              for risk in risk_report:
-                  f.write(f"- {risk}\n")
+              
+              f.write(f"## Tables with High Foreign Key Dependencies\n\n")
+              for table_name, info in schema['tables'].items():
+                  fk_count = len(info.get('foreign_keys', []) or [])
+                  if fk_count > 3:
+                      f.write(f"### ⚠️ {table_name} ({fk_count} foreign keys)\n")
+                      for fk in info['foreign_keys']:
+                          f.write(f"- {fk['column']} → {fk['references_table']}.{fk['references_column']}")
+                          f.write(f" (DELETE: {fk.get('on_delete', 'NO ACTION')}, UPDATE: {fk.get('on_update', 'NO ACTION')})\n")
+                      f.write("\n")
+              
+              f.write(f"## Tables with Missing Indexes\n\n")
+              for table_name, info in schema['tables'].items():
+                  indexes = info.get('indexes', []) or []
+                  fks = info.get('foreign_keys', []) or []
+                  
+                  # Check if foreign keys have indexes
+                  if fks:
+                      indexed_columns = []
+                      for idx in indexes:
+                          if idx.get('columns'):
+                              indexed_columns.extend(idx['columns'].split(','))
+                      
+                      missing_indexes = []
+                      for fk in fks:
+                          if fk['column'] not in indexed_columns:
+                              missing_indexes.append(fk['column'])
+                      
+                      if missing_indexes:
+                          f.write(f"### {table_name}\n")
+                          f.write(f"Foreign keys without indexes: {', '.join(missing_indexes)}\n\n")
+              
+              f.write(f"## Large Tables (Performance Considerations)\n\n")
+              large_tables = []
+              for table_name, info in schema['tables'].items():
+                  row_count = info.get('row_count', 0) or 0
+                  if row_count > 10000:
+                      large_tables.append((table_name, row_count, info.get('total_size', 'N/A')))
+              
+              large_tables.sort(key=lambda x: x[1], reverse=True)
+              for table, count, size in large_tables:
+                  f.write(f"- **{table}**: {count:,} rows ({size})\n")
           
-          # Generate readable schema documentation
+          # Generate readable documentation
           with open('.dev-index/database_documentation.md', 'w') as f:
               f.write(f"# PUVI Database Schema Documentation\n\n")
-              f.write(f"Generated: {datetime.now()}\n\n")
+              f.write(f"Generated: {datetime.now()}\n")
+              f.write(f"Database Version: {schema.get('version', 'Unknown')}\n")
               f.write(f"Total Tables: {len(schema['tables'])}\n\n")
               
-              # Group by module
-              modules = {}
-              for table_name, info in schema['tables'].items():
-                  module = info.get('module', 'unknown')
-                  if module not in modules:
-                      modules[module] = []
-                  modules[module].append((table_name, info))
+              f.write(f"## Table Summary\n\n")
+              f.write("| Table | Columns | Rows | Size | Foreign Keys |\n")
+              f.write("|-------|---------|------|------|-------------|\n")
               
-              for module, tables in sorted(modules.items()):
-                  f.write(f"\n## Module: {module}\n\n")
-                  for table_name, info in sorted(tables):
-                      f.write(f"### {table_name}\n")
-                      f.write(f"- **Rows**: {info.get('row_count', 'N/A')}\n")
-                      f.write(f"- **Size**: {info.get('size', 'N/A')}\n")
+              for table_name in sorted(schema['tables'].keys()):
+                  info = schema['tables'][table_name]
+                  col_count = len(info.get('columns', []))
+                  row_count = info.get('row_count', 0) or 0
+                  size = info.get('total_size', 'N/A')
+                  fk_count = len(info.get('foreign_keys', []) or [])
+                  f.write(f"| {table_name} | {col_count} | {row_count:,} | {size} | {fk_count} |\n")
+              
+              f.write(f"\n## Detailed Table Definitions\n\n")
+              for table_name in sorted(schema['tables'].keys()):
+                  info = schema['tables'][table_name]
+                  f.write(f"### {table_name}\n\n")
+                  
+                  # Table stats
+                  f.write(f"**Statistics:**\n")
+                  f.write(f"- Rows: {info.get('row_count', 'N/A'):,}\n")
+                  f.write(f"- Total Size: {info.get('total_size', 'N/A')}\n")
+                  f.write(f"- Table Size: {info.get('table_size', 'N/A')}\n")
+                  f.write(f"- Indexes Size: {info.get('indexes_size', 'N/A')}\n")
+                  if info.get('last_vacuum'):
+                      f.write(f"- Last Vacuum: {info['last_vacuum']}\n")
+                  f.write("\n")
+                  
+                  # Columns
+                  f.write("**Columns:**\n\n")
+                  f.write("| Column | Type | Nullable | Default | Description |\n")
+                  f.write("|--------|------|----------|---------|-------------|\n")
+                  
+                  for col in info.get('columns', []):
+                      col_type = col['type']
+                      if col.get('max_length'):
+                          col_type += f"({col['max_length']})"
+                      elif col.get('precision'):
+                          col_type += f"({col['precision']},{col.get('scale', 0)})"
                       
-                      # Primary keys
+                      nullable = "Yes" if col.get('nullable') else "No"
+                      default = col.get('default', '') or ''
+                      if len(default) > 30:
+                          default = default[:27] + "..."
+                      
+                      # Mark key columns
+                      desc = ""
                       pks = info.get('primary_keys', [])
-                      if pks:
-                          f.write(f"- **Primary Keys**: {', '.join(pks)}\n")
+                      if pks and any(pk['column'] == col['name'] for pk in pks):
+                          desc = "Primary Key"
                       
-                      # Foreign keys
                       fks = info.get('foreign_keys', [])
                       if fks:
-                          f.write(f"- **Foreign Keys**:\n")
                           for fk in fks:
-                              f.write(f"  - {fk['column']} → {fk['references_table']}.{fk['references_column']}\n")
+                              if fk['column'] == col['name']:
+                                  desc = f"FK → {fk['references_table']}.{fk['references_column']}"
+                                  break
                       
-                      # Columns
-                      f.write(f"- **Columns**:\n")
-                      for col in info.get('columns', []):
-                          nullable = " (nullable)" if col.get('nullable') else " NOT NULL"
-                          default = f" DEFAULT {col['default']}" if col.get('default') else ""
-                          f.write(f"  - `{col['name']}`: {col['type']}{nullable}{default}\n")
-                      f.write("\n")
+                      f.write(f"| {col['name']} | {col_type} | {nullable} | {default} | {desc} |\n")
+                  
+                  # Indexes
+                  if info.get('indexes'):
+                      f.write("\n**Indexes:**\n")
+                      for idx in info['indexes']:
+                          unique = "UNIQUE " if idx.get('is_unique') else ""
+                          primary = "PRIMARY " if idx.get('is_primary') else ""
+                          f.write(f"- {unique}{primary}`{idx['index_name']}` on ({idx.get('columns', 'N/A')})\n")
+                  
+                  # Constraints
+                  if info.get('check_constraints'):
+                      f.write("\n**Check Constraints:**\n")
+                      for constraint in info['check_constraints']:
+                          f.write(f"- `{constraint['constraint_name']}`: {constraint['check_clause']}\n")
+                  
+                  # Triggers
+                  if info.get('triggers'):
+                      f.write("\n**Triggers:**\n")
+                      for trigger in info['triggers']:
+                          f.write(f"- `{trigger['trigger_name']}`: {trigger['timing']} {trigger['event']}\n")
+                  
+                  f.write("\n---\n\n")
           
-          print("Database schema extracted successfully!")
+          print("✅ Database schema extracted successfully!")
+          print(f"Tables found: {len(schema['tables'])}")
+          if changes['added']:
+              print(f"New tables: {', '.join(changes['added'])}")
+          if changes['modified']:
+              print(f"Modified tables: {len(changes['modified'])}")
+          
           cur.close()
           conn.close()
           EOF
@@ -368,10 +546,8 @@ jobs:
           git config --local user.name "GitHub Action"
           
           # Add all generated files
-          git add .dev-index/database_schema.json || true
-          git add .dev-index/database_summary.json || true
-          git add .dev-index/database_risks.md || true
-          git add .dev-index/database_documentation.md || true
+          git add .dev-index/database_*.* || true
+          git add .dev-index/schema_changes.json || true
           
           # Check if there are changes
           if git diff --staged --quiet; then
@@ -384,10 +560,10 @@ jobs:
             # Commit and push
             git commit -m "chore: update database schema [automated]
             
-            - Updated database_schema.json with full schema
-            - Updated database_summary.json with table list
-            - Generated risk assessment report
-            - Generated readable documentation"
+            - Updated complete schema with indexes, triggers, constraints
+            - Generated relationship mappings
+            - Created risk assessment report
+            - Updated readable documentation"
             
             git push
           fi
@@ -396,8 +572,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: database-schema
-          path: |
-            .dev-index/database_schema.json
-            .dev-index/database_summary.json
-            .dev-index/database_risks.md
-            .dev-index/database_documentation.md
+          path: .dev-index/database_*.*
