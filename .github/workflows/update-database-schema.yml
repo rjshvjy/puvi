@@ -1,0 +1,403 @@
+# .github/workflows/update-database-schema.yml
+name: Update Database Schema
+
+on:
+  schedule:
+    - cron: '0 0 * * 0'  # Weekly on Sunday at midnight
+  workflow_dispatch:      # Allow manual trigger
+  push:
+    paths:
+      - '.github/workflows/update-database-schema.yml'
+      - 'puvi-backend/**/*.py'  # Trigger on ANY Python file change
+      - 'puvi-backend/**/*.sql'  # Trigger on SQL migrations
+
+jobs:
+  update-schema:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ github.token }}
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      
+      - name: Install dependencies
+        run: |
+          pip install psycopg2-binary
+      
+      - name: Extract Database Schema
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          python << 'EOF'
+          import psycopg2
+          import json
+          import os
+          from datetime import datetime
+          
+          # Connect to database
+          conn = psycopg2.connect(os.environ['DATABASE_URL'])
+          cur = conn.cursor()
+          
+          # Enhanced schema extraction with more details
+          enhanced_query = """
+          WITH foreign_key_details AS (
+              SELECT
+                  kcu.table_name,
+                  kcu.column_name,
+                  ccu.table_name AS foreign_table,
+                  ccu.column_name AS foreign_column,
+                  rc.update_rule,
+                  rc.delete_rule
+              FROM information_schema.table_constraints tc
+              JOIN information_schema.key_column_usage kcu 
+                  ON tc.constraint_name = kcu.constraint_name
+              JOIN information_schema.constraint_column_usage ccu 
+                  ON ccu.constraint_name = tc.constraint_name
+              JOIN information_schema.referential_constraints rc
+                  ON rc.constraint_name = tc.constraint_name
+              WHERE tc.constraint_type = 'FOREIGN KEY'
+          ),
+          index_info AS (
+              SELECT
+                  tablename,
+                  indexname,
+                  indexdef
+              FROM pg_indexes
+              WHERE schemaname = 'public'
+          ),
+          trigger_info AS (
+              SELECT 
+                  trigger_name,
+                  event_object_table,
+                  action_timing,
+                  event_manipulation
+              FROM information_schema.triggers
+              WHERE trigger_schema = 'public'
+          )
+          SELECT json_build_object(
+              'generated_at', now(),
+              'database', current_database(),
+              'tables', json_object_agg(
+                  tc.table_name,
+                  json_build_object(
+                      'columns', tc.columns,
+                      'primary_keys', pk.pk_columns,
+                      'foreign_keys', fk.fk_relationships,
+                      'indexes', idx.indexes,
+                      'triggers', trg.triggers,
+                      'row_count', ts.row_count,
+                      'size', ts.total_size,
+                      'usage_in_code', '[]'::json  -- Will be populated by code scan
+                  )
+              )
+          ) as schema
+          -- Rest of the existing query...
+          """
+          WITH table_columns AS (
+              SELECT 
+                  c.table_name,
+                  json_agg(
+                      json_build_object(
+                          'name', c.column_name,
+                          'type', c.data_type,
+                          'max_length', c.character_maximum_length,
+                          'precision', c.numeric_precision,
+                          'scale', c.numeric_scale,
+                          'nullable', c.is_nullable = 'YES',
+                          'default', c.column_default,
+                          'position', c.ordinal_position
+                      ) ORDER BY c.ordinal_position
+                  ) as columns
+              FROM information_schema.columns c
+              WHERE c.table_schema = 'public'
+              GROUP BY c.table_name
+          ),
+          primary_keys AS (
+              SELECT 
+                  kcu.table_name,
+                  json_agg(kcu.column_name) as pk_columns
+              FROM information_schema.table_constraints tc
+              JOIN information_schema.key_column_usage kcu 
+                  ON tc.constraint_name = kcu.constraint_name
+              WHERE tc.constraint_type = 'PRIMARY KEY'
+                  AND tc.table_schema = 'public'
+              GROUP BY kcu.table_name
+          ),
+          foreign_keys AS (
+              SELECT 
+                  kcu.table_name,
+                  json_agg(
+                      json_build_object(
+                          'column', kcu.column_name,
+                          'references_table', ccu.table_name,
+                          'references_column', ccu.column_name,
+                          'constraint_name', tc.constraint_name
+                      )
+                  ) as fk_relationships
+              FROM information_schema.table_constraints tc
+              JOIN information_schema.key_column_usage kcu
+                  ON tc.constraint_name = kcu.constraint_name
+              JOIN information_schema.constraint_column_usage ccu
+                  ON tc.constraint_name = ccu.constraint_name
+              WHERE tc.constraint_type = 'FOREIGN KEY'
+                  AND tc.table_schema = 'public'
+              GROUP BY kcu.table_name
+          ),
+          table_sizes AS (
+              SELECT 
+                  relname as table_name,
+                  n_live_tup as row_count,
+                  pg_size_pretty(pg_total_relation_size(relid)) as total_size
+              FROM pg_stat_user_tables
+              WHERE schemaname = 'public'
+          )
+          SELECT json_build_object(
+              'generated_at', now(),
+              'database', current_database(),
+              'tables', json_object_agg(
+                  tc.table_name,
+                  json_build_object(
+                      'columns', tc.columns,
+                      'primary_keys', pk.pk_columns,
+                      'foreign_keys', fk.fk_relationships,
+                      'row_count', ts.row_count,
+                      'size', ts.total_size
+                  )
+              )
+          ) as schema
+          FROM table_columns tc
+          LEFT JOIN primary_keys pk ON tc.table_name = pk.table_name
+          LEFT JOIN foreign_keys fk ON tc.table_name = fk.table_name
+          LEFT JOIN table_sizes ts ON tc.table_name = ts.table_name
+          """
+          
+          cur.execute(schema_query)
+          schema = cur.fetchone()[0]
+          
+          # Also run your exact query for text format output
+          text_query = """
+          WITH table_info AS (
+              SELECT 
+                  c.table_name,
+                  c.ordinal_position,
+                  c.column_name,
+                  c.data_type,
+                  c.character_maximum_length,
+                  c.numeric_precision,
+                  c.numeric_scale,
+                  c.is_nullable,
+                  c.column_default,
+                  CASE 
+                      WHEN tc.constraint_type = 'PRIMARY KEY' THEN 'PK'
+                      WHEN tc.constraint_type = 'FOREIGN KEY' THEN 'FK'
+                      ELSE ''
+                  END as key_type
+              FROM information_schema.columns c
+              LEFT JOIN information_schema.key_column_usage kcu 
+                  ON c.table_name = kcu.table_name 
+                  AND c.column_name = kcu.column_name
+              LEFT JOIN information_schema.table_constraints tc 
+                  ON kcu.constraint_name = tc.constraint_name
+              WHERE c.table_schema = 'public'
+          )
+          SELECT 
+              '=== ' || table_name || ' ===' as table_structure,
+              string_agg(
+                  column_name || ': ' || 
+                  data_type || 
+                  CASE 
+                      WHEN character_maximum_length IS NOT NULL THEN '(' || character_maximum_length || ')'
+                      WHEN numeric_precision IS NOT NULL THEN '(' || numeric_precision || ',' || numeric_scale || ')'
+                      ELSE ''
+                  END ||
+                  CASE WHEN key_type != '' THEN ' [' || key_type || ']' ELSE '' END ||
+                  CASE WHEN is_nullable = 'NO' THEN ' NOT NULL' ELSE '' END ||
+                  CASE WHEN column_default IS NOT NULL THEN ' DEFAULT ' || column_default ELSE '' END,
+                  E'\\n'
+                  ORDER BY ordinal_position
+              ) as columns
+          FROM table_info
+          GROUP BY table_name
+          ORDER BY table_name
+          """
+          
+          cur.execute(text_query)
+          text_schema = cur.fetchall()
+          
+          # Save the text format you use for coding sessions
+          with open('.dev-index/database_schema.txt', 'w') as f:
+              f.write(f"# Database Schema\n")
+              f.write(f"# Generated: {datetime.now()}\n")
+              f.write(f"# Total Tables: {len(schema['tables'])}\n\n")
+              
+              for row in text_schema:
+                  f.write(row[0] + "\n")  # Table name
+                  f.write(row[1] + "\n")  # Columns
+                  f.write("\n")
+          
+          # Save main schema file
+          with open('.dev-index/database_schema.json', 'w') as f:
+              json.dump(schema, f, indent=2, default=str)
+          
+          # Track schema changes
+          changes = {'added': [], 'removed': [], 'modified': []}
+          try:
+              # Load previous schema if exists
+              with open('.dev-index/database_schema.json', 'r') as f:
+                  old_schema = json.load(f)
+                  old_tables = set(old_schema.get('tables', {}).keys())
+                  new_tables = set(schema['tables'].keys())
+                  
+                  changes['added'] = list(new_tables - old_tables)
+                  changes['removed'] = list(old_tables - new_tables)
+                  
+                  # Check for modified tables (column count changed)
+                  for table in old_tables & new_tables:
+                      old_cols = len(old_schema['tables'][table].get('columns', []))
+                      new_cols = len(schema['tables'][table].get('columns', []))
+                      if old_cols != new_cols:
+                          changes['modified'].append(table)
+          except FileNotFoundError:
+              # First run
+              changes['added'] = list(schema['tables'].keys())
+          
+          # Save changes log
+          if any(changes.values()):
+              with open('.dev-index/schema_changes.json', 'w') as f:
+                  json.dump({
+                      'timestamp': str(datetime.now()),
+                      'changes': changes
+                  }, f, indent=2)
+          
+          # Save main schema file (after comparison)
+          with open('.dev-index/database_schema.json', 'w') as f:
+              json.dump(schema, f, indent=2, default=str)
+          
+          # Create simplified summary - just facts, no module guessing
+          summary = {
+              'generated_at': str(datetime.now()),
+              'total_tables': len(schema['tables']),
+              'table_list': sorted(schema['tables'].keys()),
+              'new_tables_since_last_run': []
+          }
+          
+          # Check for new tables since last run
+          try:
+              with open('.dev-index/database_summary.json', 'r') as f:
+                  old_summary = json.load(f)
+                  old_tables = set(old_summary.get('table_list', []))
+                  current_tables = set(summary['table_list'])
+                  summary['new_tables_since_last_run'] = list(current_tables - old_tables)
+          except FileNotFoundError:
+              pass  # First run
+          
+          with open('.dev-index/database_summary.json', 'w') as f:
+              json.dump(summary, f, indent=2)
+          
+          # Generate dependency risk report
+          risk_report = []
+          for table_name, info in schema['tables'].items():
+              fk_count = len(info.get('foreign_keys', []) or [])
+              if fk_count > 3:
+                  risk_report.append(f"⚠️ {table_name}: High dependency risk - {fk_count} foreign keys")
+              elif fk_count > 1:
+                  risk_report.append(f"🟡 {table_name}: Medium risk - {fk_count} foreign keys")
+          
+          with open('.dev-index/database_risks.md', 'w') as f:
+              f.write(f"# Database Dependency Risk Report\n\n")
+              f.write(f"Generated: {datetime.now()}\n\n")
+              f.write(f"## Risk Assessment\n\n")
+              for risk in risk_report:
+                  f.write(f"- {risk}\n")
+          
+          # Generate readable schema documentation
+          with open('.dev-index/database_documentation.md', 'w') as f:
+              f.write(f"# PUVI Database Schema Documentation\n\n")
+              f.write(f"Generated: {datetime.now()}\n\n")
+              f.write(f"Total Tables: {len(schema['tables'])}\n\n")
+              
+              # Group by module
+              modules = {}
+              for table_name, info in schema['tables'].items():
+                  module = info.get('module', 'unknown')
+                  if module not in modules:
+                      modules[module] = []
+                  modules[module].append((table_name, info))
+              
+              for module, tables in sorted(modules.items()):
+                  f.write(f"\n## Module: {module}\n\n")
+                  for table_name, info in sorted(tables):
+                      f.write(f"### {table_name}\n")
+                      f.write(f"- **Rows**: {info.get('row_count', 'N/A')}\n")
+                      f.write(f"- **Size**: {info.get('size', 'N/A')}\n")
+                      
+                      # Primary keys
+                      pks = info.get('primary_keys', [])
+                      if pks:
+                          f.write(f"- **Primary Keys**: {', '.join(pks)}\n")
+                      
+                      # Foreign keys
+                      fks = info.get('foreign_keys', [])
+                      if fks:
+                          f.write(f"- **Foreign Keys**:\n")
+                          for fk in fks:
+                              f.write(f"  - {fk['column']} → {fk['references_table']}.{fk['references_column']}\n")
+                      
+                      # Columns
+                      f.write(f"- **Columns**:\n")
+                      for col in info.get('columns', []):
+                          nullable = " (nullable)" if col.get('nullable') else " NOT NULL"
+                          default = f" DEFAULT {col['default']}" if col.get('default') else ""
+                          f.write(f"  - `{col['name']}`: {col['type']}{nullable}{default}\n")
+                      f.write("\n")
+          
+          print("Database schema extracted successfully!")
+          cur.close()
+          conn.close()
+          EOF
+      
+      - name: Commit schema updates
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          # Add all generated files
+          git add .dev-index/database_schema.json || true
+          git add .dev-index/database_summary.json || true
+          git add .dev-index/database_risks.md || true
+          git add .dev-index/database_documentation.md || true
+          
+          # Check if there are changes
+          if git diff --staged --quiet; then
+            echo "No schema changes detected"
+          else
+            # Show what changed
+            echo "Files changed:"
+            git diff --staged --name-only
+            
+            # Commit and push
+            git commit -m "chore: update database schema [automated]
+            
+            - Updated database_schema.json with full schema
+            - Updated database_summary.json with table list
+            - Generated risk assessment report
+            - Generated readable documentation"
+            
+            git push
+          fi
+      
+      - name: Upload schema as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: database-schema
+          path: |
+            .dev-index/database_schema.json
+            .dev-index/database_summary.json
+            .dev-index/database_risks.md
+            .dev-index/database_documentation.md
