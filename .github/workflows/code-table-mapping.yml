@@ -1,0 +1,377 @@
+# .github/workflows/code-table-mapping.yml
+name: Code-Table Usage Mapping
+
+on:
+  push:
+    paths:
+      - 'puvi-backend/**/*.py'
+      - 'puvi-frontend/**/*.js'
+      - 'puvi-frontend/**/*.jsx'
+  workflow_dispatch:
+
+jobs:
+  scan-code-usage:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+      
+      - name: Scan Code for Table Usage
+        run: |
+          python << 'EOF'
+          import os
+          import re
+          import json
+          import glob
+          from datetime import datetime
+          
+          # Initialize mapping
+          table_usage = {}
+          
+          # Regex patterns to find SQL table references
+          sql_patterns = [
+              # Direct SQL patterns
+              r'\bFROM\s+([a-zA-Z_][a-zA-Z0-9_]*)',
+              r'\bINTO\s+([a-zA-Z_][a-zA-Z0-9_]*)',
+              r'\bUPDATE\s+([a-zA-Z_][a-zA-Z0-9_]*)',
+              r'\bDELETE\s+FROM\s+([a-zA-Z_][a-zA-Z0-9_]*)',
+              r'\bINSERT\s+INTO\s+([a-zA-Z_][a-zA-Z0-9_]*)',
+              r'\bJOIN\s+([a-zA-Z_][a-zA-Z0-9_]*)',
+              r'\bCREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?([a-zA-Z_][a-zA-Z0-9_]*)',
+              r'\bALTER\s+TABLE\s+([a-zA-Z_][a-zA-Z0-9_]*)',
+              r'\bDROP\s+TABLE\s+(?:IF\s+EXISTS\s+)?([a-zA-Z_][a-zA-Z0-9_]*)',
+              r'\bTRUNCATE\s+(?:TABLE\s+)?([a-zA-Z_][a-zA-Z0-9_]*)',
+              # String patterns that might be table names
+              r'["\'](\w+)["\']\s*,\s*["\'](\w+_id)["\']',  # Likely foreign key references
+          ]
+          
+          # System tables to ignore
+          ignore_tables = {
+              'information_schema', 'pg_catalog', 'pg_stat', 'pg_class', 
+              'pg_namespace', 'pg_indexes', 'pg_sequences', 'dual'
+          }
+          
+          def extract_module_info(filepath):
+              """Extract module and function context from file path and content"""
+              parts = filepath.split('/')
+              
+              # Determine module type and name
+              if 'puvi-backend' in filepath:
+                  module_type = 'backend'
+                  if 'modules' in parts:
+                      idx = parts.index('modules')
+                      if idx + 1 < len(parts):
+                          module_name = parts[idx + 1].replace('.py', '')
+                      else:
+                          module_name = 'unknown'
+                  else:
+                      module_name = os.path.basename(filepath).replace('.py', '')
+              elif 'puvi-frontend' in filepath:
+                  module_type = 'frontend'
+                  # Extract React component or service name
+                  if 'components' in parts:
+                      module_name = 'component-' + parts[-2] if len(parts) > 1 else 'component'
+                  elif 'modules' in parts:
+                      module_name = 'module-' + parts[-2] if len(parts) > 1 else 'module'
+                  elif 'services' in parts:
+                      module_name = 'service-' + os.path.basename(filepath).replace('.js', '').replace('.jsx', '')
+                  else:
+                      module_name = 'frontend-other'
+              else:
+                  module_type = 'other'
+                  module_name = 'unknown'
+              
+              return module_type, module_name
+          
+          def scan_file(filepath):
+              """Scan a single file for table references"""
+              try:
+                  with open(filepath, 'r', encoding='utf-8') as f:
+                      content = f.read()
+                  
+                  module_type, module_name = extract_module_info(filepath)
+                  relative_path = filepath.replace(os.getcwd() + '/', '')
+                  
+                  # Find all table references
+                  tables_found = set()
+                  
+                  for pattern in sql_patterns:
+                      matches = re.findall(pattern, content, re.IGNORECASE | re.MULTILINE)
+                      for match in matches:
+                          table = match.lower() if isinstance(match, str) else match[0].lower()
+                          if table not in ignore_tables and not table.startswith('pg_'):
+                              tables_found.add(table)
+                  
+                  # Also look for specific table name strings in quotes
+                  quoted_tables = re.findall(r'["\']([a-zA-Z_][a-zA-Z0-9_]*)["\']', content)
+                  for table in quoted_tables:
+                      # Simple heuristic: if it ends with common table suffixes, might be a table
+                      if any(table.lower().endswith(suffix) for suffix in ['s', '_log', '_history', '_master', '_details', '_items']):
+                          tables_found.add(table.lower())
+                  
+                  # Find function/endpoint context
+                  functions = []
+                  if filepath.endswith('.py'):
+                      # Find Python functions that use these tables
+                      func_pattern = r'def\s+(\w+)\s*\([^)]*\):'
+                      funcs = re.findall(func_pattern, content)
+                      
+                      # For each function, check which tables it uses
+                      for func in funcs:
+                          # Find the function body (simplified - looks for next def or class)
+                          func_start = content.find(f'def {func}')
+                          next_def = content.find('\ndef ', func_start + 1)
+                          next_class = content.find('\nclass ', func_start + 1)
+                          
+                          func_end = min(x for x in [next_def, next_class, len(content)] if x > func_start)
+                          func_body = content[func_start:func_end]
+                          
+                          # Check which tables this function uses
+                          func_tables = set()
+                          for pattern in sql_patterns[:10]:  # Use main SQL patterns
+                              matches = re.findall(pattern, func_body, re.IGNORECASE)
+                              for match in matches:
+                                  table = match.lower() if isinstance(match, str) else match[0].lower()
+                                  if table in tables_found:
+                                      func_tables.add(table)
+                          
+                          if func_tables:
+                              functions.append({
+                                  'name': func,
+                                  'tables': list(func_tables)
+                              })
+                  
+                  # Store results
+                  for table in tables_found:
+                      if table not in table_usage:
+                          table_usage[table] = {
+                              'files': [],
+                              'modules': set(),
+                              'functions': []
+                          }
+                      
+                      table_usage[table]['files'].append({
+                          'path': relative_path,
+                          'module': module_name,
+                          'type': module_type
+                      })
+                      table_usage[table]['modules'].add(module_name)
+                      
+                      # Add function-level detail
+                      for func_info in functions:
+                          if table in func_info['tables']:
+                              table_usage[table]['functions'].append({
+                                  'file': relative_path,
+                                  'function': func_info['name']
+                              })
+                  
+                  return len(tables_found)
+                  
+              except Exception as e:
+                  print(f"Error scanning {filepath}: {e}")
+                  return 0
+          
+          # Scan all Python files
+          print("Scanning Python files...")
+          py_files = glob.glob('puvi-backend/**/*.py', recursive=True)
+          total_tables = 0
+          for filepath in py_files:
+              total_tables += scan_file(filepath)
+          
+          # Scan JavaScript/JSX files (look for API calls)
+          print("Scanning JavaScript files...")
+          js_files = glob.glob('puvi-frontend/**/*.js', recursive=True) + \
+                     glob.glob('puvi-frontend/**/*.jsx', recursive=True)
+          
+          for filepath in js_files:
+              try:
+                  with open(filepath, 'r', encoding='utf-8') as f:
+                      content = f.read()
+                  
+                  # Look for API endpoint calls that might indicate table usage
+                  api_patterns = [
+                      r'/api/(\w+)',  # API endpoints often map to tables
+                      r'from\(["\'](\w+)["\']\)',  # Supabase queries
+                  ]
+                  
+                  module_type, module_name = extract_module_info(filepath)
+                  relative_path = filepath.replace(os.getcwd() + '/', '')
+                  
+                  for pattern in api_patterns:
+                      matches = re.findall(pattern, content)
+                      for match in matches:
+                          # Educated guess: API endpoint might be table name
+                          potential_table = match.lower()
+                          if potential_table in table_usage:
+                              table_usage[potential_table]['files'].append({
+                                  'path': relative_path,
+                                  'module': module_name,
+                                  'type': 'frontend-api-call'
+                              })
+                              
+              except Exception as e:
+                  print(f"Error scanning {filepath}: {e}")
+          
+          # Convert sets to lists for JSON serialization
+          for table in table_usage:
+              table_usage[table]['modules'] = list(table_usage[table]['modules'])
+          
+          # Save the mapping
+          output = {
+              'generated_at': str(datetime.now()),
+              'total_tables_found': len(table_usage),
+              'table_usage': table_usage,
+              'summary': {
+                  'backend_files_scanned': len(py_files),
+                  'frontend_files_scanned': len(js_files),
+                  'tables_with_usage': len(table_usage),
+                  'orphaned_tables': []  # Will be filled by comparing with actual DB
+              }
+          }
+          
+          # Save to file
+          os.makedirs('.dev-index', exist_ok=True)
+          with open('.dev-index/code_table_mapping.json', 'w') as f:
+              json.dump(output, f, indent=2)
+          
+          # Create a readable report
+          with open('.dev-index/code_usage_report.md', 'w') as f:
+              f.write(f"# Code-Table Usage Report\n\n")
+              f.write(f"Generated: {datetime.now()}\n\n")
+              f.write(f"## Summary\n")
+              f.write(f"- Tables found in code: {len(table_usage)}\n")
+              f.write(f"- Backend files scanned: {len(py_files)}\n")
+              f.write(f"- Frontend files scanned: {len(js_files)}\n\n")
+              
+              f.write(f"## Table Usage by Module\n\n")
+              
+              # Group by module
+              module_tables = {}
+              for table, info in table_usage.items():
+                  for module in info['modules']:
+                      if module not in module_tables:
+                          module_tables[module] = []
+                      module_tables[module].append(table)
+              
+              for module, tables in sorted(module_tables.items()):
+                  f.write(f"### {module}\n")
+                  f.write(f"Tables used: {', '.join(sorted(tables))}\n\n")
+              
+              f.write(f"## Detailed Table Usage\n\n")
+              for table, info in sorted(table_usage.items()):
+                  f.write(f"### {table}\n")
+                  f.write(f"- Used by modules: {', '.join(info['modules'])}\n")
+                  f.write(f"- Files: {len(info['files'])}\n")
+                  if info['functions']:
+                      f.write(f"- Functions using this table:\n")
+                      for func in info['functions'][:5]:  # Show first 5
+                          f.write(f"  - {func['function']} in {func['file']}\n")
+                      if len(info['functions']) > 5:
+                          f.write(f"  - ... and {len(info['functions']) - 5} more\n")
+                  f.write("\n")
+          
+          print(f"\n✅ Code scanning complete!")
+          print(f"Found {len(table_usage)} tables referenced in code")
+          print(f"Results saved to .dev-index/code_table_mapping.json")
+          EOF
+      
+      - name: Merge with Database Schema
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          python << 'EOF'
+          import json
+          import psycopg2
+          import os
+          from datetime import datetime
+          
+          # Load code mapping
+          with open('.dev-index/code_table_mapping.json', 'r') as f:
+              code_mapping = json.load(f)
+          
+          # Connect to database to get actual tables
+          try:
+              conn = psycopg2.connect(os.environ['DATABASE_URL'])
+              cur = conn.cursor()
+              
+              cur.execute("""
+                  SELECT table_name 
+                  FROM information_schema.tables 
+                  WHERE table_schema = 'public' 
+                  AND table_type = 'BASE TABLE'
+              """)
+              
+              actual_tables = set(row[0] for row in cur.fetchall())
+              
+              # Find orphaned tables (in DB but not in code)
+              used_tables = set(code_mapping['table_usage'].keys())
+              orphaned = actual_tables - used_tables
+              
+              # Find phantom references (in code but not in DB)
+              phantom = used_tables - actual_tables
+              
+              # Update summary
+              code_mapping['summary']['orphaned_tables'] = list(orphaned)
+              code_mapping['summary']['phantom_references'] = list(phantom)
+              code_mapping['summary']['actual_db_tables'] = list(actual_tables)
+              
+              # Save updated mapping
+              with open('.dev-index/code_table_mapping.json', 'w') as f:
+                  json.dump(code_mapping, f, indent=2)
+              
+              # Create alert if there are issues
+              if orphaned or phantom:
+                  with open('.dev-index/table_issues.md', 'w') as f:
+                      f.write(f"# Table Usage Issues\n\n")
+                      f.write(f"Generated: {datetime.now()}\n\n")
+                      
+                      if orphaned:
+                          f.write(f"## ⚠️ Orphaned Tables\n")
+                          f.write(f"These tables exist in database but are not used in any code:\n\n")
+                          for table in sorted(orphaned):
+                              f.write(f"- {table}\n")
+                          f.write("\n")
+                      
+                      if phantom:
+                          f.write(f"## ❌ Phantom References\n")
+                          f.write(f"These tables are referenced in code but don't exist in database:\n\n")
+                          for table in sorted(phantom):
+                              f.write(f"- {table}\n")
+                              f.write(f"  Files: ")
+                              files = code_mapping['table_usage'][table]['files'][:3]
+                              f.write(', '.join(f['path'] for f in files))
+                              if len(code_mapping['table_usage'][table]['files']) > 3:
+                                  f.write(f" and {len(code_mapping['table_usage'][table]['files']) - 3} more")
+                              f.write("\n")
+              
+              cur.close()
+              conn.close()
+              
+          except Exception as e:
+              print(f"Could not connect to database: {e}")
+              print("Skipping orphan detection")
+          
+          print("✅ Mapping complete!")
+          EOF
+      
+      - name: Commit results
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          
+          git add .dev-index/code_table_mapping.json || true
+          git add .dev-index/code_usage_report.md || true
+          git add .dev-index/table_issues.md || true
+          
+          if git diff --staged --quiet; then
+            echo "No changes in code-table usage"
+          else
+            git commit -m "chore: update code-table usage mapping [automated]"
+            git push
+          fi
