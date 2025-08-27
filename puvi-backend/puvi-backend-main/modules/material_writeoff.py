@@ -165,8 +165,7 @@ def get_unified_writeoff_inventory():
                 COUNT(DISTINCT CASE WHEN i.closing_stock > 0 THEN m.material_id END) as item_count
             FROM categories_master cm
             LEFT JOIN materials m ON (
-                m.category = cm.category_name 
-                OR (cm.category_name = 'Packing Material' AND m.category = 'Packaging')
+                m.category = cm.category_name                
             ) AND m.is_active = true
             LEFT JOIN inventory i ON i.material_id = m.material_id
             WHERE cm.is_active = true
