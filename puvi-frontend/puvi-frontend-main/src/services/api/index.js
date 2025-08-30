@@ -256,7 +256,174 @@ const api = {
       });
     }
   },
+  // ============================================
+  // LOCATIONS MODULE - NEW
+  // ============================================
+  locations: {
+    // Get all locations with filters
+    getAll: async (params = {}) => {
+      const queryParams = new URLSearchParams();
+      if (params.type) queryParams.append('type', params.type);
+      if (params.ownership) queryParams.append('ownership', params.ownership);
+      if (params.is_active !== undefined) queryParams.append('is_active', params.is_active);
+      const queryString = queryParams.toString();
+      return apiCall(`/api/locations${queryString ? `?${queryString}` : ''}`);
+    },
+    
+    // Get single location by ID
+    getById: async (id) => {
+      return apiCall(`/api/locations/${id}`);
+    },
+    
+    // Create new location
+    create: async (data) => {
+      return post('/api/locations', data);
+    },
+    
+    // Update location
+    update: async (id, data) => {
+      return put(`/api/locations/${id}`, data);
+    },
+    
+    // Delete location
+    delete: async (id) => {
+      return del(`/api/locations/${id}`);
+    },
+    
+    // Check location dependencies before deletion
+    checkDependencies: async (id) => {
+      return apiCall(`/api/locations/${id}/check-dependencies`);
+    },
+    
+    // Get valid destination locations for transfer
+    getForTransfer: async (fromLocationId) => {
+      return apiCall(`/api/locations/for-transfer?from_location_id=${fromLocationId}`);
+    },
+    
+    // Get locations dropdown
+    dropdown: async () => {
+      return apiCall('/api/locations/dropdown');
+    }
+  },
 
+  // ============================================
+  // CUSTOMERS MODULE - NEW
+  // ============================================
+  customers: {
+    // Get all customers with filters
+    getAll: async (params = {}) => {
+      const queryParams = new URLSearchParams();
+      if (params.is_active !== undefined) queryParams.append('is_active', params.is_active);
+      if (params.search) queryParams.append('search', params.search);
+      const queryString = queryParams.toString();
+      return apiCall(`/api/customers${queryString ? `?${queryString}` : ''}`);
+    },
+    
+    // Get single customer by ID
+    getById: async (id) => {
+      return apiCall(`/api/customers/${id}`);
+    },
+    
+    // Create new customer
+    create: async (data) => {
+      return post('/api/customers', data);
+    },
+    
+    // Update customer
+    update: async (id, data) => {
+      return put(`/api/customers/${id}`, data);
+    },
+    
+    // Delete customer
+    delete: async (id) => {
+      return del(`/api/customers/${id}`);
+    },
+    
+    // Get customers dropdown
+    dropdown: async () => {
+      return apiCall('/api/customers/dropdown');
+    },
+    
+    // Get ship-to locations for customer
+    getShipTo: async (customerId) => {
+      return apiCall(`/api/customers/${customerId}/ship-to`);
+    },
+    
+    // Create ship-to location
+    createShipTo: async (customerId, data) => {
+      return post(`/api/customers/${customerId}/ship-to`, data);
+    },
+    
+    // Update ship-to location
+    updateShipTo: async (customerId, shipToId, data) => {
+      return put(`/api/customers/${customerId}/ship-to/${shipToId}`, data);
+    },
+    
+    // Delete ship-to location
+    deleteShipTo: async (customerId, shipToId) => {
+      return del(`/api/customers/${customerId}/ship-to/${shipToId}`);
+    }
+  },
+
+  // ============================================
+  // SKU OUTBOUND MODULE - NEW
+  // ============================================
+  skuOutbound: {
+    // Check SKU availability with FEFO allocation
+    checkAvailability: async (data) => {
+      return post('/api/sku/outbound/check-availability', data);
+    },
+    
+    // Create outbound transaction (transfer or sales)
+    create: async (data) => {
+      return post('/api/sku/outbound/create', data);
+    },
+    
+    // Get outbound history with filters
+    getHistory: async (params = {}) => {
+      const queryParams = new URLSearchParams();
+      if (params.transaction_type) queryParams.append('transaction_type', params.transaction_type);
+      if (params.from_location_id) queryParams.append('from_location_id', params.from_location_id);
+      if (params.to_location_id) queryParams.append('to_location_id', params.to_location_id);
+      if (params.customer_id) queryParams.append('customer_id', params.customer_id);
+      if (params.start_date) queryParams.append('start_date', params.start_date);
+      if (params.end_date) queryParams.append('end_date', params.end_date);
+      if (params.limit) queryParams.append('limit', params.limit);
+      const queryString = queryParams.toString();
+      return apiCall(`/api/sku/outbound/history${queryString ? `?${queryString}` : ''}`);
+    },
+    
+    // Get single outbound transaction details
+    getById: async (id) => {
+      return apiCall(`/api/sku/outbound/${id}`);
+    },
+    
+    // Update transaction status
+    updateStatus: async (id, status) => {
+      return post(`/api/sku/outbound/${id}/update-status`, { status });
+    },
+    
+    // Trace batch movement
+    traceBatch: async (traceableCode) => {
+      return apiCall(`/api/sku/outbound/trace/${encodeURIComponent(traceableCode)}`);
+    },
+    
+    // Get sales summary report
+    getSalesSummary: async (params = {}) => {
+      const queryParams = new URLSearchParams();
+      if (params.customer_id) queryParams.append('customer_id', params.customer_id);
+      if (params.start_date) queryParams.append('start_date', params.start_date);
+      if (params.end_date) queryParams.append('end_date', params.end_date);
+      const queryString = queryParams.toString();
+      return apiCall(`/api/sku/outbound/sales-summary${queryString ? `?${queryString}` : ''}`);
+    },
+    
+    // Cancel outbound transaction
+    cancel: async (id, reason) => {
+      return post(`/api/sku/outbound/${id}/cancel`, { reason });
+    }
+  },
+  
   // ============================================
   // OTHER MODULES
   // ============================================
