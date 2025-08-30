@@ -1,8 +1,8 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-30T08:36:14.074Z",
-  "filesScanned": 69,
-  "jsFilesScanned": 42,
+  "generatedAt": "2025-08-30T08:44:54.899Z",
+  "filesScanned": 70,
+  "jsFilesScanned": 43,
   "pyFilesScanned": 27,
   "routes": [
     {
@@ -1423,6 +1423,7 @@
         "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/index.js",
         "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
         "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundHistory.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/index.js",
         "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
         "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/BOMConfig.js",
         "puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/ExpiryAlert.js",
@@ -1739,6 +1740,24 @@
       "from": "./OutboundHistory.css",
       "usedIn": [
         "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundHistory.js"
+      ]
+    },
+    {
+      "from": "./OutboundEntry",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/index.js"
+      ]
+    },
+    {
+      "from": "./OutboundHistory",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/index.js"
+      ]
+    },
+    {
+      "from": "./SKUOutbound.css",
+      "usedIn": [
+        "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/index.js"
       ]
     },
     {
@@ -2160,6 +2179,12 @@
       "name": "OutboundHistory",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundHistory.js",
       "line": 8,
+      "type": "const"
+    },
+    {
+      "name": "SKUOutbound",
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/index.js",
+      "line": 10,
       "type": "const"
     },
     {
@@ -12290,6 +12315,38 @@
       "isAsync": false
     },
     {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/index.js",
+      "line": 10,
+      "name": "SKUOutbound",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/index.js",
+      "line": 32,
+      "name": "handleOutboundCreated",
+      "params": "outboundData",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/index.js",
+      "line": 40,
+      "name": "handleTabChange",
+      "params": "tabId",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/index.js",
+      "line": 45,
+      "name": "renderActiveComponent",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
       "line": 10,
       "name": "PackageSizeManager",
@@ -18728,6 +18785,34 @@
       "line": 38,
       "type": "useEffect",
       "hook": "useEffect"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/index.js",
+      "line": 12,
+      "type": "useState",
+      "name": "activeTab",
+      "setter": "setActiveTab",
+      "initial": "history"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/index.js",
+      "line": 12,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/index.js",
+      "line": 13,
+      "type": "useState",
+      "name": "refreshTrigger",
+      "setter": "setRefreshTrigger",
+      "initial": 0
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/index.js",
+      "line": 13,
+      "type": "useState",
+      "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/MastersManagement/components/PackageSizeManager.js",
@@ -27088,18 +27173,18 @@
   ],
   "lineNumbers": {},
   "summary": {
-    "totalFiles": 69,
-    "jsFiles": 42,
+    "totalFiles": 70,
+    "jsFiles": 43,
     "pyFiles": 27,
-    "components": 46,
+    "components": 47,
     "routes": 155,
     "exports": 45,
-    "imports": 59,
+    "imports": 62,
     "hardcodedValues": 24,
     "databaseQueries": 511,
     "databaseTables": 68,
-    "functions": 727,
-    "stateHooks": 789,
+    "functions": 731,
+    "stateHooks": 793,
     "missingEndpoints": 1,
     "errorHandlers": 720
   }
