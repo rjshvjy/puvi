@@ -1,5 +1,5 @@
 # Feature Pack: WRITEOFF-REPORT
-Generated: 2025-08-30T08:16:36.548Z
+Generated: 2025-08-30T08:34:22.024Z
 Routes: 2 | Tables: 15 | Files: 2
 
 ## Table of Contents
