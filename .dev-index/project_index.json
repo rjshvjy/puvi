@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-30T19:17:08.366Z",
+  "generatedAt": "2025-08-30T19:22:57.792Z",
   "filesScanned": 70,
   "jsFilesScanned": 43,
   "pyFilesScanned": 27,
@@ -11874,7 +11874,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundHistory.js",
-      "line": 183,
+      "line": 187,
       "name": "parseDDMMYYYY",
       "params": "dateStr",
       "type": "arrow",
@@ -11882,7 +11882,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundHistory.js",
-      "line": 189,
+      "line": 193,
       "name": "formatCurrency",
       "params": "amount",
       "type": "arrow",
@@ -11890,7 +11890,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundHistory.js",
-      "line": 197,
+      "line": 201,
       "name": "handleFilterChange",
       "params": "field, value",
       "type": "arrow",
@@ -11898,7 +11898,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundHistory.js",
-      "line": 201,
+      "line": 205,
       "name": "handleClearFilters",
       "params": "",
       "type": "arrow",
@@ -11906,7 +11906,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundHistory.js",
-      "line": 213,
+      "line": 217,
       "name": "handleSort",
       "params": "field",
       "type": "arrow",
@@ -11914,7 +11914,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundHistory.js",
-      "line": 222,
+      "line": 226,
       "name": "toggleRowExpansion",
       "params": "outboundId",
       "type": "arrow",
@@ -11922,7 +11922,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundHistory.js",
-      "line": 234,
+      "line": 238,
       "name": "handleStatusUpdate",
       "params": "outboundId, newStatus",
       "type": "arrow",
@@ -11930,7 +11930,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundHistory.js",
-      "line": 249,
+      "line": 253,
       "name": "exportToCSV",
       "params": "",
       "type": "arrow",
@@ -23279,13 +23279,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundHistory.js",
-      "line": 235,
+      "line": 239,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundHistory.js",
-      "line": 244,
+      "line": 248,
       "type": "catch",
       "code": "} catch (error) {"
     },
