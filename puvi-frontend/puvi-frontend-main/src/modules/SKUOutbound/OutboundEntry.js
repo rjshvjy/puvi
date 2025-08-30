@@ -2,7 +2,7 @@
 // SKU Outbound Entry Component - Handles creation of outbound transactions
 // Supports: Internal Transfers, Third Party Transfers, and Sales
 // Features: FEFO/FIFO batch allocation, GST calculation, multi-step workflow
-// Version: 2.0 - Fixed with Weight-Based Cost Allocation
+// Version: 2.0 - Fixed with Weight-Based Cost Allocation and Location Sorting
 
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
@@ -96,63 +96,46 @@ const OutboundEntry = () => {
   }, [items, outboundData.transport_cost, outboundData.handling_cost, skus]);
 
   const fetchMasterData = async () => {
-  try {
-    // Fetch locations
-    const locResponse = await api.locations.dropdown();
-    if (locResponse.success) {
-      // Sort locations to prioritize production factory
-      const sortedLocations = (locResponse.locations || []).sort((a, b) => {
-        // First priority: is_production_unit (factories where production happens)
-        if (a.capabilities?.is_production_unit && !b.capabilities?.is_production_unit) return -1;
-        if (!a.capabilities?.is_production_unit && b.capabilities?.is_production_unit) return 1;
+    try {
+      // Fetch locations
+      const locResponse = await api.locations.dropdown();
+      if (locResponse.success) {
+        // Sort locations to prioritize production factory
+        const sortedLocations = (locResponse.locations || []).sort((a, b) => {
+          // First priority: is_production_unit (factories where production happens)
+          if (a.capabilities?.is_production_unit && !b.capabilities?.is_production_unit) return -1;
+          if (!a.capabilities?.is_production_unit && b.capabilities?.is_production_unit) return 1;
+          
+          // Second priority: is_default flag
+          if (a.capabilities?.is_default && !b.capabilities?.is_default) return -1;
+          if (!a.capabilities?.is_default && b.capabilities?.is_default) return 1;
+          
+          // Third priority: location_type (factory > warehouse > customer)
+          const typeOrder = { 'factory': 1, 'warehouse': 2, 'customer': 3 };
+          const aOrder = typeOrder[a.location_type] || 4;
+          const bOrder = typeOrder[b.location_type] || 4;
+          if (aOrder !== bOrder) return aOrder - bOrder;
+          
+          // Finally, alphabetical by name
+          return a.location_name.localeCompare(b.location_name);
+        });
         
-        // Second priority: is_default flag
-        if (a.capabilities?.is_default && !b.capabilities?.is_default) return -1;
-        if (!a.capabilities?.is_default && b.capabilities?.is_default) return 1;
+        setLocations(sortedLocations);
         
-        // Third priority: location_type (factory > warehouse > customer)
-        const typeOrder = { 'factory': 1, 'warehouse': 2, 'customer': 3 };
-        const aOrder = typeOrder[a.location_type] || 4;
-        const bOrder = typeOrder[b.location_type] || 4;
-        if (aOrder !== bOrder) return aOrder - bOrder;
-        
-        // Finally, alphabetical by name
-        return a.location_name.localeCompare(b.location_name);
-      });
-      
-      setLocations(sortedLocations);
-      
-      // Auto-select the production factory as default if no location is selected
-      if (sortedLocations.length > 0 && !outboundData.from_location_id) {
-        const defaultLocation = sortedLocations.find(loc => 
-          loc.location_type === 'factory' && 
-          loc.capabilities?.is_production_unit && 
-          loc.ownership === 'own'
-        ) || sortedLocations[0];
-        
-        setOutboundData(prev => ({
-          ...prev,
-          from_location_id: defaultLocation.location_id
-        }));
+        // Auto-select the production factory as default if no location is selected
+        if (sortedLocations.length > 0 && !outboundData.from_location_id) {
+          const defaultLocation = sortedLocations.find(loc => 
+            loc.location_type === 'factory' && 
+            loc.capabilities?.is_production_unit && 
+            loc.ownership === 'own'
+          ) || sortedLocations[0];
+          
+          setOutboundData(prev => ({
+            ...prev,
+            from_location_id: defaultLocation.location_id
+          }));
+        }
       }
-    }
-
-    // Fetch customers
-    const custResponse = await api.customers.dropdown();
-    if (custResponse.success) {
-      setCustomers(custResponse.customers || []);
-    }
-
-    // Fetch SKUs
-    const skuResponse = await api.sku.getMasterList({ is_active: true });
-    if (skuResponse.success) {
-      setSKUs(skuResponse.skus || []);
-    }
-  } catch (error) {
-    console.error('Error fetching master data:', error);
-    setMessage({ type: 'error', text: 'Failed to load master data' });
-  }
-};
 
       // Fetch customers
       const custResponse = await api.customers.dropdown();
