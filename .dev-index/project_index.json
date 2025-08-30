@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-30T01:49:11.983Z",
+  "generatedAt": "2025-08-30T02:05:08.908Z",
   "filesScanned": 65,
   "jsFilesScanned": 38,
   "pyFilesScanned": 27,
@@ -1115,7 +1115,7 @@
       "method": "GET",
       "path": "/api/sku/outbound/history",
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 638,
+      "line": 644,
       "blueprint": "sku_outbound_bp",
       "function": "get_outbound_history",
       "source": "backend"
@@ -1124,7 +1124,7 @@
       "method": "GET",
       "path": "/api/sku/outbound/<int:outbound_id>",
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 778,
+      "line": 784,
       "blueprint": "sku_outbound_bp",
       "function": "get_outbound_details",
       "source": "backend"
@@ -1133,7 +1133,7 @@
       "method": "GET",
       "path": "/api/sku/outbound/trace/<traceable_code>",
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 950,
+      "line": 956,
       "blueprint": "sku_outbound_bp",
       "function": "trace_batch",
       "source": "backend"
@@ -1142,7 +1142,7 @@
       "method": "POST",
       "path": "/api/sku/outbound/<int:outbound_id>/update-status",
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1058,
+      "line": 1064,
       "blueprint": "sku_outbound_bp",
       "function": "update_outbound_status",
       "source": "backend"
@@ -1151,7 +1151,7 @@
       "method": "GET",
       "path": "/api/sku/outbound/sales-summary",
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1122,
+      "line": 1128,
       "blueprint": "sku_outbound_bp",
       "function": "get_sales_summary",
       "source": "backend"
@@ -8062,7 +8062,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 726,
+      "line": 732,
       "type": "OTHER",
       "tables": [
         "sku_outbound",
@@ -8078,7 +8078,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 786,
+      "line": 792,
       "type": "SELECT",
       "tables": [
         "sku_outbound",
@@ -8094,7 +8094,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 830,
+      "line": 836,
       "type": "SELECT",
       "tables": [
         "sku_outbound",
@@ -8110,7 +8110,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 958,
+      "line": 964,
       "type": "SELECT",
       "tables": [
         "sku_outbound",
@@ -8126,7 +8126,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1017,
+      "line": 1023,
       "type": "SELECT",
       "tables": [
         "sku_outbound",
@@ -8142,7 +8142,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1075,
+      "line": 1081,
       "type": "SELECT",
       "tables": [
         "sku_outbound",
@@ -8158,7 +8158,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1101,
+      "line": 1107,
       "type": "UPDATE",
       "tables": [
         "sku_outbound",
@@ -8174,7 +8174,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1165,
+      "line": 1171,
       "type": "OTHER",
       "tables": [
         "sku_outbound",
@@ -14708,7 +14708,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 639,
+      "line": 645,
       "name": "get_outbound_history",
       "params": "",
       "type": "python",
@@ -14716,7 +14716,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 779,
+      "line": 785,
       "name": "get_outbound_details",
       "params": "outbound_id",
       "type": "python",
@@ -14724,7 +14724,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 951,
+      "line": 957,
       "name": "trace_batch",
       "params": "traceable_code",
       "type": "python",
@@ -14732,7 +14732,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1059,
+      "line": 1065,
       "name": "update_outbound_status",
       "params": "outbound_id",
       "type": "python",
@@ -14740,7 +14740,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1123,
+      "line": 1129,
       "name": "get_sales_summary",
       "params": "",
       "type": "python",
@@ -20862,35 +20862,35 @@
         "method": "GET",
         "path": "/api/sku/outbound/history",
         "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-        "line": 638,
+        "line": 644,
         "function": "get_outbound_history"
       },
       {
         "method": "GET",
         "path": "/api/sku/outbound/<int:outbound_id>",
         "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-        "line": 778,
+        "line": 784,
         "function": "get_outbound_details"
       },
       {
         "method": "GET",
         "path": "/api/sku/outbound/trace/<traceable_code>",
         "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-        "line": 950,
+        "line": 956,
         "function": "trace_batch"
       },
       {
         "method": "POST",
         "path": "/api/sku/outbound/<int:outbound_id>/update-status",
         "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-        "line": 1058,
+        "line": 1064,
         "function": "update_outbound_status"
       },
       {
         "method": "GET",
         "path": "/api/sku/outbound/sales-summary",
         "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-        "line": 1122,
+        "line": 1128,
         "function": "get_sales_summary"
       }
     ],
@@ -24642,65 +24642,65 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 644,
+      "line": 650,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 772,
+      "line": 778,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 784,
+      "line": 790,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 944,
+      "line": 950,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 956,
+      "line": 962,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1052,
+      "line": 1058,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1064,
+      "line": 1070,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1115,
+      "line": 1121,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1128,
+      "line": 1134,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1184,
+      "line": 1190,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
