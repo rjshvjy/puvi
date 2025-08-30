@@ -1,19 +1,19 @@
 {
-  "generated_at": "2025-08-27 01:37:34.976628",
+  "generated_at": "2025-08-30 01:15:15.230353",
   "relationships": [
-    {
-      "from_table": "batch",
-      "from_column": "recipe_id",
-      "to_table": "recipes",
-      "to_column": "recipe_id",
-      "on_delete": "NO ACTION",
-      "on_update": "NO ACTION"
-    },
     {
       "from_table": "batch",
       "from_column": "seed_material_id",
       "to_table": "materials",
       "to_column": "material_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "batch",
+      "from_column": "recipe_id",
+      "to_table": "recipes",
+      "to_column": "recipe_id",
       "on_delete": "NO ACTION",
       "on_update": "NO ACTION"
     },
@@ -82,6 +82,14 @@
       "on_update": "NO ACTION"
     },
     {
+      "from_table": "customer_ship_to_locations",
+      "from_column": "customer_id",
+      "to_table": "customers",
+      "to_column": "customer_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
       "from_table": "inventory",
       "from_column": "material_id",
       "to_table": "materials",
@@ -94,6 +102,14 @@
       "from_column": "product_id",
       "to_table": "products",
       "to_column": "product_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "locations_master",
+      "from_column": "customer_id",
+      "to_table": "customers",
+      "to_column": "customer_id",
       "on_delete": "NO ACTION",
       "on_update": "NO ACTION"
     },
@@ -123,6 +139,14 @@
     },
     {
       "from_table": "materials",
+      "from_column": "unit",
+      "to_table": "uom_master",
+      "to_column": "uom_code",
+      "on_delete": "RESTRICT",
+      "on_update": "CASCADE"
+    },
+    {
+      "from_table": "materials",
       "from_column": "subcategory_id",
       "to_table": "subcategories_master",
       "to_column": "subcategory_id",
@@ -136,14 +160,6 @@
       "to_column": "supplier_id",
       "on_delete": "NO ACTION",
       "on_update": "NO ACTION"
-    },
-    {
-      "from_table": "materials",
-      "from_column": "unit",
-      "to_table": "uom_master",
-      "to_column": "uom_code",
-      "on_delete": "RESTRICT",
-      "on_update": "CASCADE"
     },
     {
       "from_table": "oil_cake_inventory",
@@ -195,17 +211,17 @@
     },
     {
       "from_table": "purchases",
-      "from_column": "material_id",
-      "to_table": "materials",
-      "to_column": "material_id",
+      "from_column": "supplier_id",
+      "to_table": "suppliers",
+      "to_column": "supplier_id",
       "on_delete": "NO ACTION",
       "on_update": "NO ACTION"
     },
     {
       "from_table": "purchases",
-      "from_column": "supplier_id",
-      "to_table": "suppliers",
-      "to_column": "supplier_id",
+      "from_column": "material_id",
+      "to_table": "materials",
+      "to_column": "material_id",
       "on_delete": "NO ACTION",
       "on_update": "NO ACTION"
     },
@@ -235,18 +251,18 @@
     },
     {
       "from_table": "sku_bom_details",
-      "from_column": "bom_id",
-      "to_table": "sku_bom_master",
-      "to_column": "bom_id",
-      "on_delete": "CASCADE",
-      "on_update": "NO ACTION"
-    },
-    {
-      "from_table": "sku_bom_details",
       "from_column": "material_id",
       "to_table": "materials",
       "to_column": "material_id",
       "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "sku_bom_details",
+      "from_column": "bom_id",
+      "to_table": "sku_bom_master",
+      "to_column": "bom_id",
+      "on_delete": "CASCADE",
       "on_update": "NO ACTION"
     },
     {
@@ -275,9 +291,9 @@
     },
     {
       "from_table": "sku_expiry_tracking",
-      "from_column": "sku_id",
-      "to_table": "sku_master",
-      "to_column": "sku_id",
+      "from_column": "location_id",
+      "to_table": "locations_master",
+      "to_column": "location_id",
       "on_delete": "NO ACTION",
       "on_update": "NO ACTION"
     },
@@ -290,7 +306,7 @@
       "on_update": "NO ACTION"
     },
     {
-      "from_table": "sku_inventory",
+      "from_table": "sku_expiry_tracking",
       "from_column": "sku_id",
       "to_table": "sku_master",
       "to_column": "sku_id",
@@ -299,9 +315,25 @@
     },
     {
       "from_table": "sku_inventory",
+      "from_column": "location_id",
+      "to_table": "locations_master",
+      "to_column": "location_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "sku_inventory",
       "from_column": "production_id",
       "to_table": "sku_production",
       "to_column": "production_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "sku_inventory",
+      "from_column": "sku_id",
+      "to_table": "sku_master",
+      "to_column": "sku_id",
       "on_delete": "NO ACTION",
       "on_update": "NO ACTION"
     },
@@ -338,6 +370,54 @@
       "on_update": "NO ACTION"
     },
     {
+      "from_table": "sku_outbound",
+      "from_column": "ship_to_location_id",
+      "to_table": "customer_ship_to_locations",
+      "to_column": "ship_to_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "sku_outbound",
+      "from_column": "from_location_id",
+      "to_table": "locations_master",
+      "to_column": "location_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "sku_outbound",
+      "from_column": "to_location_id",
+      "to_table": "locations_master",
+      "to_column": "location_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "sku_outbound",
+      "from_column": "customer_id",
+      "to_table": "customers",
+      "to_column": "customer_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "sku_outbound_items",
+      "from_column": "outbound_id",
+      "to_table": "sku_outbound",
+      "to_column": "outbound_id",
+      "on_delete": "CASCADE",
+      "on_update": "NO ACTION"
+    },
+    {
+      "from_table": "sku_outbound_items",
+      "from_column": "sku_id",
+      "to_table": "sku_master",
+      "to_column": "sku_id",
+      "on_delete": "NO ACTION",
+      "on_update": "NO ACTION"
+    },
+    {
       "from_table": "sku_production",
       "from_column": "bom_id",
       "to_table": "sku_bom_master",
@@ -370,5 +450,5 @@
       "on_update": "NO ACTION"
     }
   ],
-  "relationship_count": 46
+  "relationship_count": 56
 }

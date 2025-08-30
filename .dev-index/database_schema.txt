@@ -1,6 +1,6 @@
 # PUVI Database Schema
-# Generated: 2025-08-27 01:37:34.961131
-# Total Tables: 72
+# Generated: 2025-08-30 01:15:15.209362
+# Total Tables: 81
 
 === available_oil_types ===
 oil_type: character varying(50)
@@ -217,6 +217,38 @@ reason: text
 overridden_by: character varying(100)
 override_datetime: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 
+=== customer_ship_to_locations ===
+ship_to_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('customer_ship_to_locations_ship_to_id_seq'::regclass)
+customer_id: integer(32,0) [FK] -> customers.customer_id NOT NULL
+location_code: character varying(20) [UQ] NOT NULL
+location_name: character varying(255) NOT NULL
+address_line1: character varying(255)
+address_line2: character varying(255)
+city: character varying(100)
+state: character varying(50)
+pincode: character varying(10)
+contact_person: character varying(100)
+contact_phone: character varying(15)
+gstin: character varying(15)
+is_default: boolean DEFAULT false
+is_active: boolean DEFAULT true
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+created_by: character varying(100)
+
+=== customers ===
+customer_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('customers_customer_id_seq'::regclass)
+customer_code: character varying(10) [UQ] NOT NULL
+customer_name: character varying(255) NOT NULL
+customer_type: character varying(50)
+gst_number: character varying(15)
+pan_number: character varying(10)
+contact_person: character varying(100)
+contact_phone: character varying(15)
+contact_email: character varying(100)
+is_active: boolean DEFAULT true
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+created_by: character varying(100)
+
 === inventory ===
 inventory_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('inventory_inventory_id_seq'::regclass)
 material_id: integer(32,0) [FK] -> materials.material_id
@@ -239,6 +271,27 @@ material_count: bigint(64,0)
 total_quantity: numeric
 total_value: numeric
 units: text
+
+=== locations_master ===
+location_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('locations_master_location_id_seq'::regclass)
+location_code: character varying(10) [UQ] NOT NULL
+location_name: character varying(255) NOT NULL
+location_type: character varying(20) NOT NULL
+ownership: character varying(20) NOT NULL
+customer_id: integer(32,0) [FK] -> customers.customer_id
+address_line1: character varying(255)
+address_line2: character varying(255)
+city: character varying(100)
+state: character varying(50)
+pincode: character varying(10)
+is_production_unit: boolean DEFAULT false
+is_sales_point: boolean DEFAULT false
+is_default: boolean DEFAULT false
+is_active: boolean DEFAULT true
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+updated_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+created_by: character varying(100)
+notes: text
 
 === masters_audit_log ===
 audit_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('masters_audit_log_audit_id_seq'::regclass)
@@ -357,6 +410,20 @@ entered_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 is_processed: boolean DEFAULT false
 processed_at: timestamp without time zone
 
+=== outbound_summary ===
+outbound_id: integer(32,0)
+outbound_code: character varying(50)
+outbound_date: integer(32,0)
+transaction_type: character varying(20)
+from_location: character varying(255)
+destination: character varying
+sku_count: bigint(64,0)
+total_units: bigint(64,0)
+total_value: numeric
+transport_cost: numeric(10,2)
+status: character varying(20)
+created_at: timestamp without time zone
+
 === package_sizes_master ===
 size_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('package_sizes_master_size_id_seq'::regclass)
 size_code: character varying(20) [UQ] NOT NULL
@@ -468,6 +535,15 @@ material_id: integer(32,0) [FK] -> materials.material_id
 quantity: numeric(10,2)
 expected_yield: numeric(5,4)
 
+=== sales_by_ship_to_location ===
+customer_name: character varying(255)
+ship_to_location: character varying(255)
+sku_code: character varying(50)
+product_name: character varying(100)
+total_quantity: bigint(64,0)
+total_value: numeric
+shipment_count: bigint(64,0)
+
 === seed_batch_tracking ===
 seed_purchase_code: character varying(100) [PK] NOT NULL
 material_id: integer(32,0)
@@ -482,6 +558,20 @@ supplier_id: integer(32,0) [FK] -> suppliers.supplier_id
 financial_year: character varying(7) [UQ]
 current_serial: integer(32,0) DEFAULT 0
 last_updated: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+
+=== sku_batch_traceability ===
+outbound_code: character varying(50)
+outbound_date: integer(32,0)
+transaction_type: character varying(20)
+from_location: character varying(255)
+destination: character varying
+sku_code: character varying(50)
+product_name: character varying(100)
+sku_production_code: text
+quantity: integer(32,0)
+expiry_date: text
+mrp: numeric
+production_cost: numeric
 
 === sku_bom_details ===
 detail_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('sku_bom_details_detail_id_seq'::regclass)
@@ -528,6 +618,7 @@ quantity_remaining: numeric(10,2) NOT NULL
 status: character varying(50) DEFAULT 'active'::character varying
 created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 updated_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+location_id: integer(32,0) [FK] -> locations_master.location_id
 
 === sku_inventory ===
 inventory_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('sku_inventory_inventory_id_seq'::regclass)
@@ -541,6 +632,9 @@ batch_code: character varying(50)
 status: character varying(20) DEFAULT 'active'::character varying
 created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 updated_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+location_id: integer(32,0) [FK] -> locations_master.location_id
+quantity_allocated: numeric(10,2) DEFAULT 0
+last_updated: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 
 === sku_master ===
 sku_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('sku_master_sku_id_seq'::regclass)
@@ -592,6 +686,41 @@ oil_cost_per_kg: numeric(10,2) NOT NULL
 allocation_cost: numeric(10,2) NOT NULL
 created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 
+=== sku_outbound ===
+outbound_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('sku_outbound_outbound_id_seq'::regclass)
+outbound_code: character varying(50) [UQ] NOT NULL
+transaction_type: character varying(20) NOT NULL
+from_location_id: integer(32,0) [FK] -> locations_master.location_id NOT NULL
+to_location_id: integer(32,0) [FK] -> locations_master.location_id
+customer_id: integer(32,0) [FK] -> customers.customer_id
+customer_po_number: character varying(50)
+invoice_number: character varying(50)
+eway_bill_number: character varying(20)
+outbound_date: integer(32,0) NOT NULL
+dispatch_date: integer(32,0)
+transport_mode: character varying(20)
+transport_vendor: character varying(255)
+vehicle_number: character varying(20)
+lr_number: character varying(50)
+transport_cost: numeric(10,2) DEFAULT 0
+status: character varying(20) DEFAULT 'draft'::character varying
+notes: text
+created_by: character varying(100)
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+updated_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+ship_to_location_id: integer(32,0) [FK] -> customer_ship_to_locations.ship_to_id
+
+=== sku_outbound_items ===
+item_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('sku_outbound_items_item_id_seq'::regclass)
+outbound_id: integer(32,0) [FK] -> sku_outbound.outbound_id
+sku_id: integer(32,0) [FK] -> sku_master.sku_id NOT NULL
+quantity_ordered: integer(32,0) NOT NULL
+quantity_shipped: integer(32,0)
+allocation_data: jsonb NOT NULL
+unit_price: numeric(10,2)
+line_total: numeric(12,2)
+notes: text
+
 === sku_production ===
 production_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('sku_production_production_id_seq'::regclass)
 production_code: character varying(50) [UQ] NOT NULL
@@ -621,6 +750,19 @@ created_by: character varying(100)
 created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 expiry_date: integer(32,0)
 mrp_at_production: numeric(10,2)
+
+=== stock_by_location ===
+location_id: integer(32,0)
+location_name: character varying(255)
+location_type: character varying(20)
+ownership: character varying(20)
+sku_id: integer(32,0)
+sku_code: character varying(50)
+product_name: character varying(100)
+package_size: character varying(20)
+quantity_available: numeric(10,2)
+quantity_allocated: numeric(10,2)
+last_updated: timestamp without time zone
 
 === subcategories_master ===
 subcategory_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('subcategories_master_subcategory_id_seq'::regclass)
