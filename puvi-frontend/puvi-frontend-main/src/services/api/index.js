@@ -1137,6 +1137,9 @@ export const purchaseAPI = api.purchase;
 export const blendingAPI = api.blending;
 export const salesAPI = api.sales;  // NEW EXPORT
 export const writeoffAPI = api.writeoff;  // ENHANCED EXPORT
+export const locationsAPI = api.locations;
+export const customersAPI = api.customers;
+export const skuOutboundAPI = api.skuOutbound;
 
 // Export the default skuService object for legacy imports
 export const skuService = {
