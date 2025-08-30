@@ -1,5 +1,5 @@
 # Feature Pack: LOCATIONS
-Generated: 2025-08-30T18:26:28.226Z
+Generated: 2025-08-30T18:49:31.811Z
 Routes: 9 | Tables: 5 | Files: 1
 
 ## Table of Contents
