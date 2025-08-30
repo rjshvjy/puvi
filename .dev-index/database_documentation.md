@@ -1,6 +1,6 @@
 # PUVI Database Schema Documentation
 
-Generated: 2025-08-30 01:15:15.231187
+Generated: 2025-08-30 01:37:37.353278
 Database Version: PostgreSQL 17.4 on aarch64-unknown-linux-gnu, compiled by gcc (GCC) 13.2.0, 64-bit
 Total Tables: 81
 
