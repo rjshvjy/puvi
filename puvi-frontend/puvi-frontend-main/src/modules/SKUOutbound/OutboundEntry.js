@@ -2,7 +2,7 @@
 // SKU Outbound Entry Component - Handles creation of outbound transactions
 // Supports: Internal Transfers, Third Party Transfers, and Sales
 // Features: FEFO/FIFO batch allocation, GST calculation, multi-step workflow
-// Version: 1.0 - Initial implementation based on backend sku_outbound module
+// Version: 2.0 - Fixed with Weight-Based Cost Allocation
 
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
@@ -21,7 +21,7 @@ const OutboundEntry = () => {
   const [shipToLocations, setShipToLocations] = useState([]);
   const [availableBatches, setAvailableBatches] = useState([]);
   
-  // Form data
+  // Form data - FIXED: Removed broken cost fields, added handling_cost
   const [outboundData, setOutboundData] = useState({
     transaction_type: 'transfer',
     from_location_id: '',
@@ -38,10 +38,7 @@ const OutboundEntry = () => {
     vehicle_number: '',
     lr_number: '',
     transport_cost: '0',
-    loading_charges: '0',
-    unloading_charges: '0',
-    documentation_charges: '0',
-    other_charges: '0',
+    handling_cost: '0',  // NEW: Added handling cost
     notes: '',
     created_by: 'User'
   });
@@ -59,6 +56,9 @@ const OutboundEntry = () => {
   // Allocation strategy
   const [allocationStrategy, setAllocationStrategy] = useState('fefo');
   const [manualAllocations, setManualAllocations] = useState({});
+  
+  // NEW: Weight-based cost allocation preview
+  const [costAllocationPreview, setCostAllocationPreview] = useState([]);
 
   // Load master data on mount
   useEffect(() => {
@@ -89,6 +89,11 @@ const OutboundEntry = () => {
       }
     }
   }, [outboundData.to_location_id, locations]);
+
+  // NEW: Calculate weight-based cost allocation when items or costs change
+  useEffect(() => {
+    calculateCostAllocation();
+  }, [items, outboundData.transport_cost, outboundData.handling_cost, skus]);
 
   const fetchMasterData = async () => {
     try {
@@ -161,6 +166,50 @@ const OutboundEntry = () => {
     if (items.length > 1) {
       setItems(items.filter((_, i) => i !== index));
     }
+  };
+
+  // NEW: Calculate weight-based cost allocation
+  const calculateCostAllocation = () => {
+    const validItems = items.filter(item => item.sku_id && item.quantity_ordered);
+    if (validItems.length === 0 || skus.length === 0) {
+      setCostAllocationPreview([]);
+      return;
+    }
+
+    let totalWeight = 0;
+    const itemWeights = [];
+
+    // Calculate total weight
+    validItems.forEach(item => {
+      const sku = skus.find(s => s.sku_id === parseInt(item.sku_id));
+      if (sku) {
+        const weight = (sku.packaged_weight_kg || 1.0) * parseFloat(item.quantity_ordered || 0);
+        itemWeights.push({
+          sku_id: item.sku_id,
+          sku_code: sku.sku_code,
+          product_name: sku.product_name,
+          quantity: parseFloat(item.quantity_ordered || 0),
+          unit_weight: sku.packaged_weight_kg || 1.0,
+          total_weight: weight
+        });
+        totalWeight += weight;
+      }
+    });
+
+    // Calculate cost allocation
+    const transportCost = parseFloat(outboundData.transport_cost) || 0;
+    const handlingCost = parseFloat(outboundData.handling_cost) || 0;
+    
+    const allocation = itemWeights.map(item => ({
+      ...item,
+      weight_percentage: totalWeight > 0 ? ((item.total_weight / totalWeight) * 100).toFixed(2) : 0,
+      transport_allocated: totalWeight > 0 ? ((item.total_weight / totalWeight) * transportCost).toFixed(2) : 0,
+      handling_allocated: totalWeight > 0 ? ((item.total_weight / totalWeight) * handlingCost).toFixed(2) : 0,
+      transport_per_kg: totalWeight > 0 ? (transportCost / totalWeight).toFixed(2) : 0,
+      handling_per_kg: totalWeight > 0 ? (handlingCost / totalWeight).toFixed(2) : 0
+    }));
+
+    setCostAllocationPreview(allocation);
   };
 
   const checkAvailability = async () => {
@@ -354,11 +403,13 @@ const OutboundEntry = () => {
         throw new Error('No valid items with allocations');
       }
 
-      // Prepare payload
+      // Prepare payload - FIXED: Only send transport_cost and handling_cost
       const payload = {
         ...outboundData,
         outbound_date: formatDateForAPI(outboundData.outbound_date),
         dispatch_date: outboundData.dispatch_date ? formatDateForAPI(outboundData.dispatch_date) : null,
+        transport_cost: parseFloat(outboundData.transport_cost) || 0,
+        handling_cost: parseFloat(outboundData.handling_cost) || 0,
         items: validItems.map(item => ({
           sku_id: parseInt(item.sku_id),
           quantity_ordered: parseInt(item.quantity_ordered),
@@ -369,6 +420,13 @@ const OutboundEntry = () => {
           notes: item.notes
         }))
       };
+
+      // Remove undefined fields
+      Object.keys(payload).forEach(key => {
+        if (payload[key] === undefined || payload[key] === '') {
+          delete payload[key];
+        }
+      });
 
       const response = await api.skuOutbound.create(payload);
       
@@ -411,10 +469,7 @@ const OutboundEntry = () => {
       vehicle_number: '',
       lr_number: '',
       transport_cost: '0',
-      loading_charges: '0',
-      unloading_charges: '0',
-      documentation_charges: '0',
-      other_charges: '0',
+      handling_cost: '0',  // FIXED: Only transport and handling costs
       notes: '',
       created_by: 'User'
     });
@@ -428,6 +483,7 @@ const OutboundEntry = () => {
     }]);
     setAvailableBatches([]);
     setManualAllocations({});
+    setCostAllocationPreview([]);
     setMessage({ type: '', text: '' });
   };
 
@@ -471,13 +527,10 @@ const OutboundEntry = () => {
       });
     }
 
+    // FIXED: Only use transport and handling costs
     const transportCost = parseFloat(outboundData.transport_cost) || 0;
-    const loadingCharges = parseFloat(outboundData.loading_charges) || 0;
-    const unloadingCharges = parseFloat(outboundData.unloading_charges) || 0;
-    const documentationCharges = parseFloat(outboundData.documentation_charges) || 0;
-    const otherCharges = parseFloat(outboundData.other_charges) || 0;
-
-    const totalCostElements = transportCost + loadingCharges + unloadingCharges + documentationCharges + otherCharges;
+    const handlingCost = parseFloat(outboundData.handling_cost) || 0;
+    const totalCostElements = transportCost + handlingCost;
     const grandTotal = subtotal + totalGst + totalCostElements;
 
     return {
@@ -489,6 +542,50 @@ const OutboundEntry = () => {
   };
 
   const totals = calculateTotals();
+
+  // NEW: Render cost allocation preview
+  const renderCostAllocationPreview = () => {
+    if (costAllocationPreview.length === 0) return null;
+
+    const totalTransport = parseFloat(outboundData.transport_cost) || 0;
+    const totalHandling = parseFloat(outboundData.handling_cost) || 0;
+    const totalWeight = costAllocationPreview.reduce((sum, item) => sum + item.total_weight, 0);
+
+    return (
+      <div className="cost-allocation-preview">
+        <h4>Weight-Based Cost Allocation Preview</h4>
+        <div className="allocation-summary">
+          <span>Total Shipment Weight: {totalWeight.toFixed(2)} kg</span>
+          <span> | Transport Cost/kg: ₹{totalWeight > 0 ? (totalTransport / totalWeight).toFixed(2) : '0.00'}</span>
+          <span> | Handling Cost/kg: ₹{totalWeight > 0 ? (totalHandling / totalWeight).toFixed(2) : '0.00'}</span>
+        </div>
+        <table className="allocation-table">
+          <thead>
+            <tr>
+              <th>SKU</th>
+              <th>Qty</th>
+              <th>Weight (kg)</th>
+              <th>Weight %</th>
+              <th>Transport Allocated</th>
+              <th>Handling Allocated</th>
+            </tr>
+          </thead>
+          <tbody>
+            {costAllocationPreview.map((item, index) => (
+              <tr key={index}>
+                <td>{item.sku_code}</td>
+                <td>{item.quantity}</td>
+                <td>{item.total_weight.toFixed(2)}</td>
+                <td>{item.weight_percentage}%</td>
+                <td>₹{item.transport_allocated}</td>
+                <td>₹{item.handling_allocated}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
 
   return (
     <div className="outbound-entry">
@@ -834,7 +931,7 @@ const OutboundEntry = () => {
           </div>
 
           <div className="form-section">
-            <h3>Cost Elements</h3>
+            <h3>Shipment Costs</h3>
             <div className="form-grid">
               <div className="form-group">
                 <label>Transport Cost (₹)</label>
@@ -849,53 +946,20 @@ const OutboundEntry = () => {
               </div>
 
               <div className="form-group">
-                <label>Loading Charges (₹)</label>
+                <label>Handling Cost (₹)</label>
                 <input
                   type="number"
-                  name="loading_charges"
-                  value={outboundData.loading_charges}
-                  onChange={handleInputChange}
-                  step="0.01"
-                  min="0"
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Unloading Charges (₹)</label>
-                <input
-                  type="number"
-                  name="unloading_charges"
-                  value={outboundData.unloading_charges}
-                  onChange={handleInputChange}
-                  step="0.01"
-                  min="0"
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Documentation Charges (₹)</label>
-                <input
-                  type="number"
-                  name="documentation_charges"
-                  value={outboundData.documentation_charges}
-                  onChange={handleInputChange}
-                  step="0.01"
-                  min="0"
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Other Charges (₹)</label>
-                <input
-                  type="number"
-                  name="other_charges"
-                  value={outboundData.other_charges}
+                  name="handling_cost"
+                  value={outboundData.handling_cost}
                   onChange={handleInputChange}
                   step="0.01"
                   min="0"
                 />
               </div>
             </div>
+            
+            {/* NEW: Show cost allocation preview */}
+            {renderCostAllocationPreview()}
           </div>
 
           <div className="form-section">
@@ -922,7 +986,7 @@ const OutboundEntry = () => {
                   <span>₹{totals.totalGst}</span>
                 </div>
                 <div className="summary-row">
-                  <span>Cost Elements:</span>
+                  <span>Shipment Costs:</span>
                   <span>₹{totals.totalCostElements}</span>
                 </div>
                 <div className="summary-row grand-total">
@@ -1104,6 +1168,7 @@ const OutboundEntry = () => {
                 <tr>
                   <th>SKU</th>
                   <th>Quantity</th>
+                  <th>Weight (kg)</th>
                   <th>Batches Allocated</th>
                   {outboundData.transaction_type === 'sales' && (
                     <>
@@ -1119,11 +1184,13 @@ const OutboundEntry = () => {
                   const sku = skus.find(s => s.sku_id === parseInt(item.sku_id));
                   const amount = parseFloat(item.quantity_ordered) * parseFloat(item.unit_price || 0);
                   const gstAmount = amount * parseFloat(item.gst_rate || 0) / 100;
+                  const itemWeight = (sku?.packaged_weight_kg || 1.0) * parseFloat(item.quantity_ordered);
                   
                   return (
                     <tr key={index}>
                       <td>{sku?.sku_code} - {sku?.product_name}</td>
                       <td>{item.quantity_ordered}</td>
+                      <td>{itemWeight.toFixed(2)}</td>
                       <td>{item.allocations.length} batch(es)</td>
                       {outboundData.transaction_type === 'sales' && (
                         <>
@@ -1139,6 +1206,9 @@ const OutboundEntry = () => {
             </table>
           </div>
 
+          {/* Show cost allocation summary */}
+          {renderCostAllocationPreview()}
+
           {outboundData.transaction_type === 'sales' && (
             <div className="review-section">
               <h4>Financial Summary</h4>
@@ -1152,7 +1222,7 @@ const OutboundEntry = () => {
                   <span>₹{totals.totalGst}</span>
                 </div>
                 <div className="summary-row">
-                  <span>Cost Elements:</span>
+                  <span>Shipment Costs:</span>
                   <span>₹{totals.totalCostElements}</span>
                 </div>
                 <div className="summary-row grand-total">
