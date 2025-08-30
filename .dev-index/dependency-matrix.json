@@ -1,9 +1,9 @@
 {
   "version": "1.0",
-  "generatedAt": "2025-08-30T01:24:23.033Z",
+  "generatedAt": "2025-08-30T01:37:31.776Z",
   "summary": {
-    "totalTables": 66,
-    "sharedTables": 32,
+    "totalTables": 67,
+    "sharedTables": 35,
     "hardcodedCategories": 0,
     "migrationOpportunities": 0
   },
@@ -598,6 +598,118 @@
         }
       }
     },
+    "locations_master": {
+      "usedBy": [
+        "locations",
+        "sku-outbound"
+      ],
+      "fileCount": 2,
+      "operations": {
+        "locations": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/locations.py"
+          ],
+          "queryCount": 0
+        },
+        "sku-outbound": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_outbound.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "sku_inventory": {
+      "usedBy": [
+        "locations",
+        "material-writeoff",
+        "sku-outbound",
+        "sku-production"
+      ],
+      "fileCount": 4,
+      "operations": {
+        "locations": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/locations.py"
+          ],
+          "queryCount": 0
+        },
+        "material-writeoff": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/material_writeoff.py"
+          ],
+          "queryCount": 0
+        },
+        "sku-outbound": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_outbound.py"
+          ],
+          "queryCount": 0
+        },
+        "sku-production": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_production.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "sku_expiry_tracking": {
+      "usedBy": [
+        "locations",
+        "sku-outbound"
+      ],
+      "fileCount": 2,
+      "operations": {
+        "locations": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/locations.py"
+          ],
+          "queryCount": 0
+        },
+        "sku-outbound": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_outbound.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "sku_outbound": {
+      "usedBy": [
+        "locations",
+        "sku-outbound"
+      ],
+      "fileCount": 2,
+      "operations": {
+        "locations": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/locations.py"
+          ],
+          "queryCount": 0
+        },
+        "sku-outbound": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_outbound.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "customers": {
+      "usedBy": [
+        "locations"
+      ],
+      "fileCount": 1,
+      "operations": {
+        "locations": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/locations.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
     "masters_audit_log": {
       "usedBy": [
         "masters-common",
@@ -810,34 +922,6 @@
         "writeoff-analytics": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/writeoff_analytics.py"
-          ],
-          "queryCount": 0
-        }
-      }
-    },
-    "sku_inventory": {
-      "usedBy": [
-        "material-writeoff",
-        "sku-outbound",
-        "sku-production"
-      ],
-      "fileCount": 3,
-      "operations": {
-        "material-writeoff": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/material_writeoff.py"
-          ],
-          "queryCount": 0
-        },
-        "sku-outbound": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/sku_outbound.py"
-          ],
-          "queryCount": 0
-        },
-        "sku-production": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/sku_production.py"
           ],
           "queryCount": 0
         }
@@ -1243,48 +1327,6 @@
         }
       }
     },
-    "sku_outbound": {
-      "usedBy": [
-        "sku-outbound"
-      ],
-      "fileCount": 1,
-      "operations": {
-        "sku-outbound": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/sku_outbound.py"
-          ],
-          "queryCount": 0
-        }
-      }
-    },
-    "sku_expiry_tracking": {
-      "usedBy": [
-        "sku-outbound"
-      ],
-      "fileCount": 1,
-      "operations": {
-        "sku-outbound": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/sku_outbound.py"
-          ],
-          "queryCount": 0
-        }
-      }
-    },
-    "locations_master": {
-      "usedBy": [
-        "sku-outbound"
-      ],
-      "fileCount": 1,
-      "operations": {
-        "sku-outbound": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/sku_outbound.py"
-          ],
-          "queryCount": 0
-        }
-      }
-    },
     "available": {
       "usedBy": [
         "sku-outbound"
@@ -1612,6 +1654,19 @@
       "recommendation": "⚠️ CRITICAL: Changes require coordination across 5 modules"
     },
     {
+      "table": "sku_inventory",
+      "sharedBy": [
+        "locations",
+        "material-writeoff",
+        "sku-outbound",
+        "sku-production"
+      ],
+      "moduleCount": 4,
+      "fileCount": 4,
+      "risk": "HIGH",
+      "recommendation": "⚠️ CRITICAL: Changes require coordination across 4 modules"
+    },
+    {
       "table": "sku_master",
       "sharedBy": [
         "masters-crud",
@@ -1705,18 +1760,6 @@
       "recommendation": "Changes will affect material-writeoff, system-config, writeoff-analytics"
     },
     {
-      "table": "sku_inventory",
-      "sharedBy": [
-        "material-writeoff",
-        "sku-outbound",
-        "sku-production"
-      ],
-      "moduleCount": 3,
-      "fileCount": 3,
-      "risk": "MEDIUM",
-      "recommendation": "Changes will affect material-writeoff, sku-outbound, sku-production"
-    },
-    {
       "table": "material_writeoffs",
       "sharedBy": [
         "material-writeoff",
@@ -1771,6 +1814,39 @@
       "fileCount": 2,
       "risk": "LOW",
       "recommendation": "Changes will affect blending, sku-production"
+    },
+    {
+      "table": "locations_master",
+      "sharedBy": [
+        "locations",
+        "sku-outbound"
+      ],
+      "moduleCount": 2,
+      "fileCount": 2,
+      "risk": "LOW",
+      "recommendation": "Changes will affect locations, sku-outbound"
+    },
+    {
+      "table": "sku_expiry_tracking",
+      "sharedBy": [
+        "locations",
+        "sku-outbound"
+      ],
+      "moduleCount": 2,
+      "fileCount": 2,
+      "risk": "LOW",
+      "recommendation": "Changes will affect locations, sku-outbound"
+    },
+    {
+      "table": "sku_outbound",
+      "sharedBy": [
+        "locations",
+        "sku-outbound"
+      ],
+      "moduleCount": 2,
+      "fileCount": 2,
+      "risk": "LOW",
+      "recommendation": "Changes will affect locations, sku-outbound"
     },
     {
       "table": "masters_audit_log",

@@ -1,12 +1,12 @@
 # PUVI System - Dependency Analysis Report
 
-**Generated:** 2025-08-30T01:24:23.033Z
+**Generated:** 2025-08-30T01:37:31.776Z
 **Version:** 1.0
 
 ## Executive Summary
 
-- **Total Tables:** 66
-- **Shared Tables:** 32 (cross-module dependencies)
+- **Total Tables:** 67
+- **Shared Tables:** 35 (cross-module dependencies)
 - **Hardcoded Categories:** 0
 - **Migration Opportunities:** 0
 
@@ -52,6 +52,12 @@ Tables used by multiple modules (changes have cascading effects):
 - **File Count:** 5
 - **Recommendation:** ⚠️ CRITICAL: Changes require coordination across 5 modules
 
+### sku_inventory
+- **Risk Level:** HIGH
+- **Shared By:** locations, material-writeoff, sku-outbound, sku-production
+- **File Count:** 4
+- **Recommendation:** ⚠️ CRITICAL: Changes require coordination across 4 modules
+
 ### sku_master
 - **Risk Level:** HIGH
 - **Shared By:** masters-crud, material-writeoff, package-sizes, sku-management, sku-outbound, sku-production, system-config, unknown
@@ -94,12 +100,6 @@ Tables used by multiple modules (changes have cascading effects):
 - **File Count:** 3
 - **Recommendation:** Changes will affect material-writeoff, system-config, writeoff-analytics
 
-### sku_inventory
-- **Risk Level:** MEDIUM
-- **Shared By:** material-writeoff, sku-outbound, sku-production
-- **File Count:** 3
-- **Recommendation:** Changes will affect material-writeoff, sku-outbound, sku-production
-
 ### material_writeoffs
 - **Risk Level:** MEDIUM
 - **Shared By:** material-writeoff, opening-balance, writeoff-analytics
@@ -121,4 +121,4 @@ Hardcoded values that should be moved to database:
 - **sku_production**: Used by material-writeoff, sku-management, sku-outbound, sku-production, unknown (5 files)
 - **suppliers**: Used by opening-balance, purchase, sku-production, system-config, unknown (6 files)
 - **categories_master**: Used by blending, masters-crud, material-writeoff, purchase (4 files)
-- **oil_cake_inventory**: Used by batch-production, material-sales, material-writeoff (3 files)
+- **sku_inventory**: Used by locations, material-writeoff, sku-outbound, sku-production (4 files)
