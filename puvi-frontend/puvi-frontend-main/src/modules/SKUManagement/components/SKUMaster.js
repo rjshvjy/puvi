@@ -1,9 +1,9 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/modules/SKUManagement/components/SKUMaster.js
-// ROBUST VERSION - Uses API service for all calls, ready for category/subcategory migration
-// Updated: Dynamic package sizes from database (no hardcoded values)
+// ENHANCED VERSION - Includes packaged weight management for cost allocation
+// Updated: Weight-based cost allocation support
 
 import React, { useState, useEffect } from 'react';
-import api, { skuAPI, configAPI } from '../../../services/api'; // UPDATED: Added configAPI import
+import api, { skuAPI, configAPI } from '../../../services/api';
 import './SKUMaster.css';
 
 const SKUMaster = () => {
@@ -24,19 +24,20 @@ const SKUMaster = () => {
   
   // Oil types and package sizes - NOW BOTH DYNAMIC
   const [oilTypes, setOilTypes] = useState([]);
-  const [packageSizes, setPackageSizes] = useState([]); // UPDATED: No hardcoded values
-  const [loadingPackageSizes, setLoadingPackageSizes] = useState(false); // NEW: Loading state
+  const [packageSizes, setPackageSizes] = useState([]);
+  const [loadingPackageSizes, setLoadingPackageSizes] = useState(false);
   
-  // Form states
+  // Form states - ENHANCED with packaged_weight_kg
   const [formData, setFormData] = useState({
     sku_code: '',
     product_name: '',
     oil_type: '',
-    package_size: '',  // UPDATED: Empty default instead of '1L'
+    package_size: '',
     density: 0.91,
     mrp_current: '',
     shelf_life_months: 9,
     mrp_effective_date: new Date().toISOString().split('T')[0],
+    packaged_weight_kg: '', // NEW: Added weight field
     is_active: true
   });
   
@@ -56,8 +57,8 @@ const SKUMaster = () => {
   // Fetch data on component mount
   useEffect(() => {
     fetchSKUs();
-    fetchOilTypes(); // Fetch oil types from API
-    fetchPackageSizes(); // NEW: Fetch package sizes from API
+    fetchOilTypes();
+    fetchPackageSizes();
   }, []);
 
   // Apply filters whenever filter values or SKU list changes
@@ -65,18 +66,61 @@ const SKUMaster = () => {
     applyFilters();
   }, [searchTerm, filterOilType, filterPackageSize, filterActive, skuList]);
 
-  // NEW: Fetch package sizes from API - NO HARDCODED FALLBACKS
+  // Calculate estimated weight based on package size and density
+  const calculateEstimatedWeight = (packageSize, density) => {
+    if (!packageSize || !density) return '';
+    
+    const size = packageSize.toUpperCase();
+    let liters = 0;
+    
+    if (size.includes('ML')) {
+      liters = parseFloat(size.replace('ML', '')) / 1000;
+    } else if (size.includes('L')) {
+      liters = parseFloat(size.replace('L', ''));
+    }
+    
+    if (liters > 0) {
+      // Oil weight + 10% for packaging
+      const weight = (liters * density * 1.1).toFixed(3);
+      return weight;
+    }
+    
+    return '';
+  };
+
+  // Handle package size or density change to auto-calculate weight
+  const handlePackageSizeOrDensityChange = (e) => {
+    const { name, value } = e.target;
+    const newFormData = { ...formData, [name]: value };
+    
+    // Auto-calculate weight if not manually set
+    if (!formData.packaged_weight_kg || formData.packaged_weight_kg === '') {
+      const packageSize = name === 'package_size' ? value : formData.package_size;
+      const density = name === 'density' ? value : formData.density;
+      const estimatedWeight = calculateEstimatedWeight(packageSize, density);
+      
+      if (estimatedWeight) {
+        newFormData.packaged_weight_kg = estimatedWeight;
+      }
+    }
+    
+    setFormData(newFormData);
+    
+    // Clear error for this field
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
+  };
+
+  // Fetch package sizes from API
   const fetchPackageSizes = async () => {
     setLoadingPackageSizes(true);
     try {
-      // Use the configAPI to get package sizes from database
       const response = await configAPI.getPackageSizes();
       
       if (response.success && response.values && response.values.length > 0) {
-        // Set package sizes from database
         setPackageSizes(response.values);
         
-        // Set default package size in form if available
         if (response.values.length > 0 && !formData.package_size) {
           setFormData(prev => ({
             ...prev,
@@ -84,7 +128,6 @@ const SKUMaster = () => {
           }));
         }
       } else if (response.success && response.data && response.data.length > 0) {
-        // Handle alternative response structure
         setPackageSizes(response.data);
         
         if (response.data.length > 0 && !formData.package_size) {
@@ -94,11 +137,8 @@ const SKUMaster = () => {
           }));
         }
       } else {
-        // NO FALLBACK - If no package sizes exist, show empty
         console.warn('No package sizes available in database');
         setPackageSizes([]);
-        
-        // Show message to user
         setMessage({ 
           type: 'warning', 
           text: 'No package sizes configured. Please configure package sizes in the system.' 
@@ -106,7 +146,6 @@ const SKUMaster = () => {
       }
     } catch (error) {
       console.error('Error fetching package sizes:', error);
-      // NO FALLBACK - On error, show empty
       setPackageSizes([]);
       setMessage({ 
         type: 'warning', 
@@ -117,30 +156,22 @@ const SKUMaster = () => {
     }
   };
 
-  // Fetch oil types from API - NO HARDCODED FALLBACKS
+  // Fetch oil types from API
   const fetchOilTypes = async () => {
     try {
-      // Use the API service for clean architecture
       const response = await api.batch.getOilTypes();
       
       if (response.success && response.oil_types && response.oil_types.length > 0) {
-        // Transform backend oil types to frontend format
-        // Backend returns: ["Groundnut", "Sesame", "Coconut", "Mustard"]
-        // Frontend needs: ["Groundnut Oil", "Coconut Oil", "Sesame Oil", "Mustard Oil"]
         const formattedOilTypes = response.oil_types.map(type => `${type} Oil`);
         setOilTypes(formattedOilTypes);
-        
-        // Store raw oil types for backend communication
         window.rawOilTypes = response.oil_types;
       } else {
-        // NO FALLBACK - If no oil types exist, show empty
         console.warn('No oil types available in database');
         setOilTypes([]);
         window.rawOilTypes = [];
       }
     } catch (error) {
       console.error('Error fetching oil types:', error);
-      // NO FALLBACK - On error, show empty
       setOilTypes([]);
       window.rawOilTypes = [];
       setMessage({ 
@@ -150,19 +181,20 @@ const SKUMaster = () => {
     }
   };
 
-  // Fetch SKUs from API - UPDATED to use API service
+  // Fetch SKUs from API - ENHANCED to include weight
   const fetchSKUs = async () => {
     setLoading(true);
     try {
       const response = await skuAPI.getSKUs();
       
       if (response.success) {
-        // Transform SKU oil types to display format
         const skusWithFormattedOilTypes = (response.skus || []).map(sku => ({
           ...sku,
           oil_type: sku.oil_type && !sku.oil_type.includes(' Oil') 
             ? `${sku.oil_type} Oil` 
-            : sku.oil_type
+            : sku.oil_type,
+          // Ensure weight is included
+          packaged_weight_kg: sku.packaged_weight_kg || null
         }));
         setSKUList(skusWithFormattedOilTypes);
       } else {
@@ -181,7 +213,6 @@ const SKUMaster = () => {
   const applyFilters = () => {
     let filtered = [...skuList];
     
-    // Search filter
     if (searchTerm) {
       filtered = filtered.filter(sku =>
         sku.sku_code.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -189,17 +220,14 @@ const SKUMaster = () => {
       );
     }
     
-    // Oil type filter
     if (filterOilType) {
       filtered = filtered.filter(sku => sku.oil_type === filterOilType);
     }
     
-    // Package size filter
     if (filterPackageSize) {
       filtered = filtered.filter(sku => sku.package_size === filterPackageSize);
     }
     
-    // Active status filter
     if (filterActive === 'active') {
       filtered = filtered.filter(sku => sku.is_active);
     } else if (filterActive === 'inactive') {
@@ -207,7 +235,7 @@ const SKUMaster = () => {
     }
     
     setFilteredList(filtered);
-    setCurrentPage(1); // Reset to first page when filters change
+    setCurrentPage(1);
   };
 
   // Pagination
@@ -224,7 +252,6 @@ const SKUMaster = () => {
     
     try {
       if (typeof dateInt === 'number') {
-        // Convert integer date to readable format
         const dateStr = dateInt.toString();
         const year = parseInt(dateStr.substring(0, 4));
         const month = parseInt(dateStr.substring(4, 6));
@@ -242,19 +269,17 @@ const SKUMaster = () => {
 
   // Helper function to convert display oil type to backend format
   const toBackendOilType = (displayOilType) => {
-    // Remove " Oil" suffix for backend
     return displayOilType ? displayOilType.replace(' Oil', '') : '';
   };
 
   // Helper function to convert backend oil type to display format
   const toDisplayOilType = (backendOilType) => {
-    // Add " Oil" suffix for display
     return backendOilType && !backendOilType.includes(' Oil') 
       ? `${backendOilType} Oil` 
       : backendOilType;
   };
 
-  // Handle modal open
+  // Handle modal open - ENHANCED to include weight
   const handleOpenModal = (mode, sku = null) => {
     setModalMode(mode);
     setSelectedSKU(sku);
@@ -263,27 +288,32 @@ const SKUMaster = () => {
       setFormData({
         sku_code: sku.sku_code,
         product_name: sku.product_name,
-        oil_type: sku.oil_type, // Already in display format
+        oil_type: sku.oil_type,
         package_size: sku.package_size,
         density: sku.density || 0.91,
         mrp_current: sku.mrp_current || '',
         shelf_life_months: sku.shelf_life_months || 9,
         mrp_effective_date: sku.mrp_effective_date || new Date().toISOString().split('T')[0],
+        packaged_weight_kg: sku.packaged_weight_kg || '', // Include weight
         is_active: sku.is_active !== undefined ? sku.is_active : true
       });
     } else {
-      // Reset form for add mode - UPDATED to use first available package size
+      // Reset form for add mode
+      const defaultPackageSize = packageSizes.length > 0 
+        ? (packageSizes.includes('1L') ? '1L' : packageSizes[0]) 
+        : '';
+      const estimatedWeight = calculateEstimatedWeight(defaultPackageSize, 0.91);
+      
       setFormData({
         sku_code: '',
         product_name: '',
         oil_type: '',
-        package_size: packageSizes.length > 0 
-          ? (packageSizes.includes('1L') ? '1L' : packageSizes[0]) 
-          : '',
+        package_size: defaultPackageSize,
         density: 0.91,
         mrp_current: '',
         shelf_life_months: 9,
         mrp_effective_date: new Date().toISOString().split('T')[0],
+        packaged_weight_kg: estimatedWeight, // Auto-calculate initial weight
         is_active: true
       });
     }
@@ -307,6 +337,7 @@ const SKUMaster = () => {
       mrp_current: '',
       shelf_life_months: 9,
       mrp_effective_date: new Date().toISOString().split('T')[0],
+      packaged_weight_kg: '',
       is_active: true
     });
     setErrors({});
@@ -326,7 +357,7 @@ const SKUMaster = () => {
     }
   };
 
-  // Validate form
+  // Validate form - ENHANCED with weight validation
   const validateForm = () => {
     const newErrors = {};
     
@@ -340,12 +371,16 @@ const SKUMaster = () => {
     if (!formData.shelf_life_months || formData.shelf_life_months <= 0) {
       newErrors.shelf_life_months = 'Valid shelf life is required';
     }
+    // Weight validation
+    if (!formData.packaged_weight_kg || parseFloat(formData.packaged_weight_kg) <= 0) {
+      newErrors.packaged_weight_kg = 'Valid weight is required (kg)';
+    }
     
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  // Handle form submit - UPDATED to use API service
+  // Handle form submit - ENHANCED to include weight
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -353,10 +388,11 @@ const SKUMaster = () => {
     
     setLoading(true);
     try {
-      // Prepare data with backend oil type format
+      // Prepare data with backend oil type format and weight
       const submitData = {
         ...formData,
-        oil_type: toBackendOilType(formData.oil_type) // Convert to backend format
+        oil_type: toBackendOilType(formData.oil_type),
+        packaged_weight_kg: parseFloat(formData.packaged_weight_kg) // Ensure numeric
       };
       
       let response;
@@ -370,7 +406,7 @@ const SKUMaster = () => {
         setMessage({
           type: 'success',
           text: modalMode === 'add' 
-            ? 'SKU created successfully' 
+            ? 'SKU created successfully with weight information' 
             : 'SKU updated successfully'
         });
         handleCloseModal();
@@ -386,22 +422,21 @@ const SKUMaster = () => {
     }
   };
 
-  // Handle delete - UPDATED to use API service
+  // Handle delete
   const handleDelete = (sku) => {
     setDeleteTarget(sku);
     setShowDeleteConfirm(true);
   };
 
-  // Confirm delete - UPDATED to use API service
+  // Confirm delete
   const confirmDelete = async () => {
     if (!deleteTarget) return;
     
     setLoading(true);
     try {
-      // Deactivate instead of hard delete
       const submitData = {
         ...deleteTarget,
-        oil_type: toBackendOilType(deleteTarget.oil_type), // Convert to backend format
+        oil_type: toBackendOilType(deleteTarget.oil_type),
         is_active: false
       };
       
@@ -453,7 +488,7 @@ const SKUMaster = () => {
         </div>
       )}
 
-      {/* NEW: Warning if configurations are missing */}
+      {/* Warning if configurations are missing */}
       {(oilTypes.length === 0 || packageSizes.length === 0) && (
         <div className="message warning">
           ⚠️ SKU creation is disabled. 
@@ -524,7 +559,7 @@ const SKUMaster = () => {
         </div>
       </div>
 
-      {/* SKU Table */}
+      {/* SKU Table - ENHANCED with weight column */}
       <div className="table-container">
         {loading ? (
           <div className="loading">Loading SKUs...</div>
@@ -537,6 +572,7 @@ const SKUMaster = () => {
                   <th>Product Name</th>
                   <th>Oil Type</th>
                   <th>Package Size</th>
+                  <th>Weight (kg)</th>
                   <th>MRP (₹)</th>
                   <th>Shelf Life</th>
                   <th>MRP Effective</th>
@@ -548,7 +584,7 @@ const SKUMaster = () => {
               <tbody>
                 {currentItems.length === 0 ? (
                   <tr>
-                    <td colSpan="10" className="empty-cell">
+                    <td colSpan="11" className="empty-cell">
                       {searchTerm || filterOilType || filterPackageSize || filterActive !== 'all'
                         ? 'No SKUs match the current filters'
                         : 'No SKUs found. Add your first SKU to get started.'}
@@ -561,6 +597,11 @@ const SKUMaster = () => {
                       <td>{sku.product_name}</td>
                       <td>{sku.oil_type}</td>
                       <td>{sku.package_size}</td>
+                      <td className="number-cell">
+                        {sku.packaged_weight_kg 
+                          ? parseFloat(sku.packaged_weight_kg).toFixed(3) 
+                          : <span style={{ color: '#ff6b6b' }}>Not Set</span>}
+                      </td>
                       <td className="number-cell">
                         {sku.mrp_current ? `₹${sku.mrp_current}` : 'N/A'}
                       </td>
@@ -626,7 +667,7 @@ const SKUMaster = () => {
         )}
       </div>
 
-      {/* Add/Edit Modal */}
+      {/* Add/Edit Modal - ENHANCED with weight field */}
       {showModal && (
         <div className="modal-overlay">
           <div className="modal-content">
@@ -691,7 +732,7 @@ const SKUMaster = () => {
                   <select
                     name="package_size"
                     value={formData.package_size}
-                    onChange={handleInputChange}
+                    onChange={handlePackageSizeOrDensityChange}
                     className={errors.package_size ? 'error' : ''}
                     disabled={packageSizes.length === 0 || loadingPackageSizes}
                   >
@@ -753,7 +794,7 @@ const SKUMaster = () => {
                     type="number"
                     name="density"
                     value={formData.density}
-                    onChange={handleInputChange}
+                    onChange={handlePackageSizeOrDensityChange}
                     min="0.1"
                     max="2"
                     step="0.01"
@@ -761,7 +802,33 @@ const SKUMaster = () => {
                 </div>
               </div>
               
+              {/* NEW: Weight field section */}
               <div className="form-row">
+                <div className="form-group">
+                  <label>Packaged Weight (kg) <span className="required">*</span></label>
+                  <input
+                    type="number"
+                    step="0.001"
+                    name="packaged_weight_kg"
+                    value={formData.packaged_weight_kg}
+                    onChange={handleInputChange}
+                    required
+                    min="0.001"
+                    max="999"
+                    placeholder="Complete weight including packaging"
+                    className={errors.packaged_weight_kg ? 'error' : ''}
+                  />
+                  <small className="field-help">
+                    Actual weight of packaged product (oil + bottle + cap + label)
+                    {formData.package_size && formData.density && (
+                      <span style={{ display: 'block', color: '#666', marginTop: '4px' }}>
+                        Estimated: {calculateEstimatedWeight(formData.package_size, formData.density)} kg
+                      </span>
+                    )}
+                  </small>
+                  {errors.packaged_weight_kg && <span className="error-text">{errors.packaged_weight_kg}</span>}
+                </div>
+                
                 <div className="form-group checkbox-group">
                   <label>
                     <input
