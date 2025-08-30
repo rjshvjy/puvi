@@ -1,6 +1,6 @@
 # Feature Pack: SKU
-Generated: 2025-08-30T08:59:38.291Z
-Routes: 30 | Tables: 29 | Files: 11
+Generated: 2025-08-30T18:24:46.086Z
+Routes: 30 | Tables: 30 | Files: 11
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -87,6 +87,7 @@ POST   /api/sku/production/allocate-oil
 | completed | sku-management | 🟡 MEDIUM | Changes affect 1 other modules |
 | cost_elements_master | cost-management, package-sizes, sku-management | 🔴 HIGH | Changes affect 5 other modules |
 | created_at | sku-production | 🟡 MEDIUM | Changes affect 1 other modules |
+| customers | customers, locations, sku-outbound | 🔴 HIGH | Changes affect 4 other modules |
 | inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
 | locations_master | locations, sku-outbound, unknown | 🔴 HIGH | Changes affect 3 other modules |
 | materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 11 other modules |

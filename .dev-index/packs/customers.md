@@ -1,5 +1,5 @@
 # Feature Pack: CUSTOMERS
-Generated: 2025-08-30T08:59:38.283Z
+Generated: 2025-08-30T18:24:46.076Z
 Routes: 9 | Tables: 3 | Files: 1
 
 ## Table of Contents
@@ -36,7 +36,7 @@ POST   /api/customers/<int:customer_id>/restore
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
 | customer_ship_to_locations | None | 🟢 LOW | Isolated to this module |
-| customers | locations, unknown | 🟡 MEDIUM | Changes affect 2 other modules |
+| customers | locations, sku-outbound, unknown | 🔴 HIGH | Changes affect 3 other modules |
 | sku_outbound | locations, sku-outbound, unknown | 🔴 HIGH | Changes affect 3 other modules |
 
 ## Backend Implementation

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "generatedAt": "2025-08-30T08:59:38.224Z",
+  "generatedAt": "2025-08-30T18:24:46.013Z",
   "summary": {
     "totalTables": 68,
     "sharedTables": 36,
@@ -602,9 +602,10 @@
       "usedBy": [
         "customers",
         "locations",
+        "sku-outbound",
         "unknown"
       ],
-      "fileCount": 3,
+      "fileCount": 4,
       "operations": {
         "customers": {
           "files": [
@@ -615,6 +616,12 @@
         "locations": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/locations.py"
+          ],
+          "queryCount": 0
+        },
+        "sku-outbound": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_outbound.py"
           ],
           "queryCount": 0
         },
@@ -1703,6 +1710,19 @@
       "recommendation": "⚠️ CRITICAL: Changes require coordination across 5 modules"
     },
     {
+      "table": "customers",
+      "sharedBy": [
+        "customers",
+        "locations",
+        "sku-outbound",
+        "unknown"
+      ],
+      "moduleCount": 4,
+      "fileCount": 4,
+      "risk": "HIGH",
+      "recommendation": "⚠️ CRITICAL: Changes require coordination across 4 modules"
+    },
+    {
       "table": "sku_outbound",
       "sharedBy": [
         "customers",
@@ -1808,18 +1828,6 @@
       "fileCount": 3,
       "risk": "MEDIUM",
       "recommendation": "Changes will affect blending, masters-crud, sku-production"
-    },
-    {
-      "table": "customers",
-      "sharedBy": [
-        "customers",
-        "locations",
-        "unknown"
-      ],
-      "moduleCount": 3,
-      "fileCount": 3,
-      "risk": "MEDIUM",
-      "recommendation": "Changes will affect customers, locations, unknown"
     },
     {
       "table": "locations_master",

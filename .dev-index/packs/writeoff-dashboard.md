@@ -1,5 +1,5 @@
 # Feature Pack: WRITEOFF-DASHBOARD
-Generated: 2025-08-30T08:59:38.288Z
+Generated: 2025-08-30T18:24:46.083Z
 Routes: 2 | Tables: 15 | Files: 2
 
 ## Table of Contents
