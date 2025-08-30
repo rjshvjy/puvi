@@ -26,22 +26,32 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0
+          fetch-depth: 0  # Get full history for rebasing
           token: ${{ github.token }}
-          
+      
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-          
+      
+      - name: Configure Git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+      
+      - name: Pull latest changes
+        run: |
+          echo "Syncing with remote repository..."
+          git pull --rebase origin main || git pull --rebase origin master || true
+      
       - name: Install dev-index deps
         run: npm ci || npm i
         working-directory: .dev-index
-        
+      
       - name: Generate index
         run: npm run gen:index
         working-directory: .dev-index
-        
+      
       - name: Copy project_index.json to scripts directory
         run: |
           if [ -f ".dev-index/project_index.json" ]; then
@@ -51,15 +61,15 @@ jobs:
             echo "❌ project_index.json not found!"
             exit 1
           fi
-          
+      
       - name: Generate dependency matrix
         run: node scripts/build-dependency-matrix.mjs
         working-directory: .dev-index
-        
+      
       - name: Build feature packs
         run: node scripts/build-feature-packs.mjs
         working-directory: .dev-index
-        
+      
       - name: Move generated files to proper locations
         run: |
           # Move dependency files back to .dev-index root
@@ -81,7 +91,7 @@ jobs:
             # Clean up scripts/packs
             rm -rf .dev-index/scripts/packs
           fi
-          
+      
       - name: List all generated files
         run: |
           echo "=== All files in .dev-index ==="
@@ -89,13 +99,8 @@ jobs:
           echo ""
           echo "=== Packs directory contents ==="
           ls -la .dev-index/packs/ || echo "No packs directory found"
-          
-      - name: Configure Git
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          
-      - name: Add and commit only generated files
+      
+      - name: Commit and Push Changes
         run: |
           # Add only the files we want to keep (not node_modules!)
           git add .dev-index/project_index.json 2>/dev/null || true
@@ -110,6 +115,55 @@ jobs:
           echo "=== Files to be committed ==="
           git status --short
           
-          # Commit and push
-          git commit -m "chore: update dev index, feature packs, and dependency analysis" || echo "No changes to commit"
-          git push || echo "Nothing to push"
+          # Check if there are changes
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          
+          # Commit the changes
+          git commit -m "chore: update dev index, feature packs, and dependency analysis"
+          
+          # Push with retry logic
+          echo "Pushing changes..."
+          max_attempts=5
+          attempt=1
+          
+          while [ $attempt -le $max_attempts ]; do
+            echo "Push attempt $attempt of $max_attempts"
+            
+            if git push origin HEAD; then
+              echo "✅ Push successful!"
+              exit 0
+            else
+              echo "Push failed. Pulling latest changes..."
+              
+              # Try to pull and rebase
+              if git pull --rebase origin main; then
+                echo "Rebased successfully"
+              elif git pull --rebase origin master; then
+                echo "Rebased successfully"
+              else
+                echo "Rebase failed, trying merge..."
+                git rebase --abort 2>/dev/null || true
+                
+                if git pull origin main; then
+                  echo "Merged successfully"
+                elif git pull origin master; then
+                  echo "Merged successfully"
+                else
+                  echo "❌ Could not sync with remote"
+                  exit 1
+                fi
+              fi
+              
+              attempt=$((attempt + 1))
+              
+              if [ $attempt -le $max_attempts ]; then
+                sleep 2
+              fi
+            fi
+          done
+          
+          echo "❌ Failed to push after $max_attempts attempts"
+          exit 1
