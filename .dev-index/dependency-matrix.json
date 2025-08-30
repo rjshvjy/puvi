@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "generatedAt": "2025-08-30T01:45:29.508Z",
+  "generatedAt": "2025-08-30T01:49:12.846Z",
   "summary": {
     "totalTables": 68,
     "sharedTables": 36,
@@ -601,9 +601,10 @@
     "customers": {
       "usedBy": [
         "customers",
-        "locations"
+        "locations",
+        "unknown"
       ],
-      "fileCount": 2,
+      "fileCount": 3,
       "operations": {
         "customers": {
           "files": [
@@ -614,6 +615,12 @@
         "locations": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/locations.py"
+          ],
+          "queryCount": 0
+        },
+        "unknown": {
+          "files": [
+            "puvi-backend/puvi-backend-main/app.py"
           ],
           "queryCount": 0
         }
@@ -637,9 +644,10 @@
       "usedBy": [
         "customers",
         "locations",
-        "sku-outbound"
+        "sku-outbound",
+        "unknown"
       ],
-      "fileCount": 3,
+      "fileCount": 4,
       "operations": {
         "customers": {
           "files": [
@@ -658,15 +666,22 @@
             "puvi-backend/puvi-backend-main/modules/sku_outbound.py"
           ],
           "queryCount": 0
+        },
+        "unknown": {
+          "files": [
+            "puvi-backend/puvi-backend-main/app.py"
+          ],
+          "queryCount": 0
         }
       }
     },
     "locations_master": {
       "usedBy": [
         "locations",
-        "sku-outbound"
+        "sku-outbound",
+        "unknown"
       ],
-      "fileCount": 2,
+      "fileCount": 3,
       "operations": {
         "locations": {
           "files": [
@@ -677,6 +692,12 @@
         "sku-outbound": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/sku_outbound.py"
+          ],
+          "queryCount": 0
+        },
+        "unknown": {
+          "files": [
+            "puvi-backend/puvi-backend-main/app.py"
           ],
           "queryCount": 0
         }
@@ -1682,6 +1703,19 @@
       "recommendation": "⚠️ CRITICAL: Changes require coordination across 5 modules"
     },
     {
+      "table": "sku_outbound",
+      "sharedBy": [
+        "customers",
+        "locations",
+        "sku-outbound",
+        "unknown"
+      ],
+      "moduleCount": 4,
+      "fileCount": 4,
+      "risk": "HIGH",
+      "recommendation": "⚠️ CRITICAL: Changes require coordination across 4 modules"
+    },
+    {
       "table": "sku_inventory",
       "sharedBy": [
         "locations",
@@ -1776,16 +1810,28 @@
       "recommendation": "Changes will affect blending, masters-crud, sku-production"
     },
     {
-      "table": "sku_outbound",
+      "table": "customers",
       "sharedBy": [
         "customers",
         "locations",
-        "sku-outbound"
+        "unknown"
       ],
       "moduleCount": 3,
       "fileCount": 3,
       "risk": "MEDIUM",
-      "recommendation": "Changes will affect customers, locations, sku-outbound"
+      "recommendation": "Changes will affect customers, locations, unknown"
+    },
+    {
+      "table": "locations_master",
+      "sharedBy": [
+        "locations",
+        "sku-outbound",
+        "unknown"
+      ],
+      "moduleCount": 3,
+      "fileCount": 3,
+      "risk": "MEDIUM",
+      "recommendation": "Changes will affect locations, sku-outbound, unknown"
     },
     {
       "table": "writeoff_reasons",
@@ -1854,28 +1900,6 @@
       "fileCount": 2,
       "risk": "LOW",
       "recommendation": "Changes will affect blending, sku-production"
-    },
-    {
-      "table": "customers",
-      "sharedBy": [
-        "customers",
-        "locations"
-      ],
-      "moduleCount": 2,
-      "fileCount": 2,
-      "risk": "LOW",
-      "recommendation": "Changes will affect customers, locations"
-    },
-    {
-      "table": "locations_master",
-      "sharedBy": [
-        "locations",
-        "sku-outbound"
-      ],
-      "moduleCount": 2,
-      "fileCount": 2,
-      "risk": "LOW",
-      "recommendation": "Changes will affect locations, sku-outbound"
     },
     {
       "table": "sku_expiry_tracking",

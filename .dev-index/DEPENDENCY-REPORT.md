@@ -1,6 +1,6 @@
 # PUVI System - Dependency Analysis Report
 
-**Generated:** 2025-08-30T01:45:29.508Z
+**Generated:** 2025-08-30T01:49:12.846Z
 **Version:** 1.0
 
 ## Executive Summary
@@ -52,6 +52,12 @@ Tables used by multiple modules (changes have cascading effects):
 - **File Count:** 5
 - **Recommendation:** ⚠️ CRITICAL: Changes require coordination across 5 modules
 
+### sku_outbound
+- **Risk Level:** HIGH
+- **Shared By:** customers, locations, sku-outbound, unknown
+- **File Count:** 4
+- **Recommendation:** ⚠️ CRITICAL: Changes require coordination across 4 modules
+
 ### sku_inventory
 - **Risk Level:** HIGH
 - **Shared By:** locations, material-writeoff, sku-outbound, sku-production
@@ -94,11 +100,17 @@ Tables used by multiple modules (changes have cascading effects):
 - **File Count:** 3
 - **Recommendation:** Changes will affect blending, masters-crud, sku-production
 
-### sku_outbound
+### customers
 - **Risk Level:** MEDIUM
-- **Shared By:** customers, locations, sku-outbound
+- **Shared By:** customers, locations, unknown
 - **File Count:** 3
-- **Recommendation:** Changes will affect customers, locations, sku-outbound
+- **Recommendation:** Changes will affect customers, locations, unknown
+
+### locations_master
+- **Risk Level:** MEDIUM
+- **Shared By:** locations, sku-outbound, unknown
+- **File Count:** 3
+- **Recommendation:** Changes will affect locations, sku-outbound, unknown
 
 ### writeoff_reasons
 - **Risk Level:** MEDIUM
@@ -127,4 +139,4 @@ Hardcoded values that should be moved to database:
 - **sku_production**: Used by material-writeoff, sku-management, sku-outbound, sku-production, unknown (5 files)
 - **suppliers**: Used by opening-balance, purchase, sku-production, system-config, unknown (6 files)
 - **categories_master**: Used by blending, masters-crud, material-writeoff, purchase (4 files)
-- **sku_inventory**: Used by locations, material-writeoff, sku-outbound, sku-production (4 files)
+- **sku_outbound**: Used by customers, locations, sku-outbound, unknown (4 files)

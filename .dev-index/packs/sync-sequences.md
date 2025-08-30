@@ -1,6 +1,6 @@
 # Feature Pack: SYNC-SEQUENCES
-Generated: 2025-08-30T01:45:29.578Z
-Routes: 1 | Tables: 7 | Files: 1
+Generated: 2025-08-30T01:49:12.912Z
+Routes: 1 | Tables: 10 | Files: 1
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -20,9 +20,12 @@ POST   /api/sync_sequences
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
 | batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 10 other modules |
+| customers | customers, locations, unknown | 🔴 HIGH | Changes affect 3 other modules |
+| locations_master | locations, sku-outbound, unknown | 🔴 HIGH | Changes affect 3 other modules |
 | materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 11 other modules |
 | purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 6 other modules |
 | sku_master | masters-crud, material-writeoff, package-sizes | 🔴 HIGH | Changes affect 8 other modules |
+| sku_outbound | customers, locations, sku-outbound | 🔴 HIGH | Changes affect 4 other modules |
 | sku_production | material-writeoff, sku-management, sku-outbound | 🔴 HIGH | Changes affect 5 other modules |
 | suppliers | opening-balance, purchase, sku-production | 🔴 HIGH | Changes affect 5 other modules |
 | system_configuration | opening-balance, unknown | 🟡 MEDIUM | Changes affect 2 other modules |

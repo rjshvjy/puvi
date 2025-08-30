@@ -1,5 +1,5 @@
 # Feature Pack: SKU
-Generated: 2025-08-30T01:45:29.577Z
+Generated: 2025-08-30T01:49:12.911Z
 Routes: 30 | Tables: 29 | Files: 11
 
 ## Table of Contents
@@ -88,7 +88,7 @@ POST   /api/sku/production/allocate-oil
 | cost_elements_master | cost-management, package-sizes, sku-management | 🔴 HIGH | Changes affect 5 other modules |
 | created_at | sku-production | 🟡 MEDIUM | Changes affect 1 other modules |
 | inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
-| locations_master | locations, sku-outbound | 🟡 MEDIUM | Changes affect 2 other modules |
+| locations_master | locations, sku-outbound, unknown | 🔴 HIGH | Changes affect 3 other modules |
 | materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 11 other modules |
 | package_sizes_master | package-sizes, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
 | purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 6 other modules |
@@ -102,7 +102,7 @@ POST   /api/sku/production/allocate-oil
 | sku_material_consumption | sku-production | 🟡 MEDIUM | Changes affect 1 other modules |
 | sku_mrp_history | sku-management, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
 | sku_oil_allocation | sku-production | 🟡 MEDIUM | Changes affect 1 other modules |
-| sku_outbound | customers, locations, sku-outbound | 🔴 HIGH | Changes affect 3 other modules |
+| sku_outbound | customers, locations, sku-outbound | 🔴 HIGH | Changes affect 4 other modules |
 | sku_outbound_items | sku-outbound | 🟡 MEDIUM | Changes affect 1 other modules |
 | sku_production | material-writeoff, sku-management, sku-outbound | 🔴 HIGH | Changes affect 5 other modules |
 | suppliers | opening-balance, purchase, sku-production | 🔴 HIGH | Changes affect 5 other modules |
