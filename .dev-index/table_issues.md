@@ -1,6 +1,6 @@
 # Table Usage Issues
 
-Generated: 2025-08-30 01:24:28.562985
+Generated: 2025-08-30 01:37:31.187270
 
 ## ⚠️ Orphaned Tables
 These tables exist in database but are not used in any code:
@@ -23,7 +23,7 @@ These tables are referenced in code but don't exist in database:
 - actual_hours
   Files: puvi-backend/puvi-backend-main/modules/cost_management.py
 - address
-  Files: puvi-backend/puvi-backend-main/modules/masters_common.py
+  Files: puvi-backend/puvi-backend-main/modules/masters_common.py, puvi-backend/puvi-backend-main/modules/locations.py
 - age_days
   Files: puvi-backend/puvi-backend-main/modules/material_sales.py, puvi-backend/puvi-backend-main/modules/material_writeoff.py
 - alerts
@@ -35,7 +35,7 @@ These tables are referenced in code but don't exist in database:
 - allow_headers
   Files: puvi-backend/puvi-backend-main/app.py
 - an
-  Files: puvi-backend/puvi-backend-main/modules/sku_management.py, puvi-backend/puvi-backend-main/modules/masters_crud.py
+  Files: puvi-backend/puvi-backend-main/modules/sku_management.py, puvi-backend/puvi-backend-main/modules/masters_crud.py, puvi-backend/puvi-backend-main/modules/locations.py
 - any
   Files: puvi-backend/puvi-backend-main/utils/traceability.py
 - app
@@ -44,6 +44,8 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/modules/sku_management.py
 - april
   Files: puvi-backend/puvi-backend-main/utils/traceability.py
+- args
+  Files: puvi-backend/puvi-backend-main/modules/locations.py
 - available
   Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
 - available_batches
@@ -90,6 +92,8 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/modules/writeoff_analytics.py
 - cancelled
   Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
+- capabilities
+  Files: puvi-backend/puvi-backend-main/modules/locations.py
 - caps
   Files: puvi-backend/puvi-backend-main/modules/system_config.py, puvi-backend/puvi-backend-main/modules/sku_management.py
 - categories
@@ -151,15 +155,17 @@ These tables are referenced in code but don't exist in database:
 - days
   Files: puvi-backend/puvi-backend-main/modules/cost_management.py, puvi-backend/puvi-backend-main/modules/sku_production.py
 - db_utils
-  Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/modules/opening_balance.py, puvi-backend/puvi-backend-main/modules/material_sales.py and 13 more
+  Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/modules/opening_balance.py, puvi-backend/puvi-backend-main/modules/material_sales.py and 14 more
 - decimal
-  Files: puvi-backend/puvi-backend-main/inventory_utils.py, puvi-backend/puvi-backend-main/utils/validation.py, puvi-backend/puvi-backend-main/utils/expiry_utils.py and 13 more
+  Files: puvi-backend/puvi-backend-main/inventory_utils.py, puvi-backend/puvi-backend-main/utils/validation.py, puvi-backend/puvi-backend-main/utils/expiry_utils.py and 14 more
 - decimal_places
   Files: puvi-backend/puvi-backend-main/modules/masters_common.py, puvi-backend/puvi-backend-main/modules/masters_crud.py
 - density_values
   Files: puvi-backend/puvi-backend-main/modules/system_config.py
 - dependencies
-  Files: puvi-backend/puvi-backend-main/modules/masters_common.py, puvi-backend/puvi-backend-main/modules/sku_management.py, puvi-backend/puvi-backend-main/modules/masters_crud.py
+  Files: puvi-backend/puvi-backend-main/modules/masters_common.py, puvi-backend/puvi-backend-main/modules/sku_management.py, puvi-backend/puvi-backend-main/modules/masters_crud.py and 1 more
+- details
+  Files: puvi-backend/puvi-backend-main/modules/locations.py
 - different
   Files: puvi-backend/puvi-backend-main/utils/expiry_utils.py
 - display
@@ -177,7 +183,7 @@ These tables are referenced in code but don't exist in database:
 - error_details
   Files: puvi-backend/puvi-backend-main/modules/opening_balance.py
 - errors
-  Files: puvi-backend/puvi-backend-main/db_utils.py, puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/modules/opening_balance.py and 2 more
+  Files: puvi-backend/puvi-backend-main/db_utils.py, puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/modules/opening_balance.py and 3 more
 - existing
   Files: puvi-backend/puvi-backend-main/inventory_utils.py, puvi-backend/puvi-backend-main/utils/traceability.py, puvi-backend/puvi-backend-main/utils/expiry_utils.py and 5 more
 - expiry
@@ -205,7 +211,7 @@ These tables are referenced in code but don't exist in database:
 - fixed_sequences
   Files: puvi-backend/puvi-backend-main/db_utils.py
 - flask
-  Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/modules/opening_balance.py, puvi-backend/puvi-backend-main/modules/material_sales.py and 12 more
+  Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/modules/opening_balance.py, puvi-backend/puvi-backend-main/modules/material_sales.py and 13 more
 - flask_cors
   Files: puvi-backend/puvi-backend-main/app.py
 - from_history
@@ -225,7 +231,7 @@ These tables are referenced in code but don't exist in database:
 - handling_charges
   Files: puvi-backend/puvi-backend-main/modules/purchase.py
 - has_dependencies
-  Files: puvi-backend/puvi-backend-main/modules/masters_common.py, puvi-backend/puvi-backend-main/modules/masters_crud.py
+  Files: puvi-backend/puvi-backend-main/modules/masters_common.py, puvi-backend/puvi-backend-main/modules/masters_crud.py, puvi-backend/puvi-backend-main/modules/locations.py
 - has_transactions
   Files: puvi-backend/puvi-backend-main/modules/opening_balance.py
 - has_warnings
@@ -269,7 +275,9 @@ These tables are referenced in code but don't exist in database:
 - loading_charges
   Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
 - location
-  Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
+  Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py, puvi-backend/puvi-backend-main/modules/locations.py
+- locations
+  Files: puvi-backend/puvi-backend-main/modules/locations.py
 - low_confidence_suggestions
   Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
 - mapped_materials
@@ -323,7 +331,7 @@ These tables are referenced in code but don't exist in database:
 - nos
   Files: puvi-backend/puvi-backend-main/modules/material_sales.py
 - notes
-  Files: puvi-backend/puvi-backend-main/modules/opening_balance.py, puvi-backend/puvi-backend-main/modules/material_sales.py, puvi-backend/puvi-backend-main/modules/cost_management.py and 6 more
+  Files: puvi-backend/puvi-backend-main/modules/opening_balance.py, puvi-backend/puvi-backend-main/modules/material_sales.py, puvi-backend/puvi-backend-main/modules/cost_management.py and 7 more
 - numbers
   Files: puvi-backend/puvi-backend-main/modules/masters_common.py
 - oil
@@ -348,6 +356,8 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/modules/material_sales.py, puvi-backend/puvi-backend-main/modules/material_writeoff.py
 - opening
   Files: puvi-backend/puvi-backend-main/modules/opening_balance.py
+- operation
+  Files: puvi-backend/puvi-backend-main/modules/locations.py
 - options
   Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/modules/package_sizes.py, puvi-backend/puvi-backend-main/modules/masters_common.py and 1 more
 - origins
@@ -356,10 +366,14 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
 - other_charges
   Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
+- outbound_transactions
+  Files: puvi-backend/puvi-backend-main/modules/locations.py
 - outbounds
   Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
 - outsourced
   Files: puvi-backend/puvi-backend-main/modules/blending.py
+- ownership
+  Files: puvi-backend/puvi-backend-main/modules/locations.py
 - package
   Files: puvi-backend/puvi-backend-main/modules/package_sizes.py
 - package_sizes
@@ -395,7 +409,7 @@ These tables are referenced in code but don't exist in database:
 - quantity_needed
   Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
 - query
-  Files: puvi-backend/puvi-backend-main/modules/package_sizes.py, puvi-backend/puvi-backend-main/modules/masters_common.py, puvi-backend/puvi-backend-main/modules/sku_management.py and 1 more
+  Files: puvi-backend/puvi-backend-main/modules/package_sizes.py, puvi-backend/puvi-backend-main/modules/masters_common.py, puvi-backend/puvi-backend-main/modules/sku_management.py and 2 more
 - rates
   Files: puvi-backend/puvi-backend-main/modules/batch_production.py, puvi-backend/puvi-backend-main/modules/system_config.py
 - readonly_fields
@@ -479,7 +493,7 @@ These tables are referenced in code but don't exist in database:
 - subcategory_name
   Files: puvi-backend/puvi-backend-main/modules/blending.py
 - success
-  Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/utils/expiry_utils.py, puvi-backend/puvi-backend-main/modules/opening_balance.py and 13 more
+  Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/utils/expiry_utils.py, puvi-backend/puvi-backend-main/modules/opening_balance.py and 14 more
 - successful_updates
   Files: puvi-backend/puvi-backend-main/modules/cost_management.py
 - suggestions
@@ -597,7 +611,7 @@ These tables are referenced in code but don't exist in database:
 - utilities
   Files: puvi-backend/puvi-backend-main/modules/masters_common.py
 - utils
-  Files: puvi-backend/puvi-backend-main/utils/expiry_utils.py, puvi-backend/puvi-backend-main/modules/opening_balance.py, puvi-backend/puvi-backend-main/modules/material_sales.py and 10 more
+  Files: puvi-backend/puvi-backend-main/utils/expiry_utils.py, puvi-backend/puvi-backend-main/modules/opening_balance.py, puvi-backend/puvi-backend-main/modules/material_sales.py and 11 more
 - v_writeoff_trends
   Files: puvi-backend/puvi-backend-main/modules/writeoff_analytics.py
 - validation
