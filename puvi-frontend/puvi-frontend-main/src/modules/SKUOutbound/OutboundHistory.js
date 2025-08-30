@@ -1,4 +1,4 @@
-// SKU Outbound History Component
+// SKU Outbound History Component - Fixed for Weight-Based Cost Allocation
 // File Path: puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundHistory.js
 
 import React, { useState, useEffect } from 'react';
@@ -165,6 +165,10 @@ const OutboundHistory = ({ onRefresh }) => {
           aVal = parseInt(a.total_units || 0);
           bVal = parseInt(b.total_units || 0);
           break;
+        case 'total_shipment_weight_kg':
+          aVal = parseFloat(a.total_shipment_weight_kg || 0);
+          bVal = parseFloat(b.total_shipment_weight_kg || 0);
+          break;
         default:
           aVal = a[sortField] || '';
           bVal = b[sortField] || '';
@@ -257,13 +261,11 @@ const OutboundHistory = ({ onRefresh }) => {
       'Status',
       'SKU Count',
       'Total Units',
+      'Total Weight (kg)',
       'Subtotal',
       'GST',
       'Transport Cost',
-      'Loading Charges',
-      'Unloading Charges',
-      'Documentation Charges',
-      'Other Charges',
+      'Handling Cost',
       'Grand Total',
       'Invoice No',
       'E-Way Bill',
@@ -285,13 +287,11 @@ const OutboundHistory = ({ onRefresh }) => {
         o.status || '',
         o.sku_count || 0,
         o.total_units || 0,
+        o.total_shipment_weight_kg || 0,
         o.subtotal || 0,
         o.total_gst || 0,
-        o.cost_elements?.transport || 0,
-        o.cost_elements?.loading || 0,
-        o.cost_elements?.unloading || 0,
-        o.cost_elements?.documentation || 0,
-        o.cost_elements?.other || 0,
+        o.transport_cost || 0,
+        o.handling_cost || 0,
         o.grand_total || 0,
         o.invoice_number || '',
         o.eway_bill_number || '',
@@ -319,6 +319,7 @@ const OutboundHistory = ({ onRefresh }) => {
       totalTransfers: 0,
       totalSales: 0,
       totalUnits: 0,
+      totalWeight: 0,
       totalRevenue: 0,
       totalGST: 0,
       totalLogisticsCost: 0,
@@ -337,16 +338,15 @@ const OutboundHistory = ({ onRefresh }) => {
       if (o.transaction_type === 'transfer') summary.totalTransfers++;
       else if (o.transaction_type === 'sales') summary.totalSales++;
       
-      // Units and amounts
+      // Units, weight and amounts
       summary.totalUnits += parseInt(o.total_units || 0);
+      summary.totalWeight += parseFloat(o.total_shipment_weight_kg || 0);
       summary.totalRevenue += parseFloat(o.subtotal || 0);
       summary.totalGST += parseFloat(o.total_gst || 0);
       summary.grandTotal += parseFloat(o.grand_total || 0);
       
-      // Logistics costs
-      if (o.cost_elements) {
-        summary.totalLogisticsCost += parseFloat(o.cost_elements.total || 0);
-      }
+      // Logistics costs (transport + handling only)
+      summary.totalLogisticsCost += parseFloat(o.transport_cost || 0) + parseFloat(o.handling_cost || 0);
       
       // Status counts
       if (o.status && summary.statusCounts[o.status] !== undefined) {
@@ -511,6 +511,10 @@ const OutboundHistory = ({ onRefresh }) => {
             <label>Total Units:</label>
             <span className="value">{summary.totalUnits.toLocaleString()}</span>
           </div>
+          <div className="summary-item">
+            <label>Total Weight:</label>
+            <span className="value">{summary.totalWeight.toFixed(2)} kg</span>
+          </div>
         </div>
         
         {/* Status Summary */}
@@ -590,7 +594,14 @@ const OutboundHistory = ({ onRefresh }) => {
                     <span className="sort-indicator">{sortOrder === 'asc' ? ' ↑' : ' ↓'}</span>
                   )}
                 </th>
-                <th>Cost Elements</th>
+                <th onClick={() => handleSort('total_shipment_weight_kg')}>
+                  Weight (kg)
+                  {sortField === 'total_shipment_weight_kg' && (
+                    <span className="sort-indicator">{sortOrder === 'asc' ? ' ↑' : ' ↓'}</span>
+                  )}
+                </th>
+                <th>Transport/kg</th>
+                <th>Handling/kg</th>
                 <th onClick={() => handleSort('grand_total')}>
                   Total
                   {sortField === 'grand_total' && (
@@ -607,6 +618,14 @@ const OutboundHistory = ({ onRefresh }) => {
                 const destination = outbound.transaction_type === 'sales' 
                   ? outbound.customer_name 
                   : outbound.to_location;
+                
+                // Calculate per-kg costs if weight is available
+                const transportPerKg = outbound.total_shipment_weight_kg > 0 
+                  ? (outbound.transport_cost / outbound.total_shipment_weight_kg).toFixed(2)
+                  : '-';
+                const handlingPerKg = outbound.total_shipment_weight_kg > 0 
+                  ? (outbound.handling_cost / outbound.total_shipment_weight_kg).toFixed(2)
+                  : '-';
                 
                 return (
                   <React.Fragment key={outbound.outbound_id}>
@@ -635,16 +654,16 @@ const OutboundHistory = ({ onRefresh }) => {
                       </td>
                       <td className="text-center">{outbound.sku_count || 0}</td>
                       <td className="text-right">{outbound.total_units || 0}</td>
-                      <td className="cost-cell">
-                        {outbound.cost_elements && outbound.cost_elements.total > 0 && (
-                          <span title={`Transport: ${formatCurrency(outbound.cost_elements.transport)}
-Loading: ${formatCurrency(outbound.cost_elements.loading)}
-Unloading: ${formatCurrency(outbound.cost_elements.unloading)}
-Documentation: ${formatCurrency(outbound.cost_elements.documentation)}
-Other: ${formatCurrency(outbound.cost_elements.other)}`}>
-                            {formatCurrency(outbound.cost_elements.total)}
-                          </span>
-                        )}
+                      <td className="text-right">
+                        {outbound.total_shipment_weight_kg 
+                          ? parseFloat(outbound.total_shipment_weight_kg).toFixed(2)
+                          : '-'}
+                      </td>
+                      <td className="text-right">
+                        {transportPerKg !== '-' ? `₹${transportPerKg}` : '-'}
+                      </td>
+                      <td className="text-right">
+                        {handlingPerKg !== '-' ? `₹${handlingPerKg}` : '-'}
                       </td>
                       <td className="total-cell">{formatCurrency(outbound.grand_total)}</td>
                       <td>
@@ -675,7 +694,7 @@ Other: ${formatCurrency(outbound.cost_elements.other)}`}>
                     {/* Expanded Details Row */}
                     {isExpanded && selectedOutbound && selectedOutbound.outbound_code === outbound.outbound_code && (
                       <tr className="expanded-row">
-                        <td colSpan="12">
+                        <td colSpan="14">
                           <div className="expanded-content">
                             {/* Transport & Documents */}
                             <div className="detail-section">
@@ -701,45 +720,45 @@ Other: ${formatCurrency(outbound.cost_elements.other)}`}>
                             
                             {/* Cost Breakdown */}
                             <div className="detail-section">
-                              <h4>Cost Elements Breakdown</h4>
+                              <h4>Logistics Cost Breakdown</h4>
                               <table className="cost-breakdown-table">
                                 <tbody>
                                   <tr>
                                     <td>Transport Cost:</td>
-                                    <td className="text-right">{formatCurrency(selectedOutbound.cost_elements?.transport)}</td>
+                                    <td className="text-right">{formatCurrency(selectedOutbound.transport_cost || 0)}</td>
                                   </tr>
                                   <tr>
-                                    <td>Loading Charges:</td>
-                                    <td className="text-right">{formatCurrency(selectedOutbound.cost_elements?.loading)}</td>
-                                  </tr>
-                                  <tr>
-                                    <td>Unloading Charges:</td>
-                                    <td className="text-right">{formatCurrency(selectedOutbound.cost_elements?.unloading)}</td>
-                                  </tr>
-                                  <tr>
-                                    <td>Documentation:</td>
-                                    <td className="text-right">{formatCurrency(selectedOutbound.cost_elements?.documentation)}</td>
-                                  </tr>
-                                  <tr>
-                                    <td>Other Charges:</td>
-                                    <td className="text-right">{formatCurrency(selectedOutbound.cost_elements?.other)}</td>
+                                    <td>Handling Cost:</td>
+                                    <td className="text-right">{formatCurrency(selectedOutbound.handling_cost || 0)}</td>
                                   </tr>
                                   <tr className="total-row">
-                                    <td><strong>Total Cost Elements:</strong></td>
+                                    <td><strong>Total Logistics Cost:</strong></td>
                                     <td className="text-right">
                                       <strong>
                                         {formatCurrency(
-                                          (selectedOutbound.cost_elements?.transport || 0) +
-                                          (selectedOutbound.cost_elements?.loading || 0) +
-                                          (selectedOutbound.cost_elements?.unloading || 0) +
-                                          (selectedOutbound.cost_elements?.documentation || 0) +
-                                          (selectedOutbound.cost_elements?.other || 0)
+                                          (selectedOutbound.transport_cost || 0) +
+                                          (selectedOutbound.handling_cost || 0)
                                         )}
                                       </strong>
                                     </td>
                                   </tr>
                                 </tbody>
                               </table>
+                              
+                              {/* Weight-based cost allocation info */}
+                              {selectedOutbound.total_shipment_weight_kg > 0 && (
+                                <div className="weight-allocation-info">
+                                  <p className="info-text">
+                                    <strong>Total Shipment Weight:</strong> {parseFloat(selectedOutbound.total_shipment_weight_kg).toFixed(3)} kg
+                                  </p>
+                                  <p className="info-text">
+                                    <strong>Transport Cost per kg:</strong> ₹{(selectedOutbound.transport_cost / selectedOutbound.total_shipment_weight_kg).toFixed(2)}
+                                  </p>
+                                  <p className="info-text">
+                                    <strong>Handling Cost per kg:</strong> ₹{(selectedOutbound.handling_cost / selectedOutbound.total_shipment_weight_kg).toFixed(2)}
+                                  </p>
+                                </div>
+                              )}
                             </div>
                             
                             {/* Line Items */}
@@ -751,8 +770,12 @@ Other: ${formatCurrency(outbound.cost_elements.other)}`}>
                                     <tr>
                                       <th>SKU Code</th>
                                       <th>Product Name</th>
+                                      <th>Weight (kg)</th>
                                       <th>Ordered</th>
                                       <th>Shipped</th>
+                                      <th>Item Weight</th>
+                                      <th>Transport Cost</th>
+                                      <th>Handling Cost</th>
                                       <th>Allocations</th>
                                       {selectedOutbound.transaction_type === 'sales' && (
                                         <>
@@ -769,8 +792,28 @@ Other: ${formatCurrency(outbound.cost_elements.other)}`}>
                                       <tr key={idx}>
                                         <td>{item.sku_code}</td>
                                         <td>{item.product_name}</td>
+                                        <td className="text-right">
+                                          {item.packaged_weight_kg 
+                                            ? parseFloat(item.packaged_weight_kg).toFixed(3)
+                                            : '-'}
+                                        </td>
                                         <td className="text-center">{item.quantity_ordered}</td>
                                         <td className="text-center">{item.quantity_shipped}</td>
+                                        <td className="text-right">
+                                          {item.item_weight_kg 
+                                            ? `${parseFloat(item.item_weight_kg).toFixed(3)} kg`
+                                            : '-'}
+                                        </td>
+                                        <td className="text-right">
+                                          {item.transport_cost_per_unit 
+                                            ? formatCurrency(item.transport_cost_per_unit * item.quantity_shipped)
+                                            : '-'}
+                                        </td>
+                                        <td className="text-right">
+                                          {item.handling_cost_per_unit 
+                                            ? formatCurrency(item.handling_cost_per_unit * item.quantity_shipped)
+                                            : '-'}
+                                        </td>
                                         <td>
                                           {item.allocations && item.allocations.map((alloc, aIdx) => (
                                             <div key={aIdx} className="allocation-info">
@@ -812,6 +855,14 @@ Other: ${formatCurrency(outbound.cost_elements.other)}`}>
                                     <tr>
                                       <td>Total GST:</td>
                                       <td className="text-right">{formatCurrency(selectedOutbound.financial_summary.total_gst)}</td>
+                                    </tr>
+                                    <tr>
+                                      <td>Transport Cost:</td>
+                                      <td className="text-right">{formatCurrency(selectedOutbound.transport_cost || 0)}</td>
+                                    </tr>
+                                    <tr>
+                                      <td>Handling Cost:</td>
+                                      <td className="text-right">{formatCurrency(selectedOutbound.handling_cost || 0)}</td>
                                     </tr>
                                     <tr className="total-row">
                                       <td><strong>Grand Total:</strong></td>
