@@ -1,8 +1,8 @@
 {
   "version": "1.0",
-  "generatedAt": "2025-08-30T18:24:46.013Z",
+  "generatedAt": "2025-08-30T18:26:28.165Z",
   "summary": {
-    "totalTables": 68,
+    "totalTables": 66,
     "sharedTables": 36,
     "hardcodedCategories": 0,
     "migrationOpportunities": 0
@@ -121,13 +121,12 @@
         "material-writeoff",
         "opening-balance",
         "purchase",
-        "sku-management",
         "sku-production",
         "system-config",
         "writeoff-analytics",
         "unknown"
       ],
-      "fileCount": 12,
+      "fileCount": 11,
       "operations": {
         "batch-production": {
           "files": [
@@ -162,12 +161,6 @@
         "purchase": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/purchase.py"
-          ],
-          "queryCount": 0
-        },
-        "sku-management": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/sku_management.py"
           ],
           "queryCount": 0
         },
@@ -504,11 +497,10 @@
       "usedBy": [
         "cost-management",
         "package-sizes",
-        "sku-management",
         "sku-production",
         "system-config"
       ],
-      "fileCount": 5,
+      "fileCount": 4,
       "operations": {
         "cost-management": {
           "files": [
@@ -519,12 +511,6 @@
         "package-sizes": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/package_sizes.py"
-          ],
-          "queryCount": 0
-        },
-        "sku-management": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/sku_management.py"
           ],
           "queryCount": 0
         },
@@ -769,9 +755,10 @@
     "masters_audit_log": {
       "usedBy": [
         "masters-common",
-        "opening-balance"
+        "opening-balance",
+        "sku-management"
       ],
-      "fileCount": 2,
+      "fileCount": 3,
       "operations": {
         "masters-common": {
           "files": [
@@ -782,6 +769,12 @@
         "opening-balance": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/opening_balance.py"
+          ],
+          "queryCount": 0
+        },
+        "sku-management": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_management.py"
           ],
           "queryCount": 0
         }
@@ -1292,27 +1285,6 @@
         }
       }
     },
-    "sku_bom_master": {
-      "usedBy": [
-        "sku-management",
-        "sku-production"
-      ],
-      "fileCount": 2,
-      "operations": {
-        "sku-management": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/sku_management.py"
-          ],
-          "queryCount": 0
-        },
-        "sku-production": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/sku_production.py"
-          ],
-          "queryCount": 0
-        }
-      }
-    },
     "sku_mrp_history": {
       "usedBy": [
         "sku-management",
@@ -1355,29 +1327,22 @@
         }
       }
     },
-    "BOM": {
+    "sku_bom_master": {
       "usedBy": [
-        "sku-management"
+        "sku-management",
+        "sku-production"
       ],
-      "fileCount": 1,
+      "fileCount": 2,
       "operations": {
         "sku-management": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/sku_management.py"
           ],
           "queryCount": 0
-        }
-      }
-    },
-    "completed": {
-      "usedBy": [
-        "sku-management"
-      ],
-      "fileCount": 1,
-      "operations": {
-        "sku-management": {
+        },
+        "sku-production": {
           "files": [
-            "puvi-backend/puvi-backend-main/modules/sku_management.py"
+            "puvi-backend/puvi-backend-main/modules/sku_production.py"
           ],
           "queryCount": 0
         }
@@ -1635,16 +1600,15 @@
         "material-writeoff",
         "opening-balance",
         "purchase",
-        "sku-management",
         "sku-production",
         "system-config",
         "writeoff-analytics",
         "unknown"
       ],
-      "moduleCount": 11,
-      "fileCount": 12,
+      "moduleCount": 10,
+      "fileCount": 11,
       "risk": "HIGH",
-      "recommendation": "⚠️ CRITICAL: Changes require coordination across 11 modules"
+      "recommendation": "⚠️ CRITICAL: Changes require coordination across 10 modules"
     },
     {
       "table": "inventory",
@@ -1700,14 +1664,13 @@
       "sharedBy": [
         "cost-management",
         "package-sizes",
-        "sku-management",
         "sku-production",
         "system-config"
       ],
-      "moduleCount": 5,
-      "fileCount": 5,
+      "moduleCount": 4,
+      "fileCount": 4,
       "risk": "HIGH",
-      "recommendation": "⚠️ CRITICAL: Changes require coordination across 5 modules"
+      "recommendation": "⚠️ CRITICAL: Changes require coordination across 4 modules"
     },
     {
       "table": "customers",
@@ -1842,6 +1805,18 @@
       "recommendation": "Changes will affect locations, sku-outbound, unknown"
     },
     {
+      "table": "masters_audit_log",
+      "sharedBy": [
+        "masters-common",
+        "opening-balance",
+        "sku-management"
+      ],
+      "moduleCount": 3,
+      "fileCount": 3,
+      "risk": "MEDIUM",
+      "recommendation": "Changes will affect masters-common, opening-balance, sku-management"
+    },
+    {
       "table": "writeoff_reasons",
       "sharedBy": [
         "material-writeoff",
@@ -1919,17 +1894,6 @@
       "fileCount": 2,
       "risk": "LOW",
       "recommendation": "Changes will affect locations, sku-outbound"
-    },
-    {
-      "table": "masters_audit_log",
-      "sharedBy": [
-        "masters-common",
-        "opening-balance"
-      ],
-      "moduleCount": 2,
-      "fileCount": 2,
-      "risk": "LOW",
-      "recommendation": "Changes will affect masters-common, opening-balance"
     },
     {
       "table": "uom_master",
@@ -2031,17 +1995,6 @@
       "recommendation": "Changes will affect package-sizes, sku-production"
     },
     {
-      "table": "sku_bom_master",
-      "sharedBy": [
-        "sku-management",
-        "sku-production"
-      ],
-      "moduleCount": 2,
-      "fileCount": 2,
-      "risk": "LOW",
-      "recommendation": "Changes will affect sku-management, sku-production"
-    },
-    {
       "table": "sku_mrp_history",
       "sharedBy": [
         "sku-management",
@@ -2054,6 +2007,17 @@
     },
     {
       "table": "sku_bom_details",
+      "sharedBy": [
+        "sku-management",
+        "sku-production"
+      ],
+      "moduleCount": 2,
+      "fileCount": 2,
+      "risk": "LOW",
+      "recommendation": "Changes will affect sku-management, sku-production"
+    },
+    {
+      "table": "sku_bom_master",
       "sharedBy": [
         "sku-management",
         "sku-production"

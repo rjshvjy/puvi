@@ -1,5 +1,5 @@
 # Feature Pack: OIL-CONFIG
-Generated: 2025-08-30T18:24:46.077Z
+Generated: 2025-08-30T18:26:28.227Z
 Routes: 7 | Tables: 8 | Files: 1
 
 ## Table of Contents
@@ -36,7 +36,7 @@ POST   /api/oil-config/apply-suggestions
 | categories_master | blending, masters-crud, material-writeoff | 🔴 HIGH | Changes affect 4 other modules |
 | information_schema | masters-common, masters-crud | 🟡 MEDIUM | Changes affect 2 other modules |
 | inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
-| materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 11 other modules |
+| materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
 | sku_master | masters-crud, material-writeoff, package-sizes | 🔴 HIGH | Changes affect 8 other modules |
 | subcategories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
 
@@ -45,7 +45,7 @@ POST   /api/oil-config/apply-suggestions
 ## Data Flow & Integration
 ### 🔗 Cascading Dependencies
 - **materials** (HIGH RISK)
-  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, writeoff-analytics, unknown
+  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, system-config, writeoff-analytics, unknown
   - Impact: Changes will cascade to these modules
 - **inventory** (HIGH RISK)
   - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, unknown

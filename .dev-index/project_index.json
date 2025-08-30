@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-30T18:24:45.085Z",
+  "generatedAt": "2025-08-30T18:26:27.195Z",
   "filesScanned": 70,
   "jsFilesScanned": 43,
   "pyFilesScanned": 27,
@@ -989,7 +989,7 @@
       "method": "GET",
       "path": "/api/sku/master/<int:sku_id>",
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 164,
+      "line": 166,
       "blueprint": "sku_management_bp",
       "function": "get_single_sku",
       "source": "backend"
@@ -998,7 +998,7 @@
       "method": "POST",
       "path": "/api/sku/master",
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 252,
+      "line": 280,
       "blueprint": "sku_management_bp",
       "function": "create_sku",
       "source": "backend"
@@ -1007,90 +1007,36 @@
       "method": "PUT",
       "path": "/api/sku/master/<int:sku_id>",
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 331,
+      "line": 367,
       "blueprint": "sku_management_bp",
       "function": "update_sku",
+      "source": "backend"
+    },
+    {
+      "method": "POST",
+      "path": "/api/sku/master/update-weights",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 504,
+      "blueprint": "sku_management_bp",
+      "function": "bulk_update_weights",
+      "source": "backend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/sku/master/calculate-weights",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 604,
+      "blueprint": "sku_management_bp",
+      "function": "calculate_recommended_weights",
       "source": "backend"
     },
     {
       "method": "DELETE",
       "path": "/api/sku/master/<int:sku_id>",
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 443,
+      "line": 670,
       "blueprint": "sku_management_bp",
       "function": "delete_sku",
-      "source": "backend"
-    },
-    {
-      "method": "GET",
-      "path": "/api/sku/bom/<int:sku_id>",
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 509,
-      "blueprint": "sku_management_bp",
-      "function": "get_sku_bom",
-      "source": "backend"
-    },
-    {
-      "method": "POST",
-      "path": "/api/sku/bom",
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 627,
-      "blueprint": "sku_management_bp",
-      "function": "create_or_update_bom",
-      "source": "backend"
-    },
-    {
-      "method": "GET",
-      "path": "/api/sku/materials",
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 741,
-      "blueprint": "sku_management_bp",
-      "function": "get_materials_for_bom",
-      "source": "backend"
-    },
-    {
-      "method": "POST",
-      "path": "/api/sku/cost-preview",
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 818,
-      "blueprint": "sku_management_bp",
-      "function": "get_cost_preview",
-      "source": "backend"
-    },
-    {
-      "method": "GET",
-      "path": "/api/sku/bom-history/<int:sku_id>",
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 918,
-      "blueprint": "sku_management_bp",
-      "function": "get_bom_history",
-      "source": "backend"
-    },
-    {
-      "method": "POST",
-      "path": "/api/sku/master/activate/<int:sku_id>",
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 969,
-      "blueprint": "sku_management_bp",
-      "function": "activate_sku",
-      "source": "backend"
-    },
-    {
-      "method": "POST",
-      "path": "/api/sku/master/bulk-update",
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 1002,
-      "blueprint": "sku_management_bp",
-      "function": "bulk_update_skus",
-      "source": "backend"
-    },
-    {
-      "method": "GET",
-      "path": "/api/sku/master/export",
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 1094,
-      "blueprint": "sku_management_bp",
-      "function": "export_skus",
       "source": "backend"
     },
     {
@@ -7363,68 +7309,63 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 97,
+      "line": 98,
       "type": "OTHER",
       "tables": [],
       "preview": "cur.execute(query, params)"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 144,
+      "line": 146,
       "type": "OTHER",
       "tables": [],
       "preview": "cur.execute(count_query, count_params)"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 172,
+      "line": 174,
       "type": "SELECT",
       "tables": [
-        "sku_master",
-        "sku_bom_master"
+        "sku_master"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 222,
+      "line": 226,
       "type": "SELECT",
       "tables": [
         "sku_master",
-        "sku_bom_master",
         "sku_production"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 272,
+      "line": 300,
       "type": "SELECT",
       "tables": [
         "sku_master",
-        "sku_bom_master",
         "sku_production"
       ],
       "preview": "cur.execute(\"SELECT sku_id FROM sku_master WHERE sku_code = %s\", (data['sku_code'],))"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 277,
+      "line": 312,
       "type": "INSERT",
       "tables": [
         "sku_master",
-        "sku_bom_master",
         "sku_production"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 302,
+      "line": 338,
       "type": "INSERT",
       "tables": [
         "sku_master",
-        "sku_bom_master",
         "sku_production",
         "sku_mrp_history"
       ],
@@ -7432,24 +7373,22 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 341,
+      "line": 377,
       "type": "SELECT",
       "tables": [
         "sku_master",
-        "sku_bom_master",
         "sku_production",
         "sku_mrp_history",
         "query"
       ],
-      "preview": "cur.execute(\"SELECT sku_code, mrp_current FROM sku_master WHERE sku_id = %s\", (sku_id,))"
+      "preview": "cur.execute(\"SELECT sku_code, mrp_current, packaged_weight_kg FROM sku_master WHERE sku_id = %s\", (s"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 350,
+      "line": 387,
       "type": "SELECT",
       "tables": [
         "sku_master",
-        "sku_bom_master",
         "sku_production",
         "sku_mrp_history",
         "query"
@@ -7458,11 +7397,10 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 402,
+      "line": 440,
       "type": "OTHER",
       "tables": [
         "sku_master",
-        "sku_bom_master",
         "sku_production",
         "sku_mrp_history",
         "query"
@@ -7471,523 +7409,206 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 407,
-      "type": "UPDATE",
-      "tables": [
-        "sku_master",
-        "sku_bom_master",
-        "sku_production",
-        "sku_mrp_history",
-        "query"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 415,
+      "line": 446,
       "type": "INSERT",
       "tables": [
         "sku_master",
-        "sku_bom_master",
         "sku_production",
         "sku_mrp_history",
-        "query"
+        "query",
+        "masters_audit_log"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 451,
+      "line": 464,
+      "type": "UPDATE",
+      "tables": [
+        "sku_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
+        "masters_audit_log"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 472,
+      "type": "INSERT",
+      "tables": [
+        "sku_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
+        "masters_audit_log"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 523,
+      "type": "OTHER",
+      "tables": [
+        "sku_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
+        "masters_audit_log"
+      ],
+      "preview": "cur.execute(\"BEGIN\")"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 538,
       "type": "SELECT",
       "tables": [
         "sku_master",
-        "sku_bom_master",
         "sku_production",
         "sku_mrp_history",
-        "query"
+        "query",
+        "masters_audit_log"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 556,
+      "type": "UPDATE",
+      "tables": [
+        "sku_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
+        "masters_audit_log"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 565,
+      "type": "INSERT",
+      "tables": [
+        "sku_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
+        "masters_audit_log"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 612,
+      "type": "SELECT",
+      "tables": [
+        "sku_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
+        "masters_audit_log"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 678,
+      "type": "SELECT",
+      "tables": [
+        "sku_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
+        "masters_audit_log"
       ],
       "preview": "cur.execute(\"SELECT sku_code, is_active FROM sku_master WHERE sku_id = %s\", (sku_id,))"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 457,
+      "line": 684,
       "type": "SELECT",
       "tables": [
         "sku_master",
-        "sku_bom_master",
-        "sku_production",
-        "sku_mrp_history",
-        "query"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 465,
-      "type": "UPDATE",
-      "tables": [
-        "sku_master",
-        "sku_bom_master",
-        "sku_production",
-        "sku_mrp_history",
-        "query"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 485,
-      "type": "SELECT",
-      "tables": [
-        "sku_master",
-        "sku_bom_master",
         "sku_production",
         "sku_mrp_history",
         "query",
-        "sku_bom_details"
+        "masters_audit_log"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 692,
+      "type": "UPDATE",
+      "tables": [
+        "sku_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
+        "masters_audit_log"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 712,
+      "type": "SELECT",
+      "tables": [
+        "sku_master",
+        "sku_production",
+        "sku_mrp_history",
+        "query",
+        "masters_audit_log",
+        "sku_bom_details",
+        "sku_bom_master"
       ],
       "preview": "cur.execute(\"DELETE FROM sku_mrp_history WHERE sku_id = %s\", (sku_id,))"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 486,
+      "line": 713,
       "type": "SELECT",
       "tables": [
         "sku_master",
-        "sku_bom_master",
         "sku_production",
         "sku_mrp_history",
         "query",
-        "sku_bom_details"
+        "masters_audit_log",
+        "sku_bom_details",
+        "sku_bom_master"
       ],
       "preview": "cur.execute(\"DELETE FROM sku_bom_details WHERE bom_id IN (SELECT bom_id FROM sku_bom_master WHERE sk"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 487,
+      "line": 714,
       "type": "DELETE",
       "tables": [
         "sku_master",
-        "sku_bom_master",
         "sku_production",
         "sku_mrp_history",
         "query",
-        "sku_bom_details"
+        "masters_audit_log",
+        "sku_bom_details",
+        "sku_bom_master"
       ],
       "preview": "cur.execute(\"DELETE FROM sku_bom_master WHERE sku_id = %s\", (sku_id,))"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 488,
+      "line": 715,
       "type": "DELETE",
       "tables": [
         "sku_master",
-        "sku_bom_master",
         "sku_production",
         "sku_mrp_history",
         "query",
-        "sku_bom_details"
+        "masters_audit_log",
+        "sku_bom_details",
+        "sku_bom_master"
       ],
       "preview": "cur.execute(\"DELETE FROM sku_master WHERE sku_id = %s\", (sku_id,))"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 517,
-      "type": "SELECT",
-      "tables": [
-        "sku_master",
-        "sku_bom_master",
-        "sku_production",
-        "sku_mrp_history",
-        "query",
-        "sku_bom_details"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 528,
-      "type": "SELECT",
-      "tables": [
-        "sku_master",
-        "sku_bom_master",
-        "sku_production",
-        "sku_mrp_history",
-        "query",
-        "sku_bom_details"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 547,
-      "type": "SELECT",
-      "tables": [
-        "sku_master",
-        "sku_bom_master",
-        "sku_production",
-        "sku_mrp_history",
-        "query",
-        "sku_bom_details",
-        "materials"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 586,
-      "type": "SELECT",
-      "tables": [
-        "sku_master",
-        "sku_bom_master",
-        "sku_production",
-        "sku_mrp_history",
-        "query",
-        "sku_bom_details",
-        "materials",
-        "cost_elements_master"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 650,
-      "type": "SELECT",
-      "tables": [
-        "sku_master",
-        "sku_bom_master",
-        "sku_production",
-        "sku_mrp_history",
-        "query",
-        "sku_bom_details",
-        "materials",
-        "cost_elements_master"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 658,
-      "type": "OTHER",
-      "tables": [
-        "sku_master",
-        "sku_bom_master",
-        "sku_production",
-        "sku_mrp_history",
-        "query",
-        "sku_bom_details",
-        "materials",
-        "cost_elements_master"
-      ],
-      "preview": "cur.execute(\"BEGIN\")"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 665,
-      "type": "DELETE",
-      "tables": [
-        "sku_master",
-        "sku_bom_master",
-        "sku_production",
-        "sku_mrp_history",
-        "query",
-        "sku_bom_details",
-        "materials",
-        "cost_elements_master",
-        "BOM"
-      ],
-      "preview": "cur.execute(\"DELETE FROM sku_bom_details WHERE bom_id = %s\", (bom_id,))"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 668,
-      "type": "UPDATE",
-      "tables": [
-        "sku_master",
-        "sku_bom_master",
-        "sku_production",
-        "sku_mrp_history",
-        "query",
-        "sku_bom_details",
-        "materials",
-        "cost_elements_master",
-        "BOM"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 680,
-      "type": "UPDATE",
-      "tables": [
-        "sku_master",
-        "sku_bom_master",
-        "sku_production",
-        "sku_mrp_history",
-        "query",
-        "sku_bom_details",
-        "materials",
-        "cost_elements_master",
-        "BOM"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 688,
-      "type": "INSERT",
-      "tables": [
-        "sku_master",
-        "sku_bom_master",
-        "sku_production",
-        "sku_mrp_history",
-        "query",
-        "sku_bom_details",
-        "materials",
-        "cost_elements_master",
-        "BOM"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 707,
-      "type": "INSERT",
-      "tables": [
-        "sku_master",
-        "sku_bom_master",
-        "sku_production",
-        "sku_mrp_history",
-        "query",
-        "sku_bom_details",
-        "materials",
-        "cost_elements_master",
-        "BOM"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 778,
-      "type": "OTHER",
-      "tables": [
-        "sku_master",
-        "sku_bom_master",
-        "sku_production",
-        "sku_mrp_history",
-        "query",
-        "sku_bom_details",
-        "materials",
-        "cost_elements_master",
-        "BOM"
-      ],
-      "preview": "cur.execute(query, params)"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 792,
-      "type": "SELECT",
-      "tables": [
-        "sku_master",
-        "sku_bom_master",
-        "sku_production",
-        "sku_mrp_history",
-        "query",
-        "sku_bom_details",
-        "materials",
-        "cost_elements_master",
-        "BOM"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 832,
-      "type": "SELECT",
-      "tables": [
-        "sku_master",
-        "sku_bom_master",
-        "sku_production",
-        "sku_mrp_history",
-        "query",
-        "sku_bom_details",
-        "materials",
-        "cost_elements_master",
-        "BOM"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 855,
-      "type": "SELECT",
-      "tables": [
-        "sku_master",
-        "sku_bom_master",
-        "sku_production",
-        "sku_mrp_history",
-        "query",
-        "sku_bom_details",
-        "materials",
-        "cost_elements_master",
-        "BOM"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 868,
-      "type": "SELECT",
-      "tables": [
-        "sku_master",
-        "sku_bom_master",
-        "sku_production",
-        "sku_mrp_history",
-        "query",
-        "sku_bom_details",
-        "materials",
-        "cost_elements_master",
-        "BOM"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 925,
-      "type": "SELECT",
-      "tables": [
-        "sku_master",
-        "sku_bom_master",
-        "sku_production",
-        "sku_mrp_history",
-        "query",
-        "sku_bom_details",
-        "materials",
-        "cost_elements_master",
-        "BOM"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 976,
-      "type": "UPDATE",
-      "tables": [
-        "sku_master",
-        "sku_bom_master",
-        "sku_production",
-        "sku_mrp_history",
-        "query",
-        "sku_bom_details",
-        "materials",
-        "cost_elements_master",
-        "BOM"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 1022,
-      "type": "OTHER",
-      "tables": [
-        "sku_master",
-        "sku_bom_master",
-        "sku_production",
-        "sku_mrp_history",
-        "query",
-        "sku_bom_details",
-        "materials",
-        "cost_elements_master",
-        "BOM"
-      ],
-      "preview": "cur.execute(\"BEGIN\")"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 1031,
-      "type": "UPDATE",
-      "tables": [
-        "sku_master",
-        "sku_bom_master",
-        "sku_production",
-        "sku_mrp_history",
-        "query",
-        "sku_bom_details",
-        "materials",
-        "cost_elements_master",
-        "BOM"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 1040,
-      "type": "UPDATE",
-      "tables": [
-        "sku_master",
-        "sku_bom_master",
-        "sku_production",
-        "sku_mrp_history",
-        "query",
-        "sku_bom_details",
-        "materials",
-        "cost_elements_master",
-        "BOM"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 1047,
-      "type": "INSERT",
-      "tables": [
-        "sku_master",
-        "sku_bom_master",
-        "sku_production",
-        "sku_mrp_history",
-        "query",
-        "sku_bom_details",
-        "materials",
-        "cost_elements_master",
-        "BOM"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 1068,
-      "type": "OTHER",
-      "tables": [
-        "sku_master",
-        "sku_bom_master",
-        "sku_production",
-        "sku_mrp_history",
-        "query",
-        "sku_bom_details",
-        "materials",
-        "cost_elements_master",
-        "BOM",
-        "completed"
-      ],
-      "preview": "cur.execute(query, (value, sku_id))"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 1103,
-      "type": "SELECT",
-      "tables": [
-        "sku_master",
-        "sku_bom_master",
-        "sku_production",
-        "sku_mrp_history",
-        "query",
-        "sku_bom_details",
-        "materials",
-        "cost_elements_master",
-        "BOM",
-        "completed"
-      ],
-      "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
@@ -9750,7 +9371,6 @@
         "puvi-backend/puvi-backend-main/modules/material_writeoff.py",
         "puvi-backend/puvi-backend-main/modules/opening_balance.py",
         "puvi-backend/puvi-backend-main/modules/purchase.py",
-        "puvi-backend/puvi-backend-main/modules/sku_management.py",
         "puvi-backend/puvi-backend-main/modules/sku_production.py",
         "puvi-backend/puvi-backend-main/modules/system_config.py",
         "puvi-backend/puvi-backend-main/modules/writeoff_analytics.py",
@@ -9839,7 +9459,6 @@
       "files": [
         "puvi-backend/puvi-backend-main/modules/cost_management.py",
         "puvi-backend/puvi-backend-main/modules/package_sizes.py",
-        "puvi-backend/puvi-backend-main/modules/sku_management.py",
         "puvi-backend/puvi-backend-main/modules/sku_production.py",
         "puvi-backend/puvi-backend-main/modules/system_config.py"
       ]
@@ -9920,7 +9539,8 @@
       "name": "masters_audit_log",
       "files": [
         "puvi-backend/puvi-backend-main/modules/masters_common.py",
-        "puvi-backend/puvi-backend-main/modules/opening_balance.py"
+        "puvi-backend/puvi-backend-main/modules/opening_balance.py",
+        "puvi-backend/puvi-backend-main/modules/sku_management.py"
       ]
     },
     {
@@ -10085,13 +9705,6 @@
       ]
     },
     {
-      "name": "sku_bom_master",
-      "files": [
-        "puvi-backend/puvi-backend-main/modules/sku_management.py",
-        "puvi-backend/puvi-backend-main/modules/sku_production.py"
-      ]
-    },
-    {
       "name": "sku_mrp_history",
       "files": [
         "puvi-backend/puvi-backend-main/modules/sku_management.py",
@@ -10106,15 +9719,10 @@
       ]
     },
     {
-      "name": "BOM",
+      "name": "sku_bom_master",
       "files": [
-        "puvi-backend/puvi-backend-main/modules/sku_management.py"
-      ]
-    },
-    {
-      "name": "completed",
-      "files": [
-        "puvi-backend/puvi-backend-main/modules/sku_management.py"
+        "puvi-backend/puvi-backend-main/modules/sku_management.py",
+        "puvi-backend/puvi-backend-main/modules/sku_production.py"
       ]
     },
     {
@@ -15258,7 +14866,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 165,
+      "line": 167,
       "name": "get_single_sku",
       "params": "sku_id",
       "type": "python",
@@ -15266,7 +14874,15 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 253,
+      "line": 263,
+      "name": "calculate_oil_weight",
+      "params": "package_size, density",
+      "type": "python",
+      "isRoute": false
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 281,
       "name": "create_sku",
       "params": "",
       "type": "python",
@@ -15274,7 +14890,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 332,
+      "line": 368,
       "name": "update_sku",
       "params": "sku_id",
       "type": "python",
@@ -15282,73 +14898,25 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 444,
+      "line": 505,
+      "name": "bulk_update_weights",
+      "params": "",
+      "type": "python",
+      "isRoute": true
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 605,
+      "name": "calculate_recommended_weights",
+      "params": "",
+      "type": "python",
+      "isRoute": true
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 671,
       "name": "delete_sku",
       "params": "sku_id",
-      "type": "python",
-      "isRoute": true
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 510,
-      "name": "get_sku_bom",
-      "params": "sku_id",
-      "type": "python",
-      "isRoute": true
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 628,
-      "name": "create_or_update_bom",
-      "params": "",
-      "type": "python",
-      "isRoute": true
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 742,
-      "name": "get_materials_for_bom",
-      "params": "",
-      "type": "python",
-      "isRoute": true
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 819,
-      "name": "get_cost_preview",
-      "params": "",
-      "type": "python",
-      "isRoute": true
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 919,
-      "name": "get_bom_history",
-      "params": "sku_id",
-      "type": "python",
-      "isRoute": true
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 970,
-      "name": "activate_sku",
-      "params": "sku_id",
-      "type": "python",
-      "isRoute": true
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 1003,
-      "name": "bulk_update_skus",
-      "params": "",
-      "type": "python",
-      "isRoute": true
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 1095,
-      "name": "export_skus",
-      "params": "",
       "type": "python",
       "isRoute": true
     },
@@ -22389,85 +21957,43 @@
         "method": "GET",
         "path": "/api/sku/master/<int:sku_id>",
         "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-        "line": 164,
+        "line": 166,
         "function": "get_single_sku"
       },
       {
         "method": "POST",
         "path": "/api/sku/master",
         "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-        "line": 252,
+        "line": 280,
         "function": "create_sku"
       },
       {
         "method": "PUT",
         "path": "/api/sku/master/<int:sku_id>",
         "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-        "line": 331,
+        "line": 367,
         "function": "update_sku"
+      },
+      {
+        "method": "POST",
+        "path": "/api/sku/master/update-weights",
+        "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+        "line": 504,
+        "function": "bulk_update_weights"
+      },
+      {
+        "method": "GET",
+        "path": "/api/sku/master/calculate-weights",
+        "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+        "line": 604,
+        "function": "calculate_recommended_weights"
       },
       {
         "method": "DELETE",
         "path": "/api/sku/master/<int:sku_id>",
         "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-        "line": 443,
+        "line": 670,
         "function": "delete_sku"
-      },
-      {
-        "method": "GET",
-        "path": "/api/sku/bom/<int:sku_id>",
-        "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-        "line": 509,
-        "function": "get_sku_bom"
-      },
-      {
-        "method": "POST",
-        "path": "/api/sku/bom",
-        "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-        "line": 627,
-        "function": "create_or_update_bom"
-      },
-      {
-        "method": "GET",
-        "path": "/api/sku/materials",
-        "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-        "line": 741,
-        "function": "get_materials_for_bom"
-      },
-      {
-        "method": "POST",
-        "path": "/api/sku/cost-preview",
-        "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-        "line": 818,
-        "function": "get_cost_preview"
-      },
-      {
-        "method": "GET",
-        "path": "/api/sku/bom-history/<int:sku_id>",
-        "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-        "line": 918,
-        "function": "get_bom_history"
-      },
-      {
-        "method": "POST",
-        "path": "/api/sku/master/activate/<int:sku_id>",
-        "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-        "line": 969,
-        "function": "activate_sku"
-      },
-      {
-        "method": "POST",
-        "path": "/api/sku/master/bulk-update",
-        "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-        "line": 1002,
-        "function": "bulk_update_skus"
-      },
-      {
-        "method": "GET",
-        "path": "/api/sku/master/export",
-        "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-        "line": 1094,
-        "function": "export_skus"
       }
     ],
     "sku_outbound_bp": [
@@ -26305,176 +25831,98 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 158,
+      "line": 160,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 170,
+      "line": 172,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 246,
+      "line": 257,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 258,
+      "line": 286,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 324,
+      "line": 360,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 337,
+      "line": 373,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 436,
+      "line": 493,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 449,
+      "line": 510,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 498,
+      "line": 526,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
+      "line": 582,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 515,
-      "type": "try-catch",
-      "code": "try:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 621,
+      "line": 597,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 633,
+      "line": 610,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 730,
+      "line": 660,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 747,
+      "line": 676,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 808,
-      "type": "except",
-      "exception": "Exception",
-      "code": "except Exception as e:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 824,
-      "type": "try-catch",
-      "code": "try:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 908,
-      "type": "except",
-      "exception": "Exception",
-      "code": "except Exception as e:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 924,
-      "type": "try-catch",
-      "code": "try:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 959,
-      "type": "except",
-      "exception": "Exception",
-      "code": "except Exception as e:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 975,
-      "type": "try-catch",
-      "code": "try:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 995,
-      "type": "except",
-      "exception": "Exception",
-      "code": "except Exception as e:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 1008,
-      "type": "try-catch",
-      "code": "try:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 1025,
-      "type": "try-catch",
-      "code": "try:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 1072,
-      "type": "except",
-      "exception": "Exception",
-      "code": "except Exception as e:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 1087,
-      "type": "except",
-      "exception": "Exception",
-      "code": "except Exception as e:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 1100,
-      "type": "try-catch",
-      "code": "try:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_management.py",
-      "line": 1147,
+      "line": 725,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
@@ -27247,15 +26695,15 @@
     "jsFiles": 43,
     "pyFiles": 27,
     "components": 47,
-    "routes": 155,
+    "routes": 149,
     "exports": 45,
     "imports": 63,
     "hardcodedValues": 24,
-    "databaseQueries": 512,
-    "databaseTables": 68,
-    "functions": 733,
+    "databaseQueries": 494,
+    "databaseTables": 66,
+    "functions": 728,
     "stateHooks": 796,
     "missingEndpoints": 1,
-    "errorHandlers": 722
+    "errorHandlers": 710
   }
 }

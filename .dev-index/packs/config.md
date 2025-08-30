@@ -1,5 +1,5 @@
 # Feature Pack: CONFIG
-Generated: 2025-08-30T18:24:46.086Z
+Generated: 2025-08-30T18:26:28.235Z
 Routes: 5 | Tables: 8 | Files: 1
 
 ## Table of Contents
@@ -29,8 +29,8 @@ GET    /api/config/labor_rates
 |-------|-------------|------|--------|
 | available_oil_types | batch-production, system-config | 🟡 MEDIUM | Changes affect 2 other modules |
 | bom_category_mapping | system-config | 🟡 MEDIUM | Changes affect 1 other modules |
-| cost_elements_master | cost-management, package-sizes, sku-management | 🔴 HIGH | Changes affect 5 other modules |
-| materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 11 other modules |
+| cost_elements_master | cost-management, package-sizes, sku-production | 🔴 HIGH | Changes affect 4 other modules |
+| materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
 | sku_master | masters-crud, material-writeoff, package-sizes | 🔴 HIGH | Changes affect 8 other modules |
 | suppliers | opening-balance, purchase, sku-production | 🔴 HIGH | Changes affect 5 other modules |
 | uom_master | masters-common, system-config | 🟡 MEDIUM | Changes affect 2 other modules |
@@ -44,10 +44,10 @@ GET    /api/config/labor_rates
 ## Data Flow & Integration
 ### 🔗 Cascading Dependencies
 - **materials** (HIGH RISK)
-  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, writeoff-analytics, unknown
+  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, system-config, writeoff-analytics, unknown
   - Impact: Changes will cascade to these modules
 - **cost_elements_master** (HIGH RISK)
-  - Shared with: cost-management, package-sizes, sku-management, sku-production, system-config
+  - Shared with: cost-management, package-sizes, sku-production, system-config
   - Impact: Changes will cascade to these modules
 - **suppliers** (HIGH RISK)
   - Shared with: opening-balance, purchase, sku-production, system-config, unknown
