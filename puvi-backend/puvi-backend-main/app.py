@@ -1,8 +1,8 @@
 # File Path: puvi-backend/puvi-backend-main/app.py
 """
 Main Flask Application for PUVI Oil Manufacturing System
-Integrates all modules including Cost Management, SKU, Masters, and Opening Balance
-Version: 10.0.0 - Enhanced with automatic sequence synchronization at startup
+Integrates all modules including Cost Management, SKU, Masters, Opening Balance, and SKU Outbound
+Version: 11.0.0 - Enhanced with SKU Outbound, Locations, and Customers modules
 """
 
 import re
@@ -26,6 +26,10 @@ from modules.masters_crud import masters_crud_bp
 from modules.opening_balance import opening_balance_bp
 from modules.system_config import system_config_bp
 from modules.package_sizes import package_sizes_bp
+# NEW: SKU Outbound module imports
+from modules.locations import locations_bp
+from modules.customers import customers_bp
+from modules.sku_outbound import sku_outbound_bp
 
 # Create Flask app
 app = Flask(__name__)
@@ -77,6 +81,10 @@ app.register_blueprint(masters_crud_bp)
 app.register_blueprint(opening_balance_bp)
 app.register_blueprint(system_config_bp)
 app.register_blueprint(package_sizes_bp)
+# NEW: Register SKU Outbound related blueprints
+app.register_blueprint(locations_bp)
+app.register_blueprint(customers_bp)
+app.register_blueprint(sku_outbound_bp)
 
 # Configuration
 app.config['JSON_SORT_KEYS'] = False
@@ -95,16 +103,17 @@ def home():
     """Root endpoint to verify API is running"""
     return jsonify({
         'status': 'PUVI Backend API is running!',
-        'version': '10.0.0',
+        'version': '11.0.0',
         'features': {
             'sequence_sync': 'Automatic sequence synchronization enabled',
-            'self_healing': 'Database sequences auto-repair on startup'
+            'self_healing': 'Database sequences auto-repair on startup',
+            'sku_outbound': 'Complete SKU outbound with internal transfers and sales'
         },
         'modules': {
-            'core': ['Masters', 'Opening Balance'],
+            'core': ['Masters', 'Opening Balance', 'Locations', 'Customers'],
             'transactions': ['Purchase', 'Writeoff', 'Batch', 'Blending', 'Sales'],
-            'advanced': ['Cost Management', 'SKU Management v2.0'],
-            'total_modules': 10
+            'advanced': ['Cost Management', 'SKU Management v2.0', 'SKU Outbound'],
+            'total_modules': 13
         },
         'endpoints': {
             'masters': '/api/masters/*',
@@ -116,6 +125,9 @@ def home():
             'sales': '/api/add_material_sale, /api/sales_history',
             'cost': '/api/cost_management/*',
             'sku': '/api/sku/*',
+            'sku_outbound': '/api/sku/outbound/*',
+            'locations': '/api/locations/*',
+            'customers': '/api/customers/*',
             'system': '/api/sequence_status (NEW)'
         },
         'timestamp': datetime.now().isoformat(),
@@ -150,8 +162,8 @@ def health_check():
             'sequences_fixed': sequence_sync_results.get('summary', {}).get('sequences_fixed', 0)
         },
         'timestamp': datetime.now().isoformat(),
-        'modules_loaded': 10,
-        'version': '10.0.0'
+        'modules_loaded': 13,
+        'version': '11.0.0'
     })
 
 # New endpoint to check sequence synchronization status
@@ -217,7 +229,7 @@ def system_info():
         result = cur.fetchone()
         is_initialized = result[0] == 'true' if result else False
         
-        # Get module statistics
+        # Get module statistics - Enhanced with SKU Outbound stats
         cur.execute("""
             SELECT 
                 (SELECT COUNT(*) FROM suppliers WHERE is_active = true) as active_suppliers,
@@ -225,7 +237,10 @@ def system_info():
                 (SELECT COUNT(*) FROM purchases) as total_purchases,
                 (SELECT COUNT(*) FROM batch) as total_batches,
                 (SELECT COUNT(*) FROM sku_master WHERE is_active = true) as active_skus,
-                (SELECT COUNT(*) FROM sku_production) as total_productions
+                (SELECT COUNT(*) FROM sku_production) as total_productions,
+                (SELECT COUNT(*) FROM locations_master WHERE is_active = true) as active_locations,
+                (SELECT COUNT(*) FROM customers WHERE is_active = true) as active_customers,
+                (SELECT COUNT(*) FROM sku_outbound) as total_outbounds
         """)
         stats = cur.fetchone()
         
@@ -233,7 +248,7 @@ def system_info():
             'success': True,
             'system': {
                 'initialized': is_initialized,
-                'version': '10.0.0',
+                'version': '11.0.0',
                 'sequence_sync_enabled': True,
                 'sequence_sync_status': sequence_sync_results.get('status'),
                 'modules': {
@@ -242,7 +257,10 @@ def system_info():
                     'purchase': 'active',
                     'production': 'active',
                     'sales': 'active',
-                    'sku': 'active'
+                    'sku': 'active',
+                    'sku_outbound': 'active',
+                    'locations': 'active',
+                    'customers': 'active'
                 }
             },
             'statistics': {
@@ -251,7 +269,10 @@ def system_info():
                 'purchases': stats[2] if stats else 0,
                 'batches': stats[3] if stats else 0,
                 'skus': stats[4] if stats else 0,
-                'productions': stats[5] if stats else 0
+                'productions': stats[5] if stats else 0,
+                'locations': stats[6] if stats else 0,
+                'customers': stats[7] if stats else 0,
+                'outbounds': stats[8] if stats else 0
             },
             'timestamp': datetime.now().isoformat()
         })
