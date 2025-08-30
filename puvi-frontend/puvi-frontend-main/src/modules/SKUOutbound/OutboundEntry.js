@@ -110,7 +110,7 @@ const OutboundEntry = () => {
       }
 
       // Fetch SKUs
-      const skuResponse = await api.sku.dropdown();
+      const skuResponse = await api.sku.getMasterList({ is_active: true });
       if (skuResponse.success) {
         setSKUs(skuResponse.skus || []);
       }
