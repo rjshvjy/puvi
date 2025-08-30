@@ -631,8 +631,14 @@ def create_outbound():
             conn.rollback()
             return jsonify({'success': False, 'error': str(e)}), 500
             
-    finally:
-        close_connection(conn, cur)
+    # This is the key fix - finally is outside the while loop
+    close_connection(conn, cur)
+    
+    # If we get here, we exhausted retries
+    return jsonify({
+        'success': False,
+        'error': 'Failed to create outbound after maximum retries'
+    }), 503
 
 
 @sku_outbound_bp.route('/api/sku/outbound/history', methods=['GET'])
