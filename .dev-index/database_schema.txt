@@ -1,5 +1,5 @@
 # PUVI Database Schema
-# Generated: 2025-08-30 02:05:06.801019
+# Generated: 2025-08-30 18:24:42.462131
 # Total Tables: 81
 
 === available_oil_types ===
@@ -651,6 +651,7 @@ mrp_current: numeric(10,2)
 shelf_life_months: integer(32,0)
 mrp_effective_date: integer(32,0)
 updated_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+packaged_weight_kg: numeric(10,4)
 
 === sku_material_consumption ===
 consumption_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('sku_material_consumption_consumption_id_seq'::regclass)
@@ -709,6 +710,8 @@ created_by: character varying(100)
 created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 updated_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 ship_to_location_id: integer(32,0) [FK] -> customer_ship_to_locations.ship_to_id
+handling_cost: numeric(10,2) DEFAULT 0
+total_shipment_weight_kg: numeric(10,2)
 
 === sku_outbound_items ===
 item_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('sku_outbound_items_item_id_seq'::regclass)
@@ -720,6 +723,11 @@ allocation_data: jsonb NOT NULL
 unit_price: numeric(10,2)
 line_total: numeric(12,2)
 notes: text
+item_weight_kg: numeric(10,3)
+transport_cost_per_unit: numeric(10,2)
+transport_cost_per_kg: numeric(10,4)
+handling_cost_per_unit: numeric(10,2)
+handling_cost_per_kg: numeric(10,4)
 
 === sku_production ===
 production_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('sku_production_production_id_seq'::regclass)
