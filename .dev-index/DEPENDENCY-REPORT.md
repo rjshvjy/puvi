@@ -1,12 +1,12 @@
 # PUVI System - Dependency Analysis Report
 
-**Generated:** 2025-08-26T23:55:54.611Z
+**Generated:** 2025-08-30T00:52:41.656Z
 **Version:** 1.0
 
 ## Executive Summary
 
-- **Total Tables:** 61
-- **Shared Tables:** 31 (cross-module dependencies)
+- **Total Tables:** 66
+- **Shared Tables:** 32 (cross-module dependencies)
 - **Hardcoded Categories:** 0
 - **Migration Opportunities:** 0
 
@@ -54,15 +54,15 @@ Tables used by multiple modules (changes have cascading effects):
 
 ### sku_master
 - **Risk Level:** HIGH
-- **Shared By:** masters-crud, material-writeoff, package-sizes, sku-management, sku-production, system-config, unknown
-- **File Count:** 7
-- **Recommendation:** ⚠️ CRITICAL: Changes require coordination across 7 modules
+- **Shared By:** masters-crud, material-writeoff, package-sizes, sku-management, sku-outbound, sku-production, system-config, unknown
+- **File Count:** 8
+- **Recommendation:** ⚠️ CRITICAL: Changes require coordination across 8 modules
 
 ### sku_production
 - **Risk Level:** HIGH
-- **Shared By:** material-writeoff, sku-management, sku-production, unknown
-- **File Count:** 4
-- **Recommendation:** ⚠️ CRITICAL: Changes require coordination across 4 modules
+- **Shared By:** material-writeoff, sku-management, sku-outbound, sku-production, unknown
+- **File Count:** 5
+- **Recommendation:** ⚠️ CRITICAL: Changes require coordination across 5 modules
 
 ### suppliers
 - **Risk Level:** HIGH
@@ -94,6 +94,12 @@ Tables used by multiple modules (changes have cascading effects):
 - **File Count:** 3
 - **Recommendation:** Changes will affect material-writeoff, system-config, writeoff-analytics
 
+### sku_inventory
+- **Risk Level:** MEDIUM
+- **Shared By:** material-writeoff, sku-outbound, sku-production
+- **File Count:** 3
+- **Recommendation:** Changes will affect material-writeoff, sku-outbound, sku-production
+
 ### material_writeoffs
 - **Risk Level:** MEDIUM
 - **Shared By:** material-writeoff, opening-balance, writeoff-analytics
@@ -109,10 +115,10 @@ Hardcoded values that should be moved to database:
 - **materials**: Used by batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-management, sku-production, system-config, writeoff-analytics, unknown (12 files)
 - **batch**: Used by batch-production, blending, cost-management, masters-crud, material-sales, material-writeoff, opening-balance, sku-production, writeoff-analytics, unknown (11 files)
 - **inventory**: Used by batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, unknown (8 files)
-- **sku_master**: Used by masters-crud, material-writeoff, package-sizes, sku-management, sku-production, system-config, unknown (7 files)
+- **sku_master**: Used by masters-crud, material-writeoff, package-sizes, sku-management, sku-outbound, sku-production, system-config, unknown (8 files)
 - **purchases**: Used by batch-production, blending, opening-balance, purchase, sku-production, unknown (6 files)
 - **cost_elements_master**: Used by cost-management, package-sizes, sku-management, sku-production, system-config (5 files)
+- **sku_production**: Used by material-writeoff, sku-management, sku-outbound, sku-production, unknown (5 files)
 - **suppliers**: Used by opening-balance, purchase, sku-production, system-config, unknown (6 files)
 - **categories_master**: Used by blending, masters-crud, material-writeoff, purchase (4 files)
-- **sku_production**: Used by material-writeoff, sku-management, sku-production, unknown (4 files)
 - **oil_cake_inventory**: Used by batch-production, material-sales, material-writeoff (3 files)

@@ -1,9 +1,9 @@
 {
   "version": "1.0",
-  "generatedAt": "2025-08-26T23:55:54.611Z",
+  "generatedAt": "2025-08-30T00:52:41.656Z",
   "summary": {
-    "totalTables": 61,
-    "sharedTables": 31,
+    "totalTables": 66,
+    "sharedTables": 32,
     "hardcodedCategories": 0,
     "migrationOpportunities": 0
   },
@@ -688,11 +688,12 @@
         "material-writeoff",
         "package-sizes",
         "sku-management",
+        "sku-outbound",
         "sku-production",
         "system-config",
         "unknown"
       ],
-      "fileCount": 7,
+      "fileCount": 8,
       "operations": {
         "masters-crud": {
           "files": [
@@ -715,6 +716,12 @@
         "sku-management": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/sku_management.py"
+          ],
+          "queryCount": 0
+        },
+        "sku-outbound": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_outbound.py"
           ],
           "queryCount": 0
         },
@@ -810,13 +817,27 @@
     },
     "sku_inventory": {
       "usedBy": [
-        "material-writeoff"
+        "material-writeoff",
+        "sku-outbound",
+        "sku-production"
       ],
-      "fileCount": 1,
+      "fileCount": 3,
       "operations": {
         "material-writeoff": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/material_writeoff.py"
+          ],
+          "queryCount": 0
+        },
+        "sku-outbound": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_outbound.py"
+          ],
+          "queryCount": 0
+        },
+        "sku-production": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_production.py"
           ],
           "queryCount": 0
         }
@@ -826,10 +847,11 @@
       "usedBy": [
         "material-writeoff",
         "sku-management",
+        "sku-outbound",
         "sku-production",
         "unknown"
       ],
-      "fileCount": 4,
+      "fileCount": 5,
       "operations": {
         "material-writeoff": {
           "files": [
@@ -840,6 +862,12 @@
         "sku-management": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/sku_management.py"
+          ],
+          "queryCount": 0
+        },
+        "sku-outbound": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_outbound.py"
           ],
           "queryCount": 0
         },
@@ -1215,6 +1243,76 @@
         }
       }
     },
+    "sku_outbound": {
+      "usedBy": [
+        "sku-outbound"
+      ],
+      "fileCount": 1,
+      "operations": {
+        "sku-outbound": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_outbound.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "sku_expiry_tracking": {
+      "usedBy": [
+        "sku-outbound"
+      ],
+      "fileCount": 1,
+      "operations": {
+        "sku-outbound": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_outbound.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "locations_master": {
+      "usedBy": [
+        "sku-outbound"
+      ],
+      "fileCount": 1,
+      "operations": {
+        "sku-outbound": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_outbound.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "available": {
+      "usedBy": [
+        "sku-outbound"
+      ],
+      "fileCount": 1,
+      "operations": {
+        "sku-outbound": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_outbound.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "sku_outbound_items": {
+      "usedBy": [
+        "sku-outbound"
+      ],
+      "fileCount": 1,
+      "operations": {
+        "sku-outbound": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_outbound.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
     "DESC": {
       "usedBy": [
         "sku-production"
@@ -1520,27 +1618,29 @@
         "material-writeoff",
         "package-sizes",
         "sku-management",
+        "sku-outbound",
         "sku-production",
         "system-config",
         "unknown"
       ],
-      "moduleCount": 7,
-      "fileCount": 7,
+      "moduleCount": 8,
+      "fileCount": 8,
       "risk": "HIGH",
-      "recommendation": "⚠️ CRITICAL: Changes require coordination across 7 modules"
+      "recommendation": "⚠️ CRITICAL: Changes require coordination across 8 modules"
     },
     {
       "table": "sku_production",
       "sharedBy": [
         "material-writeoff",
         "sku-management",
+        "sku-outbound",
         "sku-production",
         "unknown"
       ],
-      "moduleCount": 4,
-      "fileCount": 4,
+      "moduleCount": 5,
+      "fileCount": 5,
       "risk": "HIGH",
-      "recommendation": "⚠️ CRITICAL: Changes require coordination across 4 modules"
+      "recommendation": "⚠️ CRITICAL: Changes require coordination across 5 modules"
     },
     {
       "table": "suppliers",
@@ -1603,6 +1703,18 @@
       "fileCount": 3,
       "risk": "MEDIUM",
       "recommendation": "Changes will affect material-writeoff, system-config, writeoff-analytics"
+    },
+    {
+      "table": "sku_inventory",
+      "sharedBy": [
+        "material-writeoff",
+        "sku-outbound",
+        "sku-production"
+      ],
+      "moduleCount": 3,
+      "fileCount": 3,
+      "risk": "MEDIUM",
+      "recommendation": "Changes will affect material-writeoff, sku-outbound, sku-production"
     },
     {
       "table": "material_writeoffs",

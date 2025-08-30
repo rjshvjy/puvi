@@ -1,5 +1,5 @@
 # Feature Pack: MATERIALS
-Generated: 2025-08-26T23:55:54.677Z
+Generated: 2025-08-30T00:52:41.720Z
 Routes: 4 | Tables: 15 | Files: 2
 
 ## Table of Contents
@@ -34,7 +34,7 @@ GET    /api/materials/units
 | materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 11 other modules |
 | purchase_items | batch-production, purchase | 🟡 MEDIUM | Changes affect 2 other modules |
 | purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 6 other modules |
-| sku_master | masters-crud, material-writeoff, package-sizes | 🔴 HIGH | Changes affect 7 other modules |
+| sku_master | masters-crud, material-writeoff, package-sizes | 🔴 HIGH | Changes affect 8 other modules |
 | subcategories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
 | suppliers | opening-balance, purchase, sku-production | 🔴 HIGH | Changes affect 5 other modules |
 | tags | purchase | 🟡 MEDIUM | Changes affect 1 other modules |

@@ -1,5 +1,5 @@
 # Feature Pack: MASTERS
-Generated: 2025-08-26T23:55:54.670Z
+Generated: 2025-08-30T00:52:41.714Z
 Routes: 22 | Tables: 11 | Files: 4
 
 ## Table of Contents
@@ -70,7 +70,7 @@ POST   /api/masters/package_sizes/validate
 | inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
 | materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 11 other modules |
 | package_sizes_master | package-sizes, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
-| sku_master | masters-crud, material-writeoff, package-sizes | 🔴 HIGH | Changes affect 7 other modules |
+| sku_master | masters-crud, material-writeoff, package-sizes | 🔴 HIGH | Changes affect 8 other modules |
 | subcategories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
 
 ## Backend Implementation
