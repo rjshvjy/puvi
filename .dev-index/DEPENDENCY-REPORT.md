@@ -1,12 +1,12 @@
 # PUVI System - Dependency Analysis Report
 
-**Generated:** 2025-08-30T01:37:31.776Z
+**Generated:** 2025-08-30T01:45:29.508Z
 **Version:** 1.0
 
 ## Executive Summary
 
-- **Total Tables:** 67
-- **Shared Tables:** 35 (cross-module dependencies)
+- **Total Tables:** 68
+- **Shared Tables:** 36 (cross-module dependencies)
 - **Hardcoded Categories:** 0
 - **Migration Opportunities:** 0
 
@@ -93,6 +93,12 @@ Tables used by multiple modules (changes have cascading effects):
 - **Shared By:** blending, masters-crud, sku-production
 - **File Count:** 3
 - **Recommendation:** Changes will affect blending, masters-crud, sku-production
+
+### sku_outbound
+- **Risk Level:** MEDIUM
+- **Shared By:** customers, locations, sku-outbound
+- **File Count:** 3
+- **Recommendation:** Changes will affect customers, locations, sku-outbound
 
 ### writeoff_reasons
 - **Risk Level:** MEDIUM

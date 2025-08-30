@@ -1,9 +1,9 @@
 {
   "version": "1.0",
-  "generatedAt": "2025-08-30T01:37:31.776Z",
+  "generatedAt": "2025-08-30T01:45:29.508Z",
   "summary": {
-    "totalTables": 67,
-    "sharedTables": 35,
+    "totalTables": 68,
+    "sharedTables": 36,
     "hardcodedCategories": 0,
     "migrationOpportunities": 0
   },
@@ -598,6 +598,69 @@
         }
       }
     },
+    "customers": {
+      "usedBy": [
+        "customers",
+        "locations"
+      ],
+      "fileCount": 2,
+      "operations": {
+        "customers": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/customers.py"
+          ],
+          "queryCount": 0
+        },
+        "locations": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/locations.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "customer_ship_to_locations": {
+      "usedBy": [
+        "customers"
+      ],
+      "fileCount": 1,
+      "operations": {
+        "customers": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/customers.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "sku_outbound": {
+      "usedBy": [
+        "customers",
+        "locations",
+        "sku-outbound"
+      ],
+      "fileCount": 3,
+      "operations": {
+        "customers": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/customers.py"
+          ],
+          "queryCount": 0
+        },
+        "locations": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/locations.py"
+          ],
+          "queryCount": 0
+        },
+        "sku-outbound": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_outbound.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
     "locations_master": {
       "usedBy": [
         "locations",
@@ -670,41 +733,6 @@
         "sku-outbound": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/sku_outbound.py"
-          ],
-          "queryCount": 0
-        }
-      }
-    },
-    "sku_outbound": {
-      "usedBy": [
-        "locations",
-        "sku-outbound"
-      ],
-      "fileCount": 2,
-      "operations": {
-        "locations": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/locations.py"
-          ],
-          "queryCount": 0
-        },
-        "sku-outbound": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/sku_outbound.py"
-          ],
-          "queryCount": 0
-        }
-      }
-    },
-    "customers": {
-      "usedBy": [
-        "locations"
-      ],
-      "fileCount": 1,
-      "operations": {
-        "locations": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/locations.py"
           ],
           "queryCount": 0
         }
@@ -1748,6 +1776,18 @@
       "recommendation": "Changes will affect blending, masters-crud, sku-production"
     },
     {
+      "table": "sku_outbound",
+      "sharedBy": [
+        "customers",
+        "locations",
+        "sku-outbound"
+      ],
+      "moduleCount": 3,
+      "fileCount": 3,
+      "risk": "MEDIUM",
+      "recommendation": "Changes will affect customers, locations, sku-outbound"
+    },
+    {
       "table": "writeoff_reasons",
       "sharedBy": [
         "material-writeoff",
@@ -1816,6 +1856,17 @@
       "recommendation": "Changes will affect blending, sku-production"
     },
     {
+      "table": "customers",
+      "sharedBy": [
+        "customers",
+        "locations"
+      ],
+      "moduleCount": 2,
+      "fileCount": 2,
+      "risk": "LOW",
+      "recommendation": "Changes will affect customers, locations"
+    },
+    {
       "table": "locations_master",
       "sharedBy": [
         "locations",
@@ -1828,17 +1879,6 @@
     },
     {
       "table": "sku_expiry_tracking",
-      "sharedBy": [
-        "locations",
-        "sku-outbound"
-      ],
-      "moduleCount": 2,
-      "fileCount": 2,
-      "risk": "LOW",
-      "recommendation": "Changes will affect locations, sku-outbound"
-    },
-    {
-      "table": "sku_outbound",
       "sharedBy": [
         "locations",
         "sku-outbound"
