@@ -104,11 +104,18 @@ const api = {
       return put(`/api/sku/master/${skuId}`, skuData);
     },
 
-    // Delete/Deactivate SKU
+   // Delete/Deactivate SKU
     delete: async (skuId) => {
       return del(`/api/sku/master/${skuId}`);
     },
-
+    // Bulk update weights for multiple SKUs
+    updateWeights: async (data) => {
+      return post('/api/sku/master/update-weights', data);
+    },
+    // Calculate recommended weights based on package size and density
+    calculateWeights: async () => {
+      return apiCall('/api/sku/master/calculate-weights');
+    },
     // Reactivate deactivated SKU
     activate: async (skuId) => {
       return post(`/api/sku/master/activate/${skuId}`, {});
