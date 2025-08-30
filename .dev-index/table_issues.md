@@ -1,6 +1,6 @@
 # Table Usage Issues
 
-Generated: 2025-08-30 06:50:10.173520
+Generated: 2025-08-30 07:10:56.683703
 
 ## ⚠️ Orphaned Tables
 These tables exist in database but are not used in any code:
