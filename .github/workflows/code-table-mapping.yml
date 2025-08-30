@@ -15,6 +15,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          token: ${{ github.token }}
+          fetch-depth: 0  # Get full history for rebasing
       
       - name: Setup Python
         uses: actions/setup-python@v4
@@ -24,6 +27,16 @@ jobs:
       - name: Install dependencies
         run: |
           pip install psycopg2-binary
+      
+      - name: Configure Git
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+      
+      - name: Pull latest changes
+        run: |
+          echo "Syncing with remote repository..."
+          git pull --rebase origin main || git pull --rebase origin master || true
       
       - name: Scan Code for Table Usage
         run: |
@@ -363,18 +376,62 @@ jobs:
           print("✅ Mapping complete!")
           EOF
       
-      - name: Commit results
+      - name: Commit and Push Results
         run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          
+          # Add generated files
           git add .dev-index/code_table_mapping.json || true
           git add .dev-index/code_usage_report.md || true
           git add .dev-index/table_issues.md || true
           
+          # Check if there are changes
           if git diff --staged --quiet; then
             echo "No changes in code-table usage"
-          else
-            git commit -m "chore: update code-table usage mapping [automated]"
-            git push
+            exit 0
           fi
+          
+          # Commit the changes
+          git commit -m "chore: update code-table usage mapping [automated]"
+          
+          # Push with retry logic
+          echo "Pushing changes..."
+          max_attempts=5
+          attempt=1
+          
+          while [ $attempt -le $max_attempts ]; do
+            echo "Push attempt $attempt of $max_attempts"
+            
+            if git push origin HEAD; then
+              echo "✅ Push successful!"
+              exit 0
+            else
+              echo "Push failed. Pulling latest changes..."
+              
+              # Try to pull and rebase
+              if git pull --rebase origin main; then
+                echo "Rebased successfully"
+              elif git pull --rebase origin master; then
+                echo "Rebased successfully"
+              else
+                echo "Rebase failed, trying merge..."
+                git rebase --abort 2>/dev/null || true
+                
+                if git pull origin main; then
+                  echo "Merged successfully"
+                elif git pull origin master; then
+                  echo "Merged successfully"
+                else
+                  echo "❌ Could not sync with remote"
+                  exit 1
+                fi
+              fi
+              
+              attempt=$((attempt + 1))
+              
+              if [ $attempt -le $max_attempts ]; then
+                sleep 2
+              fi
+            fi
+          done
+          
+          echo "❌ Failed to push after $max_attempts attempts"
+          exit 1
