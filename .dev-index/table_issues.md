@@ -1,6 +1,6 @@
 # Table Usage Issues
 
-Generated: 2025-08-30 02:05:01.885076
+Generated: 2025-08-30 06:35:28.381223
 
 ## ⚠️ Orphaned Tables
 These tables exist in database but are not used in any code:
@@ -277,7 +277,7 @@ These tables are referenced in code but don't exist in database:
 - location
   Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py, puvi-backend/puvi-backend-main/modules/locations.py
 - locations
-  Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/modules/locations.py
+  Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/modules/locations.py, puvi-frontend/puvi-frontend-main/src/services/api/index.js and 7 more
 - low_confidence_suggestions
   Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
 - mapped_materials
@@ -471,7 +471,7 @@ These tables are referenced in code but don't exist in database:
 - size_in_liters
   Files: puvi-backend/puvi-backend-main/modules/package_sizes.py
 - sku
-  Files: puvi-backend/puvi-backend-main/modules/system_config.py, puvi-backend/puvi-backend-main/modules/material_writeoff.py, puvi-frontend/puvi-frontend-main/src/index.js and 42 more
+  Files: puvi-backend/puvi-backend-main/modules/system_config.py, puvi-backend/puvi-backend-main/modules/material_writeoff.py, puvi-frontend/puvi-frontend-main/src/index.js and 50 more
 - sku_details
   Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
 - skus
