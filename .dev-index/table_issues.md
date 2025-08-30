@@ -1,6 +1,6 @@
 # Table Usage Issues
 
-Generated: 2025-08-30 08:59:38.066727
+Generated: 2025-08-30 18:24:39.648667
 
 ## ⚠️ Orphaned Tables
 These tables exist in database but are not used in any code:
@@ -129,11 +129,11 @@ These tables are referenced in code but don't exist in database:
 - cost_element_usage_stats
   Files: puvi-backend/puvi-backend-main/modules/cost_management.py
 - cost_elements
-  Files: puvi-backend/puvi-backend-main/modules/cost_management.py, puvi-backend/puvi-backend-main/modules/batch_production.py, puvi-backend/puvi-backend-main/modules/masters_common.py and 23 more
+  Files: puvi-backend/puvi-backend-main/modules/cost_management.py, puvi-backend/puvi-backend-main/modules/batch_production.py, puvi-backend/puvi-backend-main/modules/masters_common.py and 22 more
 - costcapture
   Files: puvi-backend/puvi-backend-main/modules/sku_production.py
 - costs
-  Files: puvi-backend/puvi-backend-main/modules/cost_management.py
+  Files: puvi-backend/puvi-backend-main/modules/cost_management.py, puvi-backend/puvi-backend-main/modules/sku_outbound.py
 - created_at
   Files: puvi-backend/puvi-backend-main/modules/sku_production.py
 - csv
@@ -170,8 +170,6 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/utils/expiry_utils.py
 - display
   Files: puvi-backend/puvi-backend-main/modules/package_sizes.py
-- documentation_charges
-  Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
 - drying_loss
   Files: puvi-backend/puvi-backend-main/modules/batch_production.py
 - endpoints
@@ -272,12 +270,12 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
 - litres
   Files: puvi-backend/puvi-backend-main/modules/masters_common.py
-- loading_charges
-  Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
 - location
   Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py, puvi-backend/puvi-backend-main/modules/locations.py
 - locations
   Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/modules/locations.py, puvi-frontend/puvi-frontend-main/src/services/api/index.js and 7 more
+- logistics_costs
+  Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
 - low_confidence_suggestions
   Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
 - mapped_materials
@@ -364,8 +362,6 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/app.py
 - orphaned_oil_types
   Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
-- other_charges
-  Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
 - outbound_transactions
   Files: puvi-backend/puvi-backend-main/modules/locations.py
 - outbounds
@@ -598,8 +594,6 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/modules/purchase.py
 - units
   Files: puvi-backend/puvi-backend-main/modules/system_config.py
-- unloading_charges
-  Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
 - unmapped_oil_products
   Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
 - unmapped_seed_varieties
