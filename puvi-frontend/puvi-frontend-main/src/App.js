@@ -1,6 +1,6 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/App.js
 // Modern Professional App Component for PUVI Oil Manufacturing System
-// MODIFIED: Added Oil Configuration as a standalone module
+// MODIFIED: Added SKU Outbound module integration
 
 import React, { useState, useEffect } from 'react';
 import './App.css';
@@ -13,6 +13,7 @@ import Blending from './modules/Blending';
 import MaterialSales from './modules/MaterialSales';
 import CostManagement from './modules/CostManagement';
 import SKUManagement from './modules/SKUManagement';
+import SKUOutbound from './modules/SKUOutbound';  // NEW - SKU Outbound module
 import MastersManagement from './modules/MastersManagement';
 import OpeningBalanceModule from './modules/OpeningBalanceModule';
 import OilConfigurationDashboard from './components/Masters/OilConfigurationDashboard';
@@ -47,6 +48,7 @@ function App() {
         { id: 'batch', label: 'Batch Production', icon: '🏭', badge: null },
         { id: 'blending', label: 'Oil Blending', icon: '🧪', badge: null },
         { id: 'sku', label: 'SKU Management', icon: '📦', badge: null },
+        { id: 'skuOutbound', label: 'SKU Outbound', icon: '📤', badge: null },  // NEW - Added SKU Outbound
         { id: 'sales', label: 'Material Sales', icon: '💰', badge: null }
       ]
     },
@@ -142,6 +144,7 @@ function App() {
       batch: 'Batch Production',
       blending: 'Oil Blending',
       sku: 'SKU Management',
+      skuOutbound: 'SKU Outbound Management',  // NEW - Added title
       sales: 'Material Sales',
       writeoff: 'Material Writeoff',
       cost: 'Cost Management',
@@ -160,6 +163,7 @@ function App() {
       batch: 'Oil extraction and production tracking',
       blending: 'Create custom oil blends',
       sku: 'Stock keeping unit management with MRP',
+      skuOutbound: 'Manage SKU transfers and sales transactions',  // NEW - Added subtitle
       sales: 'Track material and by-product sales',
       writeoff: 'Record material losses and writeoffs',
       cost: 'Analyze and manage production costs',
@@ -186,6 +190,8 @@ function App() {
         return <CostManagement />;
       case 'sku':
         return <SKUManagement />;
+      case 'skuOutbound':  // NEW - Added SKU Outbound case
+        return <SKUOutbound />;
       case 'masters':
         return <MastersManagement />;
       case 'openingBalance':
@@ -287,6 +293,7 @@ const DashboardContent = ({ stats, onNavigate, onRefresh }) => {
     { id: 'purchase', icon: '🛒', title: 'New Purchase', color: '#3b82f6' },
     { id: 'batch', icon: '🏭', title: 'Start Production', color: '#10b981' },
     { id: 'sku', icon: '📦', title: 'Create SKU', color: '#8b5cf6' },
+    { id: 'skuOutbound', icon: '📤', title: 'New Outbound', color: '#ef4444' },  // NEW - Added quick action
     { id: 'sales', icon: '💰', title: 'Record Sale', color: '#f59e0b' },
     { id: 'masters', icon: '⚙️', title: 'Add Supplier', color: '#6b7280' },
     { id: 'cost', icon: '💵', title: 'View Costs', color: '#06b6d4' }
@@ -453,6 +460,7 @@ const DashboardContent = ({ stats, onNavigate, onRefresh }) => {
                 <li>• Multi-item purchase management</li>
                 <li>• Batch production with cost tracking</li>
                 <li>• SKU management with MRP</li>
+                <li>• SKU outbound with GST</li>
                 <li>• Inventory and expiry tracking</li>
               </ul>
             </div>
