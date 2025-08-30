@@ -1,6 +1,6 @@
 // BOM Configuration Component for SKU Management with MRP & Shelf Life
 // File Path: puvi-frontend/src/modules/SKUManagement/components/BOMConfig.js
-// Updated: Removed all hardcoded values, uses database-driven categories
+// Updated: Fixed display issues and added weight field
 
 import React, { useState, useEffect } from 'react';
 
@@ -18,17 +18,17 @@ const BOMConfig = () => {
   const [currentMRP, setCurrentMRP] = useState(null);
   const [mrpHistory, setMrpHistory] = useState([]);
   
-  // NEW: State for dynamic BOM categories
+  // State for dynamic BOM categories
   const [bomCategories, setBomCategories] = useState([]);
   const [loadingCategories, setLoadingCategories] = useState(false);
 
   useEffect(() => {
     fetchSKUs();
     fetchMaterials();
-    fetchBOMCategories(); // NEW: Fetch categories on mount
+    fetchBOMCategories();
   }, []);
 
-  // NEW: Fetch BOM categories from database
+  // Fetch BOM categories from database
   const fetchBOMCategories = async () => {
     setLoadingCategories(true);
     try {
@@ -76,7 +76,7 @@ const BOMConfig = () => {
     }
   };
 
-  // UPDATED: Fetch materials with optional BOM category filter
+  // Fetch materials with optional BOM category filter
   const fetchMaterials = async (bomCategory = null) => {
     try {
       let url = 'https://puvi-backend.onrender.com/api/config/bom_materials';
@@ -207,7 +207,6 @@ const BOMConfig = () => {
     }]);
   };
 
-  // UPDATED: Removed auto-detect logic, now user selects category
   const handleMaterialChange = (index, field, value) => {
     const updated = [...bomDetails];
     updated[index][field] = value;
@@ -227,7 +226,6 @@ const BOMConfig = () => {
       }
     }
     
-        
     // Recalculate total cost if quantity changes
     if (field === 'quantity_per_unit') {
       const material = materials.find(m => m.material_id === parseInt(updated[index].material_id));
@@ -402,9 +400,10 @@ const BOMConfig = () => {
                 </div>
                 <div>
                   <p><strong>Current MRP:</strong> <span className="highlight-mrp">₹{selectedSKUData.mrp_current || 'Not set'}</span></p>
-                  <p><strong>Shelf Life:</strong> {selectedSKUData.shelf_life_months || 'Not set'} months</p>
+                  <p><strong>Shelf Life:</strong> {selectedSKUData.shelf_life_months ? `${selectedSKUData.shelf_life_months} months` : 'Not set'}</p>
                   <p><strong>MRP Effective:</strong> {selectedSKUData.mrp_effective_date || 'N/A'}</p>
-                  <p><strong>Density:</strong> {selectedSKUData.density || 0.92} kg/L</p>
+                  <p><strong>Density:</strong> {selectedSKUData.density ? `${selectedSKUData.density} kg/L` : 'Not set'}</p>
+                  <p><strong>Weight:</strong> {selectedSKUData.packaged_weight_kg ? `${parseFloat(selectedSKUData.packaged_weight_kg).toFixed(3)} kg` : 'Not set'}</p>
                 </div>
               </div>
             </div>
@@ -468,7 +467,6 @@ const BOMConfig = () => {
                           </select>
                         </td>
                         <td>
-                          {/* UPDATED: Dynamic categories from database */}
                           <select 
                             value={item.material_category}
                             onChange={(e) => handleMaterialChange(index, 'material_category', e.target.value)}
