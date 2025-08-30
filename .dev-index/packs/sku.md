@@ -1,5 +1,5 @@
 # Feature Pack: SKU
-Generated: 2025-08-30T19:11:00.438Z
+Generated: 2025-08-30T19:17:09.442Z
 Routes: 24 | Tables: 29 | Files: 11
 
 ## Table of Contents
