@@ -2,7 +2,7 @@
 // SKU Outbound Entry Component - Handles creation of outbound transactions
 // Supports: Internal Transfers, Third Party Transfers, and Sales
 // Features: FEFO/FIFO batch allocation, GST calculation, multi-step workflow
-// Version: 2.1 - Added transfer-specific document fields (STN, Shipment ID)
+// Version: 2.2 - Updated for GST implementation with inclusive pricing
 
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
@@ -177,13 +177,8 @@ const OutboundEntry = () => {
     const newItems = [...items];
     newItems[index][field] = value;
     
-    // Auto-fill GST rate when SKU is selected for sales
-    if (field === 'sku_id' && outboundData.transaction_type === 'sales') {
-      const sku = skus.find(s => s.sku_id === parseInt(value));
-      if (sku) {
-        newItems[index].gst_rate = sku.gst_rate || '5';
-      }
-    }
+    // GST rate will come from backend based on oil type
+    // No hardcoded values
     
     setItems(newItems);
   };
@@ -282,8 +277,9 @@ const OutboundEntry = () => {
         throw new Error(`Insufficient inventory. Available: ${shortage.total_available}, Required: ${shortage.quantity_needed}`);
       }
 
-      // Store available batches for allocation
+      // Store available batches and GST rates for allocation
       const batchData = {};
+      const gstRates = {};
       results.forEach((result, index) => {
         const itemIndex = items.findIndex(item => 
           item.sku_id === validItems[index].sku_id && 
@@ -291,11 +287,15 @@ const OutboundEntry = () => {
         );
         if (itemIndex !== -1) {
           batchData[itemIndex] = result.available_batches;
+          // Store GST rate from backend
+          if (result.sku_details && result.sku_details.gst_rate !== null) {
+            gstRates[itemIndex] = result.sku_details.gst_rate;
+          }
         }
       });
       setAvailableBatches(batchData);
 
-      // Auto-allocate based on strategy
+      // Auto-allocate based on strategy and set GST rates
       const updatedItems = [...items];
       Object.keys(batchData).forEach(itemIndex => {
         const allocations = allocateBatches(
@@ -304,10 +304,31 @@ const OutboundEntry = () => {
           allocationStrategy
         );
         updatedItems[itemIndex].allocations = allocations;
+        
+        // Set GST rate from backend if available
+        if (gstRates[itemIndex] !== undefined) {
+          updatedItems[itemIndex].gst_rate = gstRates[itemIndex].toString();
+        }
       });
       setItems(updatedItems);
 
-      setMessage({ type: 'success', text: 'Inventory available. Please review allocations.' });
+      // Check if GST is missing for sales transactions
+      if (outboundData.transaction_type === 'sales') {
+        const missingGST = updatedItems.filter(item => 
+          item.sku_id && (!item.gst_rate || item.gst_rate === '0')
+        );
+        if (missingGST.length > 0) {
+          setMessage({ 
+            type: 'warning', 
+            text: 'Warning: GST rate not configured for some SKUs. Please configure in materials master.' 
+          });
+        } else {
+          setMessage({ type: 'success', text: 'Inventory available. Please review allocations.' });
+        }
+      } else {
+        setMessage({ type: 'success', text: 'Inventory available. Please review allocations.' });
+      }
+      
       setCurrentStep(2);
       
     } catch (error) {
@@ -554,16 +575,25 @@ const OutboundEntry = () => {
   };
 
   const calculateTotals = () => {
-    let subtotal = 0;
+    let subtotal = 0;  // Revenue (excluding GST)
     let totalGst = 0;
+    let totalInclusive = 0;  // Total including GST
 
     if (outboundData.transaction_type === 'sales') {
       items.forEach(item => {
         if (item.quantity_ordered && item.unit_price) {
-          const amount = parseFloat(item.quantity_ordered) * parseFloat(item.unit_price);
-          const gstAmount = amount * (parseFloat(item.gst_rate) || 0) / 100;
-          subtotal += amount;
-          totalGst += gstAmount;
+          const quantity = parseFloat(item.quantity_ordered);
+          const inclusivePrice = parseFloat(item.unit_price);  // Price is inclusive of GST
+          const gstRate = parseFloat(item.gst_rate) || 0;
+          
+          // Calculate base price from inclusive price
+          const basePrice = inclusivePrice / (1 + gstRate / 100);
+          const lineBase = basePrice * quantity;
+          const lineGst = (inclusivePrice * quantity) - lineBase;
+          
+          subtotal += lineBase;
+          totalGst += lineGst;
+          totalInclusive += (inclusivePrice * quantity);
         }
       });
     }
@@ -571,11 +601,12 @@ const OutboundEntry = () => {
     const transportCost = parseFloat(outboundData.transport_cost) || 0;
     const handlingCost = parseFloat(outboundData.handling_cost) || 0;
     const totalCostElements = transportCost + handlingCost;
-    const grandTotal = subtotal + totalGst + totalCostElements;
+    const grandTotal = totalInclusive + totalCostElements;
 
     return {
-      subtotal: subtotal.toFixed(2),
+      subtotal: subtotal.toFixed(2),  // Revenue excluding GST
       totalGst: totalGst.toFixed(2),
+      totalInclusive: totalInclusive.toFixed(2),  // Sales value including GST
       totalCostElements: totalCostElements.toFixed(2),
       grandTotal: grandTotal.toFixed(2)
     };
@@ -908,9 +939,10 @@ const OutboundEntry = () => {
                     <th>Quantity</th>
                     {outboundData.transaction_type === 'sales' && (
                       <>
-                        <th>Unit Price</th>
+                        <th>Unit Price (Incl. GST)</th>
                         <th>GST %</th>
-                        <th>Amount</th>
+                        <th>Base Price</th>
+                        <th>Total</th>
                       </>
                     )}
                     <th>Notes</th>
@@ -919,9 +951,18 @@ const OutboundEntry = () => {
                 </thead>
                 <tbody>
                   {items.map((item, index) => {
-                    const amount = outboundData.transaction_type === 'sales' ? 
-                      (parseFloat(item.quantity_ordered) || 0) * (parseFloat(item.unit_price) || 0) : 0;
-                    const gstAmount = amount * (parseFloat(item.gst_rate) || 0) / 100;
+                    let basePrice = 0;
+                    let lineTotal = 0;
+                    
+                    if (outboundData.transaction_type === 'sales' && item.unit_price && item.quantity_ordered) {
+                      const quantity = parseFloat(item.quantity_ordered) || 0;
+                      const inclusivePrice = parseFloat(item.unit_price) || 0;
+                      const gstRate = parseFloat(item.gst_rate) || 0;
+                      
+                      // Calculate base price from inclusive price
+                      basePrice = inclusivePrice / (1 + gstRate / 100);
+                      lineTotal = inclusivePrice * quantity;
+                    }
                     
                     return (
                       <tr key={index}>
@@ -957,6 +998,7 @@ const OutboundEntry = () => {
                                 onChange={(e) => handleItemChange(index, 'unit_price', e.target.value)}
                                 step="0.01"
                                 min="0"
+                                placeholder="Inclusive of GST"
                               />
                             </td>
                             <td>
@@ -967,9 +1009,12 @@ const OutboundEntry = () => {
                                 step="0.1"
                                 min="0"
                                 max="28"
+                                placeholder="From backend"
+                                className={!item.gst_rate && item.sku_id ? 'warning' : ''}
                               />
                             </td>
-                            <td>₹{(amount + gstAmount).toFixed(2)}</td>
+                            <td>₹{basePrice.toFixed(2)}</td>
+                            <td>₹{lineTotal.toFixed(2)}</td>
                           </>
                         )}
                         <td>
@@ -1098,12 +1143,16 @@ const OutboundEntry = () => {
               <h3>Summary</h3>
               <div className="summary-grid">
                 <div className="summary-row">
-                  <span>Subtotal:</span>
+                  <span>Revenue (Excl. GST):</span>
                   <span>₹{totals.subtotal}</span>
                 </div>
                 <div className="summary-row">
-                  <span>Total GST:</span>
+                  <span>GST Amount:</span>
                   <span>₹{totals.totalGst}</span>
+                </div>
+                <div className="summary-row">
+                  <span>Sales Value (Incl. GST):</span>
+                  <span>₹{totals.totalInclusive}</span>
                 </div>
                 <div className="summary-row">
                   <span>Shipment Costs:</span>
@@ -1113,6 +1162,9 @@ const OutboundEntry = () => {
                   <span>Grand Total:</span>
                   <span>₹{totals.grandTotal}</span>
                 </div>
+              </div>
+              <div className="gst-note">
+                <small>Note: Unit prices are inclusive of GST. Revenue shown is exclusive of GST for P&L purposes.</small>
               </div>
             </div>
           )}
@@ -1302,9 +1354,17 @@ const OutboundEntry = () => {
               <tbody>
                 {items.filter(item => item.sku_id && item.quantity_ordered).map((item, index) => {
                   const sku = skus.find(s => s.sku_id === parseInt(item.sku_id));
-                  const amount = parseFloat(item.quantity_ordered) * parseFloat(item.unit_price || 0);
-                  const gstAmount = amount * parseFloat(item.gst_rate || 0) / 100;
-                  const itemWeight = (sku?.packaged_weight_kg || 1.0) * parseFloat(item.quantity_ordered);
+                  const quantity = parseFloat(item.quantity_ordered) || 0;
+                  const itemWeight = (sku?.packaged_weight_kg || 1.0) * quantity;
+                  
+                  let basePrice = 0;
+                  let lineTotal = 0;
+                  if (outboundData.transaction_type === 'sales' && item.unit_price) {
+                    const inclusivePrice = parseFloat(item.unit_price) || 0;
+                    const gstRate = parseFloat(item.gst_rate) || 0;
+                    basePrice = inclusivePrice / (1 + gstRate / 100);
+                    lineTotal = inclusivePrice * quantity;
+                  }
                   
                   return (
                     <tr key={index}>
@@ -1314,9 +1374,9 @@ const OutboundEntry = () => {
                       <td>{item.allocations.length} batch(es)</td>
                       {outboundData.transaction_type === 'sales' && (
                         <>
-                          <td>₹{item.unit_price}</td>
+                          <td>₹{item.unit_price} (incl)</td>
                           <td>{item.gst_rate}%</td>
-                          <td>₹{(amount + gstAmount).toFixed(2)}</td>
+                          <td>₹{lineTotal.toFixed(2)}</td>
                         </>
                       )}
                     </tr>
@@ -1334,12 +1394,16 @@ const OutboundEntry = () => {
               <h4>Financial Summary</h4>
               <div className="summary-grid">
                 <div className="summary-row">
-                  <span>Subtotal:</span>
+                  <span>Revenue (Excl. GST):</span>
                   <span>₹{totals.subtotal}</span>
                 </div>
                 <div className="summary-row">
-                  <span>Total GST:</span>
+                  <span>GST Amount:</span>
                   <span>₹{totals.totalGst}</span>
+                </div>
+                <div className="summary-row">
+                  <span>Sales Value (Incl. GST):</span>
+                  <span>₹{totals.totalInclusive}</span>
                 </div>
                 <div className="summary-row">
                   <span>Shipment Costs:</span>
@@ -1349,6 +1413,9 @@ const OutboundEntry = () => {
                   <span>Grand Total:</span>
                   <span>₹{totals.grandTotal}</span>
                 </div>
+              </div>
+              <div className="gst-note">
+                <small>Note: Customer prices are inclusive of GST. Revenue for P&L is exclusive of GST.</small>
               </div>
             </div>
           )}
