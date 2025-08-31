@@ -1,5 +1,5 @@
 # PUVI Database Schema
-# Generated: 2025-08-31 06:33:58.152772
+# Generated: 2025-08-31 07:02:04.247816
 # Total Tables: 81
 
 === available_oil_types ===
@@ -715,6 +715,9 @@ updated_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 ship_to_location_id: integer(32,0) [FK] -> customer_ship_to_locations.ship_to_id
 handling_cost: numeric(10,2) DEFAULT 0
 total_shipment_weight_kg: numeric(10,2)
+stn_number: character varying(50)
+stn_date: integer(32,0)
+shipment_id: character varying(50)
 
 === sku_outbound_items ===
 item_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('sku_outbound_items_item_id_seq'::regclass)

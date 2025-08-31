@@ -1,57 +1,29 @@
 {
-  "timestamp": "2025-08-31 01:56:37.137431",
+  "timestamp": "2025-08-31 07:02:04.251764",
   "changes": {
     "added": [],
     "removed": [],
     "modified": [
       {
-        "table": "locations_master",
+        "table": "sku_outbound",
         "added_columns": [
-          "contact_person",
-          "contact_email",
-          "contact_phone"
+          "stn_number",
+          "shipment_id",
+          "stn_date"
         ],
         "removed_columns": []
       }
     ],
     "index_changes": [
-      "masters_audit_log",
-      "sku_bom_master",
-      "sku_material_consumption",
-      "tags",
       "purchases",
-      "opening_balances",
-      "customers",
+      "production_units",
       "sku_inventory",
-      "cost_override_log",
-      "uom_master",
-      "sku_production",
-      "sku_outbound_items",
-      "cost_elements_master",
-      "serial_number_tracking",
       "sku_master",
-      "materials",
-      "batch_extended_costs",
-      "batch",
-      "material_tags",
-      "writeoff_monthly_summary",
-      "batch_cost_details",
-      "year_end_closing",
-      "blend_batch_components",
-      "system_configuration",
-      "batch_time_tracking",
+      "sku_material_consumption",
       "sku_mrp_history",
-      "blend_batches",
       "sku_expiry_tracking",
-      "customer_ship_to_locations",
-      "subcategories_master",
-      "sku_bom_details",
-      "suppliers",
-      "purchase_items",
-      "locations_master",
       "sku_outbound",
-      "material_writeoffs",
-      "sku_cost_overrides"
+      "sku_bom_details"
     ]
   }
 }
