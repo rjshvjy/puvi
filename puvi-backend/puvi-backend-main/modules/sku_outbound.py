@@ -1254,6 +1254,7 @@ def get_outbound_stats():
         monthly_stats = cur.fetchone()
         
         # Active customers (customers with transactions in last 30 days)
+        from datetime import timedelta
         thirty_days_ago = date_to_integer(datetime.now().date() - timedelta(days=30))
         cur.execute("""
             SELECT COUNT(DISTINCT customer_id)
