@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-31T07:02:02.280Z",
+  "generatedAt": "2025-08-31T07:24:33.485Z",
   "filesScanned": 70,
   "jsFilesScanned": 43,
   "pyFilesScanned": 27,
@@ -11818,7 +11818,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 98,
+      "line": 101,
       "name": "fetchMasterData",
       "params": "",
       "type": "arrow",
@@ -11826,7 +11826,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 104,
+      "line": 107,
       "name": "sortedLocations",
       "params": "locResponse.locations || []).sort((a, b",
       "type": "arrow",
@@ -11834,7 +11834,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 157,
+      "line": 160,
       "name": "fetchShipToLocations",
       "params": "customerId",
       "type": "arrow",
@@ -11842,7 +11842,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 168,
+      "line": 171,
       "name": "handleInputChange",
       "params": "e",
       "type": "arrow",
@@ -11850,7 +11850,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 173,
+      "line": 176,
       "name": "handleItemChange",
       "params": "index, field, value",
       "type": "arrow",
@@ -11858,7 +11858,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 188,
+      "line": 191,
       "name": "addItem",
       "params": "",
       "type": "arrow",
@@ -11866,7 +11866,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 199,
+      "line": 202,
       "name": "removeItem",
       "params": "index",
       "type": "arrow",
@@ -11874,7 +11874,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 206,
+      "line": 209,
       "name": "calculateCostAllocation",
       "params": "",
       "type": "arrow",
@@ -11882,7 +11882,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 249,
+      "line": 252,
       "name": "checkAvailability",
       "params": "",
       "type": "arrow",
@@ -11890,7 +11890,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 317,
+      "line": 320,
       "name": "allocateBatches",
       "params": "batches, quantityNeeded, strategy",
       "type": "arrow",
@@ -11898,7 +11898,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 371,
+      "line": 374,
       "name": "updateManualAllocation",
       "params": "itemIndex, trackingId, quantity",
       "type": "arrow",
@@ -11906,7 +11906,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 381,
+      "line": 384,
       "name": "applyManualAllocations",
       "params": "",
       "type": "arrow",
@@ -11914,7 +11914,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 413,
+      "line": 416,
       "name": "createOutbound",
       "params": "",
       "type": "arrow",
@@ -11922,7 +11922,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 488,
+      "line": 492,
       "name": "resetForm",
       "params": "",
       "type": "arrow",
@@ -11930,7 +11930,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 525,
+      "line": 532,
       "name": "formatDateForAPI",
       "params": "dateStr",
       "type": "arrow",
@@ -11938,7 +11938,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 532,
+      "line": 539,
       "name": "formatDateForDisplay",
       "params": "dateStr",
       "type": "arrow",
@@ -11946,7 +11946,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 542,
+      "line": 549,
       "name": "parseDate",
       "params": "dateStr",
       "type": "arrow",
@@ -11954,7 +11954,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 549,
+      "line": 556,
       "name": "calculateTotals",
       "params": "",
       "type": "arrow",
@@ -11962,7 +11962,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 581,
+      "line": 587,
       "name": "renderCostAllocationPreview",
       "params": "",
       "type": "arrow",
@@ -18360,7 +18360,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 47,
+      "line": 50,
       "type": "useState",
       "name": "items",
       "setter": "setItems",
@@ -18368,13 +18368,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 47,
+      "line": 50,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 57,
+      "line": 60,
       "type": "useState",
       "name": "allocationStrategy",
       "setter": "setAllocationStrategy",
@@ -18382,21 +18382,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 57,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 58,
-      "type": "useState",
-      "name": "manualAllocations",
-      "setter": "setManualAllocations",
-      "initial": "{}"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 58,
+      "line": 60,
       "type": "useState",
       "hook": "useState"
     },
@@ -18404,9 +18390,9 @@
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
       "line": 61,
       "type": "useState",
-      "name": "costAllocationPreview",
-      "setter": "setCostAllocationPreview",
-      "initial": "[]"
+      "name": "manualAllocations",
+      "setter": "setManualAllocations",
+      "initial": "{}"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
@@ -18417,24 +18403,38 @@
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
       "line": 64,
+      "type": "useState",
+      "name": "costAllocationPreview",
+      "setter": "setCostAllocationPreview",
+      "initial": "[]"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
+      "line": 64,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
+      "line": 67,
       "type": "useEffect",
       "hook": "useEffect"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 69,
+      "line": 72,
       "type": "useEffect",
       "hook": "useEffect"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 78,
+      "line": 81,
       "type": "useEffect",
       "hook": "useEffect"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 94,
+      "line": 97,
       "type": "useEffect",
       "hook": "useEffect"
     },
@@ -23410,49 +23410,49 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 99,
+      "line": 102,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 151,
+      "line": 154,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 158,
+      "line": 161,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 163,
+      "line": 166,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 253,
+      "line": 256,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 310,
+      "line": 313,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 417,
+      "line": 420,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/OutboundEntry.js",
-      "line": 481,
+      "line": 485,
       "type": "catch",
       "code": "} catch (error) {"
     },

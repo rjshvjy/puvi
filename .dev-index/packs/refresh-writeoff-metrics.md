@@ -1,5 +1,5 @@
 # Feature Pack: REFRESH-WRITEOFF-METRICS
-Generated: 2025-08-31T07:02:03.336Z
+Generated: 2025-08-31T07:24:34.529Z
 Routes: 2 | Tables: 15 | Files: 2
 
 ## Table of Contents
