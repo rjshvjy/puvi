@@ -1,5 +1,5 @@
 {
-  "timestamp": "2025-08-31 07:02:04.251764",
+  "timestamp": "2025-08-31 13:48:19.828363",
   "changes": {
     "added": [],
     "removed": [],
@@ -7,23 +7,32 @@
       {
         "table": "sku_outbound",
         "added_columns": [
-          "stn_number",
-          "shipment_id",
-          "stn_date"
+          "subtotal",
+          "grand_total",
+          "total_gst_amount"
+        ],
+        "removed_columns": []
+      },
+      {
+        "table": "sku_outbound_items",
+        "added_columns": [
+          "base_price",
+          "gst_amount",
+          "gst_rate"
         ],
         "removed_columns": []
       }
     ],
     "index_changes": [
-      "purchases",
-      "production_units",
-      "sku_inventory",
-      "sku_master",
-      "sku_material_consumption",
       "sku_mrp_history",
       "sku_expiry_tracking",
       "sku_outbound",
-      "sku_bom_details"
+      "sku_bom_details",
+      "sku_inventory",
+      "sku_material_consumption",
+      "purchases",
+      "sku_master",
+      "production_units"
     ]
   }
 }

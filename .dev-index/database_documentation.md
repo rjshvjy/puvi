@@ -1,6 +1,6 @@
 # PUVI Database Schema Documentation
 
-Generated: 2025-08-31 07:02:04.270127
+Generated: 2025-08-31 13:48:19.847005
 Database Version: PostgreSQL 17.4 on aarch64-unknown-linux-gnu, compiled by gcc (GCC) 13.2.0, 64-bit
 Total Tables: 81
 
@@ -61,8 +61,8 @@ Total Tables: 81
 | sku_material_consumption | 10 | 8 | 48 kB | 2 |
 | sku_mrp_history | 9 | 2 | 80 kB | 1 |
 | sku_oil_allocation | 9 | 4 | 40 kB | 1 |
-| sku_outbound | 27 | 0 | 80 kB | 4 |
-| sku_outbound_items | 14 | 0 | 48 kB | 2 |
+| sku_outbound | 30 | 0 | 80 kB | 4 |
+| sku_outbound_items | 17 | 0 | 48 kB | 2 |
 | sku_production | 28 | 4 | 96 kB | 2 |
 | stock_by_location | 11 | 0 | None | 0 |
 | subcategories_master | 7 | 18 | 56 kB | 1 |
@@ -1245,8 +1245,8 @@ Total Tables: 81
 | created_at | timestamp without time zone | Yes | CURRENT_TIMESTAMP |  |
 
 **Indexes:**
-- UNIQUE `production_units_short_code_key` on (short_code)
 - UNIQUE `production_units_pkey` on (unit_id)
+- UNIQUE `production_units_short_code_key` on (short_code)
 
 **Check Constraints:**
 - `check_unit_short_code`: ((short_code)::text ~ '^[A-Z]{1,3}$'::text)
@@ -1396,11 +1396,11 @@ Total Tables: 81
 | traceable_code | character varying(50) | Yes |  |  |
 
 **Indexes:**
-- UNIQUE `purchases_traceable_code_key` on (traceable_code)
-- UNIQUE `purchases_pkey` on (purchase_id)
 - `idx_purchases_supplier_name` on (supplier_name)
 - `idx_purchases_purchase_date` on (purchase_date)
 - `idx_purchases_batch_number` on (batch_number)
+- UNIQUE `purchases_traceable_code_key` on (traceable_code)
+- UNIQUE `purchases_pkey` on (purchase_id)
 
 **Check Constraints:**
 - `2200_17310_1_not_null`: purchase_id IS NOT NULL
@@ -1591,9 +1591,9 @@ Total Tables: 81
 | notes | text | Yes |  |  |
 
 **Indexes:**
-- UNIQUE `sku_bom_details_pkey` on (detail_id)
-- `idx_bom_details_bom` on (bom_id)
 - `idx_bom_details_material` on (material_id)
+- `idx_bom_details_bom` on (bom_id)
+- UNIQUE `sku_bom_details_pkey` on (detail_id)
 
 **Check Constraints:**
 - `2200_26417_3_not_null`: material_id IS NOT NULL
@@ -1705,12 +1705,12 @@ Total Tables: 81
 | location_id | integer(32,0) | Yes |  | FK → locations_master.location_id |
 
 **Indexes:**
+- UNIQUE `sku_expiry_tracking_pkey` on (tracking_id)
 - `idx_expiry_tracking_location` on (location_id)
 - `idx_expiry_tracking_production` on (production_id)
 - `idx_expiry_tracking_expiry` on (expiry_date)
 - `idx_expiry_tracking_status` on (status)
 - `idx_expiry_tracking_sku` on (sku_id)
-- UNIQUE `sku_expiry_tracking_pkey` on (tracking_id)
 
 **Check Constraints:**
 - `2200_27849_2_not_null`: production_id IS NOT NULL
@@ -1754,13 +1754,13 @@ Total Tables: 81
 | last_updated | timestamp without time zone | Yes | CURRENT_TIMESTAMP |  |
 
 **Indexes:**
-- `idx_sku_inventory_location` on (location_id)
-- `idx_sku_inventory_production` on (production_id)
 - `idx_sku_inventory_sku` on (sku_id)
-- UNIQUE `sku_inventory_pkey` on (inventory_id)
+- `idx_sku_inventory_production` on (production_id)
+- `idx_sku_inventory_expiry` on (expiry_date)
+- `idx_sku_inventory_location` on (location_id)
 - UNIQUE `unique_sku_location` on (sku_id,location_id)
 - `idx_sku_inventory_status` on (status)
-- `idx_sku_inventory_expiry` on (expiry_date)
+- UNIQUE `sku_inventory_pkey` on (inventory_id)
 
 **Check Constraints:**
 - `2200_27803_4_not_null`: quantity_available IS NOT NULL
@@ -1797,11 +1797,11 @@ Total Tables: 81
 | packaged_weight_kg | numeric(10,4) | Yes |  |  |
 
 **Indexes:**
-- UNIQUE `sku_master_sku_code_key` on (sku_code)
 - `idx_sku_oil_type` on (oil_type)
 - UNIQUE `sku_master_pkey` on (sku_id)
-- `idx_sku_package_size` on (package_size)
 - `idx_sku_active` on (is_active)
+- `idx_sku_package_size` on (package_size)
+- UNIQUE `sku_master_sku_code_key` on (sku_code)
 
 **Check Constraints:**
 - `sku_master_density_check`: ((density >= 0.8) AND (density <= 1.0))
@@ -1844,8 +1844,8 @@ Total Tables: 81
 | created_at | timestamp without time zone | Yes | CURRENT_TIMESTAMP |  |
 
 **Indexes:**
-- UNIQUE `sku_material_consumption_pkey` on (consumption_id)
 - `idx_material_consumption_production` on (production_id)
+- UNIQUE `sku_material_consumption_pkey` on (consumption_id)
 
 **Check Constraints:**
 - `2200_26487_8_not_null`: total_cost IS NOT NULL
@@ -1890,9 +1890,9 @@ Total Tables: 81
 
 **Indexes:**
 - UNIQUE `sku_mrp_history_pkey` on (mrp_id)
-- `idx_mrp_history_sku` on (sku_id)
-- `idx_mrp_history_current` on (is_current=true)
 - `idx_mrp_history_dates` on (effective_from,effective_to)
+- `idx_mrp_history_current` on (is_current=true)
+- `idx_mrp_history_sku` on (sku_id)
 
 **Check Constraints:**
 - `chk_date_validity`: ((effective_to IS NULL) OR (effective_to > effective_from))
@@ -1985,11 +1985,14 @@ Total Tables: 81
 | stn_number | character varying(50) | Yes |  |  |
 | stn_date | integer(32,0) | Yes |  |  |
 | shipment_id | character varying(50) | Yes |  |  |
+| subtotal | numeric(12,2) | Yes |  |  |
+| total_gst_amount | numeric(10,2) | Yes |  |  |
+| grand_total | numeric(12,2) | Yes |  |  |
 
 **Indexes:**
-- `idx_outbound_type` on (transaction_type)
 - `idx_outbound_ship_to` on (ship_to_location_id)
 - `idx_outbound_customer` on (customer_id)
+- `idx_outbound_type` on (transaction_type)
 - `idx_outbound_status` on (status)
 - `idx_outbound_date` on (outbound_date)
 - `idx_outbound_to_location` on (to_location_id)
@@ -2034,6 +2037,9 @@ Total Tables: 81
 | transport_cost_per_kg | numeric(10,4) | Yes |  |  |
 | handling_cost_per_unit | numeric(10,2) | Yes |  |  |
 | handling_cost_per_kg | numeric(10,4) | Yes |  |  |
+| gst_rate | numeric(5,2) | Yes |  |  |
+| base_price | numeric(10,2) | Yes |  |  |
+| gst_amount | numeric(10,2) | Yes |  |  |
 
 **Indexes:**
 - `idx_outbound_items_allocation` on (allocation_data)

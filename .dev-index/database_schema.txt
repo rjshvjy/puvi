@@ -1,5 +1,5 @@
 # PUVI Database Schema
-# Generated: 2025-08-31 07:02:04.247816
+# Generated: 2025-08-31 13:48:19.824422
 # Total Tables: 81
 
 === available_oil_types ===
@@ -718,6 +718,9 @@ total_shipment_weight_kg: numeric(10,2)
 stn_number: character varying(50)
 stn_date: integer(32,0)
 shipment_id: character varying(50)
+subtotal: numeric(12,2)
+total_gst_amount: numeric(10,2)
+grand_total: numeric(12,2)
 
 === sku_outbound_items ===
 item_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('sku_outbound_items_item_id_seq'::regclass)
@@ -734,6 +737,9 @@ transport_cost_per_unit: numeric(10,2)
 transport_cost_per_kg: numeric(10,4)
 handling_cost_per_unit: numeric(10,2)
 handling_cost_per_kg: numeric(10,4)
+gst_rate: numeric(5,2)
+base_price: numeric(10,2)
+gst_amount: numeric(10,2)
 
 === sku_production ===
 production_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('sku_production_production_id_seq'::regclass)
