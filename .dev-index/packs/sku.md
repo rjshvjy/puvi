@@ -1,6 +1,6 @@
 # Feature Pack: SKU
-Generated: 2025-08-31T05:55:12.719Z
-Routes: 24 | Tables: 29 | Files: 11
+Generated: 2025-08-31T06:04:24.906Z
+Routes: 25 | Tables: 29 | Files: 11
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -38,6 +38,8 @@ GET    /api/sku/outbound/<int:outbound_id>
 GET    /api/sku/outbound/trace/<traceable_code>
 # update_outbound_status
 POST   /api/sku/outbound/<int:outbound_id>/update-status
+# get_outbound_stats
+GET    /api/sku/outbound/stats
 # get_sales_summary
 GET    /api/sku/outbound/sales-summary
 # get_mrp_history
