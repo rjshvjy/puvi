@@ -2,7 +2,7 @@
 File path: puvi-backend/puvi-backend-main/modules/sku_outbound.py
 SKU Outbound Module for PUVI Oil Manufacturing System
 Handles Internal Transfers, Third Party Transfers, and Sales transactions
-Version: 3.0 - Fixed with Weight-Based Cost Allocation
+Version: 3.1 - Fixed GST retrieval and storage for sales transactions
 """
 
 from flask import Blueprint, request, jsonify
@@ -53,6 +53,63 @@ def calculate_gst_amount(base_amount, gst_rate):
     if not gst_rate:
         return Decimal('0')
     return (safe_decimal(base_amount) * safe_decimal(gst_rate)) / 100
+
+
+def calculate_base_from_inclusive(inclusive_amount, gst_rate):
+    """
+    Calculate base price from GST-inclusive amount
+    Base = Inclusive / (1 + GST/100)
+    """
+    if not gst_rate:
+        return safe_decimal(inclusive_amount)
+    return safe_decimal(inclusive_amount) / (1 + safe_decimal(gst_rate)/100)
+
+
+def get_gst_rate_for_sku(sku_id, cur):
+    """
+    Get GST rate for SKU from materials table via oil_type
+    
+    Args:
+        sku_id: SKU ID
+        cur: Database cursor
+    
+    Returns:
+        float: GST rate or None if not found
+    
+    Raises:
+        ValueError: If GST rate not configured
+    """
+    cur.execute("""
+        SELECT 
+            s.oil_type,
+            m.gst_rate,
+            m.material_name
+        FROM sku_master s
+        LEFT JOIN materials m ON m.produces_oil_type = s.oil_type
+        WHERE s.sku_id = %s
+        AND m.category = 'Oil'
+        LIMIT 1
+    """, (sku_id,))
+    
+    result = cur.fetchone()
+    if not result or result[1] is None:
+        # Get SKU details for better error message
+        cur.execute("""
+            SELECT sku_code, product_name, oil_type 
+            FROM sku_master 
+            WHERE sku_id = %s
+        """, (sku_id,))
+        sku_info = cur.fetchone()
+        if sku_info:
+            raise ValueError(
+                f"GST rate not configured for oil type '{sku_info[2]}' "
+                f"(SKU: {sku_info[0]} - {sku_info[1]}). "
+                f"Please configure GST rate in materials master."
+            )
+        else:
+            raise ValueError(f"SKU with ID {sku_id} not found")
+    
+    return float(result[1])
 
 
 def calculate_weight_based_costs(items, transport_cost, handling_cost, cur):
@@ -138,11 +195,9 @@ def check_sku_availability(sku_id, quantity_needed, from_location_id, cur):
             et.quantity_remaining,
             p.mrp_at_production,
             p.cost_per_bottle,
-            si.inventory_id,
-            s.gst_rate
+            si.inventory_id
         FROM sku_expiry_tracking et
         JOIN sku_production p ON et.production_id = p.production_id
-        JOIN sku_master s ON et.sku_id = s.sku_id
         LEFT JOIN sku_inventory si ON si.production_id = p.production_id 
             AND si.location_id = %s
         WHERE et.sku_id = %s
@@ -156,7 +211,7 @@ def check_sku_availability(sku_id, quantity_needed, from_location_id, cur):
     total_available = 0
     
     for row in cur.fetchall():
-        tracking_id, prod_id, prod_code, sku_trace, expiry, qty_remaining, mrp, cost, inv_id, gst_rate = row
+        tracking_id, prod_id, prod_code, sku_trace, expiry, qty_remaining, mrp, cost, inv_id = row
         
         # Calculate days to expiry
         days_to_expiry = get_days_to_expiry(expiry) if expiry else None
@@ -173,7 +228,6 @@ def check_sku_availability(sku_id, quantity_needed, from_location_id, cur):
             'quantity_remaining': float(qty_remaining),
             'mrp': float(mrp) if mrp else 0,
             'production_cost': float(cost) if cost else 0,
-            'gst_rate': float(gst_rate) if gst_rate else 0,
             'inventory_id': inv_id
         })
         total_available += float(qty_remaining)
@@ -358,9 +412,9 @@ def check_availability():
         quantity_needed = int(data['quantity_needed'])
         from_location_id = data['from_location_id']
         
-        # Get SKU details including GST rate and weight
+        # Get SKU details
         cur.execute("""
-            SELECT sku_code, product_name, package_size, gst_rate, packaged_weight_kg
+            SELECT sku_code, product_name, package_size, packaged_weight_kg
             FROM sku_master
             WHERE sku_id = %s
         """, (sku_id,))
@@ -368,6 +422,14 @@ def check_availability():
         sku_data = cur.fetchone()
         if not sku_data:
             return jsonify({'success': False, 'error': 'SKU not found'}), 404
+        
+        # Try to get GST rate but don't fail if not found
+        try:
+            gst_rate = get_gst_rate_for_sku(sku_id, cur)
+        except ValueError as e:
+            # For availability check, we can proceed without GST
+            # It will be required during sales creation
+            gst_rate = None
         
         # Check availability
         availability = check_sku_availability(
@@ -378,8 +440,8 @@ def check_availability():
             'sku_code': sku_data[0],
             'product_name': sku_data[1],
             'package_size': sku_data[2],
-            'gst_rate': float(sku_data[3]) if sku_data[3] else 0,
-            'packaged_weight_kg': float(sku_data[4]) if sku_data[4] else 1.0
+            'packaged_weight_kg': float(sku_data[3]) if sku_data[3] else 1.0,
+            'gst_rate': gst_rate  # May be None if not configured
         }
         
         return jsonify(availability)
@@ -392,7 +454,7 @@ def check_availability():
 
 @sku_outbound_bp.route('/api/sku/outbound/create', methods=['POST'])
 def create_outbound():
-    """Create outbound transaction with weight-based cost allocation"""
+    """Create outbound transaction with GST handling for sales"""
     conn = get_db_connection()
     cur = conn.cursor()
     
@@ -454,7 +516,7 @@ def create_outbound():
             # Generate outbound code
             outbound_code = generate_outbound_code(outbound_date, cur)
             
-            # Get cost inputs - now simplified to transport and handling
+            # Get cost inputs
             transport_cost = safe_decimal(data.get('transport_cost', 0))
             handling_cost = safe_decimal(data.get('handling_cost', 0))
             
@@ -473,21 +535,34 @@ def create_outbound():
             if transaction_type == 'sales':
                 for item in data['items']:
                     if item.get('unit_price'):
-                        amount = safe_decimal(item['quantity_ordered']) * safe_decimal(item['unit_price'])
-                        subtotal += amount
+                        # Unit price is inclusive of GST
+                        inclusive_price = safe_decimal(item['unit_price'])
+                        quantity = safe_decimal(item['quantity_ordered'])
                         
-                        # Calculate GST if rate provided
-                        if item.get('gst_rate'):
-                            gst_amount = calculate_gst_amount(amount, item['gst_rate'])
-                            total_gst += gst_amount
+                        # Get GST rate for this SKU
+                        try:
+                            sku_gst_rate = get_gst_rate_for_sku(item['sku_id'], cur)
+                        except ValueError as e:
+                            conn.rollback()
+                            return jsonify({'success': False, 'error': str(e)}), 400
+                        
+                        # Calculate base price from inclusive price
+                        base_price = calculate_base_from_inclusive(inclusive_price, sku_gst_rate)
+                        line_base_amount = base_price * quantity
+                        line_gst_amount = (inclusive_price * quantity) - line_base_amount
+                        
+                        subtotal += line_base_amount
+                        total_gst += line_gst_amount
+                        
+                        # Store calculated values back in item for later use
+                        item['gst_rate'] = sku_gst_rate
+                        item['base_price'] = float(base_price)
+                        item['gst_amount'] = float(line_gst_amount / quantity) if quantity > 0 else 0
             
             # Grand total calculation
-            if transaction_type == 'sales':
-                grand_total = subtotal + total_gst + transport_cost + handling_cost
-            else:
-                grand_total = transport_cost + handling_cost
+            grand_total = subtotal + total_gst + transport_cost + handling_cost
             
-            # Create main outbound record - FIXED: removed broken columns
+            # Create main outbound record
             cur.execute("""
                 INSERT INTO sku_outbound (
                     outbound_code, transaction_type, from_location_id,
@@ -498,10 +573,11 @@ def create_outbound():
                     transport_mode, transport_vendor, vehicle_number,
                     lr_number, transport_cost, handling_cost,
                     total_shipment_weight_kg,
+                    subtotal, total_gst_amount, grand_total,
                     status, notes, created_by
                 ) VALUES (
                     %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
-                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
                 ) RETURNING outbound_id
             """, (
                 outbound_code,
@@ -525,6 +601,9 @@ def create_outbound():
                 float(transport_cost),
                 float(handling_cost),
                 total_shipment_weight,
+                float(subtotal) if transaction_type == 'sales' else None,
+                float(total_gst) if transaction_type == 'sales' else None,
+                float(grand_total) if transaction_type == 'sales' else float(transport_cost + handling_cost),
                 'confirmed',
                 data.get('notes'),
                 data.get('created_by', 'System')
@@ -532,7 +611,7 @@ def create_outbound():
             
             outbound_id = cur.fetchone()[0]
             
-            # Process each item with weight-based cost allocation
+            # Process each item
             for item in data['items']:
                 sku_id = item['sku_id']
                 quantity_ordered = int(item['quantity_ordered'])
@@ -540,13 +619,6 @@ def create_outbound():
                 
                 # Get cost allocation for this item
                 cost_alloc = cost_allocation_map.get(sku_id, {})
-                
-                # Get SKU GST rate if not provided
-                if transaction_type == 'sales' and not item.get('gst_rate'):
-                    cur.execute("SELECT gst_rate FROM sku_master WHERE sku_id = %s", (sku_id,))
-                    result = cur.fetchone()
-                    if result:
-                        item['gst_rate'] = float(result[0]) if result[0] else 0
                 
                 if not allocations:
                     # Auto-allocate using FEFO if not provided
@@ -588,15 +660,19 @@ def create_outbound():
                 }
                 
                 # Calculate line amounts for sales
-                line_total = None
-                gst_amount = None
-                
                 if transaction_type == 'sales' and item.get('unit_price'):
-                    base_amount = safe_decimal(item['unit_price']) * quantity_ordered
-                    gst_amount = calculate_gst_amount(base_amount, item.get('gst_rate', 0))
-                    line_total = base_amount + gst_amount
+                    # Use pre-calculated values
+                    base_price = item.get('base_price')
+                    gst_rate = item.get('gst_rate')
+                    gst_amount = item.get('gst_amount')
+                    line_total = safe_decimal(item['unit_price']) * quantity_ordered
+                else:
+                    base_price = None
+                    gst_rate = None
+                    gst_amount = None
+                    line_total = None
                 
-                # Insert outbound item with weight-based cost allocation
+                # Insert outbound item
                 cur.execute("""
                     INSERT INTO sku_outbound_items (
                         outbound_id, sku_id,
@@ -605,9 +681,9 @@ def create_outbound():
                         item_weight_kg,
                         transport_cost_per_unit, transport_cost_per_kg,
                         handling_cost_per_unit, handling_cost_per_kg,
-                        unit_price, line_total,
+                        unit_price, base_price, gst_rate, gst_amount, line_total,
                         notes
-                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                     RETURNING item_id
                 """, (
                     outbound_id,
@@ -621,6 +697,9 @@ def create_outbound():
                     float(cost_alloc.get('handling_per_unit', 0)),
                     float(cost_alloc.get('handling_per_kg', 0)),
                     safe_decimal(item.get('unit_price')) if item.get('unit_price') else None,
+                    safe_decimal(base_price) if base_price else None,
+                    safe_decimal(gst_rate) if gst_rate else None,
+                    safe_decimal(gst_amount) if gst_amount else None,
                     float(line_total) if line_total else None,
                     item.get('notes')
                 ))
@@ -660,7 +739,7 @@ def create_outbound():
             # Commit transaction
             conn.commit()
             
-            return jsonify({
+            response_data = {
                 'success': True,
                 'outbound_id': outbound_id,
                 'outbound_code': outbound_code,
@@ -668,10 +747,22 @@ def create_outbound():
                 'cost_summary': {
                     'transport_cost': float(transport_cost),
                     'handling_cost': float(handling_cost),
-                    'total_cost': float(transport_cost + handling_cost)
-                },
-                'message': f'Outbound {outbound_code} created successfully with weight-based cost allocation'
-            }), 201
+                    'total_logistics_cost': float(transport_cost + handling_cost)
+                }
+            }
+            
+            # Add GST summary for sales
+            if transaction_type == 'sales':
+                response_data['gst_summary'] = {
+                    'subtotal': float(subtotal),
+                    'total_gst': float(total_gst),
+                    'grand_total': float(grand_total)
+                }
+                response_data['message'] = f'Sales order {outbound_code} created successfully'
+            else:
+                response_data['message'] = f'Transfer {outbound_code} created successfully'
+            
+            return jsonify(response_data), 201
             
         except InsufficientInventoryError as e:
             conn.rollback()
@@ -711,7 +802,7 @@ def create_outbound():
 
 @sku_outbound_bp.route('/api/sku/outbound/history', methods=['GET'])
 def get_outbound_history():
-    """Get outbound transaction history with weight-based costs"""
+    """Get outbound transaction history with GST details"""
     conn = get_db_connection()
     cur = conn.cursor()
     
@@ -726,7 +817,7 @@ def get_outbound_history():
         limit = int(request.args.get('limit', 50))
         offset = int(request.args.get('offset', 0))
         
-        # Build query - FIXED: removed broken columns
+        # Build query
         query = """
             SELECT 
                 o.outbound_id,
@@ -742,10 +833,12 @@ def get_outbound_history():
                 o.transport_cost,
                 o.handling_cost,
                 o.total_shipment_weight_kg,
+                o.subtotal,
+                o.total_gst_amount,
+                o.grand_total,
                 o.created_at,
                 COUNT(DISTINCT oi.sku_id) as sku_count,
-                SUM(oi.quantity_shipped) as total_units,
-                SUM(oi.item_weight_kg) as total_weight
+                SUM(oi.quantity_shipped) as total_units
             FROM sku_outbound o
             JOIN locations_master fl ON o.from_location_id = fl.location_id
             LEFT JOIN locations_master tl ON o.to_location_id = tl.location_id
@@ -786,7 +879,8 @@ def get_outbound_history():
                      o.outbound_date, o.dispatch_date, fl.location_name,
                      tl.location_name, c.customer_name, stl.location_name,
                      o.status, o.transport_cost, o.handling_cost,
-                     o.total_shipment_weight_kg, o.created_at
+                     o.total_shipment_weight_kg, o.subtotal, o.total_gst_amount,
+                     o.grand_total, o.created_at
             ORDER BY o.outbound_date DESC, o.outbound_id DESC
             LIMIT %s OFFSET %s
         """
@@ -796,7 +890,7 @@ def get_outbound_history():
         
         outbounds = []
         for row in cur.fetchall():
-            outbounds.append({
+            outbound_data = {
                 'outbound_id': row[0],
                 'outbound_code': row[1],
                 'transaction_type': row[2],
@@ -813,13 +907,22 @@ def get_outbound_history():
                     'total': (float(row[10] or 0) + float(row[11] or 0))
                 },
                 'weight_info': {
-                    'total_shipment_weight_kg': float(row[12]) if row[12] else 0,
-                    'item_weights_sum': float(row[16]) if row[16] else 0
+                    'total_shipment_weight_kg': float(row[12]) if row[12] else 0
                 },
-                'created_at': row[13].isoformat() if row[13] else None,
-                'sku_count': row[14] or 0,
-                'total_units': int(row[15]) if row[15] else 0
-            })
+                'created_at': row[16].isoformat() if row[16] else None,
+                'sku_count': row[17] or 0,
+                'total_units': int(row[18]) if row[18] else 0
+            }
+            
+            # Add GST details for sales
+            if row[2] == 'sales':
+                outbound_data['financial'] = {
+                    'subtotal': float(row[13]) if row[13] else 0,
+                    'gst_amount': float(row[14]) if row[14] else 0,
+                    'grand_total': float(row[15]) if row[15] else 0
+                }
+            
+            outbounds.append(outbound_data)
         
         return jsonify({
             'success': True,
@@ -835,12 +938,12 @@ def get_outbound_history():
 
 @sku_outbound_bp.route('/api/sku/outbound/<int:outbound_id>', methods=['GET'])
 def get_outbound_details(outbound_id):
-    """Get detailed information for a specific outbound transaction with weight-based costs"""
+    """Get detailed information for a specific outbound transaction with GST breakdown"""
     conn = get_db_connection()
     cur = conn.cursor()
     
     try:
-        # Get main outbound details - FIXED: removed broken columns
+        # Get main outbound details
         cur.execute("""
             SELECT 
                 o.outbound_code,
@@ -865,6 +968,9 @@ def get_outbound_details(outbound_id):
                 o.transport_cost,
                 o.handling_cost,
                 o.total_shipment_weight_kg,
+                o.subtotal,
+                o.total_gst_amount,
+                o.grand_total,
                 o.status,
                 o.notes,
                 o.created_by,
@@ -882,7 +988,7 @@ def get_outbound_details(outbound_id):
         if not outbound_data:
             return jsonify({'success': False, 'error': 'Outbound not found'}), 404
         
-        # Get line items with weight-based cost details
+        # Get line items
         cur.execute("""
             SELECT 
                 oi.item_id,
@@ -900,6 +1006,9 @@ def get_outbound_details(outbound_id):
                 oi.handling_cost_per_unit,
                 oi.handling_cost_per_kg,
                 oi.unit_price,
+                oi.base_price,
+                oi.gst_rate,
+                oi.gst_amount,
                 oi.line_total,
                 oi.notes
             FROM sku_outbound_items oi
@@ -909,17 +1018,7 @@ def get_outbound_details(outbound_id):
         """, (outbound_id,))
         
         items = []
-        total_transport_cost_allocated = 0
-        total_handling_cost_allocated = 0
-        
         for row in cur.fetchall():
-            # Calculate total costs for this item
-            transport_item_total = float(row[10] or 0) * row[6]  # per_unit * quantity
-            handling_item_total = float(row[12] or 0) * row[6]   # per_unit * quantity
-            
-            total_transport_cost_allocated += transport_item_total
-            total_handling_cost_allocated += handling_item_total
-            
             item_data = {
                 'item_id': row[0],
                 'sku_id': row[1],
@@ -934,15 +1033,21 @@ def get_outbound_details(outbound_id):
                     'item_weight_kg': float(row[9]) if row[9] else 0,
                     'transport_cost_per_unit': float(row[10]) if row[10] else 0,
                     'transport_cost_per_kg': float(row[11]) if row[11] else 0,
-                    'transport_cost_total': transport_item_total,
                     'handling_cost_per_unit': float(row[12]) if row[12] else 0,
-                    'handling_cost_per_kg': float(row[13]) if row[13] else 0,
-                    'handling_cost_total': handling_item_total
+                    'handling_cost_per_kg': float(row[13]) if row[13] else 0
                 },
-                'unit_price': float(row[14]) if row[14] else None,
-                'line_total': float(row[15]) if row[15] else None,
-                'notes': row[16]
+                'notes': row[19]
             }
+            
+            # Add pricing details for sales
+            if outbound_data[1] == 'sales':
+                item_data['pricing'] = {
+                    'unit_price_inclusive': float(row[14]) if row[14] else None,
+                    'base_price': float(row[15]) if row[15] else None,
+                    'gst_rate': float(row[16]) if row[16] else None,
+                    'gst_amount_per_unit': float(row[17]) if row[17] else None,
+                    'line_total': float(row[18]) if row[18] else None
+                }
             
             # Format dates in allocations to DD-MM-YYYY
             for alloc in item_data['allocations']:
@@ -968,7 +1073,7 @@ def get_outbound_details(outbound_id):
                 'to_location_type': 'internal' if outbound_data[6] == 'own' else 'third_party',
                 'customer_name': outbound_data[7],
                 'ship_to_location': outbound_data[8],
-                'customer_gst': outbound_data[26],
+                'customer_gst': outbound_data[29],
                 'reference_documents': {
                     'customer_po': outbound_data[9],
                     'invoice': outbound_data[10],
@@ -987,35 +1092,41 @@ def get_outbound_details(outbound_id):
                 'cost_summary': {
                     'transport_cost': float(outbound_data[19]) if outbound_data[19] else 0,
                     'handling_cost': float(outbound_data[20]) if outbound_data[20] else 0,
-                    'total_cost': (float(outbound_data[19] or 0) + float(outbound_data[20] or 0)),
-                    'transport_allocated': total_transport_cost_allocated,
-                    'handling_allocated': total_handling_cost_allocated
+                    'total_logistics_cost': (float(outbound_data[19] or 0) + float(outbound_data[20] or 0))
                 },
                 'weight_info': {
                     'total_shipment_weight_kg': float(outbound_data[21]) if outbound_data[21] else 0
                 },
-                'status': outbound_data[22],
-                'notes': outbound_data[23],
-                'created_by': outbound_data[24],
-                'created_at': outbound_data[25].isoformat() if outbound_data[25] else None,
+                'status': outbound_data[25],
+                'notes': outbound_data[26],
+                'created_by': outbound_data[27],
+                'created_at': outbound_data[28].isoformat() if outbound_data[28] else None,
                 'items': items
             }
         }
         
-        # Add margin analysis for sales
-        if outbound_data[1] == 'sales' and items:
-            total_cost = sum(
-                sum(a['production_cost'] * a['quantity'] for a in item['allocations'])
-                for item in items
-            )
-            total_revenue = sum(item['line_total'] or 0 for item in items)
-            
-            response['outbound']['margin_analysis'] = {
-                'total_production_cost': total_cost,
-                'total_revenue': total_revenue,
-                'gross_margin': total_revenue - total_cost,
-                'gross_margin_percentage': ((total_revenue - total_cost) / total_revenue * 100) if total_revenue > 0 else 0
+        # Add financial summary for sales
+        if outbound_data[1] == 'sales':
+            response['outbound']['financial_summary'] = {
+                'subtotal': float(outbound_data[22]) if outbound_data[22] else 0,
+                'total_gst': float(outbound_data[23]) if outbound_data[23] else 0,
+                'grand_total': float(outbound_data[24]) if outbound_data[24] else 0
             }
+            
+            # Calculate margin if production costs available
+            total_production_cost = 0
+            for item in items:
+                for alloc in item['allocations']:
+                    total_production_cost += alloc.get('production_cost', 0) * alloc.get('quantity', 0)
+            
+            if total_production_cost > 0 and outbound_data[22]:
+                revenue = float(outbound_data[22])
+                response['outbound']['margin_analysis'] = {
+                    'revenue': revenue,
+                    'production_cost': total_production_cost,
+                    'gross_margin': revenue - total_production_cost,
+                    'gross_margin_percentage': ((revenue - total_production_cost) / revenue * 100) if revenue > 0 else 0
+                }
         
         return jsonify(response)
         
@@ -1046,7 +1157,9 @@ def trace_batch(traceable_code):
                 s.product_name,
                 oi.quantity_shipped,
                 oi.allocation_data,
-                oi.unit_price
+                oi.unit_price,
+                oi.base_price,
+                oi.gst_rate
             FROM sku_outbound o
             JOIN sku_outbound_items oi ON o.outbound_id = oi.outbound_id
             JOIN sku_master s ON oi.sku_id = s.sku_id
@@ -1085,7 +1198,9 @@ def trace_batch(traceable_code):
                 
                 # Add sales information if applicable
                 if row[3] == 'sales':
-                    movement['unit_price'] = float(row[11]) if row[11] else None
+                    movement['unit_price_inclusive'] = float(row[11]) if row[11] else None
+                    movement['base_price'] = float(row[12]) if row[12] else None
+                    movement['gst_rate'] = float(row[13]) if row[13] else None
                 
                 movements.append(movement)
         
@@ -1196,7 +1311,7 @@ def update_outbound_status(outbound_id):
 
 
 # ============================================
-# NEW STATISTICS ENDPOINT
+# STATISTICS ENDPOINT
 # ============================================
 
 @sku_outbound_bp.route('/api/sku/outbound/stats', methods=['GET'])
@@ -1252,10 +1367,11 @@ def get_outbound_stats():
         
         cur.execute("""
             SELECT 
-                COALESCE(SUM(oi.line_total), 0) as monthly_sales_value,
+                COALESCE(SUM(o.subtotal), 0) as monthly_revenue,
+                COALESCE(SUM(o.total_gst_amount), 0) as monthly_gst,
                 COALESCE(SUM(oi.quantity_shipped), 0) as monthly_units_sold
             FROM sku_outbound o
-            JOIN sku_outbound_items oi ON o.outbound_id = oi.outbound_id
+            LEFT JOIN sku_outbound_items oi ON o.outbound_id = oi.outbound_id
             WHERE o.transaction_type = 'sales'
             AND o.status != 'cancelled'
             AND o.outbound_date >= %s
@@ -1289,8 +1405,9 @@ def get_outbound_stats():
                 'totalSales': total_sales,
                 'pendingDeliveries': pending_deliveries,
                 'deliveredToday': delivered_today,
-                'monthlySalesValue': float(monthly_stats[0]) if monthly_stats[0] else 0,
-                'monthlyUnitsSold': int(monthly_stats[1]) if monthly_stats[1] else 0,
+                'monthlyRevenue': float(monthly_stats[0]) if monthly_stats[0] else 0,
+                'monthlyGSTCollected': float(monthly_stats[1]) if monthly_stats[1] else 0,
+                'monthlyUnitsSold': int(monthly_stats[2]) if monthly_stats[2] else 0,
                 'activeCustomers': active_customers,
                 'locationsPending': locations_pending
             },
@@ -1314,7 +1431,7 @@ def get_outbound_stats():
 
 @sku_outbound_bp.route('/api/sku/outbound/sales-summary', methods=['GET'])
 def get_sales_summary():
-    """Get sales summary with weight and cost analysis"""
+    """Get sales summary with GST and margin analysis"""
     conn = get_db_connection()
     cur = conn.cursor()
     
@@ -1332,6 +1449,8 @@ def get_sales_summary():
                 SUM(oi.item_weight_kg) as total_weight_kg,
                 SUM(oi.transport_cost_per_unit * oi.quantity_shipped) as total_transport_allocated,
                 SUM(oi.handling_cost_per_unit * oi.quantity_shipped) as total_handling_allocated,
+                SUM(oi.base_price * oi.quantity_shipped) as total_revenue,
+                SUM(oi.gst_amount * oi.quantity_shipped) as total_gst,
                 SUM(oi.line_total) as total_sales_value
             FROM sku_outbound o
             JOIN customers c ON o.customer_id = c.customer_id
@@ -1354,7 +1473,7 @@ def get_sales_summary():
             query += " AND o.customer_id = %s"
             params.append(customer_id)
         
-        query += " GROUP BY c.customer_name ORDER BY total_sales_value DESC"
+        query += " GROUP BY c.customer_name ORDER BY total_revenue DESC"
         
         cur.execute(query, params)
         
@@ -1370,7 +1489,9 @@ def get_sales_summary():
                     'handling': float(row[5]) if row[5] else 0,
                     'total': (float(row[4] or 0) + float(row[5] or 0))
                 },
-                'total_sales_value': float(row[6]) if row[6] else 0,
+                'revenue': float(row[6]) if row[6] else 0,  # Excluding GST
+                'gst_collected': float(row[7]) if row[7] else 0,
+                'total_sales_value': float(row[8]) if row[8] else 0,  # Including GST
                 'cost_per_kg': ((float(row[4] or 0) + float(row[5] or 0)) / float(row[3])) if row[3] else 0
             })
         
