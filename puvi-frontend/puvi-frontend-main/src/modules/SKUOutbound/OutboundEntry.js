@@ -103,12 +103,12 @@ const OutboundEntry = () => {
         // Sort locations to prioritize production factory
         const sortedLocations = (locResponse.locations || []).sort((a, b) => {
           // First priority: is_production_unit (factories where production happens)
-          if (a.capabilities?.is_production_unit && !b.capabilities?.is_production_unit) return -1;
-          if (!a.capabilities?.is_production_unit && b.capabilities?.is_production_unit) return 1;
+          if (a.is_production_unit && !b.is_production_unit) return -1;
+          if (!a.is_production_unit && b.is_production_unit) return 1;
           
           // Second priority: is_default flag
-          if (a.capabilities?.is_default && !b.capabilities?.is_default) return -1;
-          if (!a.capabilities?.is_default && b.capabilities?.is_default) return 1;
+          if (a.is_default && !b.is_default) return -1;
+          if (!a.is_default && b.is_default) return 1;
           
           // Third priority: location_type (factory > warehouse > customer)
           const typeOrder = { 'factory': 1, 'warehouse': 2, 'customer': 3 };
@@ -126,7 +126,7 @@ const OutboundEntry = () => {
         if (sortedLocations.length > 0 && !outboundData.from_location_id) {
           const defaultLocation = sortedLocations.find(loc => 
             loc.location_type === 'factory' && 
-            loc.capabilities?.is_production_unit && 
+            loc.is_production_unit && 
             loc.ownership === 'own'
           ) || sortedLocations[0];
           
