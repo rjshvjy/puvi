@@ -1,6 +1,6 @@
 # PUVI Database Schema Documentation
 
-Generated: 2025-08-31 04:19:24.682701
+Generated: 2025-08-31 06:04:24.365088
 Database Version: PostgreSQL 17.4 on aarch64-unknown-linux-gnu, compiled by gcc (GCC) 13.2.0, 64-bit
 Total Tables: 81
 
@@ -29,7 +29,7 @@ Total Tables: 81
 | customers | 12 | 4 | 80 kB | 0 |
 | inventory | 13 | 14 | 72 kB | 2 |
 | inventory_by_tags | 6 | 0 | None | 0 |
-| locations_master | 22 | 13 | 96 kB | 1 |
+| locations_master | 22 | 14 | 96 kB | 1 |
 | masters_audit_log | 13 | 18 | 144 kB | 0 |
 | material_tags | 2 | 12 | 56 kB | 2 |
 | material_tags_view | 8 | 0 | None | 0 |
@@ -783,7 +783,7 @@ Total Tables: 81
 ### locations_master
 
 **Statistics:**
-- Rows: 13
+- Rows: 14
 - Total Size: 96 kB
 - Table Size: 8192 bytes
 - Indexes Size: 80 kB

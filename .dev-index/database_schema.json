@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-08-31T04:19:20.064888+00:00",
+  "generated_at": "2025-08-31T06:04:19.884368+00:00",
   "database": "postgres",
   "version": "PostgreSQL 17.4 on aarch64-unknown-linux-gnu, compiled by gcc (GCC) 13.2.0, 64-bit",
   "tables": {
@@ -4209,8 +4209,8 @@
         }
       ],
       "triggers": null,
-      "row_count": 13,
-      "dead_rows": 1,
+      "row_count": 14,
+      "dead_rows": 28,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "96 kB",
