@@ -1,5 +1,5 @@
 /* File Path: puvi-frontend/puvi-frontend-main/src/modules/SKUOutbound/SKUOutbound.css */
-/* SKU Outbound Module Styles */
+/* SKU Outbound Module Styles - FIXED VERSION WITH PROPER COLORS */
 
 .sku-outbound-module {
   padding: 20px;
@@ -14,14 +14,14 @@
 
 .module-title {
   font-size: 28px;
-  color: #2c3e50;
+  color: #2c3e50 !important;
   margin: 0 0 10px 0;
   font-weight: 600;
 }
 
 .module-subtitle {
   font-size: 14px;
-  color: #7f8c8d;
+  color: #7f8c8d !important;
   margin: 0;
 }
 
@@ -48,19 +48,19 @@
   cursor: pointer;
   font-size: 14px;
   font-weight: 500;
-  color: #7f8c8d;
+  color: #7f8c8d !important;
   transition: all 0.3s ease;
   white-space: nowrap;
 }
 
 .tab-button:hover {
   background: #f8f9fa;
-  color: #3498db;
+  color: #3498db !important;
 }
 
 .tab-button.active {
   background: #3498db;
-  color: white;
+  color: white !important;
   border-color: #3498db;
 }
 
@@ -93,7 +93,7 @@
   }
 }
 
-/* Module Stats Bar */
+/* Module Stats Bar - FIXED WITH PROPER TEXT COLORS */
 .module-stats {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -110,6 +110,7 @@
   align-items: center;
   gap: 15px;
   transition: transform 0.2s, box-shadow 0.2s;
+  border: 1px solid #e0e0e0;
 }
 
 .stat-card:hover {
@@ -151,16 +152,23 @@
   flex: 1;
 }
 
+/* FIXED: Ensure text colors are properly visible */
 .stat-label {
   font-size: 12px;
-  color: #7f8c8d;
+  color: #7f8c8d !important;  /* Gray color with !important to override any conflicts */
   margin-bottom: 4px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: block;
 }
 
 .stat-value {
   font-size: 22px;
   font-weight: bold;
-  color: #2c3e50;
+  color: #2c3e50 !important;  /* Dark blue color with !important to override any conflicts */
+  display: block;
+  line-height: 1.2;
 }
 
 /* Action Buttons */
@@ -324,18 +332,18 @@
   }
 }
 
-/* Dark Mode Support (Optional) */
+/* Dark Mode Support (Optional) - WITH FIXED COLORS */
 @media (prefers-color-scheme: dark) {
   .sku-outbound-module {
     background: #1a1a1a;
   }
   
   .module-title {
-    color: #ecf0f1;
+    color: #ecf0f1 !important;
   }
   
   .module-subtitle {
-    color: #95a5a6;
+    color: #95a5a6 !important;
   }
   
   .tab-navigation {
@@ -343,29 +351,30 @@
   }
   
   .tab-button {
-    color: #95a5a6;
+    color: #95a5a6 !important;
   }
   
   .tab-button:hover {
     background: #34495e;
-    color: #3498db;
+    color: #3498db !important;
   }
   
   .tab-button.active {
     background: #3498db;
-    color: white;
+    color: white !important;
   }
   
   .stat-card {
     background: #2c3e50;
+    border-color: #34495e;
   }
   
   .stat-label {
-    color: #95a5a6;
+    color: #95a5a6 !important;
   }
   
   .stat-value {
-    color: #ecf0f1;
+    color: #ecf0f1 !important;
   }
   
   .content-wrapper {
