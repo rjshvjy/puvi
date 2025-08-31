@@ -1,73 +1,57 @@
 {
-  "timestamp": "2025-08-30 18:24:42.466127",
+  "timestamp": "2025-08-31 01:56:37.137431",
   "changes": {
     "added": [],
     "removed": [],
     "modified": [
       {
-        "table": "sku_outbound_items",
+        "table": "locations_master",
         "added_columns": [
-          "handling_cost_per_unit",
-          "item_weight_kg",
-          "handling_cost_per_kg",
-          "transport_cost_per_unit",
-          "transport_cost_per_kg"
-        ],
-        "removed_columns": []
-      },
-      {
-        "table": "sku_master",
-        "added_columns": [
-          "packaged_weight_kg"
-        ],
-        "removed_columns": []
-      },
-      {
-        "table": "sku_outbound",
-        "added_columns": [
-          "handling_cost",
-          "total_shipment_weight_kg"
+          "contact_person",
+          "contact_email",
+          "contact_phone"
         ],
         "removed_columns": []
       }
     ],
     "index_changes": [
-      "categories_master",
+      "masters_audit_log",
+      "sku_bom_master",
+      "sku_material_consumption",
+      "tags",
+      "purchases",
+      "opening_balances",
+      "customers",
+      "sku_inventory",
+      "cost_override_log",
+      "uom_master",
+      "sku_production",
+      "sku_outbound_items",
+      "cost_elements_master",
+      "serial_number_tracking",
+      "sku_master",
+      "materials",
+      "batch_extended_costs",
+      "batch",
+      "material_tags",
+      "writeoff_monthly_summary",
+      "batch_cost_details",
       "year_end_closing",
       "blend_batch_components",
-      "package_sizes_master",
-      "batch",
+      "system_configuration",
+      "batch_time_tracking",
       "sku_mrp_history",
-      "subcategories_master",
-      "sku_bom_master",
-      "suppliers",
       "blend_batches",
-      "seed_batch_tracking",
-      "batch_extended_costs",
-      "opening_balances",
-      "cost_override_log",
-      "purchases",
-      "uom_master",
       "sku_expiry_tracking",
-      "customers",
-      "tags",
-      "batch_cost_details",
-      "purchase_items",
-      "sku_outbound_items",
-      "sku_master",
-      "masters_audit_log",
-      "production_units",
-      "material_writeoffs",
-      "sku_production",
-      "serial_number_tracking",
-      "sku_outbound",
-      "materials",
       "customer_ship_to_locations",
-      "cost_elements_master",
-      "material_tags",
-      "sku_cost_overrides",
-      "sku_inventory",
-      "sku_bom_details"
+      "subcategories_master",
+      "sku_bom_details",
+      "suppliers",
+      "purchase_items",
+      "locations_master",
+      "sku_outbound",
+      "material_writeoffs",
+      "sku_cost_overrides"
     ]
   }
 }

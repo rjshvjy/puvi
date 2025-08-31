@@ -1,5 +1,5 @@
 # PUVI Database Schema
-# Generated: 2025-08-30 18:26:28.802925
+# Generated: 2025-08-31 01:56:37.133495
 # Total Tables: 81
 
 === available_oil_types ===
@@ -292,6 +292,9 @@ created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 updated_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 created_by: character varying(100)
 notes: text
+contact_person: character varying(100)
+contact_phone: character varying(20)
+contact_email: character varying(100)
 
 === masters_audit_log ===
 audit_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('masters_audit_log_audit_id_seq'::regclass)
