@@ -644,3 +644,18 @@ textarea {
     padding: 0;
   }
 }
+/* Warning state for missing GST */
+input.warning {
+  border-color: #ff9800;
+  background-color: #fff3e0;
+}
+
+/* GST note styling */
+.gst-note {
+  margin-top: 10px;
+  padding: 8px;
+  background-color: #f5f5f5;
+  border-left: 3px solid #2196f3;
+  font-size: 0.9em;
+  color: #666;
+}
