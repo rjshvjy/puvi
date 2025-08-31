@@ -12,7 +12,7 @@ import json
 import time
 import psycopg2
 from db_utils import get_db_connection, close_connection
-from utils.date_utils import parse_date, integer_to_date, get_current_day_number, format_date_indian, date_to_integer
+from utils.date_utils import parse_date, integer_to_date, get_current_day_number, format_date_indian
 from utils.validation import validate_required_fields, safe_decimal
 from utils.expiry_utils import get_fefo_allocation, get_days_to_expiry, get_expiry_status
 
@@ -1197,8 +1197,7 @@ def get_outbound_stats():
     
     try:
         # Get today's date as integer (days since epoch)
-        today = datetime.now().date()
-        today_integer = date_to_integer(today)
+        today_integer = get_current_day_number()
         
         # Total transfers
         cur.execute("""
@@ -1237,8 +1236,9 @@ def get_outbound_stats():
         
         # Additional useful stats
         # Total value of sales this month
+        today = datetime.now().date()
         first_day_of_month = datetime(today.year, today.month, 1).date()
-        first_day_integer = date_to_integer(first_day_of_month)
+        first_day_integer = parse_date(first_day_of_month.strftime('%Y-%m-%d'))
         
         cur.execute("""
             SELECT 
@@ -1254,8 +1254,7 @@ def get_outbound_stats():
         monthly_stats = cur.fetchone()
         
         # Active customers (customers with transactions in last 30 days)
-        from datetime import timedelta
-        thirty_days_ago = date_to_integer(datetime.now().date() - timedelta(days=30))
+        thirty_days_ago = today_integer - 30  # Simple arithmetic since it's days
         cur.execute("""
             SELECT COUNT(DISTINCT customer_id)
             FROM sku_outbound
