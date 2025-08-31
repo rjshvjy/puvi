@@ -1,6 +1,6 @@
 # Table Usage Issues
 
-Generated: 2025-08-31 05:35:33.195176
+Generated: 2025-08-31 06:04:23.947233
 
 ## ⚠️ Orphaned Tables
 These tables exist in database but are not used in any code:
@@ -16,6 +16,8 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/utils/date_utils.py
 - above
   Files: puvi-backend/puvi-backend-main/modules/sku_production.py
+- activecustomers
+  Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
 - activities
   Files: puvi-backend/puvi-backend-main/modules/cost_management.py
 - actual
@@ -374,6 +376,8 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/modules/sku_management.py, puvi-backend/puvi-backend-main/modules/masters_crud.py
 - parameters
   Files: puvi-backend/puvi-backend-main/modules/cost_management.py, puvi-backend/puvi-backend-main/modules/sku_outbound.py
+- pendingdeliveries
+  Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
 - prev_month_writeoffs
   Files: puvi-backend/puvi-backend-main/modules/writeoff_analytics.py
 - previous
@@ -474,6 +478,8 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/modules/masters_common.py
 - statistics
   Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/modules/opening_balance.py, puvi-backend/puvi-backend-main/modules/writeoff_analytics.py and 1 more
+- stats
+  Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
 - status
   Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/modules/opening_balance.py, puvi-backend/puvi-backend-main/modules/sku_production.py and 2 more
 - subcategories
@@ -564,6 +570,10 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/modules/cost_management.py
 - total_writeoffs
   Files: puvi-backend/puvi-backend-main/modules/writeoff_analytics.py, puvi-backend/puvi-backend-main/modules/material_writeoff.py
+- totalsales
+  Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
+- totaltransfers
+  Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
 - traceability
   Files: puvi-backend/puvi-backend-main/modules/sku_production.py
 - traceable_codes
