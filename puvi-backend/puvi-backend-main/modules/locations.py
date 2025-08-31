@@ -826,6 +826,7 @@ def get_locations_dropdown():
         location_type = request.args.get('type')
         ownership = request.args.get('ownership')
         
+        # FIXED: Added is_production_unit to the SELECT query
         query = """
             SELECT 
                 location_id,
@@ -833,7 +834,8 @@ def get_locations_dropdown():
                 location_name,
                 location_type,
                 ownership,
-                is_default
+                is_default,
+                is_production_unit
             FROM locations_master
             WHERE is_active = true
         """
@@ -854,14 +856,17 @@ def get_locations_dropdown():
         
         locations = []
         for row in cur.fetchall():
+            # FIXED: Added is_production_unit to the response
             locations.append({
                 'value': row[0],
                 'label': f"{row[2]} ({row[1]})",
+                'location_id': row[0],  # Added for consistency
                 'location_code': row[1],
                 'location_name': row[2],
                 'location_type': row[3],
                 'ownership': row[4],
-                'is_default': row[5]
+                'is_default': row[5],
+                'is_production_unit': row[6]  # FIXED: Added this field
             })
         
         return jsonify({
