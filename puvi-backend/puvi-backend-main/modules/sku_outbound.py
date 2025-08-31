@@ -12,7 +12,7 @@ import json
 import time
 import psycopg2
 from db_utils import get_db_connection, close_connection
-from utils.date_utils import parse_date, integer_to_date, get_current_day_number, format_date_indian
+from utils.date_utils import parse_date, integer_to_date, get_current_day_number, format_date_indian, date_to_integer
 from utils.validation import validate_required_fields, safe_decimal
 from utils.expiry_utils import get_fefo_allocation, get_days_to_expiry, get_expiry_status
 
@@ -1015,9 +1015,6 @@ def get_outbound_details(outbound_id):
         close_connection(conn, cur)
 
 
-# Keep all other endpoints unchanged (trace_batch, update_outbound_status, get_sales_summary)
-# They don't reference the broken columns
-
 @sku_outbound_bp.route('/api/sku/outbound/trace/<traceable_code>', methods=['GET'])
 def trace_batch(traceable_code):
     """Find where a specific SKU batch was sent"""
@@ -1184,6 +1181,123 @@ def update_outbound_status(outbound_id):
     except Exception as e:
         conn.rollback()
         return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+# ============================================
+# NEW STATISTICS ENDPOINT
+# ============================================
+
+@sku_outbound_bp.route('/api/sku/outbound/stats', methods=['GET'])
+def get_outbound_stats():
+    """Get real-time statistics for SKU outbound transactions"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        # Get today's date as integer (days since epoch)
+        today = datetime.now().date()
+        today_integer = date_to_integer(today)
+        
+        # Total transfers
+        cur.execute("""
+            SELECT COUNT(*) 
+            FROM sku_outbound 
+            WHERE transaction_type = 'transfer' 
+            AND status != 'cancelled'
+        """)
+        total_transfers = cur.fetchone()[0] or 0
+        
+        # Total sales
+        cur.execute("""
+            SELECT COUNT(*) 
+            FROM sku_outbound 
+            WHERE transaction_type = 'sales' 
+            AND status != 'cancelled'
+        """)
+        total_sales = cur.fetchone()[0] or 0
+        
+        # Pending deliveries (confirmed or dispatched but not delivered)
+        cur.execute("""
+            SELECT COUNT(*) 
+            FROM sku_outbound 
+            WHERE status IN ('confirmed', 'dispatched')
+        """)
+        pending_deliveries = cur.fetchone()[0] or 0
+        
+        # Delivered today (based on dispatch_date)
+        cur.execute("""
+            SELECT COUNT(*) 
+            FROM sku_outbound 
+            WHERE status = 'delivered' 
+            AND dispatch_date = %s
+        """, (today_integer,))
+        delivered_today = cur.fetchone()[0] or 0
+        
+        # Additional useful stats
+        # Total value of sales this month
+        first_day_of_month = datetime(today.year, today.month, 1).date()
+        first_day_integer = date_to_integer(first_day_of_month)
+        
+        cur.execute("""
+            SELECT 
+                COALESCE(SUM(oi.line_total), 0) as monthly_sales_value,
+                COALESCE(SUM(oi.quantity_shipped), 0) as monthly_units_sold
+            FROM sku_outbound o
+            JOIN sku_outbound_items oi ON o.outbound_id = oi.outbound_id
+            WHERE o.transaction_type = 'sales'
+            AND o.status != 'cancelled'
+            AND o.outbound_date >= %s
+            AND o.outbound_date <= %s
+        """, (first_day_integer, today_integer))
+        monthly_stats = cur.fetchone()
+        
+        # Active customers (customers with transactions in last 30 days)
+        thirty_days_ago = date_to_integer(datetime.now().date() - timedelta(days=30))
+        cur.execute("""
+            SELECT COUNT(DISTINCT customer_id)
+            FROM sku_outbound
+            WHERE customer_id IS NOT NULL
+            AND status != 'cancelled'
+            AND outbound_date >= %s
+        """, (thirty_days_ago,))
+        active_customers = cur.fetchone()[0] or 0
+        
+        # Locations with pending shipments
+        cur.execute("""
+            SELECT COUNT(DISTINCT COALESCE(to_location_id, ship_to_location_id))
+            FROM sku_outbound
+            WHERE status IN ('confirmed', 'dispatched')
+        """)
+        locations_pending = cur.fetchone()[0] or 0
+        
+        return jsonify({
+            'success': True,
+            'stats': {
+                'totalTransfers': total_transfers,
+                'totalSales': total_sales,
+                'pendingDeliveries': pending_deliveries,
+                'deliveredToday': delivered_today,
+                'monthlySalesValue': float(monthly_stats[0]) if monthly_stats[0] else 0,
+                'monthlyUnitsSold': int(monthly_stats[1]) if monthly_stats[1] else 0,
+                'activeCustomers': active_customers,
+                'locationsPending': locations_pending
+            },
+            'timestamp': datetime.now().isoformat()
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False, 
+            'error': str(e),
+            'stats': {
+                'totalTransfers': 0,
+                'totalSales': 0,
+                'pendingDeliveries': 0,
+                'deliveredToday': 0
+            }
+        }), 500
     finally:
         close_connection(conn, cur)
 
