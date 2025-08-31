@@ -2,7 +2,7 @@
 // SKU Outbound Entry Component - Handles creation of outbound transactions
 // Supports: Internal Transfers, Third Party Transfers, and Sales
 // Features: FEFO/FIFO batch allocation, GST calculation, multi-step workflow
-// Version: 2.0 - Fixed with Weight-Based Cost Allocation and Location Sorting
+// Version: 2.1 - Added transfer-specific document fields (STN, Shipment ID)
 
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
@@ -21,7 +21,7 @@ const OutboundEntry = () => {
   const [shipToLocations, setShipToLocations] = useState([]);
   const [availableBatches, setAvailableBatches] = useState([]);
   
-  // Form data - FIXED: Removed broken cost fields, added handling_cost
+  // Form data - UPDATED: Added transfer-specific fields
   const [outboundData, setOutboundData] = useState({
     transaction_type: 'transfer',
     from_location_id: '',
@@ -33,12 +33,15 @@ const OutboundEntry = () => {
     customer_po_number: '',
     invoice_number: '',
     eway_bill_number: '',
+    stn_number: '',        // NEW: Stock Transfer Note Number
+    stn_date: '',          // NEW: Stock Transfer Note Date
+    shipment_id: '',       // NEW: Shipment/Tracking ID
     transport_mode: '',
     transport_vendor: '',
     vehicle_number: '',
     lr_number: '',
     transport_cost: '0',
-    handling_cost: '0',  // NEW: Added handling cost
+    handling_cost: '0',
     notes: '',
     created_by: 'User'
   });
@@ -57,7 +60,7 @@ const OutboundEntry = () => {
   const [allocationStrategy, setAllocationStrategy] = useState('fefo');
   const [manualAllocations, setManualAllocations] = useState({});
   
-  // NEW: Weight-based cost allocation preview
+  // Weight-based cost allocation preview
   const [costAllocationPreview, setCostAllocationPreview] = useState([]);
 
   // Load master data on mount
@@ -90,7 +93,7 @@ const OutboundEntry = () => {
     }
   }, [outboundData.to_location_id, locations]);
 
-  // NEW: Calculate weight-based cost allocation when items or costs change
+  // Calculate weight-based cost allocation when items or costs change
   useEffect(() => {
     calculateCostAllocation();
   }, [items, outboundData.transport_cost, outboundData.handling_cost, skus]);
@@ -202,7 +205,7 @@ const OutboundEntry = () => {
     }
   };
 
-  // NEW: Calculate weight-based cost allocation
+  // Calculate weight-based cost allocation
   const calculateCostAllocation = () => {
     const validItems = items.filter(item => item.sku_id && item.quantity_ordered);
     if (validItems.length === 0 || skus.length === 0) {
@@ -437,11 +440,12 @@ const OutboundEntry = () => {
         throw new Error('No valid items with allocations');
       }
 
-      // Prepare payload - FIXED: Only send transport_cost and handling_cost
+      // Prepare payload - includes all fields from outboundData
       const payload = {
         ...outboundData,
         outbound_date: formatDateForAPI(outboundData.outbound_date),
         dispatch_date: outboundData.dispatch_date ? formatDateForAPI(outboundData.dispatch_date) : null,
+        stn_date: outboundData.stn_date ? formatDateForAPI(outboundData.stn_date) : null,
         transport_cost: parseFloat(outboundData.transport_cost) || 0,
         handling_cost: parseFloat(outboundData.handling_cost) || 0,
         items: validItems.map(item => ({
@@ -498,12 +502,15 @@ const OutboundEntry = () => {
       customer_po_number: '',
       invoice_number: '',
       eway_bill_number: '',
+      stn_number: '',        // RESET: Stock Transfer Note Number
+      stn_date: '',          // RESET: Stock Transfer Note Date
+      shipment_id: '',       // RESET: Shipment/Tracking ID
       transport_mode: '',
       transport_vendor: '',
       vehicle_number: '',
       lr_number: '',
       transport_cost: '0',
-      handling_cost: '0',  // FIXED: Only transport and handling costs
+      handling_cost: '0',
       notes: '',
       created_by: 'User'
     });
@@ -561,7 +568,6 @@ const OutboundEntry = () => {
       });
     }
 
-    // FIXED: Only use transport and handling costs
     const transportCost = parseFloat(outboundData.transport_cost) || 0;
     const handlingCost = parseFloat(outboundData.handling_cost) || 0;
     const totalCostElements = transportCost + handlingCost;
@@ -577,7 +583,7 @@ const OutboundEntry = () => {
 
   const totals = calculateTotals();
 
-  // NEW: Render cost allocation preview
+  // Render cost allocation preview
   const renderCostAllocationPreview = () => {
     if (costAllocationPreview.length === 0) return null;
 
@@ -806,6 +812,7 @@ const OutboundEntry = () => {
           <div className="form-section">
             <h3>Reference Documents</h3>
             <div className="form-grid">
+              {/* Sales-Specific Documents */}
               {outboundData.transaction_type === 'sales' && (
                 <>
                   <div className="form-group">
@@ -832,6 +839,46 @@ const OutboundEntry = () => {
                 </>
               )}
 
+              {/* Transfer-Specific Documents */}
+              {outboundData.transaction_type === 'transfer' && (
+                <>
+                  <div className="form-group">
+                    <label>Stock Transfer Note Number</label>
+                    <input
+                      type="text"
+                      name="stn_number"
+                      value={outboundData.stn_number}
+                      onChange={handleInputChange}
+                      placeholder="STN-XXXX"
+                      maxLength="50"
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>STN Date</label>
+                    <input
+                      type="date"
+                      name="stn_date"
+                      value={outboundData.stn_date}
+                      onChange={handleInputChange}
+                    />
+                  </div>
+
+                  <div className="form-group">
+                    <label>Shipment ID</label>
+                    <input
+                      type="text"
+                      name="shipment_id"
+                      value={outboundData.shipment_id}
+                      onChange={handleInputChange}
+                      placeholder="e.g., FBA15GHJKL2 for Amazon"
+                      maxLength="50"
+                    />
+                  </div>
+                </>
+              )}
+
+              {/* Common Document - Always Show */}
               <div className="form-group">
                 <label>E-Way Bill Number</label>
                 <input
@@ -1031,7 +1078,7 @@ const OutboundEntry = () => {
               </div>
             </div>
             
-            {/* NEW: Show cost allocation preview */}
+            {/* Show cost allocation preview */}
             {renderCostAllocationPreview()}
           </div>
 
