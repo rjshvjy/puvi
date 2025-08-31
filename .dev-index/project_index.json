@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-30T20:03:47.595Z",
+  "generatedAt": "2025-08-31T04:19:25.699Z",
   "filesScanned": 70,
   "jsFilesScanned": 43,
   "pyFilesScanned": 27,
@@ -4029,7 +4029,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 853,
+      "line": 855,
       "type": "OTHER",
       "tables": [
         "locations_master",
@@ -24884,7 +24884,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 873,
+      "line": 878,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
