@@ -1,5 +1,5 @@
 # Feature Pack: SKU-FOR-WRITEOFF
-Generated: 2025-08-31T07:24:34.527Z
+Generated: 2025-08-31T13:48:18.908Z
 Routes: 1 | Tables: 13 | Files: 1
 
 ## Table of Contents
@@ -23,7 +23,7 @@ GET    /api/sku_for_writeoff
 | categories_master | blending, masters-crud, material-writeoff | 🔴 HIGH | Changes affect 4 other modules |
 | inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
 | material_writeoffs | material-writeoff, opening-balance, writeoff-analytics | 🔴 HIGH | Changes affect 3 other modules |
-| materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
+| materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 11 other modules |
 | oil_cake_inventory | batch-production, material-sales, material-writeoff | 🔴 HIGH | Changes affect 3 other modules |
 | sku_inventory | locations, material-writeoff, sku-outbound | 🔴 HIGH | Changes affect 4 other modules |
 | sku_master | masters-crud, material-writeoff, package-sizes | 🔴 HIGH | Changes affect 8 other modules |
@@ -38,7 +38,7 @@ GET    /api/sku_for_writeoff
 ## Data Flow & Integration
 ### 🔗 Cascading Dependencies
 - **materials** (HIGH RISK)
-  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, system-config, writeoff-analytics, unknown
+  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-outbound, sku-production, system-config, writeoff-analytics, unknown
   - Impact: Changes will cascade to these modules
 - **inventory** (HIGH RISK)
   - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, unknown

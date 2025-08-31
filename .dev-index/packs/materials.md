@@ -1,5 +1,5 @@
 # Feature Pack: MATERIALS
-Generated: 2025-08-31T07:24:34.530Z
+Generated: 2025-08-31T13:48:18.911Z
 Routes: 4 | Tables: 15 | Files: 2
 
 ## Table of Contents
@@ -31,7 +31,7 @@ GET    /api/materials/units
 | cost_elements_master | cost-management, package-sizes, sku-production | 🔴 HIGH | Changes affect 4 other modules |
 | inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
 | material_tags | purchase | 🟡 MEDIUM | Changes affect 1 other modules |
-| materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
+| materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 11 other modules |
 | purchase_items | batch-production, purchase | 🟡 MEDIUM | Changes affect 2 other modules |
 | purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 6 other modules |
 | sku_master | masters-crud, material-writeoff, package-sizes | 🔴 HIGH | Changes affect 8 other modules |
@@ -49,7 +49,7 @@ GET    /api/materials/units
 ## Data Flow & Integration
 ### 🔗 Cascading Dependencies
 - **materials** (HIGH RISK)
-  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, system-config, writeoff-analytics, unknown
+  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-outbound, sku-production, system-config, writeoff-analytics, unknown
   - Impact: Changes will cascade to these modules
 - **inventory** (HIGH RISK)
   - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, unknown
