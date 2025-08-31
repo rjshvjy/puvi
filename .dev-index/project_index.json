@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-08-31T06:12:47.532Z",
+  "generatedAt": "2025-08-31T06:27:45.931Z",
   "filesScanned": 70,
   "jsFilesScanned": 43,
   "pyFilesScanned": 27,
@@ -1106,7 +1106,7 @@
       "method": "GET",
       "path": "/api/sku/outbound/sales-summary",
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1305,
+      "line": 1306,
       "blueprint": "sku_outbound_bp",
       "function": "get_sales_summary",
       "source": "backend"
@@ -8005,7 +8005,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1258,
+      "line": 1259,
       "type": "SELECT",
       "tables": [
         "sku_outbound",
@@ -8022,7 +8022,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1268,
+      "line": 1269,
       "type": "SELECT",
       "tables": [
         "sku_outbound",
@@ -8039,7 +8039,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1349,
+      "line": 1350,
       "type": "OTHER",
       "tables": [
         "sku_outbound",
@@ -15226,7 +15226,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1306,
+      "line": 1307,
       "name": "get_sales_summary",
       "params": "",
       "type": "python",
@@ -22310,7 +22310,7 @@
         "method": "GET",
         "path": "/api/sku/outbound/sales-summary",
         "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-        "line": 1305,
+        "line": 1306,
         "function": "get_sales_summary"
       }
     ],
@@ -26294,20 +26294,20 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1290,
+      "line": 1291,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1311,
+      "line": 1312,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1373,
+      "line": 1374,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
