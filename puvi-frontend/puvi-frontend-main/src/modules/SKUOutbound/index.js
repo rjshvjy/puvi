@@ -23,8 +23,8 @@ const SKUOutbound = () => {
   const [error, setError] = useState(null);
   const [lastUpdated, setLastUpdated] = useState(null);
 
-  // Get API base URL from environment or use default
-  const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+  // Get API base URL from environment or use Render backend
+  const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://puvi-backend.onrender.com';
 
   // Tab configuration
   const tabs = [
