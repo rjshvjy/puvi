@@ -692,11 +692,50 @@ const OutboundEntry = () => {
                     required
                   >
                     <option value="">Select Location</option>
-                    {locations.filter(l => l.location_id !== parseInt(outboundData.from_location_id)).map(loc => (
-                      <option key={loc.location_id} value={loc.location_id}>
-                        {loc.location_name} ({loc.ownership})
-                      </option>
-                    ))}
+                    
+                    {/* Own Locations (Warehouse) */}
+                    {locations
+                      .filter(l => l.location_id !== parseInt(outboundData.from_location_id) && l.ownership === 'own')
+                      .length > 0 && (
+                      <optgroup label="Own Locations">
+                        {locations
+                          .filter(l => l.location_id !== parseInt(outboundData.from_location_id) && l.ownership === 'own')
+                          .map(loc => (
+                            <option key={loc.location_id} value={loc.location_id}>
+                              {loc.location_name} ({loc.location_code})
+                            </option>
+                          ))}
+                      </optgroup>
+                    )}
+                    
+                    {/* Group third-party locations by customer */}
+                    {(() => {
+                      const thirdPartyLocs = locations.filter(
+                        l => l.location_id !== parseInt(outboundData.from_location_id) && l.ownership === 'third_party'
+                      );
+                      
+                      // Extract unique customer names
+                      const customerGroups = {};
+                      thirdPartyLocs.forEach(loc => {
+                        // Extract customer name from location name (e.g., "Amazon FC DEL" -> "Amazon")
+                        const customerName = loc.location_name.split(' ')[0];
+                        if (!customerGroups[customerName]) {
+                          customerGroups[customerName] = [];
+                        }
+                        customerGroups[customerName].push(loc);
+                      });
+                      
+                      // Render grouped options
+                      return Object.keys(customerGroups).sort().map(customer => (
+                        <optgroup key={customer} label={`${customer} Locations`}>
+                          {customerGroups[customer].map(loc => (
+                            <option key={loc.location_id} value={loc.location_id}>
+                              {loc.location_name.replace(customer + ' ', '')} ({loc.location_code})
+                            </option>
+                          ))}
+                        </optgroup>
+                      ));
+                    })()}
                   </select>
                 </div>
               )}
