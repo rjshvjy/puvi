@@ -493,13 +493,14 @@ def create_outbound():
                     outbound_code, transaction_type, from_location_id,
                     to_location_id, customer_id, ship_to_location_id,
                     customer_po_number, invoice_number, eway_bill_number,
+                    stn_number, stn_date, shipment_id,
                     outbound_date, dispatch_date,
                     transport_mode, transport_vendor, vehicle_number,
                     lr_number, transport_cost, handling_cost,
                     total_shipment_weight_kg,
                     status, notes, created_by
                 ) VALUES (
-                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
+                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
                     %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
                 ) RETURNING outbound_id
             """, (
@@ -512,6 +513,9 @@ def create_outbound():
                 data.get('customer_po_number'),
                 data.get('invoice_number'),
                 data.get('eway_bill_number'),
+                data.get('stn_number'),  # Stock Transfer Note number
+                parse_date(data.get('stn_date')) if data.get('stn_date') else None,  # STN date
+                data.get('shipment_id'),  # Shipment/Tracking ID
                 outbound_date,
                 parse_date(data.get('dispatch_date')) if data.get('dispatch_date') else None,
                 data.get('transport_mode'),
@@ -851,6 +855,9 @@ def get_outbound_details(outbound_id):
                 o.customer_po_number,
                 o.invoice_number,
                 o.eway_bill_number,
+                o.stn_number,
+                o.stn_date,
+                o.shipment_id,
                 o.transport_mode,
                 o.transport_vendor,
                 o.vehicle_number,
@@ -961,33 +968,36 @@ def get_outbound_details(outbound_id):
                 'to_location_type': 'internal' if outbound_data[6] == 'own' else 'third_party',
                 'customer_name': outbound_data[7],
                 'ship_to_location': outbound_data[8],
-                'customer_gst': outbound_data[23],
+                'customer_gst': outbound_data[26],
                 'reference_documents': {
                     'customer_po': outbound_data[9],
                     'invoice': outbound_data[10],
-                    'eway_bill': outbound_data[11]
+                    'eway_bill': outbound_data[11],
+                    'stn_number': outbound_data[12],  # Stock Transfer Note
+                    'stn_date': integer_to_date(outbound_data[13], '%d-%m-%Y') if outbound_data[13] else None,
+                    'shipment_id': outbound_data[14]  # Shipment/Tracking ID
                 },
                 'transport': {
-                    'mode': outbound_data[12],
-                    'vendor': outbound_data[13],
-                    'vehicle_number': outbound_data[14],
-                    'lr_number': outbound_data[15],
-                    'cost': float(outbound_data[16]) if outbound_data[16] else 0
+                    'mode': outbound_data[15],
+                    'vendor': outbound_data[16],
+                    'vehicle_number': outbound_data[17],
+                    'lr_number': outbound_data[18],
+                    'cost': float(outbound_data[19]) if outbound_data[19] else 0
                 },
                 'cost_summary': {
-                    'transport_cost': float(outbound_data[16]) if outbound_data[16] else 0,
-                    'handling_cost': float(outbound_data[17]) if outbound_data[17] else 0,
-                    'total_cost': (float(outbound_data[16] or 0) + float(outbound_data[17] or 0)),
+                    'transport_cost': float(outbound_data[19]) if outbound_data[19] else 0,
+                    'handling_cost': float(outbound_data[20]) if outbound_data[20] else 0,
+                    'total_cost': (float(outbound_data[19] or 0) + float(outbound_data[20] or 0)),
                     'transport_allocated': total_transport_cost_allocated,
                     'handling_allocated': total_handling_cost_allocated
                 },
                 'weight_info': {
-                    'total_shipment_weight_kg': float(outbound_data[18]) if outbound_data[18] else 0
+                    'total_shipment_weight_kg': float(outbound_data[21]) if outbound_data[21] else 0
                 },
-                'status': outbound_data[19],
-                'notes': outbound_data[20],
-                'created_by': outbound_data[21],
-                'created_at': outbound_data[22].isoformat() if outbound_data[22] else None,
+                'status': outbound_data[22],
+                'notes': outbound_data[23],
+                'created_by': outbound_data[24],
+                'created_at': outbound_data[25].isoformat() if outbound_data[25] else None,
                 'items': items
             }
         }
