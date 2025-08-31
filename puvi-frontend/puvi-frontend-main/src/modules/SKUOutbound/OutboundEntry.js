@@ -173,12 +173,47 @@ const OutboundEntry = () => {
     setOutboundData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleItemChange = (index, field, value) => {
+  const handleItemChange = async (index, field, value) => {
     const newItems = [...items];
     newItems[index][field] = value;
     
-    // GST rate will come from backend based on oil type
-    // No hardcoded values
+    // Fetch GST rate when SKU is selected for sales
+    if (field === 'sku_id' && value && outboundData.transaction_type === 'sales') {
+      // Only fetch if we have a from_location selected
+      if (outboundData.from_location_id) {
+        try {
+          // Call availability check just to get GST rate
+          const response = await api.skuOutbound.checkAvailability({
+            sku_id: parseInt(value),
+            quantity_needed: 1, // Minimal quantity just to get SKU details
+            from_location_id: parseInt(outboundData.from_location_id)
+          });
+          
+          if (response.success && response.sku_details && response.sku_details.gst_rate !== null) {
+            newItems[index].gst_rate = response.sku_details.gst_rate.toString();
+            // Clear any warning message
+            if (message.type === 'warning') {
+              setMessage({ type: '', text: '' });
+            }
+          } else {
+            // Show warning if GST not configured
+            setMessage({ 
+              type: 'warning', 
+              text: `GST rate not configured for this SKU. Please configure in materials master.` 
+            });
+            newItems[index].gst_rate = '';
+          }
+        } catch (error) {
+          console.error('Error fetching GST rate:', error);
+          // Don't show error to user, just log it
+          newItems[index].gst_rate = '';
+        }
+      } else {
+        // If no location selected yet, we can't fetch GST
+        // It will be fetched during availability check
+        newItems[index].gst_rate = '';
+      }
+    }
     
     setItems(newItems);
   };
@@ -1009,8 +1044,9 @@ const OutboundEntry = () => {
                                 step="0.1"
                                 min="0"
                                 max="28"
-                                placeholder="From backend"
+                                placeholder="Auto-fetching..."
                                 className={!item.gst_rate && item.sku_id ? 'warning' : ''}
+                                readOnly={!item.sku_id}
                               />
                             </td>
                             <td>₹{basePrice.toFixed(2)}</td>
