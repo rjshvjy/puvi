@@ -1,6 +1,6 @@
 # Table Usage Issues
 
-Generated: 2025-08-31 14:04:46.299405
+Generated: 2025-09-01 04:42:10.415773
 
 ## ⚠️ Orphaned Tables
 These tables exist in database but are not used in any code:
@@ -469,7 +469,7 @@ These tables are referenced in code but don't exist in database:
 - size_in_liters
   Files: puvi-backend/puvi-backend-main/modules/package_sizes.py
 - sku
-  Files: puvi-backend/puvi-backend-main/modules/system_config.py, puvi-backend/puvi-backend-main/modules/material_writeoff.py, puvi-frontend/puvi-frontend-main/src/index.js and 53 more
+  Files: puvi-backend/puvi-backend-main/modules/system_config.py, puvi-backend/puvi-backend-main/modules/sku_outbound.py, puvi-backend/puvi-backend-main/modules/material_writeoff.py and 54 more
 - sku_details
   Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
 - skus
