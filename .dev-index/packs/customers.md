@@ -1,5 +1,5 @@
 # Feature Pack: CUSTOMERS
-Generated: 2025-09-01T06:52:32.840Z
+Generated: 2025-09-01T07:11:34.909Z
 Routes: 11 | Tables: 11 | Files: 2
 
 ## Table of Contents
@@ -52,6 +52,8 @@ GET    /api/customers/<int:customer_id>/ship-to
 
 ### ⚠️ Hardcoded Values Detected
 - `sku_outbound.py:103` - object
+- `sku_outbound.py:154` - object
+- `sku_outbound.py:474` - object
 
 ## Backend Implementation
 
