@@ -2,7 +2,7 @@
 File path: puvi-backend/puvi-backend-main/modules/sku_outbound.py
 SKU Outbound Module for PUVI Oil Manufacturing System
 Handles Internal Transfers, Third Party Transfers, and Sales transactions
-Version: 3.2 - UPDATED: GST retrieval from subcategories_master instead of materials
+Version: 3.3 - UPDATED: Added Customer endpoints for frontend integration
 """
 
 from flask import Blueprint, request, jsonify
@@ -1324,6 +1324,119 @@ def update_outbound_status(outbound_id):
         
     except Exception as e:
         conn.rollback()
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+# ============================================
+# CUSTOMER ENDPOINTS - NEW ADDITION 
+# ============================================
+
+@sku_outbound_bp.route('/api/customers/<int:customer_id>/ship-to', methods=['GET'])
+def get_customer_ship_to_locations(customer_id):
+    """Get ship-to locations for a customer"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        # First check if customer exists
+        cur.execute("""
+            SELECT customer_name 
+            FROM customers 
+            WHERE customer_id = %s AND is_active = true
+        """, (customer_id,))
+        
+        if not cur.fetchone():
+            return jsonify({
+                'success': False,
+                'error': 'Customer not found'
+            }), 404
+        
+        # Get ship-to locations
+        cur.execute("""
+            SELECT 
+                ship_to_id,
+                location_code,
+                location_name,
+                address_line1,
+                address_line2,
+                city,
+                state,
+                pincode,
+                contact_person,
+                contact_phone,
+                gstin,
+                is_default
+            FROM customer_ship_to_locations
+            WHERE customer_id = %s AND is_active = true
+            ORDER BY is_default DESC, location_name
+        """, (customer_id,))
+        
+        locations = []
+        for row in cur.fetchall():
+            locations.append({
+                'ship_to_id': row[0],
+                'location_code': row[1],
+                'location_name': row[2],
+                'address_line1': row[3],
+                'address_line2': row[4],
+                'city': row[5],
+                'state': row[6],
+                'pincode': row[7],
+                'contact_person': row[8],
+                'contact_phone': row[9],
+                'gstin': row[10],
+                'is_default': row[11]
+            })
+        
+        return jsonify({
+            'success': True,
+            'locations': locations,
+            'count': len(locations)
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+@sku_outbound_bp.route('/api/customers/dropdown', methods=['GET'])
+def get_customers_dropdown():
+    """Get customers for dropdown selection"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        cur.execute("""
+            SELECT 
+                customer_id,
+                customer_code,
+                customer_name,
+                gst_number
+            FROM customers
+            WHERE is_active = true
+            ORDER BY customer_name
+        """)
+        
+        customers = []
+        for row in cur.fetchall():
+            customers.append({
+                'customer_id': row[0],
+                'customer_code': row[1],
+                'customer_name': row[2],
+                'gst_number': row[3],
+                'label': f"{row[2]} ({row[1]})",  # For dropdown display
+                'value': row[0]  # For dropdown value
+            })
+        
+        return jsonify({
+            'success': True,
+            'customers': customers
+        })
+        
+    except Exception as e:
         return jsonify({'success': False, 'error': str(e)}), 500
     finally:
         close_connection(conn, cur)
