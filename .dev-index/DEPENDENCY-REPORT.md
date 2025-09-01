@@ -1,6 +1,6 @@
 # PUVI System - Dependency Analysis Report
 
-**Generated:** 2025-09-01T07:56:42.877Z
+**Generated:** 2025-09-01T07:57:56.172Z
 **Version:** 1.0
 
 ## Executive Summary
@@ -73,14 +73,14 @@ Tables used by multiple modules (changes have cascading effects):
 ### locations_master
 - **Risk Level:** HIGH
 - **Shared By:** locations, sku-outbound, sku-production, unknown
-- **File Count:** 4
+- **File Count:** 5
 - **Recommendation:** ⚠️ CRITICAL: Changes require coordination across 4 modules
 
 ### sku_inventory
 - **Risk Level:** HIGH
-- **Shared By:** locations, material-writeoff, sku-outbound, sku-production
-- **File Count:** 4
-- **Recommendation:** ⚠️ CRITICAL: Changes require coordination across 4 modules
+- **Shared By:** locations, material-writeoff, sku-outbound, sku-production, unknown
+- **File Count:** 5
+- **Recommendation:** ⚠️ CRITICAL: Changes require coordination across 5 modules
 
 ### sku_master
 - **Risk Level:** HIGH
@@ -112,6 +112,12 @@ Tables used by multiple modules (changes have cascading effects):
 - **File Count:** 3
 - **Recommendation:** Changes will affect blending, masters-crud, sku-production
 
+### sku_expiry_tracking
+- **Risk Level:** MEDIUM
+- **Shared By:** locations, sku-outbound, unknown
+- **File Count:** 3
+- **Recommendation:** Changes will affect locations, sku-outbound, unknown
+
 ### masters_audit_log
 - **Risk Level:** MEDIUM
 - **Shared By:** masters-common, opening-balance, sku-management
@@ -142,7 +148,7 @@ Hardcoded values that should be moved to database:
 - **sku_master**: Used by masters-crud, material-writeoff, package-sizes, sku-management, sku-outbound, sku-production, system-config, unknown (8 files)
 - **purchases**: Used by batch-production, blending, opening-balance, purchase, sku-production, unknown (6 files)
 - **categories_master**: Used by blending, masters-crud, material-writeoff, purchase, sku-outbound (5 files)
+- **sku_inventory**: Used by locations, material-writeoff, sku-outbound, sku-production, unknown (5 files)
 - **sku_production**: Used by material-writeoff, sku-management, sku-outbound, sku-production, unknown (5 files)
 - **suppliers**: Used by opening-balance, purchase, sku-production, system-config, unknown (6 files)
 - **subcategories_master**: Used by blending, masters-crud, purchase, sku-outbound (4 files)
-- **cost_elements_master**: Used by cost-management, package-sizes, sku-production, system-config (4 files)

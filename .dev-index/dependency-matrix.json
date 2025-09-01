@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "generatedAt": "2025-09-01T07:56:42.877Z",
+  "generatedAt": "2025-09-01T07:57:56.172Z",
   "summary": {
     "totalTables": 65,
     "sharedTables": 37,
@@ -696,7 +696,7 @@
         "sku-production",
         "unknown"
       ],
-      "fileCount": 4,
+      "fileCount": 5,
       "operations": {
         "locations": {
           "files": [
@@ -718,6 +718,7 @@
         },
         "unknown": {
           "files": [
+            "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
             "puvi-backend/puvi-backend-main/app.py"
           ],
           "queryCount": 0
@@ -729,9 +730,10 @@
         "locations",
         "material-writeoff",
         "sku-outbound",
-        "sku-production"
+        "sku-production",
+        "unknown"
       ],
-      "fileCount": 4,
+      "fileCount": 5,
       "operations": {
         "locations": {
           "files": [
@@ -756,15 +758,22 @@
             "puvi-backend/puvi-backend-main/modules/sku_production.py"
           ],
           "queryCount": 0
+        },
+        "unknown": {
+          "files": [
+            "puvi-backend/puvi-backend-main/utils/expiry_utils.py"
+          ],
+          "queryCount": 0
         }
       }
     },
     "sku_expiry_tracking": {
       "usedBy": [
         "locations",
-        "sku-outbound"
+        "sku-outbound",
+        "unknown"
       ],
-      "fileCount": 2,
+      "fileCount": 3,
       "operations": {
         "locations": {
           "files": [
@@ -775,6 +784,12 @@
         "sku-outbound": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/sku_outbound.py"
+          ],
+          "queryCount": 0
+        },
+        "unknown": {
+          "files": [
+            "puvi-backend/puvi-backend-main/utils/expiry_utils.py"
           ],
           "queryCount": 0
         }
@@ -1735,7 +1750,7 @@
         "unknown"
       ],
       "moduleCount": 4,
-      "fileCount": 4,
+      "fileCount": 5,
       "risk": "HIGH",
       "recommendation": "⚠️ CRITICAL: Changes require coordination across 4 modules"
     },
@@ -1745,12 +1760,13 @@
         "locations",
         "material-writeoff",
         "sku-outbound",
-        "sku-production"
+        "sku-production",
+        "unknown"
       ],
-      "moduleCount": 4,
-      "fileCount": 4,
+      "moduleCount": 5,
+      "fileCount": 5,
       "risk": "HIGH",
-      "recommendation": "⚠️ CRITICAL: Changes require coordination across 4 modules"
+      "recommendation": "⚠️ CRITICAL: Changes require coordination across 5 modules"
     },
     {
       "table": "sku_master",
@@ -1820,6 +1836,18 @@
       "fileCount": 3,
       "risk": "MEDIUM",
       "recommendation": "Changes will affect blending, masters-crud, sku-production"
+    },
+    {
+      "table": "sku_expiry_tracking",
+      "sharedBy": [
+        "locations",
+        "sku-outbound",
+        "unknown"
+      ],
+      "moduleCount": 3,
+      "fileCount": 3,
+      "risk": "MEDIUM",
+      "recommendation": "Changes will affect locations, sku-outbound, unknown"
     },
     {
       "table": "masters_audit_log",
@@ -1911,17 +1939,6 @@
       "fileCount": 2,
       "risk": "LOW",
       "recommendation": "Changes will affect customers, sku-outbound"
-    },
-    {
-      "table": "sku_expiry_tracking",
-      "sharedBy": [
-        "locations",
-        "sku-outbound"
-      ],
-      "moduleCount": 2,
-      "fileCount": 2,
-      "risk": "LOW",
-      "recommendation": "Changes will affect locations, sku-outbound"
     },
     {
       "table": "uom_master",

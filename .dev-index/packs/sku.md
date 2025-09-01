@@ -1,5 +1,5 @@
 # Feature Pack: SKU
-Generated: 2025-09-01T07:56:42.945Z
+Generated: 2025-09-01T07:57:56.241Z
 Routes: 25 | Tables: 31 | Files: 11
 
 ## Table of Contents
@@ -87,8 +87,8 @@ POST   /api/sku/production/allocate-oil
 | sku_bom_details | sku-management, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
 | sku_bom_master | sku-management, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
 | sku_cost_overrides | sku-production | 🟡 MEDIUM | Changes affect 1 other modules |
-| sku_expiry_tracking | locations, sku-outbound | 🟡 MEDIUM | Changes affect 2 other modules |
-| sku_inventory | locations, material-writeoff, sku-outbound | 🔴 HIGH | Changes affect 4 other modules |
+| sku_expiry_tracking | locations, sku-outbound, unknown | 🔴 HIGH | Changes affect 3 other modules |
+| sku_inventory | locations, material-writeoff, sku-outbound | 🔴 HIGH | Changes affect 5 other modules |
 | sku_master | masters-crud, material-writeoff, package-sizes | 🔴 HIGH | Changes affect 8 other modules |
 | sku_material_consumption | sku-production | 🟡 MEDIUM | Changes affect 1 other modules |
 | sku_mrp_history | sku-management, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |

@@ -1,5 +1,5 @@
 # Feature Pack: ADD-OILCAKE-WRITEOFF
-Generated: 2025-09-01T07:56:42.942Z
+Generated: 2025-09-01T07:57:56.238Z
 Routes: 1 | Tables: 13 | Files: 1
 
 ## Table of Contents
@@ -25,7 +25,7 @@ POST   /api/add_oilcake_writeoff
 | material_writeoffs | material-writeoff, opening-balance, writeoff-analytics | 🔴 HIGH | Changes affect 3 other modules |
 | materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
 | oil_cake_inventory | batch-production, material-sales, material-writeoff | 🔴 HIGH | Changes affect 3 other modules |
-| sku_inventory | locations, material-writeoff, sku-outbound | 🔴 HIGH | Changes affect 4 other modules |
+| sku_inventory | locations, material-writeoff, sku-outbound | 🔴 HIGH | Changes affect 5 other modules |
 | sku_master | masters-crud, material-writeoff, package-sizes | 🔴 HIGH | Changes affect 8 other modules |
 | sku_production | material-writeoff, sku-management, sku-outbound | 🔴 HIGH | Changes affect 5 other modules |
 | writeoff | material-writeoff, writeoff-analytics | 🟡 MEDIUM | Changes affect 2 other modules |
