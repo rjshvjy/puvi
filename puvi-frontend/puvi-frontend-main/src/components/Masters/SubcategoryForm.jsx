@@ -1,9 +1,11 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx
 // Subcategory Form Component for Oil Types & Blends CRUD
-// FIXED: Now only shows Seeds and Oil categories for oil production management
+// ENHANCED: Added GST rate management for Oil subcategories
 import React, { useState, useEffect } from 'react';
+
 // API configuration
 const API_BASE_URL = 'https://puvi-backend.onrender.com';
+
 // API helper function
 const apiCall = async (url, options = {}) => {
   try {
@@ -14,6 +16,7 @@ const apiCall = async (url, options = {}) => {
       },
       ...options
     });
+
     let data;
     try {
       data = await response.json();
@@ -23,36 +26,43 @@ const apiCall = async (url, options = {}) => {
       console.log('Backend non-JSON response:', text);
       throw new Error(text || `API call failed: ${response.status}`);
     }
+
     if (!response.ok) {
       console.log('Backend response data:', data); // Log raw data for debugging
       throw new Error(data.message || data.error || JSON.stringify(data) || `API call failed: ${response.status}`);
     }
+
     return data;
   } catch (error) {
     console.error('API Error:', error);
     throw error;
   }
 };
+
 const SubcategoryForm = ({
   editData = null,
   onSave,
   onCancel,
   isOpen = true
 }) => {
-  // Form state
+  // Form state - ENHANCED with GST rate
   const [formData, setFormData] = useState({
     subcategory_name: '',
     subcategory_code: '',
     oil_type: '',
     category_id: '',
+    gst_rate: '',  // NEW: GST rate field
     is_active: true
   });
+
   const [categories, setCategories] = useState([]);
   const [existingOilTypes, setExistingOilTypes] = useState([]);
   const [errors, setErrors] = useState({});
   const [saving, setSaving] = useState(false);
   const [loading, setLoading] = useState(false);
+
   const isEditMode = !!editData;
+
   // Load initial data
   useEffect(() => {
     if (isOpen) {
@@ -65,6 +75,7 @@ const SubcategoryForm = ({
           subcategory_code: editData.subcategory_code || '',
           oil_type: editData.oil_type || '',
           category_id: editData.category_id || '',
+          gst_rate: editData.gst_rate !== null && editData.gst_rate !== undefined ? editData.gst_rate : '',  // NEW
           is_active: editData.is_active !== false
         });
       } else {
@@ -74,6 +85,7 @@ const SubcategoryForm = ({
           subcategory_code: '',
           oil_type: '',
           category_id: '',
+          gst_rate: '',  // NEW
           is_active: true
         });
       }
@@ -121,12 +133,37 @@ const SubcategoryForm = ({
     // Convert category_id to integer when it comes from select dropdown
     if (fieldName === 'category_id' && value !== '') {
       value = parseInt(value, 10);
+      
+      // NEW: Auto-suggest GST rate when Oil category is selected
+      const selectedCategory = categories.find(c => c.category_id === parseInt(value, 10));
+      if (selectedCategory && selectedCategory.category_name === 'Oil' && !formData.gst_rate) {
+        // Suggest 5% for edible oils by default
+        setFormData(prev => ({
+          ...prev,
+          category_id: value,
+          gst_rate: '5'
+        }));
+      } else {
+        setFormData(prev => ({
+          ...prev,
+          [fieldName]: value
+        }));
+      }
+    } else if (fieldName === 'gst_rate') {
+      // NEW: Handle GST rate input
+      // Allow empty string or valid decimal number
+      if (value === '' || /^\d*\.?\d*$/.test(value)) {
+        setFormData(prev => ({
+          ...prev,
+          [fieldName]: value
+        }));
+      }
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [fieldName]: value
+      }));
     }
-   
-    setFormData(prev => ({
-      ...prev,
-      [fieldName]: value
-    }));
    
     // Clear error for this field
     if (errors[fieldName]) {
@@ -167,9 +204,17 @@ const SubcategoryForm = ({
      
       setFormData(prev => ({ ...prev, subcategory_code: code }));
     }
+    
+    // NEW: Auto-adjust GST rate for Deepam oil
+    if (fieldName === 'subcategory_name' && value.toUpperCase().includes('DEEPAM')) {
+      const selectedCategory = categories.find(c => c.category_id === formData.category_id);
+      if (selectedCategory && selectedCategory.category_name === 'Oil') {
+        setFormData(prev => ({ ...prev, gst_rate: '12' }));
+      }
+    }
   };
   
-  // Validate form
+  // Validate form - ENHANCED with GST validation
   const validateForm = () => {
     const newErrors = {};
    
@@ -191,8 +236,29 @@ const SubcategoryForm = ({
       newErrors.category_id = 'Category is required';
     }
    
-    // Oil type validation - only for Oil/Seeds categories
+    // NEW: GST Rate Validation for Oil Category
     const selectedCategory = categories.find(c => c.category_id === formData.category_id);
+    if (selectedCategory && selectedCategory.category_name === 'Oil') {
+      if (!formData.gst_rate || formData.gst_rate === '') {
+        newErrors.gst_rate = 'GST rate is required for Oil subcategories';
+      } else {
+        const gstValue = parseFloat(formData.gst_rate);
+        if (isNaN(gstValue)) {
+          newErrors.gst_rate = 'GST rate must be a valid number';
+        } else if (gstValue < 0) {
+          newErrors.gst_rate = 'GST rate cannot be negative';
+        } else if (gstValue > 28) {
+          newErrors.gst_rate = 'GST rate cannot exceed 28%';
+        }
+        // Warn about non-standard slabs (but don't block)
+        const standardSlabs = [0, 5, 12, 18, 28];
+        if (!standardSlabs.includes(gstValue) && !newErrors.gst_rate) {
+          console.warn(`GST rate ${gstValue}% is not a standard slab`);
+        }
+      }
+    }
+   
+    // Oil type validation - only for Oil/Seeds categories
     if (selectedCategory && ['Oil', 'Seeds'].includes(selectedCategory.category_name)) {
       if (!formData.oil_type || formData.oil_type.trim() === '') {
         console.warn('⚠️ No oil_type specified for Oil/Seeds subcategory!');
@@ -206,7 +272,7 @@ const SubcategoryForm = ({
     return Object.keys(newErrors).length === 0;
   };
   
-  // Handle form submission
+  // Handle form submission - ENHANCED with GST
   const handleSubmit = async (e) => {
     e.preventDefault();
    
@@ -223,13 +289,16 @@ const SubcategoryForm = ({
       const submitData = {
         ...formData,
         // Ensure category_id is integer if it exists
-        category_id: formData.category_id ? parseInt(formData.category_id, 10) : null
+        category_id: formData.category_id ? parseInt(formData.category_id, 10) : null,
+        // NEW: Convert GST rate to number or null
+        gst_rate: formData.gst_rate !== '' ? parseFloat(formData.gst_rate) : null
       };
      
       // Add debug logging to see what's being sent
       console.log('=== Submitting Subcategory ===');
       console.log('Data being sent:', JSON.stringify(submitData, null, 2));
       console.log('Category ID:', submitData.category_id, 'Type:', typeof submitData.category_id);
+      console.log('GST Rate:', submitData.gst_rate, 'Type:', typeof submitData.gst_rate);
       console.log('========================');
      
       if (isEditMode) {
@@ -246,7 +315,9 @@ const SubcategoryForm = ({
           let errorMessage = error.message;
          
           // Common validation error patterns
-          if (errorMessage.includes('category_id')) {
+          if (errorMessage.includes('GST rate')) {
+            errorMessage = error.message; // Keep GST-specific error messages
+          } else if (errorMessage.includes('category_id')) {
             errorMessage = 'Invalid category selected. Please select a valid category.';
           } else if (errorMessage.includes('unique') && errorMessage.includes('subcategory_code')) {
             errorMessage = `Code "${submitData.subcategory_code}" already exists. Try a different code.`;
@@ -275,7 +346,9 @@ const SubcategoryForm = ({
           let errorMessage = error.message || 'Failed to create subcategory';
          
           // Check for specific validation errors from backend
-          if (errorMessage.includes('category_id')) {
+          if (errorMessage.includes('GST rate')) {
+            errorMessage = error.message; // Keep GST-specific error messages
+          } else if (errorMessage.includes('category_id')) {
             errorMessage = 'Invalid category selected. Please select a valid category.';
           } else if (errorMessage.includes('duplicate key') || errorMessage.includes('already exists')) {
             if (errorMessage.includes('subcategory_code')) {
@@ -351,7 +424,8 @@ const SubcategoryForm = ({
                 {categories.find(c => c.category_id === formData.category_id)?.category_name === 'Oil' && (
                   <>• Define finished oil products (Sesame Oil, Coconut Oil, Deepam Oil, etc.)<br/>
                   • Set oil_type to match what seeds produce (e.g., "Groundnut", "Sesame")<br/>
-                  • Used in blending and SKU production</>
+                  • <strong>GST rate is mandatory for oil products</strong><br/>
+                  • Used in blending, SKU production, and sales</>
                 )}
                 {categories.find(c => c.category_id === formData.category_id)?.category_name === 'Seeds' && (
                   <>• Define seed varieties that produce specific oil types<br/>
@@ -372,7 +446,7 @@ const SubcategoryForm = ({
               <strong>📋 Oil Production Configuration</strong>
               <div style={{ marginTop: '5px', fontSize: '12px' }}>
                 • <strong>Seeds:</strong> Define what oil type each seed variety produces<br/>
-                • <strong>Oil:</strong> Define finished oil products and blends
+                • <strong>Oil:</strong> Define finished oil products, blends, and their GST rates
               </div>
             </div>
           )}
@@ -477,11 +551,70 @@ const SubcategoryForm = ({
                 )}
                 <div className="form-help">
                   <strong>Seeds:</strong> For seed varieties that produce oil<br/>
-                  <strong>Oil:</strong> For finished oil products and blends
+                  <strong>Oil:</strong> For finished oil products and blends (GST required)
                 </div>
               </div>
             )}
           </div>
+          
+          {/* GST Rate Field - NEW: Only for Oil Category */}
+          {formData.category_id && categories.find(c => c.category_id === formData.category_id)?.category_name === 'Oil' && (
+            <div className="form-group" style={{
+              padding: '12px',
+              backgroundColor: '#e0f2fe',
+              borderRadius: '4px',
+              border: '1px solid #0284c7'
+            }}>
+              <label className="form-label">
+                GST Rate (%) <span style={{ color: 'red' }}>*</span>
+              </label>
+              <input
+                type="text"
+                className={`form-control ${errors.gst_rate ? 'error' : ''}`}
+                value={formData.gst_rate}
+                onChange={(e) => handleFieldChange('gst_rate', e.target.value)}
+                placeholder="Enter GST rate (e.g., 5, 12, 18)"
+                disabled={saving}
+                style={{ marginBottom: '8px' }}
+              />
+              {errors.gst_rate && (
+                <div className="form-error" style={{ marginBottom: '8px' }}>{errors.gst_rate}</div>
+              )}
+              
+              {/* GST Rate Quick Select Buttons */}
+              <div style={{ marginBottom: '8px' }}>
+                <strong style={{ fontSize: '12px', marginRight: '8px' }}>Quick Select:</strong>
+                {[0, 5, 12, 18, 28].map(rate => (
+                  <button
+                    key={rate}
+                    type="button"
+                    onClick={() => handleFieldChange('gst_rate', rate.toString())}
+                    style={{
+                      padding: '4px 8px',
+                      marginRight: '6px',
+                      backgroundColor: formData.gst_rate === rate.toString() ? '#0284c7' : '#f3f4f6',
+                      color: formData.gst_rate === rate.toString() ? 'white' : '#374151',
+                      border: '1px solid #d1d5db',
+                      borderRadius: '4px',
+                      fontSize: '12px',
+                      cursor: 'pointer'
+                    }}
+                    disabled={saving}
+                  >
+                    {rate}%
+                  </button>
+                ))}
+              </div>
+              
+              <div className="form-help" style={{ marginTop: '8px', color: '#075985', fontSize: '12px' }}>
+                <strong>Standard GST Rates for Oil:</strong><br/>
+                • <strong>5%</strong> - Edible oils (Groundnut, Sesame, Coconut, Mustard, etc.)<br/>
+                • <strong>12%</strong> - Lamp oil (Deepam oil, non-edible oils)<br/>
+                • <strong>0%</strong> - Exempted items (if applicable)<br/>
+                • <strong>18%/28%</strong> - Premium or processed oil products
+              </div>
+            </div>
+          )}
           
           {/* Oil Type - Critical for Production */}
           {formData.category_id && ['Oil', 'Seeds'].includes(
@@ -543,13 +676,14 @@ const SubcategoryForm = ({
             fontSize: '14px',
             color: '#1e40af'
           }}>
-            <strong>💡 Oil Production Flow:</strong>
+            <strong>💡 Oil Production & Sales Flow:</strong>
             <ol style={{ marginTop: '8px', marginBottom: 0, paddingLeft: '20px' }}>
               <li>Create seed variety with oil_type (e.g., "Groundnut")</li>
-              <li>Create oil product with matching oil_type</li>
+              <li>Create oil product with matching oil_type <strong>and GST rate</strong></li>
               <li>Purchase seeds → Materials get produces_oil_type</li>
               <li>Batch production auto-detects and produces correct oil</li>
               <li>Blending module uses these oil types</li>
+              <li><strong>Sales transactions apply GST based on oil subcategory</strong></li>
             </ol>
           </div>
           
