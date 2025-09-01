@@ -1,6 +1,6 @@
 # Table Usage Issues
 
-Generated: 2025-09-01 04:42:10.415773
+Generated: 2025-09-01 05:06:52.829346
 
 ## ⚠️ Orphaned Tables
 These tables exist in database but are not used in any code:
@@ -222,6 +222,8 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
 - gst_rates
   Files: puvi-backend/puvi-backend-main/modules/system_config.py
+- gst_status
+  Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
 - gunny_bags
   Files: puvi-backend/puvi-backend-main/modules/material_sales.py
 - handling_charges
@@ -634,6 +636,8 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/modules/sku_management.py
 - weight_updates
   Files: puvi-backend/puvi-backend-main/modules/sku_management.py
+- with
+  Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
 - witness
   Files: puvi-backend/puvi-backend-main/modules/writeoff_analytics.py
 - writeoff_analytics
