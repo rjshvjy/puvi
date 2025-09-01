@@ -2,7 +2,7 @@
 // SKU Outbound Entry Component - Handles creation of outbound transactions
 // Supports: Internal Transfers, Third Party Transfers, and Sales
 // Features: FEFO/FIFO batch allocation, GST calculation, multi-step workflow
-// Version: 2.2 - Updated for GST implementation with inclusive pricing
+// Version: 2.3 - Fixed customer ID handling to ensure numeric values
 
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
@@ -21,21 +21,21 @@ const OutboundEntry = () => {
   const [shipToLocations, setShipToLocations] = useState([]);
   const [availableBatches, setAvailableBatches] = useState([]);
   
-  // Form data - UPDATED: Added transfer-specific fields
+  // Form data - customer_id initialized as empty string but will be converted to number
   const [outboundData, setOutboundData] = useState({
     transaction_type: 'transfer',
     from_location_id: '',
     to_location_id: '',
-    customer_id: '',
+    customer_id: '',  // Will be converted to number when set
     ship_to_location_id: '',
     outbound_date: new Date().toISOString().split('T')[0],
     dispatch_date: '',
     customer_po_number: '',
     invoice_number: '',
     eway_bill_number: '',
-    stn_number: '',        // NEW: Stock Transfer Note Number
-    stn_date: '',          // NEW: Stock Transfer Note Date
-    shipment_id: '',       // NEW: Shipment/Tracking ID
+    stn_number: '',
+    stn_date: '',
+    shipment_id: '',
     transport_mode: '',
     transport_vendor: '',
     vehicle_number: '',
@@ -68,10 +68,14 @@ const OutboundEntry = () => {
     fetchMasterData();
   }, []);
 
-  // Load ship-to locations when customer changes
+  // Load ship-to locations when customer changes - Fixed to handle numeric customer_id
   useEffect(() => {
-    if (outboundData.customer_id) {
-      fetchShipToLocations(outboundData.customer_id);
+    if (outboundData.customer_id && outboundData.customer_id !== '') {
+      // Ensure customer_id is numeric before making API call
+      const customerId = parseInt(outboundData.customer_id);
+      if (!isNaN(customerId)) {
+        fetchShipToLocations(customerId);
+      }
     } else {
       setShipToLocations([]);
     }
@@ -140,10 +144,15 @@ const OutboundEntry = () => {
         }
       }
 
-      // Fetch customers
+      // Fetch customers - ensure customer_id is treated as number
       const custResponse = await api.customers.dropdown();
       if (custResponse.success) {
-        setCustomers(custResponse.customers || []);
+        // Ensure customer_id is a number in the customer objects
+        const customersWithNumericIds = (custResponse.customers || []).map(cust => ({
+          ...cust,
+          customer_id: parseInt(cust.customer_id)  // Ensure it's a number
+        }));
+        setCustomers(customersWithNumericIds);
       }
 
       // Fetch SKUs
@@ -159,18 +168,34 @@ const OutboundEntry = () => {
 
   const fetchShipToLocations = async (customerId) => {
     try {
-      const response = await api.customers.getShipTo(customerId);
+      // Ensure customerId is numeric
+      const numericId = parseInt(customerId);
+      if (isNaN(numericId)) {
+        console.error('Invalid customer ID:', customerId);
+        setShipToLocations([]);
+        return;
+      }
+      
+      const response = await api.customers.getShipTo(numericId);
       if (response.success) {
-        setShipToLocations(response.ship_to_locations || []);
+        setShipToLocations(response.locations || []);
       }
     } catch (error) {
       console.error('Error fetching ship-to locations:', error);
+      setShipToLocations([]);
     }
   };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setOutboundData(prev => ({ ...prev, [name]: value }));
+    
+    // Special handling for numeric fields
+    if (name === 'customer_id' || name === 'from_location_id' || name === 'to_location_id' || name === 'ship_to_location_id') {
+      // Store as string in state but ensure it's a valid numeric string
+      setOutboundData(prev => ({ ...prev, [name]: value }));
+    } else {
+      setOutboundData(prev => ({ ...prev, [name]: value }));
+    }
   };
 
   const handleItemChange = async (index, field, value) => {
@@ -496,9 +521,13 @@ const OutboundEntry = () => {
         throw new Error('No valid items with allocations');
       }
 
-      // Prepare payload - includes all fields from outboundData
+      // Prepare payload - ensure numeric IDs
       const payload = {
         ...outboundData,
+        from_location_id: parseInt(outboundData.from_location_id),
+        to_location_id: outboundData.to_location_id ? parseInt(outboundData.to_location_id) : null,
+        customer_id: outboundData.customer_id ? parseInt(outboundData.customer_id) : null,
+        ship_to_location_id: outboundData.ship_to_location_id ? parseInt(outboundData.ship_to_location_id) : null,
         outbound_date: formatDateForAPI(outboundData.outbound_date),
         dispatch_date: outboundData.dispatch_date ? formatDateForAPI(outboundData.dispatch_date) : null,
         stn_date: outboundData.stn_date ? formatDateForAPI(outboundData.stn_date) : null,
@@ -515,9 +544,9 @@ const OutboundEntry = () => {
         }))
       };
 
-      // Remove undefined fields
+      // Remove undefined or empty string fields
       Object.keys(payload).forEach(key => {
-        if (payload[key] === undefined || payload[key] === '') {
+        if (payload[key] === undefined || payload[key] === '' || payload[key] === null) {
           delete payload[key];
         }
       });
@@ -558,9 +587,9 @@ const OutboundEntry = () => {
       customer_po_number: '',
       invoice_number: '',
       eway_bill_number: '',
-      stn_number: '',        // RESET: Stock Transfer Note Number
-      stn_date: '',          // RESET: Stock Transfer Note Date
-      shipment_id: '',       // RESET: Shipment/Tracking ID
+      stn_number: '',
+      stn_date: '',
+      shipment_id: '',
       transport_mode: '',
       transport_vendor: '',
       vehicle_number: '',
