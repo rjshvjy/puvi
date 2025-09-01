@@ -1,6 +1,6 @@
 # Database Dependency Risk Report
 
-Generated: 2025-09-01 07:56:45.135784
+Generated: 2025-09-01 07:57:55.695755
 
 ## Tables with High Foreign Key Dependencies
 
