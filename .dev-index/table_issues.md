@@ -1,6 +1,6 @@
 # Table Usage Issues
 
-Generated: 2025-09-01 07:56:42.493918
+Generated: 2025-09-01 07:57:53.961143
 
 ## ⚠️ Orphaned Tables
 These tables exist in database but are not used in any code:
@@ -160,8 +160,6 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/modules/masters_common.py, puvi-backend/puvi-backend-main/modules/sku_management.py, puvi-backend/puvi-backend-main/modules/masters_crud.py and 1 more
 - details
   Files: puvi-backend/puvi-backend-main/modules/locations.py
-- different
-  Files: puvi-backend/puvi-backend-main/utils/expiry_utils.py
 - display
   Files: puvi-backend/puvi-backend-main/modules/package_sizes.py
 - drying_loss
@@ -275,7 +273,7 @@ These tables are referenced in code but don't exist in database:
 - litres
   Files: puvi-backend/puvi-backend-main/modules/masters_common.py
 - location
-  Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py, puvi-backend/puvi-backend-main/modules/locations.py
+  Files: puvi-backend/puvi-backend-main/utils/expiry_utils.py, puvi-backend/puvi-backend-main/modules/sku_outbound.py, puvi-backend/puvi-backend-main/modules/locations.py
 - locations
   Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/modules/sku_outbound.py, puvi-backend/puvi-backend-main/modules/locations.py and 8 more
 - logistics_costs
@@ -326,6 +324,8 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/modules/material_sales.py
 - net_loss
   Files: puvi-backend/puvi-backend-main/modules/writeoff_analytics.py, puvi-backend/puvi-backend-main/modules/material_writeoff.py
+- new_location_id
+  Files: puvi-backend/puvi-backend-main/utils/expiry_utils.py
 - nos
   Files: puvi-backend/puvi-backend-main/modules/material_sales.py
 - notes
@@ -423,7 +423,7 @@ These tables are referenced in code but don't exist in database:
 - record
   Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
 - records
-  Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
+  Files: puvi-backend/puvi-backend-main/utils/expiry_utils.py, puvi-backend/puvi-backend-main/modules/masters_crud.py
 - reference_documents
   Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
 - remaining
@@ -610,6 +610,8 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
 - uom
   Files: puvi-backend/puvi-backend-main/modules/system_config.py
+- update_query
+  Files: puvi-backend/puvi-backend-main/utils/expiry_utils.py
 - updates
   Files: puvi-backend/puvi-backend-main/modules/cost_management.py, puvi-backend/puvi-backend-main/modules/package_sizes.py
 - usage_stats
