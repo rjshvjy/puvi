@@ -2,6 +2,7 @@
 Common utilities and configurations for Masters CRUD operations
 File Path: puvi-backend/puvi-backend-main/modules/masters_common.py
 Updated: Fixed category options and activity typo for cost_elements
+Enhanced: Added GST support for subcategories
 """
 
 import re
@@ -458,7 +459,7 @@ MASTERS_CONFIG = {
         }
     },
     
-    # NEW: Added Subcategories master configuration
+    # ENHANCED: Added GST support for Subcategories master configuration
     'subcategories': {
         'table': 'subcategories_master',
         'primary_key': 'subcategory_id',
@@ -495,6 +496,17 @@ MASTERS_CONFIG = {
                 'label': 'Oil Type',
                 'help_text': 'Type of oil produced (e.g., Groundnut, Sesame, Deepam Oil)'
             },
+            # NEW: Added GST rate field for Oil subcategories
+            'gst_rate': {
+                'type': 'decimal',
+                'required': False,  # Made conditional - required for Oil category in validation
+                'min': 0,
+                'max': 28,
+                'decimal_places': 2,
+                'label': 'GST Rate (%)',
+                'help_text': 'GST rate for oil products. Required for Oil category. Standard rates: 5% for edible oils, 12% for lamp oil',
+                'placeholder': '5.00'
+            },
             'is_active': {
                 'type': 'boolean',
                 'required': False,
@@ -510,6 +522,7 @@ MASTERS_CONFIG = {
                 s.category_id,
                 c.category_name,
                 s.oil_type,
+                s.gst_rate,
                 s.is_active,
                 s.created_at,
                 COUNT(DISTINCT m.material_id) FILTER (WHERE m.is_active = true) as material_count
@@ -518,7 +531,7 @@ MASTERS_CONFIG = {
             LEFT JOIN materials m ON s.subcategory_id = m.subcategory_id
             WHERE s.is_active = true
             GROUP BY s.subcategory_id, s.subcategory_name, s.subcategory_code, 
-                     s.category_id, c.category_name, s.oil_type, s.is_active, s.created_at
+                     s.category_id, c.category_name, s.oil_type, s.gst_rate, s.is_active, s.created_at
             ORDER BY c.category_name, s.subcategory_name
         """,
         'dependencies': {
