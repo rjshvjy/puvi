@@ -222,7 +222,9 @@ const OutboundEntry = () => {
           
           console.log('API Response:', response);
           
-          if (response.success && response.sku_details) {
+          // Check for sku_details regardless of success status
+          // success: false just means no inventory, not no SKU details
+          if (response.sku_details) {
             console.log('SKU Details:', response.sku_details);
             console.log('GST Rate from backend:', response.sku_details.gst_rate);
             
@@ -243,9 +245,8 @@ const OutboundEntry = () => {
               newItems[index].gst_rate = '';
             }
           } else {
-            console.log('Response not successful or no sku_details');
-            console.log('Response success:', response.success);
-            console.log('Response error:', response.error);
+            console.log('No sku_details in response');
+            console.log('Response:', response);
             setMessage({ 
               type: 'warning', 
               text: `GST rate not configured for this SKU. Please configure in materials master.` 
