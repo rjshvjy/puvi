@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-09-01T05:29:23.649Z",
+  "generatedAt": "2025-09-01T05:40:44.930Z",
   "filesScanned": 70,
   "jsFilesScanned": 43,
   "pyFilesScanned": 27,
@@ -2277,7 +2277,7 @@
     {
       "name": "SubcategoriesList",
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoriesList.jsx",
-      "line": 34,
+      "line": 35,
       "type": "const"
     },
     {
@@ -13710,7 +13710,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoriesList.jsx",
-      "line": 11,
+      "line": 12,
       "name": "apiCall",
       "params": "url, options = {}",
       "type": "arrow",
@@ -13718,7 +13718,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoriesList.jsx",
-      "line": 34,
+      "line": 35,
       "name": "SubcategoriesList",
       "params": "{ onAdd, onEdit, refreshTrigger = 0 }",
       "type": "arrow",
@@ -13726,7 +13726,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoriesList.jsx",
-      "line": 45,
+      "line": 46,
       "name": "loadSubcategories",
       "params": "",
       "type": "arrow",
@@ -13734,7 +13734,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoriesList.jsx",
-      "line": 83,
+      "line": 84,
       "name": "handleDelete",
       "params": "subcategoryId",
       "type": "arrow",
@@ -13742,7 +13742,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoriesList.jsx",
-      "line": 106,
+      "line": 107,
       "name": "showToast",
       "params": "type, text",
       "type": "arrow",
@@ -13750,7 +13750,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoriesList.jsx",
-      "line": 115,
+      "line": 116,
       "name": "formatFieldValue",
       "params": "value",
       "type": "arrow",
@@ -21045,7 +21045,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoriesList.jsx",
-      "line": 35,
+      "line": 36,
       "type": "useState",
       "name": "subcategories",
       "setter": "setSubcategories",
@@ -21053,13 +21053,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoriesList.jsx",
-      "line": 35,
+      "line": 36,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoriesList.jsx",
-      "line": 36,
+      "line": 37,
       "type": "useState",
       "name": "loading",
       "setter": "setLoading",
@@ -21067,13 +21067,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoriesList.jsx",
-      "line": 36,
+      "line": 37,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoriesList.jsx",
-      "line": 37,
+      "line": 38,
       "type": "useState",
       "name": "searchTerm",
       "setter": "setSearchTerm",
@@ -21081,13 +21081,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoriesList.jsx",
-      "line": 37,
+      "line": 38,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoriesList.jsx",
-      "line": 38,
+      "line": 39,
       "type": "useState",
       "name": "message",
       "setter": "setMessage",
@@ -21095,13 +21095,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoriesList.jsx",
-      "line": 38,
+      "line": 39,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoriesList.jsx",
-      "line": 41,
+      "line": 42,
       "type": "useEffect",
       "hook": "useEffect"
     },
@@ -24390,37 +24390,37 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoriesList.jsx",
-      "line": 12,
+      "line": 13,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoriesList.jsx",
-      "line": 28,
+      "line": 29,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoriesList.jsx",
-      "line": 47,
+      "line": 48,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoriesList.jsx",
-      "line": 53,
+      "line": 54,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoriesList.jsx",
-      "line": 88,
+      "line": 89,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoriesList.jsx",
-      "line": 99,
+      "line": 100,
       "type": "catch",
       "code": "} catch (error) {"
     },
