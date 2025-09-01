@@ -1,6 +1,7 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoriesList.jsx
 // Subcategories List Component for Oil Types & Blends Management
 // Uses the existing /api/subcategories endpoints
+// UPDATED: Added GST Rate column display
 
 import React, { useState, useEffect } from 'react';
 
@@ -222,6 +223,7 @@ const SubcategoriesList = ({ onAdd, onEdit, refreshTrigger = 0 }) => {
                       <th>Subcategory Name</th>
                       <th>Code</th>
                       <th>Oil Type</th>
+                      <th>GST Rate</th>
                       <th>Status</th>
                       <th style={{ textAlign: 'right' }}>Actions</th>
                     </tr>
@@ -254,6 +256,22 @@ const SubcategoriesList = ({ onAdd, onEdit, refreshTrigger = 0 }) => {
                               fontWeight: '500'
                             }}>
                               {subcategory.oil_type}
+                            </span>
+                          ) : (
+                            <span style={{ color: '#9ca3af' }}>-</span>
+                          )}
+                        </td>
+                        <td>
+                          {subcategory.gst_rate !== null && subcategory.gst_rate !== undefined ? (
+                            <span style={{
+                              padding: '4px 8px',
+                              backgroundColor: '#f0f4f8',
+                              color: '#1a365d',
+                              borderRadius: '4px',
+                              fontSize: '13px',
+                              fontWeight: '500'
+                            }}>
+                              {subcategory.gst_rate}%
                             </span>
                           ) : (
                             <span style={{ color: '#9ca3af' }}>-</span>
@@ -313,7 +331,8 @@ const SubcategoriesList = ({ onAdd, onEdit, refreshTrigger = 0 }) => {
           <strong>Statistics:</strong> {' '}
           Total {subcategories.length} oil types configured | {' '}
           {subcategories.filter(s => s.is_active).length} active | {' '}
-          {subcategories.filter(s => s.oil_type).length} with oil type mapping
+          {subcategories.filter(s => s.oil_type).length} with oil type mapping | {' '}
+          {subcategories.filter(s => s.gst_rate !== null).length} with GST rates configured
         </div>
       )}
     </div>
