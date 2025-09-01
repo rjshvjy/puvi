@@ -1,6 +1,6 @@
 # Feature Pack: CUSTOMERS
-Generated: 2025-09-01T05:40:45.953Z
-Routes: 9 | Tables: 3 | Files: 1
+Generated: 2025-09-01T06:20:20.419Z
+Routes: 11 | Tables: 11 | Files: 2
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -28,16 +28,30 @@ GET    /api/customers/<int:customer_id>/ship-to
 POST   /api/customers/<int:customer_id>/ship-to
 # get_customers_dropdown
 GET    /api/customers/dropdown
+GET    /api/customers/dropdown
 # restore_customer
 POST   /api/customers/<int:customer_id>/restore
+# get_customer_ship_to_locations
+GET    /api/customers/<int:customer_id>/ship-to
 ```
 
 ## Database Dependencies
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
-| customer_ship_to_locations | None | 🟢 LOW | Isolated to this module |
-| customers | locations, unknown | 🟡 MEDIUM | Changes affect 2 other modules |
+| categories_master | blending, masters-crud, material-writeoff | 🔴 HIGH | Changes affect 5 other modules |
+| customer_ship_to_locations | sku-outbound | 🟡 MEDIUM | Changes affect 1 other modules |
+| customers | locations, sku-outbound, unknown | 🔴 HIGH | Changes affect 3 other modules |
+| locations_master | locations, sku-outbound, unknown | 🔴 HIGH | Changes affect 3 other modules |
+| sku_expiry_tracking | locations, sku-outbound | 🟡 MEDIUM | Changes affect 2 other modules |
+| sku_inventory | locations, material-writeoff, sku-outbound | 🔴 HIGH | Changes affect 4 other modules |
+| sku_master | masters-crud, material-writeoff, package-sizes | 🔴 HIGH | Changes affect 8 other modules |
 | sku_outbound | locations, sku-outbound, unknown | 🔴 HIGH | Changes affect 3 other modules |
+| sku_outbound_items | sku-outbound | 🟡 MEDIUM | Changes affect 1 other modules |
+| sku_production | material-writeoff, sku-management, sku-outbound | 🔴 HIGH | Changes affect 5 other modules |
+| subcategories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 4 other modules |
+
+### ⚠️ Hardcoded Values Detected
+- `sku_outbound.py:103` - object
 
 ## Backend Implementation
 
