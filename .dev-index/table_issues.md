@@ -1,6 +1,6 @@
 # Table Usage Issues
 
-Generated: 2025-09-01 06:52:31.607986
+Generated: 2025-09-01 07:11:38.730759
 
 ## ⚠️ Orphaned Tables
 These tables exist in database but are not used in any code:
@@ -199,7 +199,7 @@ These tables are referenced in code but don't exist in database:
 - finished_products
   Files: puvi-backend/puvi-backend-main/modules/material_writeoff.py
 - first
-  Files: puvi-backend/puvi-backend-main/modules/purchase.py
+  Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py, puvi-backend/puvi-backend-main/modules/purchase.py
 - fixed_sequences
   Files: puvi-backend/puvi-backend-main/db_utils.py
 - flask
