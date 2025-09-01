@@ -204,9 +204,15 @@ const OutboundEntry = () => {
     
     // Fetch GST rate when SKU is selected for sales
     if (field === 'sku_id' && value && outboundData.transaction_type === 'sales') {
+      console.log('=== GST FETCH DEBUG ===');
+      console.log('SKU selected:', value);
+      console.log('From location:', outboundData.from_location_id);
+      console.log('Transaction type:', outboundData.transaction_type);
+      
       // Only fetch if we have a from_location selected
       if (outboundData.from_location_id) {
         try {
+          console.log('Making API call to check availability...');
           // Call availability check just to get GST rate
           const response = await api.skuOutbound.checkAvailability({
             sku_id: parseInt(value),
@@ -214,14 +220,32 @@ const OutboundEntry = () => {
             from_location_id: parseInt(outboundData.from_location_id)
           });
           
-          if (response.success && response.sku_details && response.sku_details.gst_rate !== null) {
-            newItems[index].gst_rate = response.sku_details.gst_rate.toString();
-            // Clear any warning message
-            if (message.type === 'warning') {
-              setMessage({ type: '', text: '' });
+          console.log('API Response:', response);
+          
+          if (response.success && response.sku_details) {
+            console.log('SKU Details:', response.sku_details);
+            console.log('GST Rate from backend:', response.sku_details.gst_rate);
+            
+            if (response.sku_details.gst_rate !== null && response.sku_details.gst_rate !== undefined) {
+              newItems[index].gst_rate = response.sku_details.gst_rate.toString();
+              console.log('GST rate set to:', newItems[index].gst_rate);
+              // Clear any warning message
+              if (message.type === 'warning') {
+                setMessage({ type: '', text: '' });
+              }
+            } else {
+              console.log('GST rate is null or undefined');
+              // Show warning if GST not configured
+              setMessage({ 
+                type: 'warning', 
+                text: `GST rate not configured for this SKU. Please configure in materials master.` 
+              });
+              newItems[index].gst_rate = '';
             }
           } else {
-            // Show warning if GST not configured
+            console.log('Response not successful or no sku_details');
+            console.log('Response success:', response.success);
+            console.log('Response error:', response.error);
             setMessage({ 
               type: 'warning', 
               text: `GST rate not configured for this SKU. Please configure in materials master.` 
@@ -230,14 +254,17 @@ const OutboundEntry = () => {
           }
         } catch (error) {
           console.error('Error fetching GST rate:', error);
+          console.error('Error details:', error.message);
           // Don't show error to user, just log it
           newItems[index].gst_rate = '';
         }
       } else {
+        console.log('No from_location selected, skipping GST fetch');
         // If no location selected yet, we can't fetch GST
         // It will be fetched during availability check
         newItems[index].gst_rate = '';
       }
+      console.log('=== END GST DEBUG ===');
     }
     
     setItems(newItems);
