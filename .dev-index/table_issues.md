@@ -1,6 +1,6 @@
 # Table Usage Issues
 
-Generated: 2025-09-01 05:40:45.885744
+Generated: 2025-09-01 06:20:10.878023
 
 ## ⚠️ Orphaned Tables
 These tables exist in database but are not used in any code:
@@ -277,7 +277,7 @@ These tables are referenced in code but don't exist in database:
 - location
   Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py, puvi-backend/puvi-backend-main/modules/locations.py
 - locations
-  Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/modules/locations.py, puvi-frontend/puvi-frontend-main/src/services/api/index.js and 7 more
+  Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/modules/sku_outbound.py, puvi-backend/puvi-backend-main/modules/locations.py and 8 more
 - logistics_costs
   Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
 - low_confidence_suggestions
