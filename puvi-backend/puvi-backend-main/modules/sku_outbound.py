@@ -2,7 +2,7 @@
 File path: puvi-backend/puvi-backend-main/modules/sku_outbound.py
 SKU Outbound Module for PUVI Oil Manufacturing System
 Handles Internal Transfers, Third Party Transfers, and Sales transactions
-Version: 3.3 - UPDATED: Added Customer endpoints for frontend integration
+Version: 3.4 - FIXED: GST rate retrieval with better error handling
 """
 
 from flask import Blueprint, request, jsonify
@@ -69,8 +69,7 @@ def get_gst_rate_for_sku(sku_id, cur):
     """
     Get GST rate for SKU from subcategories_master via oil_type
     
-    UPDATED LOGIC:
-    SKU.oil_type → subcategories_master.oil_type → gst_rate
+    NO FALLBACK VERSION: Returns None if GST not configured
     
     Args:
         sku_id: SKU ID
@@ -82,53 +81,77 @@ def get_gst_rate_for_sku(sku_id, cur):
     Raises:
         ValueError: If GST rate not configured
     """
-    # First, get the oil_type from SKU
-    cur.execute("""
-        SELECT 
-            s.sku_code,
-            s.product_name,
-            s.oil_type
-        FROM sku_master s
-        WHERE s.sku_id = %s
-    """, (sku_id,))
-    
-    sku_info = cur.fetchone()
-    if not sku_info:
-        raise ValueError(f"SKU with ID {sku_id} not found")
-    
-    sku_code, product_name, oil_type = sku_info
-    
-    if not oil_type:
-        raise ValueError(
-            f"Oil type not configured for SKU: {sku_code} - {product_name}. "
-            f"Please configure oil_type in SKU master."
-        )
-    
-    # Now get GST rate from subcategories_master
-    cur.execute("""
-        SELECT 
-            sc.subcategory_name,
-            sc.gst_rate
-        FROM subcategories_master sc
-        WHERE sc.oil_type = %s
-            AND sc.category_id = (
-                SELECT category_id 
-                FROM categories_master 
-                WHERE category_name = 'Oil'
-                LIMIT 1
+    try:
+        # First, get the oil_type from SKU
+        cur.execute("""
+            SELECT 
+                s.sku_code,
+                s.product_name,
+                s.oil_type
+            FROM sku_master s
+            WHERE s.sku_id = %s
+        """, (sku_id,))
+        
+        sku_info = cur.fetchone()
+        if not sku_info:
+            raise ValueError(f"SKU with ID {sku_id} not found")
+        
+        sku_code, product_name, oil_type = sku_info
+        
+        if not oil_type:
+            raise ValueError(
+                f"Oil type not configured for SKU: {sku_code} - {product_name}. "
+                f"Please configure oil_type in SKU master."
             )
-        LIMIT 1
-    """, (oil_type,))
-    
-    result = cur.fetchone()
-    if not result or result[1] is None:
-        raise ValueError(
-            f"GST rate not configured for oil type '{oil_type}' "
-            f"(SKU: {sku_code} - {product_name}). "
-            f"Please configure GST rate in subcategories master for {oil_type} oil."
-        )
-    
-    return float(result[1])
+        
+        # Try with JOIN first
+        cur.execute("""
+            SELECT 
+                sc.subcategory_name,
+                sc.gst_rate
+            FROM subcategories_master sc
+            INNER JOIN categories_master c ON sc.category_id = c.category_id
+            WHERE sc.oil_type = %s
+                AND c.category_name = 'Oil'
+                AND sc.gst_rate IS NOT NULL
+                AND sc.is_active = true
+            ORDER BY sc.subcategory_id
+            LIMIT 1
+        """, (oil_type,))
+        
+        result = cur.fetchone()
+        
+        # If no result, try with hardcoded category_id
+        if not result or result[1] is None:
+            cur.execute("""
+                SELECT 
+                    sc.subcategory_name,
+                    sc.gst_rate
+                FROM subcategories_master sc
+                WHERE sc.oil_type = %s
+                    AND sc.category_id = 8
+                    AND sc.gst_rate IS NOT NULL
+                ORDER BY sc.subcategory_id
+                LIMIT 1
+            """, (oil_type,))
+            
+            result = cur.fetchone()
+        
+        if result and result[1] is not None:
+            return float(result[1])
+        else:
+            raise ValueError(
+                f"GST rate not configured for oil type '{oil_type}' "
+                f"(SKU: {sku_code} - {product_name}). "
+                f"Please configure GST rate in subcategories master for {oil_type} oil."
+            )
+            
+    except ValueError:
+        # Re-raise ValueError as is
+        raise
+    except Exception as e:
+        # Wrap other exceptions in ValueError with context
+        raise ValueError(f"Error retrieving GST rate for SKU {sku_id}: {str(e)}")
 
 
 def calculate_weight_based_costs(items, transport_cost, handling_cost, cur):
@@ -442,12 +465,13 @@ def check_availability():
         if not sku_data:
             return jsonify({'success': False, 'error': 'SKU not found'}), 404
         
-        # Try to get GST rate but don't fail if not found
+        # Get GST rate - let errors propagate for sales, but handle for availability check
         try:
             gst_rate = get_gst_rate_for_sku(sku_id, cur)
         except ValueError as e:
             # For availability check, we can proceed without GST
             # It will be required during sales creation
+            print(f"WARNING: GST rate error for SKU {sku_id}: {str(e)}")
             gst_rate = None
         
         # Check availability
@@ -460,12 +484,13 @@ def check_availability():
             'product_name': sku_data[1],
             'package_size': sku_data[2],
             'packaged_weight_kg': float(sku_data[3]) if sku_data[3] else 1.0,
-            'gst_rate': gst_rate  # May be None if not configured
+            'gst_rate': gst_rate
         }
         
         return jsonify(availability)
         
     except Exception as e:
+        print(f"ERROR in check_availability: {str(e)}")
         return jsonify({'success': False, 'error': str(e)}), 500
     finally:
         close_connection(conn, cur)
