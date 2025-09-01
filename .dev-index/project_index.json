@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-09-01T05:17:12.538Z",
+  "generatedAt": "2025-09-01T05:29:23.649Z",
   "filesScanned": 70,
   "jsFilesScanned": 43,
   "pyFilesScanned": 27,
@@ -2283,7 +2283,7 @@
     {
       "name": "SubcategoryForm",
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 36,
+      "line": 42,
       "type": "const"
     },
     {
@@ -13758,7 +13758,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 8,
+      "line": 10,
       "name": "apiCall",
       "params": "url, options = {}",
       "type": "arrow",
@@ -13766,7 +13766,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 85,
+      "line": 97,
       "name": "loadCategories",
       "params": "",
       "type": "arrow",
@@ -13774,7 +13774,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 108,
+      "line": 120,
       "name": "loadExistingOilTypes",
       "params": "",
       "type": "arrow",
@@ -13782,7 +13782,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 120,
+      "line": 132,
       "name": "handleFieldChange",
       "params": "fieldName, value",
       "type": "arrow",
@@ -13790,7 +13790,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 173,
+      "line": 218,
       "name": "validateForm",
       "params": "",
       "type": "arrow",
@@ -13798,7 +13798,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 210,
+      "line": 276,
       "name": "handleSubmit",
       "params": "e",
       "type": "arrow",
@@ -21107,7 +21107,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 43,
+      "line": 49,
       "type": "useState",
       "name": "formData",
       "setter": "setFormData",
@@ -21115,13 +21115,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 43,
+      "line": 49,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 50,
+      "line": 58,
       "type": "useState",
       "name": "categories",
       "setter": "setCategories",
@@ -21129,13 +21129,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 50,
+      "line": 58,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 51,
+      "line": 59,
       "type": "useState",
       "name": "existingOilTypes",
       "setter": "setExistingOilTypes",
@@ -21143,13 +21143,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 51,
+      "line": 59,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 52,
+      "line": 60,
       "type": "useState",
       "name": "errors",
       "setter": "setErrors",
@@ -21157,13 +21157,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 52,
+      "line": 60,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 53,
+      "line": 61,
       "type": "useState",
       "name": "saving",
       "setter": "setSaving",
@@ -21171,13 +21171,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 53,
+      "line": 61,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 54,
+      "line": 62,
       "type": "useState",
       "name": "loading",
       "setter": "setLoading",
@@ -21185,13 +21185,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 54,
+      "line": 62,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 57,
+      "line": 67,
       "type": "useEffect",
       "hook": "useEffect"
     },
@@ -24426,43 +24426,31 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 9,
+      "line": 11,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 18,
+      "line": 21,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 20,
+      "line": 23,
       "type": "catch",
       "code": "} catch (jsonError) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 31,
+      "line": 36,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 86,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 101,
-      "type": "catch",
-      "code": "} catch (error) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 109,
+      "line": 98,
       "type": "try-catch",
       "code": "try {"
     },
@@ -24474,37 +24462,49 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 219,
+      "line": 121,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 237,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 242,
+      "line": 125,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 264,
+      "line": 285,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 269,
+      "line": 306,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
+      "line": 311,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
-      "line": 317,
+      "line": 335,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
+      "line": 340,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
+      "line": 390,
       "type": "catch",
       "code": "} catch (error) {"
     },
