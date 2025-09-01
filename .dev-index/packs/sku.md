@@ -1,6 +1,6 @@
 # Feature Pack: SKU
-Generated: 2025-08-31T14:04:42.476Z
-Routes: 25 | Tables: 27 | Files: 11
+Generated: 2025-09-01T04:42:15.206Z
+Routes: 25 | Tables: 29 | Files: 11
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -72,12 +72,13 @@ POST   /api/sku/production/allocate-oil
 | batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 10 other modules |
 | blend_batch_components | blending, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
 | blend_batches | blending, masters-crud, sku-production | 🔴 HIGH | Changes affect 3 other modules |
+| categories_master | blending, masters-crud, material-writeoff | 🔴 HIGH | Changes affect 5 other modules |
 | cost_elements_master | cost-management, package-sizes, sku-production | 🔴 HIGH | Changes affect 4 other modules |
 | created_at | sku-production | 🟡 MEDIUM | Changes affect 1 other modules |
 | inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
 | locations_master | locations, sku-outbound, unknown | 🔴 HIGH | Changes affect 3 other modules |
 | masters_audit_log | masters-common, opening-balance, sku-management | 🔴 HIGH | Changes affect 3 other modules |
-| materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 11 other modules |
+| materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
 | package_sizes_master | package-sizes, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
 | purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 6 other modules |
 | query | masters-common, sku-management | 🟡 MEDIUM | Changes affect 2 other modules |
@@ -93,10 +94,12 @@ POST   /api/sku/production/allocate-oil
 | sku_outbound | customers, locations, sku-outbound | 🔴 HIGH | Changes affect 4 other modules |
 | sku_outbound_items | sku-outbound | 🟡 MEDIUM | Changes affect 1 other modules |
 | sku_production | material-writeoff, sku-management, sku-outbound | 🔴 HIGH | Changes affect 5 other modules |
+| subcategories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 4 other modules |
 | suppliers | opening-balance, purchase, sku-production | 🔴 HIGH | Changes affect 5 other modules |
 
 ### ⚠️ Hardcoded Values Detected
 - `ProductionSummaryReport.js:277` - object
+- `sku_outbound.py:103` - object
 - `sku_production.py:396` - object
 
 ## Backend Implementation
@@ -106,7 +109,7 @@ POST   /api/sku/production/allocate-oil
 ## Data Flow & Integration
 ### 🔗 Cascading Dependencies
 - **materials** (HIGH RISK)
-  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-outbound, sku-production, system-config, writeoff-analytics, unknown
+  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, system-config, writeoff-analytics, unknown
   - Impact: Changes will cascade to these modules
 - **inventory** (HIGH RISK)
   - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, unknown

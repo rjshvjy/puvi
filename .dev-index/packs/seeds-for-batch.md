@@ -1,5 +1,5 @@
 # Feature Pack: SEEDS-FOR-BATCH
-Generated: 2025-08-31T14:04:42.463Z
+Generated: 2025-09-01T04:42:15.194Z
 Routes: 1 | Tables: 9 | Files: 1
 
 ## Table of Contents
@@ -23,7 +23,7 @@ GET    /api/seeds_for_batch
 | batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 10 other modules |
 | batch_extended_costs | batch-production, cost-management | 🟡 MEDIUM | Changes affect 2 other modules |
 | inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
-| materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 11 other modules |
+| materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
 | oil_cake_inventory | batch-production, material-sales, material-writeoff | 🔴 HIGH | Changes affect 3 other modules |
 | oil_cake_rate_master | batch-production | 🟡 MEDIUM | Changes affect 1 other modules |
 | purchase_items | batch-production, purchase | 🟡 MEDIUM | Changes affect 2 other modules |
@@ -40,7 +40,7 @@ GET    /api/seeds_for_batch
 ## Data Flow & Integration
 ### 🔗 Cascading Dependencies
 - **materials** (HIGH RISK)
-  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-outbound, sku-production, system-config, writeoff-analytics, unknown
+  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, system-config, writeoff-analytics, unknown
   - Impact: Changes will cascade to these modules
 - **inventory** (HIGH RISK)
   - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, unknown

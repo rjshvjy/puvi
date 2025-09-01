@@ -1,5 +1,5 @@
 # Feature Pack: ADD-PURCHASE
-Generated: 2025-08-31T14:04:42.475Z
+Generated: 2025-09-01T04:42:15.205Z
 Routes: 1 | Tables: 9 | Files: 1
 
 ## Table of Contents
@@ -19,13 +19,13 @@ POST   /api/add_purchase
 ## Database Dependencies
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
-| categories_master | blending, masters-crud, material-writeoff | 🔴 HIGH | Changes affect 4 other modules |
+| categories_master | blending, masters-crud, material-writeoff | 🔴 HIGH | Changes affect 5 other modules |
 | inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
 | material_tags | purchase | 🟡 MEDIUM | Changes affect 1 other modules |
-| materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 11 other modules |
+| materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
 | purchase_items | batch-production, purchase | 🟡 MEDIUM | Changes affect 2 other modules |
 | purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 6 other modules |
-| subcategories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
+| subcategories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 4 other modules |
 | suppliers | opening-balance, purchase, sku-production | 🔴 HIGH | Changes affect 5 other modules |
 | tags | purchase | 🟡 MEDIUM | Changes affect 1 other modules |
 
@@ -34,7 +34,7 @@ POST   /api/add_purchase
 ## Data Flow & Integration
 ### 🔗 Cascading Dependencies
 - **materials** (HIGH RISK)
-  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-outbound, sku-production, system-config, writeoff-analytics, unknown
+  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, system-config, writeoff-analytics, unknown
   - Impact: Changes will cascade to these modules
 - **inventory** (HIGH RISK)
   - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, unknown

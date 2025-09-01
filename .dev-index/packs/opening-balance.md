@@ -1,5 +1,5 @@
 # Feature Pack: OPENING-BALANCE
-Generated: 2025-08-31T14:04:42.474Z
+Generated: 2025-09-01T04:42:15.205Z
 Routes: 8 | Tables: 11 | Files: 1
 
 ## Table of Contents
@@ -37,7 +37,7 @@ POST   /api/opening_balance/import
 | inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 7 other modules |
 | masters_audit_log | masters-common, sku-management | 🟡 MEDIUM | Changes affect 2 other modules |
 | material_writeoffs | material-writeoff, writeoff-analytics | 🟡 MEDIUM | Changes affect 2 other modules |
-| materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
+| materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 9 other modules |
 | opening_balances | None | 🟢 LOW | Isolated to this module |
 | purchases | batch-production, blending, purchase | 🔴 HIGH | Changes affect 5 other modules |
 | serial_number_tracking | unknown | 🟡 MEDIUM | Changes affect 1 other modules |
@@ -50,7 +50,7 @@ POST   /api/opening_balance/import
 ## Data Flow & Integration
 ### 🔗 Cascading Dependencies
 - **materials** (HIGH RISK)
-  - Shared with: batch-production, blending, masters-crud, material-writeoff, purchase, sku-outbound, sku-production, system-config, writeoff-analytics, unknown
+  - Shared with: batch-production, blending, masters-crud, material-writeoff, purchase, sku-production, system-config, writeoff-analytics, unknown
   - Impact: Changes will cascade to these modules
 - **inventory** (HIGH RISK)
   - Shared with: batch-production, blending, masters-crud, material-writeoff, purchase, sku-production, unknown

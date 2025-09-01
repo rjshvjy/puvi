@@ -1,5 +1,5 @@
 # Feature Pack: REFRESH-WRITEOFF-METRICS
-Generated: 2025-08-31T14:04:42.474Z
+Generated: 2025-09-01T04:42:15.204Z
 Routes: 2 | Tables: 15 | Files: 2
 
 ## Table of Contents
@@ -22,10 +22,10 @@ POST   /api/refresh_writeoff_metrics
 |-------|-------------|------|--------|
 | batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 10 other modules |
 | calculate_writeoff_impact | writeoff-analytics | 🟡 MEDIUM | Changes affect 1 other modules |
-| categories_master | blending, masters-crud, material-writeoff | 🔴 HIGH | Changes affect 4 other modules |
+| categories_master | blending, masters-crud, material-writeoff | 🔴 HIGH | Changes affect 5 other modules |
 | inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
 | material_writeoffs | material-writeoff, opening-balance, writeoff-analytics | 🔴 HIGH | Changes affect 3 other modules |
-| materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 11 other modules |
+| materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
 | oil_cake_inventory | batch-production, material-sales, material-writeoff | 🔴 HIGH | Changes affect 3 other modules |
 | sku_inventory | locations, material-writeoff, sku-outbound | 🔴 HIGH | Changes affect 4 other modules |
 | sku_master | masters-crud, material-writeoff, package-sizes | 🔴 HIGH | Changes affect 8 other modules |
@@ -41,7 +41,7 @@ POST   /api/refresh_writeoff_metrics
 ## Data Flow & Integration
 ### 🔗 Cascading Dependencies
 - **materials** (HIGH RISK)
-  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-outbound, sku-production, system-config, writeoff-analytics, unknown
+  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, system-config, writeoff-analytics, unknown
   - Impact: Changes will cascade to these modules
 - **inventory** (HIGH RISK)
   - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, unknown

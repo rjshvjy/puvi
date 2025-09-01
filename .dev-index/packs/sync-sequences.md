@@ -1,5 +1,5 @@
 # Feature Pack: SYNC-SEQUENCES
-Generated: 2025-08-31T14:04:42.477Z
+Generated: 2025-09-01T04:42:15.207Z
 Routes: 1 | Tables: 10 | Files: 1
 
 ## Table of Contents
@@ -22,7 +22,7 @@ POST   /api/sync_sequences
 | batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 10 other modules |
 | customers | customers, locations, unknown | 🔴 HIGH | Changes affect 3 other modules |
 | locations_master | locations, sku-outbound, unknown | 🔴 HIGH | Changes affect 3 other modules |
-| materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 11 other modules |
+| materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
 | purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 6 other modules |
 | sku_master | masters-crud, material-writeoff, package-sizes | 🔴 HIGH | Changes affect 8 other modules |
 | sku_outbound | customers, locations, sku-outbound | 🔴 HIGH | Changes affect 4 other modules |
@@ -35,7 +35,7 @@ POST   /api/sync_sequences
 ## Data Flow & Integration
 ### 🔗 Cascading Dependencies
 - **materials** (HIGH RISK)
-  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-outbound, sku-production, system-config, writeoff-analytics, unknown
+  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, system-config, writeoff-analytics, unknown
   - Impact: Changes will cascade to these modules
 - **suppliers** (HIGH RISK)
   - Shared with: opening-balance, purchase, sku-production, system-config, unknown

@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "generatedAt": "2025-08-31T14:04:42.404Z",
+  "generatedAt": "2025-09-01T04:42:15.139Z",
   "summary": {
     "totalTables": 65,
     "sharedTables": 36,
@@ -121,13 +121,12 @@
         "material-writeoff",
         "opening-balance",
         "purchase",
-        "sku-outbound",
         "sku-production",
         "system-config",
         "writeoff-analytics",
         "unknown"
       ],
-      "fileCount": 12,
+      "fileCount": 11,
       "operations": {
         "batch-production": {
           "files": [
@@ -162,12 +161,6 @@
         "purchase": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/purchase.py"
-          ],
-          "queryCount": 0
-        },
-        "sku-outbound": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/sku_outbound.py"
           ],
           "queryCount": 0
         },
@@ -392,9 +385,10 @@
       "usedBy": [
         "blending",
         "masters-crud",
-        "purchase"
+        "purchase",
+        "sku-outbound"
       ],
-      "fileCount": 3,
+      "fileCount": 4,
       "operations": {
         "blending": {
           "files": [
@@ -413,6 +407,12 @@
             "puvi-backend/puvi-backend-main/modules/purchase.py"
           ],
           "queryCount": 0
+        },
+        "sku-outbound": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_outbound.py"
+          ],
+          "queryCount": 0
         }
       }
     },
@@ -421,9 +421,10 @@
         "blending",
         "masters-crud",
         "material-writeoff",
-        "purchase"
+        "purchase",
+        "sku-outbound"
       ],
-      "fileCount": 4,
+      "fileCount": 5,
       "operations": {
         "blending": {
           "files": [
@@ -446,6 +447,12 @@
         "purchase": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/purchase.py"
+          ],
+          "queryCount": 0
+        },
+        "sku-outbound": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_outbound.py"
           ],
           "queryCount": 0
         }
@@ -1586,16 +1593,15 @@
         "material-writeoff",
         "opening-balance",
         "purchase",
-        "sku-outbound",
         "sku-production",
         "system-config",
         "writeoff-analytics",
         "unknown"
       ],
-      "moduleCount": 11,
-      "fileCount": 12,
+      "moduleCount": 10,
+      "fileCount": 11,
       "risk": "HIGH",
-      "recommendation": "⚠️ CRITICAL: Changes require coordination across 11 modules"
+      "recommendation": "⚠️ CRITICAL: Changes require coordination across 10 modules"
     },
     {
       "table": "inventory",
@@ -1634,17 +1640,31 @@
       "recommendation": "⚠️ CRITICAL: Changes require coordination across 10 modules"
     },
     {
-      "table": "categories_master",
+      "table": "subcategories_master",
       "sharedBy": [
         "blending",
         "masters-crud",
-        "material-writeoff",
-        "purchase"
+        "purchase",
+        "sku-outbound"
       ],
       "moduleCount": 4,
       "fileCount": 4,
       "risk": "HIGH",
       "recommendation": "⚠️ CRITICAL: Changes require coordination across 4 modules"
+    },
+    {
+      "table": "categories_master",
+      "sharedBy": [
+        "blending",
+        "masters-crud",
+        "material-writeoff",
+        "purchase",
+        "sku-outbound"
+      ],
+      "moduleCount": 5,
+      "fileCount": 5,
+      "risk": "HIGH",
+      "recommendation": "⚠️ CRITICAL: Changes require coordination across 5 modules"
     },
     {
       "table": "cost_elements_master",
@@ -1741,18 +1761,6 @@
       "fileCount": 3,
       "risk": "MEDIUM",
       "recommendation": "Changes will affect batch-production, material-sales, material-writeoff"
-    },
-    {
-      "table": "subcategories_master",
-      "sharedBy": [
-        "blending",
-        "masters-crud",
-        "purchase"
-      ],
-      "moduleCount": 3,
-      "fileCount": 3,
-      "risk": "MEDIUM",
-      "recommendation": "Changes will affect blending, masters-crud, purchase"
     },
     {
       "table": "blend_batches",

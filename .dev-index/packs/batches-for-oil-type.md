@@ -1,5 +1,5 @@
 # Feature Pack: BATCHES-FOR-OIL-TYPE
-Generated: 2025-08-31T14:04:42.466Z
+Generated: 2025-09-01T04:42:15.197Z
 Routes: 1 | Tables: 8 | Files: 1
 
 ## Table of Contents
@@ -22,18 +22,18 @@ GET    /api/batches_for_oil_type
 | batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 10 other modules |
 | blend_batch_components | blending, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
 | blend_batches | blending, masters-crud, sku-production | 🔴 HIGH | Changes affect 3 other modules |
-| categories_master | blending, masters-crud, material-writeoff | 🔴 HIGH | Changes affect 4 other modules |
+| categories_master | blending, masters-crud, material-writeoff | 🔴 HIGH | Changes affect 5 other modules |
 | inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
-| materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 11 other modules |
+| materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
 | purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 6 other modules |
-| subcategories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 3 other modules |
+| subcategories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 4 other modules |
 
 ## Backend Implementation
 
 ## Data Flow & Integration
 ### 🔗 Cascading Dependencies
 - **materials** (HIGH RISK)
-  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-outbound, sku-production, system-config, writeoff-analytics, unknown
+  - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, system-config, writeoff-analytics, unknown
   - Impact: Changes will cascade to these modules
 - **inventory** (HIGH RISK)
   - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, unknown
