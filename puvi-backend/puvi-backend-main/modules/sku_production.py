@@ -1,8 +1,7 @@
 """
 File path: puvi-backend/puvi-backend-main/modules/sku_production.py
 SKU Production Module for PUVI Oil Manufacturing System
-COMPLETE REPLACEMENT - Fixed SQL syntax error and removed duplicate code
-Version: 2.5 - FIXED: SQL query completed, duplicates removed
+Version: 3.0 - FIXED: Added location_id to inventory and expiry tracking
 """
 
 from flask import Blueprint, request, jsonify
@@ -164,12 +163,12 @@ def get_current_mrp(sku_id):
 
 
 # ============================================
-# PRODUCTION WITH MRP & EXPIRY - FIXED VERSION
+# PRODUCTION WITH MRP & EXPIRY - FIXED VERSION WITH LOCATION
 # ============================================
 
 @sku_production_bp.route('/api/sku/production', methods=['POST'])
 def create_sku_production():
-    """Create SKU production entry with MRP capture and expiry calculation"""
+    """Create SKU production entry with MRP capture, expiry calculation, and location tracking"""
     conn = get_db_connection()
     cur = conn.cursor()
     
@@ -194,6 +193,41 @@ def create_sku_production():
         oil_allocations = data['oil_allocations']
         
         cur.execute("BEGIN")
+        
+        # FIXED: Get production location FIRST
+        # Check if a specific location_id was provided in the request
+        production_location_id = data.get('location_id')
+        
+        if not production_location_id:
+            # No location provided, get default production location
+            cur.execute("""
+                SELECT location_id, location_name 
+                FROM locations_master 
+                WHERE is_production_unit = true 
+                    AND is_active = true
+                ORDER BY is_default DESC, location_id ASC
+                LIMIT 1
+            """)
+            
+            location_result = cur.fetchone()
+            if not location_result:
+                raise Exception("No production location configured. Please set up a production unit location in Locations module.")
+            
+            production_location_id = location_result[0]
+            print(f"Using production location: {location_result[1]} (ID: {production_location_id})")
+        else:
+            # Verify the provided location is valid
+            cur.execute("""
+                SELECT location_name, is_production_unit 
+                FROM locations_master 
+                WHERE location_id = %s AND is_active = true
+            """, (production_location_id,))
+            
+            location_check = cur.fetchone()
+            if not location_check:
+                raise Exception(f"Invalid location_id: {production_location_id}")
+            if not location_check[1]:
+                print(f"WARNING: Location {location_check[0]} is not marked as production unit")
         
         # Get SKU details including MRP and shelf life
         cur.execute("""
@@ -222,7 +256,7 @@ def create_sku_production():
         shelf_life_months = sku_data[3]
         package_size = sku_data[0]  # Store package_size for labor cost lookup
         
-        # Calculate expiry date - ENSURE IT'S SAVED
+        # Calculate expiry date
         expiry_date = None
         if shelf_life_months:
             expiry_date = calculate_expiry_date(production_date, shelf_life_months)
@@ -237,7 +271,7 @@ def create_sku_production():
         seq_num = cur.fetchone()[0]
         production_code = f"SP-{seq_num:03d}-{datetime.now().year}"
         
-        # Generate traceable code - FIXED EXTRACTION LOGIC
+        # Generate traceable code
         first_allocation = oil_allocations[0]
         oil_traceable_code = first_allocation.get('traceable_code', '')
         
@@ -254,7 +288,7 @@ def create_sku_production():
         
         production_month = datetime.now().month
         
-        # Get sequence number for this variety and month - FIXED SQL QUERY
+        # Get sequence number for this variety and month
         cur.execute("""
             SELECT COALESCE(MAX(
                 CAST(SUBSTRING(traceable_code FROM '[0-9]{2}$') AS INTEGER)
@@ -404,7 +438,7 @@ def create_sku_production():
         total_production_cost = oil_cost_total + material_cost_total + labor_cost_total
         cost_per_bottle = total_production_cost / bottles_produced if bottles_produced > 0 else 0
         
-        # Insert production record with MRP and expiry - ENSURE EXPIRY IS SAVED
+        # Insert production record with MRP and expiry
         cur.execute("""
             INSERT INTO sku_production (
                 production_code, traceable_code, sku_id, bom_id,
@@ -457,15 +491,15 @@ def create_sku_production():
                     data.get('created_by', 'System')
                 ))
         
-        # Create expiry tracking record
+        # FIXED: Create expiry tracking record WITH LOCATION
         if expiry_date and shelf_life_months:
             tracking_id = update_expiry_tracking(
                 conn, production_id, sku_id, production_date,
-                expiry_date, bottles_produced
+                expiry_date, bottles_produced, production_location_id  # FIXED: Added location_id
             )
-            print(f"DEBUG: Created expiry tracking record ID={tracking_id}")
+            print(f"DEBUG: Created expiry tracking record ID={tracking_id} at location {production_location_id}")
         
-        # CREATE SKU INVENTORY RECORD - THIS WAS MISSING!
+        # FIXED: CREATE SKU INVENTORY RECORD WITH LOCATION
         cur.execute("""
             INSERT INTO sku_inventory (
                 sku_id,
@@ -474,19 +508,21 @@ def create_sku_production():
                 mrp,
                 status,
                 expiry_date,
+                location_id,
                 created_at
-            ) VALUES (%s, %s, %s, %s, 'active', %s, CURRENT_TIMESTAMP)
+            ) VALUES (%s, %s, %s, %s, 'active', %s, %s, CURRENT_TIMESTAMP)
             RETURNING inventory_id
         """, (
             sku_id,
             production_id,
             bottles_produced,
             mrp_at_production,
-            expiry_date
+            expiry_date,
+            production_location_id  # FIXED: Added location_id
         ))
         
         inventory_id = cur.fetchone()[0]
-        print(f"DEBUG: Created SKU inventory record ID={inventory_id} with {bottles_produced} bottles")
+        print(f"DEBUG: Created SKU inventory record ID={inventory_id} with {bottles_produced} bottles at location {production_location_id}")
         
         # Insert oil allocations
         for allocation in oil_allocations:
@@ -547,6 +583,7 @@ def create_sku_production():
             'production_id': production_id,
             'production_code': production_code,
             'traceable_code': traceable_code,
+            'production_location_id': production_location_id,  # Include location in response
             'mrp_at_production': mrp_at_production,
             'expiry_date': integer_to_date(saved_expiry_date) if saved_expiry_date else None,
             'days_to_expiry': days_to_expiry,
@@ -559,7 +596,7 @@ def create_sku_production():
                 'total_cost': total_production_cost,
                 'cost_per_bottle': cost_per_bottle
             },
-            'message': 'Production recorded successfully with MRP and expiry tracking'
+            'message': 'Production recorded successfully with MRP, expiry tracking, and inventory at production location'
         }), 201
         
     except Exception as e:
@@ -614,10 +651,13 @@ def get_production_history():
                 p.operator_name,
                 p.created_at,
                 et.quantity_remaining,
-                et.status as expiry_tracking_status
+                et.status as expiry_tracking_status,
+                et.location_id,
+                l.location_name
             FROM sku_production p
             JOIN sku_master s ON p.sku_id = s.sku_id
             LEFT JOIN sku_expiry_tracking et ON p.production_id = et.production_id
+            LEFT JOIN locations_master l ON et.location_id = l.location_id
             WHERE 1=1
         """
         params = []
@@ -681,6 +721,8 @@ def get_production_history():
                 'created_at': row[20].isoformat() if row[20] else None,
                 'quantity_remaining': float(row[21]) if row[21] else None,
                 'expiry_tracking_status': row[22],
+                'location_id': row[23],
+                'location_name': row[24],
                 'days_to_expiry': days_to_expiry,
                 'expiry_status': expiry_status
             })
@@ -709,7 +751,9 @@ def get_expiry_alerts():
     
     try:
         days_threshold = int(request.args.get('days', 30))
-        items = check_near_expiry_items(conn, days_threshold)
+        location_id = request.args.get('location_id')  # Optional location filter
+        
+        items = check_near_expiry_items(conn, days_threshold, location_id)
         
         # Format dates for display
         for item in items:
@@ -736,7 +780,8 @@ def get_expiry_summary():
     cur = conn.cursor()
     
     try:
-        summary = get_expiry_alert_summary(conn)
+        location_id = request.args.get('location_id')  # Optional location filter
+        summary = get_expiry_alert_summary(conn, location_id)
         
         return jsonify({
             'success': True,
@@ -765,6 +810,7 @@ def get_fefo_allocation_for_sku(sku_id):
     try:
         data = request.json
         quantity_needed = data.get('quantity_needed')
+        location_id = data.get('location_id')  # Support location-specific FEFO
         
         if not quantity_needed:
             return jsonify({
@@ -772,7 +818,7 @@ def get_fefo_allocation_for_sku(sku_id):
                 'error': 'quantity_needed is required'
             }), 400
         
-        result = get_fefo_allocation(conn, sku_id, quantity_needed)
+        result = get_fefo_allocation(conn, sku_id, quantity_needed, location_id)
         
         # Format dates in allocations
         for allocation in result.get('allocations', []):
@@ -797,7 +843,7 @@ def get_production_summary_report(production_id):
     cur = conn.cursor()
     
     try:
-        # Get production details
+        # Get production details with location
         cur.execute("""
             SELECT 
                 p.production_code,
@@ -824,9 +870,13 @@ def get_production_summary_report(production_id):
                 p.material_cost_total,
                 p.labor_cost_total,
                 p.total_production_cost,
-                p.cost_per_bottle
+                p.cost_per_bottle,
+                et.location_id,
+                l.location_name
             FROM sku_production p
             JOIN sku_master s ON p.sku_id = s.sku_id
+            LEFT JOIN sku_expiry_tracking et ON p.production_id = et.production_id
+            LEFT JOIN locations_master l ON et.location_id = l.location_id
             WHERE p.production_id = %s
         """, (production_id,))
         
@@ -1009,7 +1059,7 @@ def get_production_summary_report(production_id):
             days_to_expiry = get_days_to_expiry(expiry_date)
             expiry_status = get_expiry_status(expiry_date)
         
-        # Build summary report
+        # Build summary report with location info
         summary = {
             'report_type': 'SKU Production Summary',
             'generated_at': datetime.now().isoformat(),
@@ -1021,7 +1071,9 @@ def get_production_summary_report(production_id):
                 'packing_date': format_date_indian(prod_data[3]),
                 'shift': prod_data[15] or 'N/A',
                 'production_line': prod_data[16] or 'N/A',
-                'operator': prod_data[14] or 'N/A'
+                'operator': prod_data[14] or 'N/A',
+                'location_id': prod_data[25],
+                'location_name': prod_data[26] or 'Not specified'
             },
             
             'product_details': {
@@ -1104,6 +1156,26 @@ def create_production_plan():
         sku_id = data['sku_id']
         bottles_planned = int(data['bottles_planned'])
         production_date = parse_date(data['production_date'])
+        location_id = data.get('location_id')  # Optional location for planning
+        
+        # Get production location for planning
+        if not location_id:
+            cur.execute("""
+                SELECT location_id, location_name 
+                FROM locations_master 
+                WHERE is_production_unit = true AND is_active = true
+                ORDER BY is_default DESC
+                LIMIT 1
+            """)
+            location_result = cur.fetchone()
+            if location_result:
+                location_id = location_result[0]
+                location_name = location_result[1]
+            else:
+                location_name = "No production location configured"
+        else:
+            cur.execute("SELECT location_name FROM locations_master WHERE location_id = %s", (location_id,))
+            location_name = cur.fetchone()[0] if cur.fetchone() else "Unknown"
         
         # Get SKU details including MRP and shelf life
         cur.execute("""
@@ -1270,6 +1342,10 @@ def create_production_plan():
                 'sku_code': sku_data[0],
                 'product_name': sku_data[1],
                 'bottles_planned': bottles_planned,
+                'production_location': {
+                    'location_id': location_id,
+                    'location_name': location_name
+                },
                 'mrp_current': float(sku_data[5]) if sku_data[5] else None,
                 'shelf_life_months': sku_data[6],
                 'expected_expiry_date': integer_to_date(expiry_date) if expiry_date else None,
