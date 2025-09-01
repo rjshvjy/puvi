@@ -1,5 +1,5 @@
 # Feature Pack: SKU
-Generated: 2025-09-01T07:23:22.027Z
+Generated: 2025-09-01T07:56:42.945Z
 Routes: 25 | Tables: 31 | Files: 11
 
 ## Table of Contents
@@ -78,7 +78,7 @@ POST   /api/sku/production/allocate-oil
 | customer_ship_to_locations | customers, sku-outbound | 🟡 MEDIUM | Changes affect 2 other modules |
 | customers | customers, locations, sku-outbound | 🔴 HIGH | Changes affect 4 other modules |
 | inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
-| locations_master | locations, sku-outbound, unknown | 🔴 HIGH | Changes affect 3 other modules |
+| locations_master | locations, sku-outbound, sku-production | 🔴 HIGH | Changes affect 4 other modules |
 | masters_audit_log | masters-common, opening-balance, sku-management | 🔴 HIGH | Changes affect 3 other modules |
 | materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
 | package_sizes_master | package-sizes, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
@@ -104,7 +104,7 @@ POST   /api/sku/production/allocate-oil
 - `sku_outbound.py:103` - object
 - `sku_outbound.py:154` - object
 - `sku_outbound.py:474` - object
-- `sku_production.py:396` - object
+- `sku_production.py:430` - object
 
 ## Backend Implementation
 

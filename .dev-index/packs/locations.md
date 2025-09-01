@@ -1,5 +1,5 @@
 # Feature Pack: LOCATIONS
-Generated: 2025-09-01T07:23:22.019Z
+Generated: 2025-09-01T07:56:42.937Z
 Routes: 9 | Tables: 5 | Files: 1
 
 ## Table of Contents
@@ -36,7 +36,7 @@ GET    /api/locations/dropdown
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
 | customers | customers, sku-outbound, unknown | 🔴 HIGH | Changes affect 3 other modules |
-| locations_master | sku-outbound, unknown | 🟡 MEDIUM | Changes affect 2 other modules |
+| locations_master | sku-outbound, sku-production, unknown | 🔴 HIGH | Changes affect 3 other modules |
 | sku_expiry_tracking | sku-outbound | 🟡 MEDIUM | Changes affect 1 other modules |
 | sku_inventory | material-writeoff, sku-outbound, sku-production | 🔴 HIGH | Changes affect 3 other modules |
 | sku_outbound | customers, sku-outbound, unknown | 🔴 HIGH | Changes affect 3 other modules |

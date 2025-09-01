@@ -1,6 +1,6 @@
 # PUVI System - Dependency Analysis Report
 
-**Generated:** 2025-09-01T07:23:21.960Z
+**Generated:** 2025-09-01T07:56:42.877Z
 **Version:** 1.0
 
 ## Executive Summary
@@ -70,6 +70,12 @@ Tables used by multiple modules (changes have cascading effects):
 - **File Count:** 4
 - **Recommendation:** ⚠️ CRITICAL: Changes require coordination across 4 modules
 
+### locations_master
+- **Risk Level:** HIGH
+- **Shared By:** locations, sku-outbound, sku-production, unknown
+- **File Count:** 4
+- **Recommendation:** ⚠️ CRITICAL: Changes require coordination across 4 modules
+
 ### sku_inventory
 - **Risk Level:** HIGH
 - **Shared By:** locations, material-writeoff, sku-outbound, sku-production
@@ -105,12 +111,6 @@ Tables used by multiple modules (changes have cascading effects):
 - **Shared By:** blending, masters-crud, sku-production
 - **File Count:** 3
 - **Recommendation:** Changes will affect blending, masters-crud, sku-production
-
-### locations_master
-- **Risk Level:** MEDIUM
-- **Shared By:** locations, sku-outbound, unknown
-- **File Count:** 3
-- **Recommendation:** Changes will affect locations, sku-outbound, unknown
 
 ### masters_audit_log
 - **Risk Level:** MEDIUM

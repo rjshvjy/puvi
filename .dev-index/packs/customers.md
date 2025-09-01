@@ -1,5 +1,5 @@
 # Feature Pack: CUSTOMERS
-Generated: 2025-09-01T07:23:22.019Z
+Generated: 2025-09-01T07:56:42.937Z
 Routes: 11 | Tables: 11 | Files: 2
 
 ## Table of Contents
@@ -41,7 +41,7 @@ GET    /api/customers/<int:customer_id>/ship-to
 | categories_master | blending, masters-crud, material-writeoff | 🔴 HIGH | Changes affect 5 other modules |
 | customer_ship_to_locations | sku-outbound | 🟡 MEDIUM | Changes affect 1 other modules |
 | customers | locations, sku-outbound, unknown | 🔴 HIGH | Changes affect 3 other modules |
-| locations_master | locations, sku-outbound, unknown | 🔴 HIGH | Changes affect 3 other modules |
+| locations_master | locations, sku-outbound, sku-production | 🔴 HIGH | Changes affect 4 other modules |
 | sku_expiry_tracking | locations, sku-outbound | 🟡 MEDIUM | Changes affect 2 other modules |
 | sku_inventory | locations, material-writeoff, sku-outbound | 🔴 HIGH | Changes affect 4 other modules |
 | sku_master | masters-crud, material-writeoff, package-sizes | 🔴 HIGH | Changes affect 8 other modules |
