@@ -2,7 +2,9 @@
 Generic Masters CRUD Module for PUVI Oil Manufacturing System
 Handles CRUD operations for all master data tables using configuration
 Provides unified API for suppliers, materials, tags, writeoff_reasons, cost_elements
+Enhanced with GST support for subcategories
 File Path: puvi-backend/puvi-backend-main/modules/masters_crud.py
+Version: 2.0 - GST Enhancement
 """
 
 from flask import Blueprint, request, jsonify, send_file
@@ -62,6 +64,47 @@ def check_column_exists(cur, table_name, column_name):
         return cur.fetchone()[0] > 0
     except:
         return False
+
+# =====================================================
+# GST VALIDATION HELPER
+# =====================================================
+
+def validate_gst_rate(gst_rate, category_id=None):
+    """
+    Validate GST rate according to Indian GST slabs
+    
+    Args:
+        gst_rate: The GST rate to validate
+        category_id: Category ID (8 for Oil category)
+    
+    Returns:
+        tuple: (is_valid, error_message, validated_rate)
+    """
+    if gst_rate is None or gst_rate == '':
+        # For Oil category (ID 8), GST is mandatory
+        if category_id == 8:
+            return False, "GST rate is mandatory for Oil subcategories", None
+        return True, None, None
+    
+    try:
+        rate = safe_decimal(gst_rate)
+        
+        # Check valid range (0-28%)
+        if rate < 0:
+            return False, "GST rate cannot be negative", None
+        if rate > 28:
+            return False, "GST rate cannot exceed 28%", None
+        
+        # Warn about non-standard slabs (but allow them)
+        standard_slabs = [0, 5, 12, 18, 28]
+        if rate not in standard_slabs:
+            # This is just a warning, we still allow it
+            print(f"Warning: GST rate {rate}% is not a standard slab")
+        
+        return True, None, rate
+        
+    except Exception as e:
+        return False, f"Invalid GST rate: {str(e)}", None
 
 # =====================================================
 # LIST MASTER TYPES
@@ -1044,7 +1087,7 @@ def import_from_csv(master_type):
         close_connection(conn, cur)
 
 # =====================================================
-# CATEGORY AND SUBCATEGORY ENDPOINTS
+# CATEGORY AND SUBCATEGORY ENDPOINTS - ENHANCED WITH GST
 # =====================================================
 
 @masters_crud_bp.route('/api/categories', methods=['GET'])
@@ -1088,7 +1131,7 @@ def get_categories():
 
 @masters_crud_bp.route('/api/subcategories', methods=['GET'])
 def get_subcategories():
-    """Get subcategories, optionally filtered by category_id"""
+    """Get subcategories, optionally filtered by category_id - ENHANCED WITH GST"""
     conn = get_db_connection()
     cur = conn.cursor()
     
@@ -1105,6 +1148,7 @@ def get_subcategories():
                     s.subcategory_name,
                     s.subcategory_code,
                     s.oil_type,
+                    s.gst_rate,
                     s.is_active
                 FROM subcategories_master s
                 JOIN categories_master c ON s.category_id = c.category_id
@@ -1121,6 +1165,7 @@ def get_subcategories():
                     s.subcategory_name,
                     s.subcategory_code,
                     s.oil_type,
+                    s.gst_rate,
                     s.is_active
                 FROM subcategories_master s
                 JOIN categories_master c ON s.category_id = c.category_id
@@ -1137,7 +1182,8 @@ def get_subcategories():
                 'subcategory_name': row[3],
                 'subcategory_code': row[4],
                 'oil_type': row[5],
-                'is_active': row[6]
+                'gst_rate': float(row[6]) if row[6] is not None else None,
+                'is_active': row[7]
             })
         
         return jsonify({
@@ -1154,7 +1200,7 @@ def get_subcategories():
 
 @masters_crud_bp.route('/api/subcategories/<int:subcategory_id>', methods=['GET'])
 def get_subcategory_details(subcategory_id):
-    """Get details of a single subcategory"""
+    """Get details of a single subcategory - ENHANCED WITH GST"""
     conn = get_db_connection()
     cur = conn.cursor()
     
@@ -1167,6 +1213,7 @@ def get_subcategory_details(subcategory_id):
                 s.subcategory_name,
                 s.subcategory_code,
                 s.oil_type,
+                s.gst_rate,
                 s.is_active,
                 s.created_at
             FROM subcategories_master s
@@ -1189,8 +1236,9 @@ def get_subcategory_details(subcategory_id):
             'subcategory_name': row[3],
             'subcategory_code': row[4],
             'oil_type': row[5],
-            'is_active': row[6],
-            'created_at': row[7].isoformat() if row[7] else None
+            'gst_rate': float(row[6]) if row[6] is not None else None,
+            'is_active': row[7],
+            'created_at': row[8].isoformat() if row[8] else None
         }
         
         return jsonify({
@@ -1205,12 +1253,12 @@ def get_subcategory_details(subcategory_id):
 
 
 # =====================================================
-# SUBCATEGORY CREATE/UPDATE/DELETE ENDPOINTS - FIXED
+# SUBCATEGORY CREATE/UPDATE/DELETE ENDPOINTS - ENHANCED WITH GST
 # =====================================================
 
 @masters_crud_bp.route('/api/masters/subcategories', methods=['POST'])
 def create_subcategory():
-    """Create a new subcategory - FIXED: No created_by column"""
+    """Create a new subcategory - ENHANCED WITH GST VALIDATION"""
     conn = get_db_connection()
     cur = conn.cursor()
     
@@ -1254,33 +1302,55 @@ def create_subcategory():
                 'error': f'Subcategory code "{data["subcategory_code"]}" already exists'
             }), 400
         
-        # Insert the subcategory - Only columns that exist in the table
+        # GST Validation for Oil Category (category_id = 8)
+        gst_rate = None
+        if 'gst_rate' in data:
+            is_valid, error_msg, validated_rate = validate_gst_rate(data['gst_rate'], data['category_id'])
+            if not is_valid:
+                return jsonify({
+                    'success': False,
+                    'error': error_msg
+                }), 400
+            gst_rate = validated_rate
+        elif data['category_id'] == 8:  # Oil category requires GST
+            # Don't auto-default - require explicit GST rate for Oil category
+            return jsonify({
+                'success': False,
+                'error': 'GST rate is required for Oil subcategories. Please specify a GST rate (typically 5% for edible oils, 12% for lamp oil).'
+            }), 400
+        
+        # Insert the subcategory with GST rate
         cur.execute("""
             INSERT INTO subcategories_master (
                 category_id,
                 subcategory_name,
                 subcategory_code,
                 oil_type,
+                gst_rate,
                 is_active,
                 created_at
-            ) VALUES (%s, %s, %s, %s, %s, CURRENT_TIMESTAMP)
+            ) VALUES (%s, %s, %s, %s, %s, %s, CURRENT_TIMESTAMP)
             RETURNING subcategory_id
         """, (
             data['category_id'],
             data['subcategory_name'],
             data['subcategory_code'],
             data.get('oil_type'),
+            gst_rate,
             data.get('is_active', True)
         ))
         
         new_subcategory_id = cur.fetchone()[0]
         
         # Log audit
+        audit_data = dict(data)
+        audit_data['gst_rate'] = gst_rate
+        
         log_audit(
             conn, cur, 'subcategories_master', new_subcategory_id, 'INSERT',
-            new_values=data,
+            new_values=audit_data,
             changed_by='System',
-            reason='Created new subcategory via Oil Configuration'
+            reason='Created new subcategory with GST configuration'
         )
         
         conn.commit()
@@ -1289,7 +1359,8 @@ def create_subcategory():
             'success': True,
             'id': new_subcategory_id,
             'subcategory_id': new_subcategory_id,
-            'message': f'Subcategory "{data["subcategory_name"]}" created successfully'
+            'message': f'Subcategory "{data["subcategory_name"]}" created successfully' + 
+                      (f' with GST rate {gst_rate}%' if gst_rate is not None else '')
         })
         
     except Exception as e:
@@ -1327,7 +1398,7 @@ def create_subcategory():
 
 @masters_crud_bp.route('/api/masters/subcategories/<int:subcategory_id>', methods=['PUT'])
 def update_subcategory(subcategory_id):
-    """Update an existing subcategory - FIXED: No updated_at column"""
+    """Update an existing subcategory - ENHANCED WITH GST VALIDATION"""
     conn = get_db_connection()
     cur = conn.cursor()
     
@@ -1350,6 +1421,7 @@ def update_subcategory(subcategory_id):
             }), 404
         
         old_values = dict(zip(columns, current_row))
+        current_category_id = old_values['category_id']
         
         # Build update query dynamically
         update_fields = []
@@ -1378,10 +1450,27 @@ def update_subcategory(subcategory_id):
                 
             update_fields.append('category_id = %s')
             values.append(data['category_id'])
+            current_category_id = data['category_id']
             
         if 'oil_type' in data:
             update_fields.append('oil_type = %s')
             values.append(data['oil_type'])
+            
+        # GST Rate Update with Validation
+        if 'gst_rate' in data:
+            is_valid, error_msg, validated_rate = validate_gst_rate(data['gst_rate'], current_category_id)
+            if not is_valid:
+                return jsonify({
+                    'success': False,
+                    'error': error_msg
+                }), 400
+            
+            update_fields.append('gst_rate = %s')
+            values.append(validated_rate)
+        elif current_category_id == 8 and old_values.get('gst_rate') is None:
+            # Don't auto-default - warn user that Oil subcategory needs GST
+            # This is just a warning since it's an update, not creation
+            print(f"Warning: Oil subcategory {subcategory_id} still missing GST rate after update")
             
         if 'is_active' in data:
             update_fields.append('is_active = %s')
@@ -1418,14 +1507,19 @@ def update_subcategory(subcategory_id):
             old_values=old_values,
             new_values=data,
             changed_by='System',
-            reason='Updated subcategory via Oil Configuration'
+            reason='Updated subcategory with GST configuration'
         )
         
         conn.commit()
         
+        # Build success message
+        message = 'Subcategory updated successfully'
+        if 'gst_rate' in data:
+            message += f' (GST rate: {data["gst_rate"]}%)'
+        
         return jsonify({
             'success': True,
-            'message': 'Subcategory updated successfully'
+            'message': message
         })
         
     except Exception as e:
@@ -1527,7 +1621,7 @@ def delete_subcategory(subcategory_id):
 
 
 # =====================================================
-# OIL CONFIGURATION ENDPOINTS (NEW)
+# OIL CONFIGURATION ENDPOINTS (EXISTING)
 # =====================================================
 
 @masters_crud_bp.route('/api/oil-config/status', methods=['GET'])
@@ -1570,35 +1664,43 @@ def get_oil_config_status():
                 'is_configured': is_configured
             })
         
-        # Check Oil subcategories
+        # Check Oil subcategories with GST rates
         cur.execute("""
             SELECT 
                 s.subcategory_id,
                 s.subcategory_name,
                 s.subcategory_code,
                 s.oil_type,
+                s.gst_rate,
                 COUNT(DISTINCT sku.sku_id) as sku_count
             FROM subcategories_master s
             JOIN categories_master c ON s.category_id = c.category_id
             LEFT JOIN sku_master sku ON sku.oil_type = s.oil_type
             WHERE c.category_name = 'Oil' AND s.is_active = true
-            GROUP BY s.subcategory_id, s.subcategory_name, s.subcategory_code, s.oil_type
+            GROUP BY s.subcategory_id, s.subcategory_name, s.subcategory_code, s.oil_type, s.gst_rate
         """)
         
         oil_products = []
         unmapped_oils = 0
+        missing_gst = 0
         for row in cur.fetchall():
             is_configured = row[3] is not None and row[3] != ''
+            has_gst = row[4] is not None
+            
             if not is_configured:
                 unmapped_oils += 1
+            if not has_gst:
+                missing_gst += 1
                 
             oil_products.append({
                 'subcategory_id': row[0],
                 'name': row[1],
                 'code': row[2],
                 'oil_type': row[3],
-                'sku_count': row[4],
-                'is_configured': is_configured
+                'gst_rate': float(row[4]) if row[4] is not None else None,
+                'sku_count': row[5],
+                'is_configured': is_configured,
+                'has_gst': has_gst
             })
         
         # Check materials without produces_oil_type
@@ -1630,8 +1732,17 @@ def get_oil_config_status():
         orphaned_oil_types = [row[0] for row in cur.fetchall()]
         
         # Calculate health score
-        total_issues = unmapped_seeds + unmapped_oils + materials_without_oil_type + len(orphaned_oil_types)
+        total_issues = unmapped_seeds + unmapped_oils + materials_without_oil_type + len(orphaned_oil_types) + missing_gst
         health_score = 'healthy' if total_issues == 0 else 'warning' if total_issues <= 3 else 'critical'
+        
+        # Prepare recommendations
+        recommendations = []
+        if missing_gst > 0:
+            recommendations.append(f'Configure GST rates for {missing_gst} oil products')
+        if unmapped_seeds > 0:
+            recommendations.append(f'Map oil types for {unmapped_seeds} seed varieties')
+        if unmapped_oils > 0:
+            recommendations.append(f'Configure oil types for {unmapped_oils} oil products')
         
         return jsonify({
             'success': True,
@@ -1644,10 +1755,11 @@ def get_oil_config_status():
                 'unmapped_seed_varieties': unmapped_seeds,
                 'total_oil_products': len(oil_products),
                 'unmapped_oil_products': unmapped_oils,
+                'oil_products_missing_gst': missing_gst,
                 'materials_without_oil_type': materials_without_oil_type,
                 'orphaned_oil_types': orphaned_oil_types
             },
-            'recommendations': []
+            'recommendations': recommendations
         })
         
     except Exception as e:
@@ -1710,7 +1822,7 @@ def get_seed_varieties():
 
 @masters_crud_bp.route('/api/oil-config/oil-products', methods=['GET'])
 def get_oil_products():
-    """Get oil subcategories with production statistics"""
+    """Get oil subcategories with production statistics and GST rates"""
     conn = get_db_connection()
     cur = conn.cursor()
     
@@ -1721,6 +1833,7 @@ def get_oil_products():
                 s.subcategory_name,
                 s.subcategory_code,
                 s.oil_type,
+                s.gst_rate,
                 s.is_active,
                 COUNT(DISTINCT sku.sku_id) as sku_count,
                 COUNT(DISTINCT b.batch_id) as batch_count,
@@ -1731,7 +1844,7 @@ def get_oil_products():
             LEFT JOIN batch b ON b.oil_type = s.oil_type
             LEFT JOIN blend_batches blend ON blend.result_oil_type = s.oil_type
             WHERE c.category_name = 'Oil'
-            GROUP BY s.subcategory_id, s.subcategory_name, s.subcategory_code, s.oil_type, s.is_active
+            GROUP BY s.subcategory_id, s.subcategory_name, s.subcategory_code, s.oil_type, s.gst_rate, s.is_active
             ORDER BY s.subcategory_name
         """)
         
@@ -1742,11 +1855,13 @@ def get_oil_products():
                 'product_name': row[1],
                 'code': row[2],
                 'oil_type': row[3] if row[3] else 'NOT SET',
-                'is_active': row[4],
-                'sku_count': row[5],
-                'batch_count': row[6],
-                'blend_count': row[7],
-                'configuration_status': 'configured' if row[3] else 'needs_configuration'
+                'gst_rate': float(row[4]) if row[4] is not None else None,
+                'is_active': row[5],
+                'sku_count': row[6],
+                'batch_count': row[7],
+                'blend_count': row[8],
+                'configuration_status': 'configured' if row[3] else 'needs_configuration',
+                'gst_status': 'configured' if row[4] is not None else 'missing'
             })
         
         return jsonify({
@@ -1768,7 +1883,7 @@ def get_production_flow():
     cur = conn.cursor()
     
     try:
-        # Get the production chain
+        # Get the production chain with GST rates
         cur.execute("""
             WITH seed_to_oil AS (
                 SELECT DISTINCT
@@ -1785,18 +1900,20 @@ def get_production_flow():
                 SELECT DISTINCT
                     s.oil_type,
                     s.subcategory_name as oil_product,
+                    s.gst_rate,
                     COUNT(DISTINCT sku.sku_id) as sku_count
                 FROM subcategories_master s
                 JOIN categories_master c ON s.category_id = c.category_id
                 LEFT JOIN sku_master sku ON sku.oil_type = s.oil_type
                 WHERE c.category_name = 'Oil' AND s.oil_type IS NOT NULL
-                GROUP BY s.oil_type, s.subcategory_name
+                GROUP BY s.oil_type, s.subcategory_name, s.gst_rate
             )
             SELECT 
                 sto.seed_variety,
                 sto.produces_oil,
                 sto.material_count,
                 otp.oil_product,
+                otp.gst_rate,
                 otp.sku_count
             FROM seed_to_oil sto
             LEFT JOIN oil_to_product otp ON sto.produces_oil = otp.oil_type
@@ -1813,6 +1930,7 @@ def get_production_flow():
                     'oil_type': oil_type,
                     'seeds': [],
                     'products': [],
+                    'gst_rate': None,
                     'total_materials': 0,
                     'total_skus': 0
                 }
@@ -1828,9 +1946,12 @@ def get_production_flow():
             if row[3] and row[3] not in [p['name'] for p in oil_types[oil_type]['products']]:
                 oil_types[oil_type]['products'].append({
                     'name': row[3],
-                    'sku_count': row[4]
+                    'gst_rate': float(row[4]) if row[4] is not None else None,
+                    'sku_count': row[5]
                 })
-                oil_types[oil_type]['total_skus'] += row[4]
+                oil_types[oil_type]['total_skus'] += row[5]
+                if row[4] is not None:
+                    oil_types[oil_type]['gst_rate'] = float(row[4])
         
         # Convert to list
         for oil_type, data in oil_types.items():
@@ -2065,6 +2186,51 @@ def validate_oil_configuration():
                     'reason': f"Product name contains '{suggested_oil_type}'"
                 })
         
+        # Check 4: Oil subcategories without GST rate
+        cur.execute("""
+            SELECT s.subcategory_id, s.subcategory_name, s.oil_type
+            FROM subcategories_master s
+            JOIN categories_master c ON s.category_id = c.category_id
+            WHERE c.category_name = 'Oil' 
+            AND s.gst_rate IS NULL
+            AND s.is_active = true
+            ORDER BY s.subcategory_name
+        """)
+        
+        for row in cur.fetchall():
+            subcategory_id = row[0]
+            subcategory_name = row[1]
+            oil_type = row[2]
+            
+            issues.append({
+                'type': 'oil_product_missing_gst',
+                'entity': 'subcategory',
+                'id': subcategory_id,
+                'name': subcategory_name,
+                'message': f"Oil product '{subcategory_name}' has no GST rate configured"
+            })
+            
+            # Suggest GST rate based on oil type
+            suggested_gst = 5.0  # Default for edible oils
+            confidence = 'high'
+            
+            # Check if it's lamp oil (Deepam)
+            if 'DEEPAM' in subcategory_name.upper():
+                suggested_gst = 12.0
+                confidence = 'high'
+            
+            suggestions.append({
+                'entity_type': 'oil_subcategory',
+                'entity_id': subcategory_id,
+                'entity_name': subcategory_name,
+                'field': 'gst_rate',
+                'current_value': None,
+                'suggested_value': suggested_gst,
+                'confidence': confidence,
+                'pattern_matched': 'standard_rate',
+                'reason': f"Standard GST rate for {'lamp oil' if suggested_gst == 12 else 'edible oil'}"
+            })
+        
         # Group suggestions by confidence for better UX
         suggestions_by_confidence = {
             'high': [s for s in suggestions if s['confidence'] == 'high'],
@@ -2083,6 +2249,7 @@ def validate_oil_configuration():
                 'subcategories_without_oil_type': len([i for i in issues if i['type'] == 'missing_oil_type']),
                 'materials_without_produces_oil_type': len([i for i in issues if i['type'] == 'missing_produces_oil_type']),
                 'oil_products_without_type': len([i for i in issues if i['type'] == 'oil_product_missing_type']),
+                'oil_products_without_gst': len([i for i in issues if i['type'] == 'oil_product_missing_gst']),
                 'high_confidence_suggestions': len(suggestions_by_confidence['high']),
                 'medium_confidence_suggestions': len(suggestions_by_confidence['medium']),
                 'low_confidence_suggestions': len(suggestions_by_confidence['low'])
@@ -2186,6 +2353,42 @@ def apply_oil_suggestions():
                             new_values={'oil_type': new_value},
                             changed_by=applied_by,
                             reason=f'Applied oil type suggestion for oil product'
+                        )
+                        
+                        applied_count += 1
+                        results.append({
+                            'entity': entity_name,
+                            'field': field,
+                            'old_value': old_value,
+                            'new_value': new_value,
+                            'status': 'success'
+                        })
+                        
+                elif entity_type == 'oil_subcategory' and field == 'gst_rate':
+                    # Handle GST rate updates
+                    cur.execute("""
+                        SELECT gst_rate, subcategory_name 
+                        FROM subcategories_master 
+                        WHERE subcategory_id = %s
+                    """, (entity_id,))
+                    row = cur.fetchone()
+                    
+                    if row:
+                        old_value = row[0]
+                        entity_name = row[1]
+                        
+                        cur.execute("""
+                            UPDATE subcategories_master 
+                            SET gst_rate = %s 
+                            WHERE subcategory_id = %s
+                        """, (new_value, entity_id))
+                        
+                        log_audit(
+                            conn, cur, 'subcategories_master', entity_id, 'UPDATE',
+                            old_values={'gst_rate': old_value},
+                            new_values={'gst_rate': new_value},
+                            changed_by=applied_by,
+                            reason=f'Applied GST rate suggestion for oil product'
                         )
                         
                         applied_count += 1
