@@ -2,7 +2,7 @@
 # PUVI System - Expiry Management Utilities
 # File: puvi-backend/utils/expiry_utils.py
 # Purpose: Handle expiry date calculations and status checks
-# Version: Fixed - Status mapping for database constraint
+# Version: 3.0 - FIXED: Added location_id support throughout
 # =====================================================
 
 from datetime import datetime, timedelta
@@ -166,19 +166,22 @@ def validate_shelf_life(shelf_life_months):
         return (False, "Shelf life must be a valid number")
 
 
-def check_near_expiry_items(connection, days_threshold=30):
+def check_near_expiry_items(connection, days_threshold=30, location_id=None):
     """
     Get list of items nearing expiry within specified days.
+    FIXED: Added location_id filter support
     
     Args:
         connection: Database connection
         days_threshold: Number of days to check ahead (default 30)
+        location_id: Optional location filter
         
     Returns:
         List of items nearing expiry
     """
     try:
         cursor = connection.cursor()
+        
         query = """
             SELECT 
                 et.tracking_id,
@@ -189,16 +192,28 @@ def check_near_expiry_items(connection, days_threshold=30):
                 s.product_name,
                 et.expiry_date,
                 et.quantity_remaining,
-                et.expiry_date - (EXTRACT(EPOCH FROM CURRENT_DATE)::INTEGER / 86400) as days_to_expiry
+                et.expiry_date - (EXTRACT(EPOCH FROM CURRENT_DATE)::INTEGER / 86400) as days_to_expiry,
+                et.location_id,
+                l.location_name
             FROM sku_expiry_tracking et
             JOIN sku_production p ON et.production_id = p.production_id
             JOIN sku_master s ON et.sku_id = s.sku_id
+            LEFT JOIN locations_master l ON et.location_id = l.location_id
             WHERE et.quantity_remaining > 0
             AND et.status != 'expired'
             AND et.expiry_date - (EXTRACT(EPOCH FROM CURRENT_DATE)::INTEGER / 86400) <= %s
-            ORDER BY et.expiry_date ASC
         """
-        cursor.execute(query, (days_threshold,))
+        
+        params = [days_threshold]
+        
+        # Add location filter if provided
+        if location_id:
+            query += " AND et.location_id = %s"
+            params.append(location_id)
+        
+        query += " ORDER BY et.expiry_date ASC"
+        
+        cursor.execute(query, params)
         
         columns = [desc[0] for desc in cursor.description]
         results = []
@@ -214,10 +229,10 @@ def check_near_expiry_items(connection, days_threshold=30):
 
 
 def update_expiry_tracking(connection, production_id, sku_id, production_date_int, 
-                          expiry_date_int, quantity_produced):
+                          expiry_date_int, quantity_produced, location_id):
     """
     Create or update expiry tracking record for a production.
-    FIXED: Use database-compatible status values
+    FIXED: Now includes location_id parameter and handling
     
     Args:
         connection: Database connection
@@ -226,6 +241,7 @@ def update_expiry_tracking(connection, production_id, sku_id, production_date_in
         production_date_int: Production date as integer
         expiry_date_int: Expiry date as integer
         quantity_produced: Quantity produced
+        location_id: Location ID where inventory is created
         
     Returns:
         Tracking ID if successful, None otherwise
@@ -235,41 +251,68 @@ def update_expiry_tracking(connection, production_id, sku_id, production_date_in
         
         # Check if tracking already exists
         check_query = """
-            SELECT tracking_id FROM sku_expiry_tracking 
+            SELECT tracking_id, location_id FROM sku_expiry_tracking 
             WHERE production_id = %s
         """
         cursor.execute(check_query, (production_id,))
         existing = cursor.fetchone()
         
-        # FIXED: Use database-compatible status
+        # Use database-compatible status
         status = get_database_status(expiry_date_int)
         
         if existing:
-            # Update existing record
-            update_query = """
-                UPDATE sku_expiry_tracking
-                SET expiry_date = %s,
-                    quantity_produced = %s,
-                    quantity_remaining = %s,
-                    status = %s,
-                    updated_at = CURRENT_TIMESTAMP
-                WHERE production_id = %s
-                RETURNING tracking_id
-            """
-            cursor.execute(update_query, (
-                expiry_date_int,
-                quantity_produced,
-                quantity_produced,  # Initially, remaining = produced
-                status,
-                production_id
-            ))
+            tracking_id = existing[0]
+            existing_location = existing[1]
+            
+            # Update existing record, including location if it was NULL
+            if existing_location is None:
+                # Location was missing, add it
+                update_query = """
+                    UPDATE sku_expiry_tracking
+                    SET expiry_date = %s,
+                        quantity_produced = %s,
+                        quantity_remaining = %s,
+                        status = %s,
+                        location_id = %s,
+                        updated_at = CURRENT_TIMESTAMP
+                    WHERE production_id = %s
+                    RETURNING tracking_id
+                """
+                cursor.execute(update_query, (
+                    expiry_date_int,
+                    quantity_produced,
+                    quantity_produced,  # Initially, remaining = produced
+                    status,
+                    location_id,
+                    production_id
+                ))
+                print(f"Updated expiry tracking {tracking_id} with location {location_id}")
+            else:
+                # Location exists, normal update
+                update_query = """
+                    UPDATE sku_expiry_tracking
+                    SET expiry_date = %s,
+                        quantity_produced = %s,
+                        quantity_remaining = %s,
+                        status = %s,
+                        updated_at = CURRENT_TIMESTAMP
+                    WHERE production_id = %s
+                    RETURNING tracking_id
+                """
+                cursor.execute(update_query, (
+                    expiry_date_int,
+                    quantity_produced,
+                    quantity_produced,
+                    status,
+                    production_id
+                ))
         else:
-            # Insert new record
+            # Insert new record with location_id
             insert_query = """
                 INSERT INTO sku_expiry_tracking (
                     production_id, sku_id, production_date, expiry_date,
-                    quantity_produced, quantity_remaining, status
-                ) VALUES (%s, %s, %s, %s, %s, %s, %s)
+                    quantity_produced, quantity_remaining, status, location_id
+                ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                 RETURNING tracking_id
             """
             cursor.execute(insert_query, (
@@ -279,8 +322,10 @@ def update_expiry_tracking(connection, production_id, sku_id, production_date_in
                 expiry_date_int,
                 quantity_produced,
                 quantity_produced,  # Initially, remaining = produced
-                status
+                status,
+                location_id  # FIXED: Now included
             ))
+            print(f"Created new expiry tracking with location {location_id}")
         
         tracking_id = cursor.fetchone()[0]
         connection.commit()
@@ -292,20 +337,24 @@ def update_expiry_tracking(connection, production_id, sku_id, production_date_in
         if connection:
             connection.rollback()
         print(f"Error updating expiry tracking: {str(e)}")
+        import traceback
+        traceback.print_exc()
         return None
 
 
-def get_fefo_allocation(connection, sku_id, quantity_needed):
+def get_fefo_allocation(connection, sku_id, quantity_needed, location_id=None):
     """
     Get FEFO (First Expiry First Out) allocation for SKU sales.
+    FIXED: Added location_id filter support
     
     Args:
         connection: Database connection
         sku_id: SKU ID
         quantity_needed: Quantity to allocate
+        location_id: Optional location filter for allocation
         
     Returns:
-        List of allocations from different batches
+        Dictionary with allocation details
     """
     try:
         cursor = connection.cursor()
@@ -319,15 +368,27 @@ def get_fefo_allocation(connection, sku_id, quantity_needed):
                 et.quantity_remaining,
                 p.production_code,
                 p.traceable_code,
-                p.mrp_at_production
+                p.mrp_at_production,
+                et.location_id,
+                l.location_name
             FROM sku_expiry_tracking et
             JOIN sku_production p ON et.production_id = p.production_id
+            LEFT JOIN locations_master l ON et.location_id = l.location_id
             WHERE et.sku_id = %s
             AND et.quantity_remaining > 0
             AND et.status != 'expired'
-            ORDER BY et.expiry_date ASC, et.production_id ASC
         """
-        cursor.execute(query, (sku_id,))
+        
+        params = [sku_id]
+        
+        # Add location filter if provided
+        if location_id:
+            query += " AND et.location_id = %s"
+            params.append(location_id)
+        
+        query += " ORDER BY et.expiry_date ASC, et.production_id ASC"
+        
+        cursor.execute(query, params)
         
         allocations = []
         remaining_needed = Decimal(str(quantity_needed))
@@ -336,7 +397,7 @@ def get_fefo_allocation(connection, sku_id, quantity_needed):
             if remaining_needed <= 0:
                 break
                 
-            tracking_id, production_id, expiry_date, qty_available, prod_code, trace_code, mrp = row
+            tracking_id, production_id, expiry_date, qty_available, prod_code, trace_code, mrp, loc_id, loc_name = row
             
             # Calculate allocation from this batch
             allocation_qty = min(remaining_needed, Decimal(str(qty_available)))
@@ -349,7 +410,9 @@ def get_fefo_allocation(connection, sku_id, quantity_needed):
                 'expiry_date': expiry_date,
                 'quantity_allocated': float(allocation_qty),
                 'quantity_available': float(qty_available),
-                'mrp': float(mrp) if mrp else None
+                'mrp': float(mrp) if mrp else None,
+                'location_id': loc_id,
+                'location_name': loc_name
             })
             
             remaining_needed -= allocation_qty
@@ -358,11 +421,12 @@ def get_fefo_allocation(connection, sku_id, quantity_needed):
         
         # Check if we could fulfill the entire quantity
         if remaining_needed > 0:
+            location_msg = f" at location {location_id}" if location_id else ""
             return {
                 'success': False,
                 'allocations': allocations,
                 'shortage': float(remaining_needed),
-                'message': f"Insufficient stock. Short by {remaining_needed} units"
+                'message': f"Insufficient stock{location_msg}. Short by {remaining_needed} units"
             }
         else:
             return {
@@ -404,13 +468,14 @@ def format_expiry_date_display(expiry_date_int):
         return "Invalid Date"
 
 
-def get_expiry_alert_summary(connection):
+def get_expiry_alert_summary(connection, location_id=None):
     """
     Get summary of items by expiry status for dashboard.
-    FIXED: GROUP BY clause error resolved
+    FIXED: Added location filter support
     
     Args:
         connection: Database connection
+        location_id: Optional location filter
         
     Returns:
         Dictionary with counts by status
@@ -418,8 +483,7 @@ def get_expiry_alert_summary(connection):
     try:
         cursor = connection.cursor()
         
-        # FIX: Use GROUP BY 1 to group by the first column (the CASE expression)
-        # This avoids the PostgreSQL error about grouping by the alias
+        # Use GROUP BY 1 to group by the first column (the CASE expression)
         query = """
             SELECT 
                 CASE 
@@ -433,9 +497,18 @@ def get_expiry_alert_summary(connection):
                 SUM(quantity_remaining) as total_quantity
             FROM sku_expiry_tracking
             WHERE quantity_remaining > 0
-            GROUP BY 1
         """
-        cursor.execute(query)
+        
+        params = []
+        
+        # Add location filter if provided
+        if location_id:
+            query += " AND location_id = %s"
+            params.append(location_id)
+        
+        query += " GROUP BY 1"
+        
+        cursor.execute(query, params)
         
         summary = {
             'expired': {'count': 0, 'quantity': 0},
@@ -458,3 +531,140 @@ def get_expiry_alert_summary(connection):
     except Exception as e:
         print(f"Error getting expiry alert summary: {str(e)}")
         return {}
+
+
+def update_expiry_tracking_on_transfer(connection, tracking_ids, new_location_id):
+    """
+    Update location for expiry tracking records during transfers.
+    Used when inventory is moved between locations.
+    
+    Args:
+        connection: Database connection
+        tracking_ids: List of tracking IDs to update
+        new_location_id: New location ID
+        
+    Returns:
+        Number of records updated
+    """
+    try:
+        if not tracking_ids:
+            return 0
+            
+        cursor = connection.cursor()
+        
+        query = """
+            UPDATE sku_expiry_tracking
+            SET location_id = %s,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE tracking_id = ANY(%s)
+        """
+        
+        cursor.execute(query, (new_location_id, tracking_ids))
+        
+        updated_count = cursor.rowcount
+        connection.commit()
+        cursor.close()
+        
+        print(f"Updated {updated_count} expiry tracking records to location {new_location_id}")
+        return updated_count
+        
+    except Exception as e:
+        if connection:
+            connection.rollback()
+        print(f"Error updating expiry tracking location: {str(e)}")
+        return 0
+
+
+def repair_missing_locations(connection, default_location_id=None):
+    """
+    Utility function to repair existing records with missing location_id.
+    Used for fixing data after deploying the location fix.
+    
+    Args:
+        connection: Database connection
+        default_location_id: Location ID to use for repair (if not provided, uses production location)
+        
+    Returns:
+        Dictionary with repair results
+    """
+    try:
+        cursor = connection.cursor()
+        
+        # If no default location provided, get the production location
+        if not default_location_id:
+            cursor.execute("""
+                SELECT location_id, location_name 
+                FROM locations_master 
+                WHERE is_production_unit = true AND is_active = true
+                ORDER BY is_default DESC
+                LIMIT 1
+            """)
+            result = cursor.fetchone()
+            if not result:
+                return {
+                    'success': False,
+                    'error': 'No production location configured'
+                }
+            default_location_id = result[0]
+            location_name = result[1]
+        else:
+            cursor.execute("SELECT location_name FROM locations_master WHERE location_id = %s", (default_location_id,))
+            result = cursor.fetchone()
+            location_name = result[0] if result else "Unknown"
+        
+        # Count records with missing location
+        cursor.execute("SELECT COUNT(*) FROM sku_expiry_tracking WHERE location_id IS NULL")
+        missing_count = cursor.fetchone()[0]
+        
+        if missing_count == 0:
+            return {
+                'success': True,
+                'message': 'No records with missing location_id found',
+                'records_fixed': 0
+            }
+        
+        # Update records with missing location
+        cursor.execute("""
+            UPDATE sku_expiry_tracking
+            SET location_id = %s,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE location_id IS NULL
+        """, (default_location_id,))
+        
+        fixed_count = cursor.rowcount
+        
+        # Also fix sku_inventory table
+        cursor.execute("""
+            UPDATE sku_inventory
+            SET location_id = %s,
+                updated_at = CURRENT_TIMESTAMP
+            WHERE location_id IS NULL
+        """, (default_location_id,))
+        
+        inventory_fixed = cursor.rowcount
+        
+        connection.commit()
+        cursor.close()
+        
+        return {
+            'success': True,
+            'message': f'Successfully repaired missing locations using {location_name}',
+            'records_fixed': {
+                'expiry_tracking': fixed_count,
+                'sku_inventory': inventory_fixed,
+                'total': fixed_count + inventory_fixed
+            },
+            'location_used': {
+                'id': default_location_id,
+                'name': location_name
+            }
+        }
+        
+    except Exception as e:
+        if connection:
+            connection.rollback()
+        print(f"Error repairing missing locations: {str(e)}")
+        return {
+            'success': False,
+            'error': str(e)
+        }
