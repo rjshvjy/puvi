@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-08-31T13:48:15.381241+00:00",
+  "generated_at": "2025-09-01T04:42:11.074075+00:00",
   "database": "postgres",
   "version": "PostgreSQL 17.4 on aarch64-unknown-linux-gnu, compiled by gcc (GCC) 13.2.0, 64-bit",
   "tables": {
@@ -11109,13 +11109,6 @@
       ],
       "indexes": [
         {
-          "index_name": "idx_outbound_items_allocation",
-          "is_unique": false,
-          "is_primary": false,
-          "definition": "CREATE INDEX idx_outbound_items_allocation ON public.sku_outbound_items USING gin (allocation_data)",
-          "columns": "allocation_data"
-        },
-        {
           "index_name": "sku_outbound_items_pkey",
           "is_unique": true,
           "is_primary": false,
@@ -11123,18 +11116,25 @@
           "columns": "item_id"
         },
         {
-          "index_name": "idx_outbound_items_sku",
-          "is_unique": false,
-          "is_primary": false,
-          "definition": "CREATE INDEX idx_outbound_items_sku ON public.sku_outbound_items USING btree (sku_id)",
-          "columns": "sku_id"
-        },
-        {
           "index_name": "idx_outbound_items_outbound",
           "is_unique": false,
           "is_primary": false,
           "definition": "CREATE INDEX idx_outbound_items_outbound ON public.sku_outbound_items USING btree (outbound_id)",
           "columns": "outbound_id"
+        },
+        {
+          "index_name": "idx_outbound_items_allocation",
+          "is_unique": false,
+          "is_primary": false,
+          "definition": "CREATE INDEX idx_outbound_items_allocation ON public.sku_outbound_items USING gin (allocation_data)",
+          "columns": "allocation_data"
+        },
+        {
+          "index_name": "idx_outbound_items_sku",
+          "is_unique": false,
+          "is_primary": false,
+          "definition": "CREATE INDEX idx_outbound_items_sku ON public.sku_outbound_items USING btree (sku_id)",
+          "columns": "sku_id"
         }
       ],
       "triggers": null,
@@ -11609,11 +11609,11 @@
           "columns": "production_id"
         },
         {
-          "index_name": "idx_sku_production_sku",
-          "is_unique": false,
+          "index_name": "sku_production_traceable_code_key",
+          "is_unique": true,
           "is_primary": false,
-          "definition": "CREATE INDEX idx_sku_production_sku ON public.sku_production USING btree (sku_id)",
-          "columns": "sku_id"
+          "definition": "CREATE UNIQUE INDEX sku_production_traceable_code_key ON public.sku_production USING btree (traceable_code)",
+          "columns": "traceable_code"
         },
         {
           "index_name": "idx_sku_production_date",
@@ -11623,11 +11623,11 @@
           "columns": "production_dateDESC"
         },
         {
-          "index_name": "sku_production_traceable_code_key",
-          "is_unique": true,
+          "index_name": "idx_sku_production_sku",
+          "is_unique": false,
           "is_primary": false,
-          "definition": "CREATE UNIQUE INDEX sku_production_traceable_code_key ON public.sku_production USING btree (traceable_code)",
-          "columns": "traceable_code"
+          "definition": "CREATE INDEX idx_sku_production_sku ON public.sku_production USING btree (sku_id)",
+          "columns": "sku_id"
         }
       ],
       "triggers": null,
@@ -11873,6 +11873,18 @@
           "position": 7,
           "is_generated": "NEVER",
           "generation_expression": null
+        },
+        {
+          "name": "gst_rate",
+          "type": "numeric",
+          "max_length": null,
+          "precision": 5,
+          "scale": 2,
+          "nullable": true,
+          "default": null,
+          "position": 8,
+          "is_generated": "NEVER",
+          "generation_expression": null
         }
       ],
       "primary_keys": [
@@ -11922,13 +11934,6 @@
       ],
       "indexes": [
         {
-          "index_name": "subcategories_master_category_id_subcategory_name_key",
-          "is_unique": true,
-          "is_primary": false,
-          "definition": "CREATE UNIQUE INDEX subcategories_master_category_id_subcategory_name_key ON public.subcategories_master USING btree (category_id, subcategory_name)",
-          "columns": "category_id,subcategory_name"
-        },
-        {
           "index_name": "subcategories_master_subcategory_code_key",
           "is_unique": true,
           "is_primary": false,
@@ -11941,11 +11946,18 @@
           "is_primary": false,
           "definition": "CREATE UNIQUE INDEX subcategories_master_pkey ON public.subcategories_master USING btree (subcategory_id)",
           "columns": "subcategory_id"
+        },
+        {
+          "index_name": "subcategories_master_category_id_subcategory_name_key",
+          "is_unique": true,
+          "is_primary": false,
+          "definition": "CREATE UNIQUE INDEX subcategories_master_category_id_subcategory_name_key ON public.subcategories_master USING btree (category_id, subcategory_name)",
+          "columns": "category_id,subcategory_name"
         }
       ],
       "triggers": null,
       "row_count": 18,
-      "dead_rows": 14,
+      "dead_rows": 29,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "56 kB",
@@ -12124,20 +12136,6 @@
       ],
       "indexes": [
         {
-          "index_name": "suppliers_short_code_key",
-          "is_unique": true,
-          "is_primary": false,
-          "definition": "CREATE UNIQUE INDEX suppliers_short_code_key ON public.suppliers USING btree (short_code)",
-          "columns": "short_code"
-        },
-        {
-          "index_name": "suppliers_pkey",
-          "is_unique": true,
-          "is_primary": false,
-          "definition": "CREATE UNIQUE INDEX suppliers_pkey ON public.suppliers USING btree (supplier_id)",
-          "columns": "supplier_id"
-        },
-        {
           "index_name": "suppliers_supplier_name_key",
           "is_unique": true,
           "is_primary": false,
@@ -12150,6 +12148,20 @@
           "is_primary": false,
           "definition": "CREATE INDEX idx_suppliers_active ON public.suppliers USING btree (is_active)",
           "columns": "is_active"
+        },
+        {
+          "index_name": "suppliers_pkey",
+          "is_unique": true,
+          "is_primary": false,
+          "definition": "CREATE UNIQUE INDEX suppliers_pkey ON public.suppliers USING btree (supplier_id)",
+          "columns": "supplier_id"
+        },
+        {
+          "index_name": "suppliers_short_code_key",
+          "is_unique": true,
+          "is_primary": false,
+          "definition": "CREATE UNIQUE INDEX suppliers_short_code_key ON public.suppliers USING btree (short_code)",
+          "columns": "short_code"
         }
       ],
       "triggers": [

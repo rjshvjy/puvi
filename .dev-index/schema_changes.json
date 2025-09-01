@@ -1,38 +1,22 @@
 {
-  "timestamp": "2025-08-31 13:48:19.828363",
+  "timestamp": "2025-09-01 04:42:15.863131",
   "changes": {
     "added": [],
     "removed": [],
     "modified": [
       {
-        "table": "sku_outbound",
+        "table": "subcategories_master",
         "added_columns": [
-          "subtotal",
-          "grand_total",
-          "total_gst_amount"
-        ],
-        "removed_columns": []
-      },
-      {
-        "table": "sku_outbound_items",
-        "added_columns": [
-          "base_price",
-          "gst_amount",
           "gst_rate"
         ],
         "removed_columns": []
       }
     ],
     "index_changes": [
-      "sku_mrp_history",
-      "sku_expiry_tracking",
-      "sku_outbound",
-      "sku_bom_details",
-      "sku_inventory",
-      "sku_material_consumption",
-      "purchases",
-      "sku_master",
-      "production_units"
+      "suppliers",
+      "subcategories_master",
+      "sku_outbound_items",
+      "sku_production"
     ]
   }
 }

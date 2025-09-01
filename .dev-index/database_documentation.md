@@ -1,6 +1,6 @@
 # PUVI Database Schema Documentation
 
-Generated: 2025-08-31 13:48:19.847005
+Generated: 2025-09-01 04:42:15.881857
 Database Version: PostgreSQL 17.4 on aarch64-unknown-linux-gnu, compiled by gcc (GCC) 13.2.0, 64-bit
 Total Tables: 81
 
@@ -65,7 +65,7 @@ Total Tables: 81
 | sku_outbound_items | 17 | 0 | 48 kB | 2 |
 | sku_production | 28 | 4 | 96 kB | 2 |
 | stock_by_location | 11 | 0 | None | 0 |
-| subcategories_master | 7 | 18 | 56 kB | 1 |
+| subcategories_master | 8 | 18 | 56 kB | 1 |
 | suppliers | 11 | 4 | 80 kB | 0 |
 | system_configuration | 7 | 7 | 48 kB | 0 |
 | tags | 5 | 12 | 56 kB | 0 |
@@ -2042,10 +2042,10 @@ Total Tables: 81
 | gst_amount | numeric(10,2) | Yes |  |  |
 
 **Indexes:**
-- `idx_outbound_items_allocation` on (allocation_data)
 - UNIQUE `sku_outbound_items_pkey` on (item_id)
-- `idx_outbound_items_sku` on (sku_id)
 - `idx_outbound_items_outbound` on (outbound_id)
+- `idx_outbound_items_allocation` on (allocation_data)
+- `idx_outbound_items_sku` on (sku_id)
 
 **Check Constraints:**
 - `2200_55127_6_not_null`: allocation_data IS NOT NULL
@@ -2099,9 +2099,9 @@ Total Tables: 81
 **Indexes:**
 - UNIQUE `sku_production_production_code_key` on (production_code)
 - UNIQUE `sku_production_pkey` on (production_id)
-- `idx_sku_production_sku` on (sku_id)
-- `idx_sku_production_date` on (production_dateDESC)
 - UNIQUE `sku_production_traceable_code_key` on (traceable_code)
+- `idx_sku_production_date` on (production_dateDESC)
+- `idx_sku_production_sku` on (sku_id)
 
 **Check Constraints:**
 - `2200_26439_17_not_null`: total_production_cost IS NOT NULL
@@ -2169,11 +2169,12 @@ Total Tables: 81
 | oil_type | character varying(50) | Yes |  |  |
 | is_active | boolean | Yes | true |  |
 | created_at | timestamp without time zone | Yes | CURRENT_TIMESTAMP |  |
+| gst_rate | numeric(5,2) | Yes |  |  |
 
 **Indexes:**
-- UNIQUE `subcategories_master_category_id_subcategory_name_key` on (category_id,subcategory_name)
 - UNIQUE `subcategories_master_subcategory_code_key` on (subcategory_code)
 - UNIQUE `subcategories_master_pkey` on (subcategory_id)
+- UNIQUE `subcategories_master_category_id_subcategory_name_key` on (category_id,subcategory_name)
 
 **Check Constraints:**
 - `2200_36909_1_not_null`: subcategory_id IS NOT NULL
@@ -2207,10 +2208,10 @@ Total Tables: 81
 | is_active | boolean | Yes | true |  |
 
 **Indexes:**
-- UNIQUE `suppliers_short_code_key` on (short_code)
-- UNIQUE `suppliers_pkey` on (supplier_id)
 - UNIQUE `suppliers_supplier_name_key` on (supplier_name)
 - `idx_suppliers_active` on (is_active)
+- UNIQUE `suppliers_pkey` on (supplier_id)
+- UNIQUE `suppliers_short_code_key` on (short_code)
 
 **Check Constraints:**
 - `2200_18488_2_not_null`: supplier_name IS NOT NULL
