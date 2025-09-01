@@ -1,5 +1,5 @@
 # Feature Pack: MASTERS
-Generated: 2025-09-01T04:42:15.199Z
+Generated: 2025-09-01T05:06:56.228Z
 Routes: 22 | Tables: 11 | Files: 4
 
 ## Table of Contents
@@ -72,6 +72,10 @@ POST   /api/masters/package_sizes/validate
 | package_sizes_master | package-sizes, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
 | sku_master | masters-crud, material-writeoff, package-sizes | 🔴 HIGH | Changes affect 8 other modules |
 | subcategories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 4 other modules |
+
+### ⚠️ Hardcoded Values Detected
+- `masters_crud.py:107` - object
+- `masters_crud.py:1518` - object
 
 ## Backend Implementation
 

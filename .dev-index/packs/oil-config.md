@@ -1,5 +1,5 @@
 # Feature Pack: OIL-CONFIG
-Generated: 2025-09-01T04:42:15.199Z
+Generated: 2025-09-01T05:06:56.229Z
 Routes: 7 | Tables: 8 | Files: 1
 
 ## Table of Contents
@@ -39,6 +39,10 @@ POST   /api/oil-config/apply-suggestions
 | materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
 | sku_master | masters-crud, material-writeoff, package-sizes | 🔴 HIGH | Changes affect 8 other modules |
 | subcategories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 4 other modules |
+
+### ⚠️ Hardcoded Values Detected
+- `masters_crud.py:107` - object
+- `masters_crud.py:1518` - object
 
 ## Backend Implementation
 
