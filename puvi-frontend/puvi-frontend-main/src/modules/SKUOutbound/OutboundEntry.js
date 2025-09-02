@@ -2,7 +2,7 @@
 // SKU Outbound Entry Component - Handles creation of outbound transactions
 // Supports: Internal Transfers, Third Party Transfers, and Sales
 // Features: FEFO/FIFO batch allocation, GST calculation, multi-step workflow
-// Version: 2.3 - Fixed customer ID handling to ensure numeric values
+// Version: 2.4 - Fixed JSX closing tags and ship-to location display
 
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
@@ -874,21 +874,27 @@ const OutboundEntry = () => {
                 <>
                   <div className="form-group">
                     <label>Customer *</label>
-                    ...
+                    <select
+                      name="customer_id"
+                      value={outboundData.customer_id}
+                      onChange={handleInputChange}
+                      required
+                    >
+                      <option value="">Select Customer</option>
+                      {customers.map(cust => {
+                        const custId = cust.customer_id || cust.value || '';
+                        const custName = cust.customer_name || cust.label || 'Unknown';
+                        const custCode = cust.customer_code || '';
+                        return (
+                          <option key={custId} value={custId}>
+                            {custName} {custCode ? `(${custCode})` : ''}
+                          </option>
+                        );
+                      })}
+                    </select>
                   </div>
 
-                  {outboundData.transaction_type === 'sales' && outboundData.customer_id && (
-                    <div className="form-group">
-                      <label>Delivery Location</label>
-                      ...
-                    </div>
-                  )}
-                </>
-              )}
-
-              <div className="form-group">
-                <label>Outbound Date *</label>
-                  {outboundData.transaction_type === 'sales' && outboundData.customer_id && (
+                  {outboundData.customer_id && (
                     <div className="form-group">
                       <label>Delivery Location</label>
                       <select
@@ -909,6 +915,8 @@ const OutboundEntry = () => {
                       </select>
                     </div>
                   )}
+                </>
+              )}
 
               <div className="form-group">
                 <label>Outbound Date *</label>
@@ -1418,7 +1426,13 @@ const OutboundEntry = () => {
               {outboundData.transaction_type === 'sales' && (
                 <div className="review-item">
                   <label>Customer:</label>
-                  <span>{customers.find(c => c.customer_id === parseInt(outboundData.customer_id))?.customer_name}</span>
+                  <span>{customers.find(c => {
+                    const custId = (c.customer_id || c.value || '').toString();
+                    return custId === outboundData.customer_id.toString();
+                  })?.customer_name || customers.find(c => {
+                    const custId = (c.customer_id || c.value || '').toString();
+                    return custId === outboundData.customer_id.toString();
+                  })?.label || 'Unknown'}</span>
                 </div>
               )}
               <div className="review-item">
