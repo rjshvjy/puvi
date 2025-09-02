@@ -237,7 +237,7 @@ const OutboundHistory = ({ onRefresh }) => {
 
   const handleStatusUpdate = async (outboundId, newStatus) => {
     try {
-      const response = await api.skuOutbound.updateStatus(outboundId, { status: newStatus });
+      const response = await api.skuOutbound.updateStatus(outboundId, newStatus);
       
       if (response.success) {
         setMessage({ type: 'success', text: response.message });
@@ -665,7 +665,7 @@ const OutboundHistory = ({ onRefresh }) => {
                       <td className="text-right">
                         {handlingPerKg !== '-' ? `₹${handlingPerKg}` : '-'}
                       </td>
-                      <td className="total-cell">{formatCurrency(outbound.grand_total)}</td>
+                      <td className="total-cell">{formatCurrency(outbound.grand_total || outbound.financial?.grand_total || 0)}</td>
                       <td>
                         <span className={`status-badge ${getStatusClass(outbound.status)}`}>
                           {outbound.status}
