@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-09-02T05:37:56.205Z",
+  "generatedAt": "2025-09-02T07:11:44.690Z",
   "filesScanned": 70,
   "jsFilesScanned": 43,
   "pyFilesScanned": 27,
@@ -296,7 +296,7 @@
       "method": "GET",
       "path": "/api/locations",
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 224,
+      "line": 261,
       "blueprint": "locations_bp",
       "function": "get_locations",
       "source": "backend"
@@ -305,7 +305,7 @@
       "method": "GET",
       "path": "/api/locations/<int:location_id>",
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 333,
+      "line": 372,
       "blueprint": "locations_bp",
       "function": "get_location_details",
       "source": "backend"
@@ -314,7 +314,7 @@
       "method": "POST",
       "path": "/api/locations",
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 414,
+      "line": 454,
       "blueprint": "locations_bp",
       "function": "create_location",
       "source": "backend"
@@ -323,7 +323,7 @@
       "method": "PUT",
       "path": "/api/locations/<int:location_id>",
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 529,
+      "line": 574,
       "blueprint": "locations_bp",
       "function": "update_location",
       "source": "backend"
@@ -332,7 +332,7 @@
       "method": "DELETE",
       "path": "/api/locations/<int:location_id>",
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 632,
+      "line": 681,
       "blueprint": "locations_bp",
       "function": "delete_location",
       "source": "backend"
@@ -341,7 +341,7 @@
       "method": "GET",
       "path": "/api/locations/<int:location_id>/check-dependencies",
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 691,
+      "line": 740,
       "blueprint": "locations_bp",
       "function": "check_dependencies",
       "source": "backend"
@@ -350,7 +350,7 @@
       "method": "GET",
       "path": "/api/locations/for-transfer",
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 711,
+      "line": 760,
       "blueprint": "locations_bp",
       "function": "get_locations_for_transfer",
       "source": "backend"
@@ -359,7 +359,7 @@
       "method": "POST",
       "path": "/api/locations/<int:location_id>/restore",
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 783,
+      "line": 834,
       "blueprint": "locations_bp",
       "function": "restore_location",
       "source": "backend"
@@ -368,7 +368,7 @@
       "method": "GET",
       "path": "/api/locations/dropdown",
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 819,
+      "line": 870,
       "blueprint": "locations_bp",
       "function": "get_locations_dropdown",
       "source": "backend"
@@ -3875,7 +3875,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 43,
+      "line": 75,
       "type": "SELECT",
       "tables": [
         "locations_master"
@@ -3884,7 +3884,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 54,
+      "line": 86,
       "type": "SELECT",
       "tables": [
         "locations_master"
@@ -3893,7 +3893,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 61,
+      "line": 93,
       "type": "SELECT",
       "tables": [
         "locations_master"
@@ -3902,7 +3902,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 91,
+      "line": 123,
       "type": "SELECT",
       "tables": [
         "locations_master",
@@ -3912,7 +3912,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 109,
+      "line": 141,
       "type": "SELECT",
       "tables": [
         "locations_master",
@@ -3923,7 +3923,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 126,
+      "line": 158,
       "type": "SELECT",
       "tables": [
         "locations_master",
@@ -3935,7 +3935,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 143,
+      "line": 175,
       "type": "SELECT",
       "tables": [
         "locations_master",
@@ -3948,7 +3948,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 285,
+      "line": 323,
       "type": "OTHER",
       "tables": [
         "locations_master",
@@ -3961,7 +3961,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 340,
+      "line": 379,
       "type": "SELECT",
       "tables": [
         "locations_master",
@@ -3974,7 +3974,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 433,
+      "line": 477,
       "type": "SELECT",
       "tables": [
         "locations_master",
@@ -3987,7 +3987,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 455,
+      "line": 499,
       "type": "SELECT",
       "tables": [
         "locations_master",
@@ -4000,7 +4000,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 467,
+      "line": 511,
       "type": "INSERT",
       "tables": [
         "locations_master",
@@ -4013,7 +4013,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 505,
+      "line": 550,
       "type": "UPDATE",
       "tables": [
         "locations_master",
@@ -4026,7 +4026,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 539,
+      "line": 584,
       "type": "SELECT",
       "tables": [
         "locations_master",
@@ -4039,7 +4039,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 605,
+      "line": 654,
       "type": "OTHER",
       "tables": [
         "locations_master",
@@ -4052,7 +4052,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 610,
+      "line": 659,
       "type": "UPDATE",
       "tables": [
         "locations_master",
@@ -4065,7 +4065,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 644,
+      "line": 693,
       "type": "UPDATE",
       "tables": [
         "locations_master",
@@ -4078,7 +4078,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 666,
+      "line": 715,
       "type": "DELETE",
       "tables": [
         "locations_master",
@@ -4091,7 +4091,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 743,
+      "line": 793,
       "type": "OTHER",
       "tables": [
         "locations_master",
@@ -4104,7 +4104,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 790,
+      "line": 841,
       "type": "UPDATE",
       "tables": [
         "locations_master",
@@ -4117,7 +4117,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 855,
+      "line": 906,
       "type": "OTHER",
       "tables": [
         "locations_master",
@@ -14815,7 +14815,15 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 21,
+      "line": 23,
+      "name": "validate_gst_number",
+      "params": "gst_number",
+      "type": "python",
+      "isRoute": false
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/locations.py",
+      "line": 53,
       "name": "generate_location_code",
       "params": "location_name, location_type, cur",
       "type": "python",
@@ -14823,7 +14831,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 73,
+      "line": 105,
       "name": "check_location_dependencies",
       "params": "location_id, cur",
       "type": "python",
@@ -14831,7 +14839,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 162,
+      "line": 194,
       "name": "validate_location_data",
       "params": "data, is_update=False",
       "type": "python",
@@ -14839,7 +14847,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 225,
+      "line": 262,
       "name": "get_locations",
       "params": "",
       "type": "python",
@@ -14847,7 +14855,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 334,
+      "line": 373,
       "name": "get_location_details",
       "params": "location_id",
       "type": "python",
@@ -14855,7 +14863,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 415,
+      "line": 455,
       "name": "create_location",
       "params": "",
       "type": "python",
@@ -14863,7 +14871,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 530,
+      "line": 575,
       "name": "update_location",
       "params": "location_id",
       "type": "python",
@@ -14871,7 +14879,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 633,
+      "line": 682,
       "name": "delete_location",
       "params": "location_id",
       "type": "python",
@@ -14879,7 +14887,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 692,
+      "line": 741,
       "name": "check_dependencies",
       "params": "location_id",
       "type": "python",
@@ -14887,7 +14895,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 712,
+      "line": 761,
       "name": "get_locations_for_transfer",
       "params": "",
       "type": "python",
@@ -14895,7 +14903,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 784,
+      "line": 835,
       "name": "restore_location",
       "params": "location_id",
       "type": "python",
@@ -14903,7 +14911,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 820,
+      "line": 871,
       "name": "get_locations_dropdown",
       "params": "",
       "type": "python",
@@ -22261,63 +22269,63 @@
         "method": "GET",
         "path": "/api/locations",
         "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-        "line": 224,
+        "line": 261,
         "function": "get_locations"
       },
       {
         "method": "GET",
         "path": "/api/locations/<int:location_id>",
         "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-        "line": 333,
+        "line": 372,
         "function": "get_location_details"
       },
       {
         "method": "POST",
         "path": "/api/locations",
         "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-        "line": 414,
+        "line": 454,
         "function": "create_location"
       },
       {
         "method": "PUT",
         "path": "/api/locations/<int:location_id>",
         "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-        "line": 529,
+        "line": 574,
         "function": "update_location"
       },
       {
         "method": "DELETE",
         "path": "/api/locations/<int:location_id>",
         "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-        "line": 632,
+        "line": 681,
         "function": "delete_location"
       },
       {
         "method": "GET",
         "path": "/api/locations/<int:location_id>/check-dependencies",
         "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-        "line": 691,
+        "line": 740,
         "function": "check_dependencies"
       },
       {
         "method": "GET",
         "path": "/api/locations/for-transfer",
         "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-        "line": 711,
+        "line": 760,
         "function": "get_locations_for_transfer"
       },
       {
         "method": "POST",
         "path": "/api/locations/<int:location_id>/restore",
         "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-        "line": 783,
+        "line": 834,
         "function": "restore_location"
       },
       {
         "method": "GET",
         "path": "/api/locations/dropdown",
         "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-        "line": 819,
+        "line": 870,
         "function": "get_locations_dropdown"
       }
     ],
@@ -25611,117 +25619,117 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 230,
+      "line": 267,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 327,
+      "line": 366,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 339,
+      "line": 378,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 408,
+      "line": 448,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 420,
+      "line": 460,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 522,
+      "line": 567,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 535,
+      "line": 580,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 625,
+      "line": 674,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 638,
+      "line": 687,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 684,
+      "line": 733,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 697,
+      "line": 746,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 705,
+      "line": 754,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 717,
+      "line": 766,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 777,
+      "line": 828,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 789,
+      "line": 840,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 812,
+      "line": 863,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 825,
+      "line": 876,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/locations.py",
-      "line": 878,
+      "line": 929,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
@@ -27735,7 +27743,7 @@
     "hardcodedValues": 32,
     "databaseQueries": 524,
     "databaseTables": 65,
-    "functions": 745,
+    "functions": 746,
     "stateHooks": 806,
     "missingEndpoints": 1,
     "errorHandlers": 733
