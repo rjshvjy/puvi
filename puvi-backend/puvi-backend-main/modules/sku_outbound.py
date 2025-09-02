@@ -2,7 +2,7 @@
 File path: puvi-backend/puvi-backend-main/modules/sku_outbound.py
 SKU Outbound Module for PUVI Oil Manufacturing System
 Handles Internal Transfers, Third Party Transfers, and Sales transactions
-Version: 3.4 - FIXED: GST rate retrieval with better error handling
+Version: 4.0 - ENHANCED: Unified customer locations (warehouse + ship-to)
 """
 
 from flask import Blueprint, request, jsonify
@@ -282,6 +282,51 @@ def check_sku_availability(sku_id, quantity_needed, from_location_id, cur):
     }
 
 
+def resolve_delivery_location(outbound_data, cur):
+    """
+    Resolve delivery location for sales transactions
+    Determines actual location_id and ship_to_id based on selection
+    
+    Args:
+        outbound_data: Dictionary with delivery location information
+        cur: Database cursor
+    
+    Returns:
+        tuple: (actual_location_id, ship_to_location_id)
+    """
+    # For transfers, it's straightforward
+    if outbound_data.get('transaction_type') == 'transfer':
+        return outbound_data.get('to_location_id'), None
+    
+    # For sales, need to determine if it's warehouse or ship-to
+    if outbound_data.get('delivery_location_type') == 'warehouse':
+        # Delivering to a warehouse location (third-party location)
+        return outbound_data.get('to_location_id'), None
+    elif outbound_data.get('delivery_location_type') == 'ship_to':
+        # Delivering to a ship-to location
+        # We store the ship_to_id but don't have a location_id
+        return None, outbound_data.get('ship_to_location_id')
+    else:
+        # Legacy: Check if ship_to_location_id is provided
+        if outbound_data.get('ship_to_location_id'):
+            return None, outbound_data.get('ship_to_location_id')
+        # Otherwise check for to_location_id (third-party warehouse)
+        elif outbound_data.get('to_location_id'):
+            # Verify this is a third-party location for the customer
+            cur.execute("""
+                SELECT location_id 
+                FROM locations_master 
+                WHERE location_id = %s 
+                    AND customer_id = %s 
+                    AND ownership = 'third_party'
+            """, (outbound_data['to_location_id'], outbound_data.get('customer_id')))
+            
+            if cur.fetchone():
+                return outbound_data.get('to_location_id'), None
+    
+    return None, None
+
+
 def deplete_inventory_atomic(sku_id, location_id, quantity, cur):
     """
     Atomic inventory depletion with concurrency handling
@@ -496,6 +541,134 @@ def check_availability():
         close_connection(conn, cur)
 
 
+@sku_outbound_bp.route('/api/customers/<int:customer_id>/all-locations', methods=['GET'])
+def get_customer_all_locations(customer_id):
+    """
+    Get all locations associated with a customer (warehouse + ship-to)
+    This unifies location selection for sales transactions
+    """
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        # Get customer details first
+        cur.execute("""
+            SELECT customer_name, customer_code 
+            FROM customers 
+            WHERE customer_id = %s AND is_active = true
+        """, (customer_id,))
+        
+        customer = cur.fetchone()
+        if not customer:
+            return jsonify({
+                'success': False,
+                'error': 'Customer not found'
+            }), 404
+        
+        customer_name, customer_code = customer
+        
+        locations = []
+        
+        # 1. Get third-party warehouse locations from locations_master
+        # These are locations where ownership = 'third_party' and linked to this customer
+        cur.execute("""
+            SELECT 
+                location_id as id,
+                location_code,
+                location_name,
+                'warehouse' as location_type,
+                address_line1,
+                address_line2,
+                city,
+                state,
+                pincode,
+                contact_person,
+                contact_phone,
+                gst_number as gstin,
+                false as is_ship_to_location,
+                location_type as facility_type
+            FROM locations_master
+            WHERE customer_id = %s 
+                AND ownership = 'third_party'
+                AND is_active = true
+            ORDER BY location_name
+        """, (customer_id,))
+        
+        for row in cur.fetchall():
+            locations.append({
+                'location_id': row[0],
+                'location_code': row[1],
+                'location_name': row[2],
+                'location_type': row[3],
+                'address_line1': row[4],
+                'address_line2': row[5],
+                'city': row[6],
+                'state': row[7],
+                'pincode': row[8],
+                'contact_person': row[9],
+                'contact_phone': row[10],
+                'gstin': row[11],
+                'is_ship_to_location': row[12],
+                'facility_type': row[13],  # warehouse, distribution_center, etc.
+                'source': 'locations_master'
+            })
+        
+        # 2. Get configured ship-to locations from customer_ship_to_locations
+        cur.execute("""
+            SELECT 
+                ship_to_id as id,
+                location_code,
+                location_name,
+                'ship_to' as location_type,
+                address_line1,
+                address_line2,
+                city,
+                state,
+                pincode,
+                contact_person,
+                contact_phone,
+                gstin,
+                is_default,
+                true as is_ship_to_location
+            FROM customer_ship_to_locations
+            WHERE customer_id = %s AND is_active = true
+            ORDER BY is_default DESC, location_name
+        """, (customer_id,))
+        
+        for row in cur.fetchall():
+            locations.append({
+                'ship_to_id': row[0],
+                'location_code': row[1],
+                'location_name': row[2],
+                'location_type': row[3],
+                'address_line1': row[4],
+                'address_line2': row[5],
+                'city': row[6],
+                'state': row[7],
+                'pincode': row[8],
+                'contact_person': row[9],
+                'contact_phone': row[10],
+                'gstin': row[11],
+                'is_default': row[12],
+                'is_ship_to_location': row[13],
+                'source': 'customer_ship_to_locations'
+            })
+        
+        return jsonify({
+            'success': True,
+            'customer_name': customer_name,
+            'customer_code': customer_code,
+            'locations': locations,
+            'warehouse_count': sum(1 for loc in locations if not loc['is_ship_to_location']),
+            'ship_to_count': sum(1 for loc in locations if loc['is_ship_to_location'])
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
 @sku_outbound_bp.route('/api/sku/outbound/create', methods=['POST'])
 def create_outbound():
     """Create outbound transaction with GST handling for sales"""
@@ -525,6 +698,9 @@ def create_outbound():
             # Parse date in DD-MM-YYYY format
             outbound_date = parse_date(data['outbound_date'])
             
+            # Resolve delivery location for sales
+            actual_location_id, ship_to_id = resolve_delivery_location(data, cur)
+            
             # Validate transaction type specific requirements
             if transaction_type == 'transfer':
                 if not data.get('to_location_id'):
@@ -553,6 +729,15 @@ def create_outbound():
                         'success': False,
                         'error': 'customer_id required for sales'
                     }), 400
+                
+                # For sales, we need either location_id or ship_to_id
+                if not actual_location_id and not ship_to_id:
+                    # Try to get from delivery_location_type
+                    if not data.get('delivery_location_type'):
+                        return jsonify({
+                            'success': False,
+                            'error': 'Delivery location required for sales'
+                        }), 400
             
             # Begin transaction
             cur.execute("BEGIN")
@@ -606,6 +791,14 @@ def create_outbound():
             # Grand total calculation
             grand_total = subtotal + total_gst + transport_cost + handling_cost
             
+            # For sales, determine which location to use
+            if transaction_type == 'sales':
+                to_location_id = actual_location_id  # Could be None if using ship_to
+                ship_to_location_id = ship_to_id      # Could be None if using warehouse
+            else:
+                to_location_id = data.get('to_location_id')
+                ship_to_location_id = None
+            
             # Create main outbound record
             cur.execute("""
                 INSERT INTO sku_outbound (
@@ -627,9 +820,9 @@ def create_outbound():
                 outbound_code,
                 transaction_type,
                 from_location_id,
-                data.get('to_location_id'),
+                to_location_id,
                 data.get('customer_id'),
-                data.get('ship_to_location_id'),
+                ship_to_location_id,
                 data.get('customer_po_number'),
                 data.get('invoice_number'),
                 data.get('eway_bill_number'),
@@ -761,7 +954,7 @@ def create_outbound():
                     # Update expiry tracking quantity
                     update_expiry_tracking_quantity(tracking_id, quantity, cur)
                     
-                    # For internal transfers, add to destination
+                    # For internal transfers to own warehouse, add to destination
                     if transaction_type == 'transfer' and to_location[0] == 'own':
                         add_inventory_atomic(
                             sku_id,
@@ -779,6 +972,13 @@ def create_outbound():
                             data['to_location_id'],
                             cur
                         )
+                    
+                    # For sales to warehouse locations (third-party), also update tracking
+                    elif transaction_type == 'sales' and to_location_id:
+                        # Record delivery to third-party warehouse
+                        # Note: We don't add to inventory as it's not our location
+                        # But we can track where the batch went
+                        pass
             
             # Commit transaction
             conn.commit()
@@ -870,7 +1070,7 @@ def get_outbound_history():
                 o.outbound_date,
                 o.dispatch_date,
                 fl.location_name as from_location,
-                tl.location_name as to_location,
+                COALESCE(tl.location_name, stl.location_name) as to_location,
                 c.customer_name,
                 stl.location_name as ship_to_location,
                 o.status,
@@ -995,7 +1195,7 @@ def get_outbound_details(outbound_id):
                 o.outbound_date,
                 o.dispatch_date,
                 fl.location_name as from_location,
-                tl.location_name as to_location,
+                COALESCE(tl.location_name, stl.location_name) as to_location,
                 tl.ownership as to_location_ownership,
                 c.customer_name,
                 stl.location_name as ship_to_location,
@@ -1019,7 +1219,12 @@ def get_outbound_details(outbound_id):
                 o.notes,
                 o.created_by,
                 o.created_at,
-                c.gst_number as customer_gst
+                c.gst_number as customer_gst,
+                CASE 
+                    WHEN o.to_location_id IS NOT NULL THEN 'warehouse'
+                    WHEN o.ship_to_location_id IS NOT NULL THEN 'ship_to'
+                    ELSE 'unknown'
+                END as delivery_type
             FROM sku_outbound o
             JOIN locations_master fl ON o.from_location_id = fl.location_id
             LEFT JOIN locations_master tl ON o.to_location_id = tl.location_id
@@ -1114,10 +1319,11 @@ def get_outbound_details(outbound_id):
                 'dispatch_date': integer_to_date(outbound_data[3], '%d-%m-%Y') if outbound_data[3] else None,
                 'from_location': outbound_data[4],
                 'to_location': outbound_data[5],
-                'to_location_type': 'internal' if outbound_data[6] == 'own' else 'third_party',
+                'to_location_type': 'internal' if outbound_data[6] == 'own' else 'third_party' if outbound_data[6] else outbound_data[30],
                 'customer_name': outbound_data[7],
                 'ship_to_location': outbound_data[8],
                 'customer_gst': outbound_data[29],
+                'delivery_type': outbound_data[30],  # 'warehouse' or 'ship_to'
                 'reference_documents': {
                     'customer_po': outbound_data[9],
                     'invoice': outbound_data[10],
@@ -1182,7 +1388,7 @@ def get_outbound_details(outbound_id):
 
 @sku_outbound_bp.route('/api/sku/outbound/trace/<traceable_code>', methods=['GET'])
 def trace_batch(traceable_code):
-    """Find where a specific SKU batch was sent"""
+    """Find where a specific SKU batch was sent - works for all location types"""
     conn = get_db_connection()
     cur = conn.cursor()
     
@@ -1203,7 +1409,14 @@ def trace_batch(traceable_code):
                 oi.allocation_data,
                 oi.unit_price,
                 oi.base_price,
-                oi.gst_rate
+                oi.gst_rate,
+                CASE 
+                    WHEN o.to_location_id IS NOT NULL THEN 'warehouse'
+                    WHEN o.ship_to_location_id IS NOT NULL THEN 'ship_to'
+                    ELSE 'unknown'
+                END as delivery_type,
+                tl.location_code as warehouse_code,
+                stl.location_code as ship_to_code
             FROM sku_outbound o
             JOIN sku_outbound_items oi ON o.outbound_id = oi.outbound_id
             JOIN sku_master s ON oi.sku_id = s.sku_id
@@ -1237,7 +1450,9 @@ def trace_batch(traceable_code):
                     'sku_code': row[7],
                     'product_name': row[8],
                     'quantity': specific_allocation['quantity'],
-                    'expiry_date': specific_allocation.get('expiry_date')
+                    'expiry_date': specific_allocation.get('expiry_date'),
+                    'delivery_type': row[14],
+                    'location_code': row[15] or row[16]  # Warehouse code or ship-to code
                 }
                 
                 # Add sales information if applicable
@@ -1355,12 +1570,12 @@ def update_outbound_status(outbound_id):
 
 
 # ============================================
-# CUSTOMER ENDPOINTS - NEW ADDITION 
+# CUSTOMER ENDPOINTS - ENHANCED
 # ============================================
 
 @sku_outbound_bp.route('/api/customers/<int:customer_id>/ship-to', methods=['GET'])
 def get_customer_ship_to_locations(customer_id):
-    """Get ship-to locations for a customer"""
+    """Get ship-to locations for a customer (legacy endpoint)"""
     conn = get_db_connection()
     cur = conn.cursor()
     
@@ -1418,6 +1633,7 @@ def get_customer_ship_to_locations(customer_id):
         return jsonify({
             'success': True,
             'locations': locations,
+            'ship_to_locations': locations,  # For compatibility
             'count': len(locations)
         })
         
