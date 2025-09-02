@@ -889,25 +889,27 @@ const OutboundEntry = () => {
                     </select>
                   </div>
 
-                  {shipToLocations.length > 0 && (
+                  {outboundData.transaction_type === 'sales' && outboundData.customer_id && (
                     <div className="form-group">
-                      <label>Ship To Location</label>
+                      <label>Delivery Location</label>
                       <select
                         name="ship_to_location_id"
                         value={outboundData.ship_to_location_id}
                         onChange={handleInputChange}
                       >
-                        <option value="">Select Ship To</option>
-                        {shipToLocations.map(loc => (
-                          <option key={loc.ship_to_id} value={loc.ship_to_id}>
-                            {loc.location_name}
-                          </option>
-                        ))}
+                        <option value="">Primary Address (Bill To)</option>
+                        {shipToLocations.length > 0 ? (
+                          shipToLocations.map(loc => (
+                            <option key={loc.ship_to_id} value={loc.ship_to_id}>
+                              {loc.location_name}
+                            </option>
+                          ))
+                        ) : (
+                          <option value="" disabled>No alternate delivery locations configured</option>
+                        )}
                       </select>
                     </div>
                   )}
-                </>
-              )}
 
               <div className="form-group">
                 <label>Outbound Date *</label>
