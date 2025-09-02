@@ -1,6 +1,6 @@
 # Feature Pack: CUSTOMERS
-Generated: 2025-09-02T04:53:42.781Z
-Routes: 11 | Tables: 11 | Files: 2
+Generated: 2025-09-02T05:19:35.502Z
+Routes: 12 | Tables: 11 | Files: 2
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -31,6 +31,8 @@ GET    /api/customers/dropdown
 GET    /api/customers/dropdown
 # restore_customer
 POST   /api/customers/<int:customer_id>/restore
+# get_customer_all_locations
+GET    /api/customers/<int:customer_id>/all-locations
 # get_customer_ship_to_locations
 GET    /api/customers/<int:customer_id>/ship-to
 ```
@@ -53,7 +55,7 @@ GET    /api/customers/<int:customer_id>/ship-to
 ### ⚠️ Hardcoded Values Detected
 - `sku_outbound.py:103` - object
 - `sku_outbound.py:154` - object
-- `sku_outbound.py:474` - object
+- `sku_outbound.py:519` - object
 
 ## Backend Implementation
 

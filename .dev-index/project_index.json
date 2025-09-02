@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-09-02T04:53:41.771Z",
+  "generatedAt": "2025-09-02T05:19:34.487Z",
   "filesScanned": 70,
   "jsFilesScanned": 43,
   "pyFilesScanned": 27,
@@ -1043,16 +1043,25 @@
       "method": "POST",
       "path": "/api/sku/outbound/check-availability",
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 434,
+      "line": 479,
       "blueprint": "sku_outbound_bp",
       "function": "check_availability",
+      "source": "backend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/customers/<int:customer_id>/all-locations",
+      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
+      "line": 544,
+      "blueprint": "sku_outbound_bp",
+      "function": "get_customer_all_locations",
       "source": "backend"
     },
     {
       "method": "POST",
       "path": "/api/sku/outbound/create",
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 499,
+      "line": 672,
       "blueprint": "sku_outbound_bp",
       "function": "create_outbound",
       "source": "backend"
@@ -1061,7 +1070,7 @@
       "method": "GET",
       "path": "/api/sku/outbound/history",
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 847,
+      "line": 1047,
       "blueprint": "sku_outbound_bp",
       "function": "get_outbound_history",
       "source": "backend"
@@ -1070,7 +1079,7 @@
       "method": "GET",
       "path": "/api/sku/outbound/<int:outbound_id>",
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 983,
+      "line": 1183,
       "blueprint": "sku_outbound_bp",
       "function": "get_outbound_details",
       "source": "backend"
@@ -1079,7 +1088,7 @@
       "method": "GET",
       "path": "/api/sku/outbound/trace/<traceable_code>",
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1183,
+      "line": 1389,
       "blueprint": "sku_outbound_bp",
       "function": "trace_batch",
       "source": "backend"
@@ -1088,7 +1097,7 @@
       "method": "POST",
       "path": "/api/sku/outbound/<int:outbound_id>/update-status",
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1293,
+      "line": 1508,
       "blueprint": "sku_outbound_bp",
       "function": "update_outbound_status",
       "source": "backend"
@@ -1097,7 +1106,7 @@
       "method": "GET",
       "path": "/api/customers/<int:customer_id>/ship-to",
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1361,
+      "line": 1576,
       "blueprint": "sku_outbound_bp",
       "function": "get_customer_ship_to_locations",
       "source": "backend"
@@ -1106,7 +1115,7 @@
       "method": "GET",
       "path": "/api/customers/dropdown",
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1430,
+      "line": 1646,
       "blueprint": "sku_outbound_bp",
       "function": "get_customers_dropdown",
       "source": "backend"
@@ -1115,7 +1124,7 @@
       "method": "GET",
       "path": "/api/sku/outbound/stats",
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1474,
+      "line": 1690,
       "blueprint": "sku_outbound_bp",
       "function": "get_outbound_stats",
       "source": "backend"
@@ -1124,7 +1133,7 @@
       "method": "GET",
       "path": "/api/sku/outbound/sales-summary",
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1589,
+      "line": 1805,
       "blueprint": "sku_outbound_bp",
       "function": "get_sales_summary",
       "source": "backend"
@@ -2559,7 +2568,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 474,
+      "line": 519,
       "type": "object",
       "code": "print(f\"WARNING: GST rate error for SKU {sku_id}: {str(e)}\")"
     },
@@ -7809,97 +7818,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 301,
-      "type": "UPDATE",
-      "tables": [
-        "sku_outbound",
-        "sku_master",
-        "subcategories_master",
-        "categories_master",
-        "sku_expiry_tracking",
-        "sku_production",
-        "sku_inventory"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 314,
-      "type": "SELECT",
-      "tables": [
-        "sku_outbound",
-        "sku_master",
-        "subcategories_master",
-        "categories_master",
-        "sku_expiry_tracking",
-        "sku_production",
-        "sku_inventory"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 349,
-      "type": "INSERT",
-      "tables": [
-        "sku_outbound",
-        "sku_master",
-        "subcategories_master",
-        "categories_master",
-        "sku_expiry_tracking",
-        "sku_production",
-        "sku_inventory"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 378,
-      "type": "UPDATE",
-      "tables": [
-        "sku_outbound",
-        "sku_master",
-        "subcategories_master",
-        "categories_master",
-        "sku_expiry_tracking",
-        "sku_production",
-        "sku_inventory"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 395,
-      "type": "UPDATE",
-      "tables": [
-        "sku_outbound",
-        "sku_master",
-        "subcategories_master",
-        "categories_master",
-        "sku_expiry_tracking",
-        "sku_production",
-        "sku_inventory"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 458,
-      "type": "SELECT",
-      "tables": [
-        "sku_outbound",
-        "sku_master",
-        "subcategories_master",
-        "categories_master",
-        "sku_expiry_tracking",
-        "sku_production",
-        "sku_inventory"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 537,
+      "line": 316,
       "type": "SELECT",
       "tables": [
         "sku_outbound",
@@ -7915,7 +7834,173 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 558,
+      "line": 346,
+      "type": "UPDATE",
+      "tables": [
+        "sku_outbound",
+        "sku_master",
+        "subcategories_master",
+        "categories_master",
+        "sku_expiry_tracking",
+        "sku_production",
+        "sku_inventory",
+        "locations_master"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
+      "line": 359,
+      "type": "SELECT",
+      "tables": [
+        "sku_outbound",
+        "sku_master",
+        "subcategories_master",
+        "categories_master",
+        "sku_expiry_tracking",
+        "sku_production",
+        "sku_inventory",
+        "locations_master"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
+      "line": 394,
+      "type": "INSERT",
+      "tables": [
+        "sku_outbound",
+        "sku_master",
+        "subcategories_master",
+        "categories_master",
+        "sku_expiry_tracking",
+        "sku_production",
+        "sku_inventory",
+        "locations_master"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
+      "line": 423,
+      "type": "UPDATE",
+      "tables": [
+        "sku_outbound",
+        "sku_master",
+        "subcategories_master",
+        "categories_master",
+        "sku_expiry_tracking",
+        "sku_production",
+        "sku_inventory",
+        "locations_master"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
+      "line": 440,
+      "type": "UPDATE",
+      "tables": [
+        "sku_outbound",
+        "sku_master",
+        "subcategories_master",
+        "categories_master",
+        "sku_expiry_tracking",
+        "sku_production",
+        "sku_inventory",
+        "locations_master"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
+      "line": 503,
+      "type": "SELECT",
+      "tables": [
+        "sku_outbound",
+        "sku_master",
+        "subcategories_master",
+        "categories_master",
+        "sku_expiry_tracking",
+        "sku_production",
+        "sku_inventory",
+        "locations_master"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
+      "line": 555,
+      "type": "SELECT",
+      "tables": [
+        "sku_outbound",
+        "sku_master",
+        "subcategories_master",
+        "categories_master",
+        "sku_expiry_tracking",
+        "sku_production",
+        "sku_inventory",
+        "locations_master",
+        "customers"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
+      "line": 574,
+      "type": "SELECT",
+      "tables": [
+        "sku_outbound",
+        "sku_master",
+        "subcategories_master",
+        "categories_master",
+        "sku_expiry_tracking",
+        "sku_production",
+        "sku_inventory",
+        "locations_master",
+        "customers"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
+      "line": 617,
+      "type": "SELECT",
+      "tables": [
+        "sku_outbound",
+        "sku_master",
+        "subcategories_master",
+        "categories_master",
+        "sku_expiry_tracking",
+        "sku_production",
+        "sku_inventory",
+        "locations_master",
+        "customers",
+        "customer_ship_to_locations"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
+      "line": 713,
+      "type": "SELECT",
+      "tables": [
+        "sku_outbound",
+        "sku_master",
+        "subcategories_master",
+        "categories_master",
+        "sku_expiry_tracking",
+        "sku_production",
+        "sku_inventory",
+        "locations_master",
+        "customers",
+        "customer_ship_to_locations"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
+      "line": 743,
       "type": "OTHER",
       "tables": [
         "sku_outbound",
@@ -7925,29 +8010,15 @@
         "sku_expiry_tracking",
         "sku_production",
         "sku_inventory",
-        "locations_master"
+        "locations_master",
+        "customers",
+        "customer_ship_to_locations"
       ],
       "preview": "cur.execute(\"BEGIN\")"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 610,
-      "type": "INSERT",
-      "tables": [
-        "sku_outbound",
-        "sku_master",
-        "subcategories_master",
-        "categories_master",
-        "sku_expiry_tracking",
-        "sku_production",
-        "sku_inventory",
-        "locations_master"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 720,
+      "line": 803,
       "type": "INSERT",
       "tables": [
         "sku_outbound",
@@ -7958,13 +8029,33 @@
         "sku_production",
         "sku_inventory",
         "locations_master",
+        "customers",
+        "customer_ship_to_locations"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
+      "line": 913,
+      "type": "INSERT",
+      "tables": [
+        "sku_outbound",
+        "sku_master",
+        "subcategories_master",
+        "categories_master",
+        "sku_expiry_tracking",
+        "sku_production",
+        "sku_inventory",
+        "locations_master",
+        "customers",
+        "customer_ship_to_locations",
         "sku_outbound_items"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 933,
+      "line": 1133,
       "type": "OTHER",
       "tables": [
         "sku_outbound",
@@ -7975,43 +8066,11 @@
         "sku_production",
         "sku_inventory",
         "locations_master",
+        "customers",
+        "customer_ship_to_locations",
         "sku_outbound_items"
       ],
       "preview": "cur.execute(query, params)"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 991,
-      "type": "SELECT",
-      "tables": [
-        "sku_outbound",
-        "sku_master",
-        "subcategories_master",
-        "categories_master",
-        "sku_expiry_tracking",
-        "sku_production",
-        "sku_inventory",
-        "locations_master",
-        "sku_outbound_items"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1036,
-      "type": "SELECT",
-      "tables": [
-        "sku_outbound",
-        "sku_master",
-        "subcategories_master",
-        "categories_master",
-        "sku_expiry_tracking",
-        "sku_production",
-        "sku_inventory",
-        "locations_master",
-        "sku_outbound_items"
-      ],
-      "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
@@ -8026,13 +8085,15 @@
         "sku_production",
         "sku_inventory",
         "locations_master",
+        "customers",
+        "customer_ship_to_locations",
         "sku_outbound_items"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1252,
+      "line": 1241,
       "type": "SELECT",
       "tables": [
         "sku_outbound",
@@ -8043,13 +8104,15 @@
         "sku_production",
         "sku_inventory",
         "locations_master",
+        "customers",
+        "customer_ship_to_locations",
         "sku_outbound_items"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1310,
+      "line": 1397,
       "type": "SELECT",
       "tables": [
         "sku_outbound",
@@ -8060,14 +8123,16 @@
         "sku_production",
         "sku_inventory",
         "locations_master",
+        "customers",
+        "customer_ship_to_locations",
         "sku_outbound_items"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1336,
-      "type": "UPDATE",
+      "line": 1467,
+      "type": "SELECT",
       "tables": [
         "sku_outbound",
         "sku_master",
@@ -8077,139 +8142,9 @@
         "sku_production",
         "sku_inventory",
         "locations_master",
+        "customers",
+        "customer_ship_to_locations",
         "sku_outbound_items"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1369,
-      "type": "SELECT",
-      "tables": [
-        "sku_outbound",
-        "sku_master",
-        "subcategories_master",
-        "categories_master",
-        "sku_expiry_tracking",
-        "sku_production",
-        "sku_inventory",
-        "locations_master",
-        "sku_outbound_items",
-        "customers"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1382,
-      "type": "SELECT",
-      "tables": [
-        "sku_outbound",
-        "sku_master",
-        "subcategories_master",
-        "categories_master",
-        "sku_expiry_tracking",
-        "sku_production",
-        "sku_inventory",
-        "locations_master",
-        "sku_outbound_items",
-        "customers",
-        "customer_ship_to_locations"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1437,
-      "type": "SELECT",
-      "tables": [
-        "sku_outbound",
-        "sku_master",
-        "subcategories_master",
-        "categories_master",
-        "sku_expiry_tracking",
-        "sku_production",
-        "sku_inventory",
-        "locations_master",
-        "sku_outbound_items",
-        "customers",
-        "customer_ship_to_locations"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1485,
-      "type": "SELECT",
-      "tables": [
-        "sku_outbound",
-        "sku_master",
-        "subcategories_master",
-        "categories_master",
-        "sku_expiry_tracking",
-        "sku_production",
-        "sku_inventory",
-        "locations_master",
-        "sku_outbound_items",
-        "customers",
-        "customer_ship_to_locations"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1494,
-      "type": "SELECT",
-      "tables": [
-        "sku_outbound",
-        "sku_master",
-        "subcategories_master",
-        "categories_master",
-        "sku_expiry_tracking",
-        "sku_production",
-        "sku_inventory",
-        "locations_master",
-        "sku_outbound_items",
-        "customers",
-        "customer_ship_to_locations"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1503,
-      "type": "SELECT",
-      "tables": [
-        "sku_outbound",
-        "sku_master",
-        "subcategories_master",
-        "categories_master",
-        "sku_expiry_tracking",
-        "sku_production",
-        "sku_inventory",
-        "locations_master",
-        "sku_outbound_items",
-        "customers",
-        "customer_ship_to_locations"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1511,
-      "type": "SELECT",
-      "tables": [
-        "sku_outbound",
-        "sku_master",
-        "subcategories_master",
-        "categories_master",
-        "sku_expiry_tracking",
-        "sku_production",
-        "sku_inventory",
-        "locations_master",
-        "sku_outbound_items",
-        "customers",
-        "customer_ship_to_locations"
       ],
       "preview": "cur.execute(\"\"\""
     },
@@ -8226,34 +8161,34 @@
         "sku_production",
         "sku_inventory",
         "locations_master",
-        "sku_outbound_items",
         "customers",
-        "customer_ship_to_locations"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1541,
-      "type": "SELECT",
-      "tables": [
-        "sku_outbound",
-        "sku_master",
-        "subcategories_master",
-        "categories_master",
-        "sku_expiry_tracking",
-        "sku_production",
-        "sku_inventory",
-        "locations_master",
-        "sku_outbound_items",
-        "customers",
-        "customer_ship_to_locations"
+        "customer_ship_to_locations",
+        "sku_outbound_items"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
       "line": 1551,
+      "type": "UPDATE",
+      "tables": [
+        "sku_outbound",
+        "sku_master",
+        "subcategories_master",
+        "categories_master",
+        "sku_expiry_tracking",
+        "sku_production",
+        "sku_inventory",
+        "locations_master",
+        "customers",
+        "customer_ship_to_locations",
+        "sku_outbound_items"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
+      "line": 1584,
       "type": "SELECT",
       "tables": [
         "sku_outbound",
@@ -8264,15 +8199,186 @@
         "sku_production",
         "sku_inventory",
         "locations_master",
-        "sku_outbound_items",
         "customers",
-        "customer_ship_to_locations"
+        "customer_ship_to_locations",
+        "sku_outbound_items"
       ],
       "preview": "cur.execute(\"\"\""
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1635,
+      "line": 1597,
+      "type": "SELECT",
+      "tables": [
+        "sku_outbound",
+        "sku_master",
+        "subcategories_master",
+        "categories_master",
+        "sku_expiry_tracking",
+        "sku_production",
+        "sku_inventory",
+        "locations_master",
+        "customers",
+        "customer_ship_to_locations",
+        "sku_outbound_items"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
+      "line": 1653,
+      "type": "SELECT",
+      "tables": [
+        "sku_outbound",
+        "sku_master",
+        "subcategories_master",
+        "categories_master",
+        "sku_expiry_tracking",
+        "sku_production",
+        "sku_inventory",
+        "locations_master",
+        "customers",
+        "customer_ship_to_locations",
+        "sku_outbound_items"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
+      "line": 1701,
+      "type": "SELECT",
+      "tables": [
+        "sku_outbound",
+        "sku_master",
+        "subcategories_master",
+        "categories_master",
+        "sku_expiry_tracking",
+        "sku_production",
+        "sku_inventory",
+        "locations_master",
+        "customers",
+        "customer_ship_to_locations",
+        "sku_outbound_items"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
+      "line": 1710,
+      "type": "SELECT",
+      "tables": [
+        "sku_outbound",
+        "sku_master",
+        "subcategories_master",
+        "categories_master",
+        "sku_expiry_tracking",
+        "sku_production",
+        "sku_inventory",
+        "locations_master",
+        "customers",
+        "customer_ship_to_locations",
+        "sku_outbound_items"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
+      "line": 1719,
+      "type": "SELECT",
+      "tables": [
+        "sku_outbound",
+        "sku_master",
+        "subcategories_master",
+        "categories_master",
+        "sku_expiry_tracking",
+        "sku_production",
+        "sku_inventory",
+        "locations_master",
+        "customers",
+        "customer_ship_to_locations",
+        "sku_outbound_items"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
+      "line": 1727,
+      "type": "SELECT",
+      "tables": [
+        "sku_outbound",
+        "sku_master",
+        "subcategories_master",
+        "categories_master",
+        "sku_expiry_tracking",
+        "sku_production",
+        "sku_inventory",
+        "locations_master",
+        "customers",
+        "customer_ship_to_locations",
+        "sku_outbound_items"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
+      "line": 1741,
+      "type": "SELECT",
+      "tables": [
+        "sku_outbound",
+        "sku_master",
+        "subcategories_master",
+        "categories_master",
+        "sku_expiry_tracking",
+        "sku_production",
+        "sku_inventory",
+        "locations_master",
+        "customers",
+        "customer_ship_to_locations",
+        "sku_outbound_items"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
+      "line": 1757,
+      "type": "SELECT",
+      "tables": [
+        "sku_outbound",
+        "sku_master",
+        "subcategories_master",
+        "categories_master",
+        "sku_expiry_tracking",
+        "sku_production",
+        "sku_inventory",
+        "locations_master",
+        "customers",
+        "customer_ship_to_locations",
+        "sku_outbound_items"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
+      "line": 1767,
+      "type": "SELECT",
+      "tables": [
+        "sku_outbound",
+        "sku_master",
+        "subcategories_master",
+        "categories_master",
+        "sku_expiry_tracking",
+        "sku_production",
+        "sku_inventory",
+        "locations_master",
+        "customers",
+        "customer_ship_to_locations",
+        "sku_outbound_items"
+      ],
+      "preview": "cur.execute(\"\"\""
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
+      "line": 1851,
       "type": "OTHER",
       "tables": [
         "sku_outbound",
@@ -8283,9 +8389,9 @@
         "sku_production",
         "sku_inventory",
         "locations_master",
-        "sku_outbound_items",
         "customers",
-        "customer_ship_to_locations"
+        "customer_ship_to_locations",
+        "sku_outbound_items"
       ],
       "preview": "cur.execute(query, params)"
     },
@@ -15582,6 +15688,14 @@
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
       "line": 285,
+      "name": "resolve_delivery_location",
+      "params": "outbound_data, cur",
+      "type": "python",
+      "isRoute": false
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
+      "line": 330,
       "name": "deplete_inventory_atomic",
       "params": "sku_id, location_id, quantity, cur",
       "type": "python",
@@ -15589,7 +15703,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 333,
+      "line": 378,
       "name": "add_inventory_atomic",
       "params": "sku_id, location_id, quantity, production_id, mrp, expiry_date, cur",
       "type": "python",
@@ -15597,7 +15711,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 366,
+      "line": 411,
       "name": "update_expiry_tracking_location",
       "params": "tracking_ids, new_location_id, cur",
       "type": "python",
@@ -15605,7 +15719,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 386,
+      "line": 431,
       "name": "update_expiry_tracking_quantity",
       "params": "tracking_id, quantity_used, cur",
       "type": "python",
@@ -15613,7 +15727,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 435,
+      "line": 480,
       "name": "check_availability",
       "params": "",
       "type": "python",
@@ -15621,7 +15735,15 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 500,
+      "line": 545,
+      "name": "get_customer_all_locations",
+      "params": "customer_id",
+      "type": "python",
+      "isRoute": true
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
+      "line": 673,
       "name": "create_outbound",
       "params": "",
       "type": "python",
@@ -15629,7 +15751,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 848,
+      "line": 1048,
       "name": "get_outbound_history",
       "params": "",
       "type": "python",
@@ -15637,7 +15759,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 984,
+      "line": 1184,
       "name": "get_outbound_details",
       "params": "outbound_id",
       "type": "python",
@@ -15645,7 +15767,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1184,
+      "line": 1390,
       "name": "trace_batch",
       "params": "traceable_code",
       "type": "python",
@@ -15653,7 +15775,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1294,
+      "line": 1509,
       "name": "update_outbound_status",
       "params": "outbound_id",
       "type": "python",
@@ -15661,7 +15783,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1362,
+      "line": 1577,
       "name": "get_customer_ship_to_locations",
       "params": "customer_id",
       "type": "python",
@@ -15669,7 +15791,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1431,
+      "line": 1647,
       "name": "get_customers_dropdown",
       "params": "",
       "type": "python",
@@ -15677,7 +15799,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1475,
+      "line": 1691,
       "name": "get_outbound_stats",
       "params": "",
       "type": "python",
@@ -15685,7 +15807,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1590,
+      "line": 1806,
       "name": "get_sales_summary",
       "params": "",
       "type": "python",
@@ -22736,70 +22858,77 @@
         "method": "POST",
         "path": "/api/sku/outbound/check-availability",
         "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-        "line": 434,
+        "line": 479,
         "function": "check_availability"
+      },
+      {
+        "method": "GET",
+        "path": "/api/customers/<int:customer_id>/all-locations",
+        "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
+        "line": 544,
+        "function": "get_customer_all_locations"
       },
       {
         "method": "POST",
         "path": "/api/sku/outbound/create",
         "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-        "line": 499,
+        "line": 672,
         "function": "create_outbound"
       },
       {
         "method": "GET",
         "path": "/api/sku/outbound/history",
         "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-        "line": 847,
+        "line": 1047,
         "function": "get_outbound_history"
       },
       {
         "method": "GET",
         "path": "/api/sku/outbound/<int:outbound_id>",
         "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-        "line": 983,
+        "line": 1183,
         "function": "get_outbound_details"
       },
       {
         "method": "GET",
         "path": "/api/sku/outbound/trace/<traceable_code>",
         "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-        "line": 1183,
+        "line": 1389,
         "function": "trace_batch"
       },
       {
         "method": "POST",
         "path": "/api/sku/outbound/<int:outbound_id>/update-status",
         "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-        "line": 1293,
+        "line": 1508,
         "function": "update_outbound_status"
       },
       {
         "method": "GET",
         "path": "/api/customers/<int:customer_id>/ship-to",
         "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-        "line": 1361,
+        "line": 1576,
         "function": "get_customer_ship_to_locations"
       },
       {
         "method": "GET",
         "path": "/api/customers/dropdown",
         "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-        "line": 1430,
+        "line": 1646,
         "function": "get_customers_dropdown"
       },
       {
         "method": "GET",
         "path": "/api/sku/outbound/stats",
         "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-        "line": 1474,
+        "line": 1690,
         "function": "get_outbound_stats"
       },
       {
         "method": "GET",
         "path": "/api/sku/outbound/sales-summary",
         "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-        "line": 1589,
+        "line": 1805,
         "function": "get_sales_summary"
       }
     ],
@@ -26730,86 +26859,86 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 440,
+      "line": 485,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 469,
+      "line": 514,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 471,
+      "line": 516,
       "type": "except",
       "exception": "ValueError",
       "code": "except ValueError as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 492,
+      "line": 537,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 509,
+      "line": 553,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 587,
+      "line": 666,
+      "type": "except",
+      "exception": "Exception",
+      "code": "except Exception as e:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
+      "line": 682,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 589,
+      "line": 772,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
+      "line": 774,
       "type": "except",
       "exception": "ValueError",
       "code": "except ValueError as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 811,
+      "line": 1011,
       "type": "except",
       "exception": "InsufficientInventoryError",
       "code": "except InsufficientInventoryError as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 815,
+      "line": 1015,
       "type": "except",
       "exception": "psycopg2",
       "code": "except psycopg2.Error as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 833,
+      "line": 1033,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 853,
-      "type": "try-catch",
-      "code": "try:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 977,
-      "type": "except",
-      "exception": "Exception",
-      "code": "except Exception as e:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 989,
+      "line": 1053,
       "type": "try-catch",
       "code": "try:"
     },
@@ -26828,72 +26957,85 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1287,
+      "line": 1383,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1299,
+      "line": 1395,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1350,
+      "line": 1502,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1367,
+      "line": 1514,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1424,
+      "line": 1565,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1436,
+      "line": 1582,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1464,
+      "line": 1640,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1480,
+      "line": 1652,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1574,
+      "line": 1680,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1595,
+      "line": 1696,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
-      "line": 1661,
+      "line": 1790,
+      "type": "except",
+      "exception": "Exception",
+      "code": "except Exception as e:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
+      "line": 1811,
+      "type": "try-catch",
+      "code": "try:"
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/sku_outbound.py",
+      "line": 1877,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
@@ -27587,15 +27729,15 @@
     "jsFiles": 43,
     "pyFiles": 27,
     "components": 47,
-    "routes": 152,
+    "routes": 153,
     "exports": 45,
     "imports": 63,
     "hardcodedValues": 32,
-    "databaseQueries": 520,
+    "databaseQueries": 524,
     "databaseTables": 65,
-    "functions": 743,
+    "functions": 745,
     "stateHooks": 806,
     "missingEndpoints": 1,
-    "errorHandlers": 731
+    "errorHandlers": 733
   }
 }
