@@ -1,22 +1,49 @@
 {
-  "timestamp": "2025-09-01 04:42:15.863131",
+  "timestamp": "2025-09-02 07:11:49.635675",
   "changes": {
     "added": [],
     "removed": [],
     "modified": [
       {
-        "table": "subcategories_master",
+        "table": "locations_master",
         "added_columns": [
-          "gst_rate"
+          "gst_number"
         ],
         "removed_columns": []
+      },
+      {
+        "table": "customer_ship_to_locations",
+        "added_columns": [
+          "gst_number"
+        ],
+        "removed_columns": [
+          "gstin"
+        ]
       }
     ],
     "index_changes": [
+      "purchases",
+      "tags",
+      "seed_batch_tracking",
+      "sku_bom_details",
+      "uom_master",
       "suppliers",
+      "sku_master",
+      "sku_inventory",
+      "system_configuration",
+      "blend_batch_components",
+      "sku_outbound",
+      "writeoff_reasons",
+      "sku_expiry_tracking",
+      "sku_oil_allocation",
+      "year_end_closing",
       "subcategories_master",
+      "production_units",
+      "purchase_items",
+      "writeoff_impact_tracking",
+      "sku_production",
       "sku_outbound_items",
-      "sku_production"
+      "batch"
     ]
   }
 }

@@ -1,6 +1,6 @@
 # PUVI Database Schema Documentation
 
-Generated: 2025-09-02 05:19:37.971332
+Generated: 2025-09-02 07:11:49.654007
 Database Version: PostgreSQL 17.4 on aarch64-unknown-linux-gnu, compiled by gcc (GCC) 13.2.0, 64-bit
 Total Tables: 81
 
@@ -29,7 +29,7 @@ Total Tables: 81
 | customers | 12 | 4 | 80 kB | 0 |
 | inventory | 13 | 14 | 72 kB | 2 |
 | inventory_by_tags | 6 | 0 | None | 0 |
-| locations_master | 22 | 14 | 96 kB | 1 |
+| locations_master | 23 | 14 | 96 kB | 1 |
 | masters_audit_log | 13 | 18 | 144 kB | 0 |
 | material_tags | 2 | 12 | 56 kB | 2 |
 | material_tags_view | 8 | 0 | None | 0 |
@@ -153,11 +153,11 @@ Total Tables: 81
 | seed_material_id | integer(32,0) | Yes |  | FK → materials.material_id |
 
 **Indexes:**
-- `idx_batch_production_date` on (production_date)
-- UNIQUE `batch_traceable_code_key` on (traceable_code)
+- UNIQUE `batch_pkey` on (batch_id)
 - UNIQUE `batch_batch_code_key` on (batch_code)
 - `idx_batch_oil_type` on (oil_type)
-- UNIQUE `batch_pkey` on (batch_id)
+- `idx_batch_production_date` on (production_date)
+- UNIQUE `batch_traceable_code_key` on (traceable_code)
 
 **Check Constraints:**
 - `2200_17322_4_not_null`: oil_type IS NOT NULL
@@ -377,9 +377,9 @@ Total Tables: 81
 | traceable_code | character varying(100) | Yes |  |  |
 
 **Indexes:**
-- `idx_blend_components_blend` on (blend_id)
-- UNIQUE `blend_batch_components_pkey` on (component_id)
 - `idx_blend_components_source` on (source_batch_id)
+- UNIQUE `blend_batch_components_pkey` on (component_id)
+- `idx_blend_components_blend` on (blend_id)
 
 **Check Constraints:**
 - `2200_22167_8_not_null`: quantity_used IS NOT NULL
@@ -666,7 +666,7 @@ Total Tables: 81
 | pincode | character varying(10) | Yes |  |  |
 | contact_person | character varying(100) | Yes |  |  |
 | contact_phone | character varying(15) | Yes |  |  |
-| gstin | character varying(15) | Yes |  |  |
+| gst_number | character varying(15) | Yes |  |  |
 | is_default | boolean | Yes | false |  |
 | is_active | boolean | Yes | true |  |
 | created_at | timestamp without time zone | Yes | CURRENT_TIMESTAMP |  |
@@ -814,6 +814,7 @@ Total Tables: 81
 | contact_person | character varying(100) | Yes |  |  |
 | contact_phone | character varying(20) | Yes |  |  |
 | contact_email | character varying(100) | Yes |  |  |
+| gst_number | character varying(15) | Yes |  |  |
 
 **Indexes:**
 - `idx_locations_customer` on (customer_id)
@@ -1245,8 +1246,8 @@ Total Tables: 81
 | created_at | timestamp without time zone | Yes | CURRENT_TIMESTAMP |  |
 
 **Indexes:**
-- UNIQUE `production_units_pkey` on (unit_id)
 - UNIQUE `production_units_short_code_key` on (short_code)
+- UNIQUE `production_units_pkey` on (unit_id)
 
 **Check Constraints:**
 - `check_unit_short_code`: ((short_code)::text ~ '^[A-Z]{1,3}$'::text)
@@ -1346,9 +1347,9 @@ Total Tables: 81
 | created_at | timestamp without time zone | Yes | CURRENT_TIMESTAMP |  |
 
 **Indexes:**
-- `idx_purchase_items_material_id` on (material_id)
-- UNIQUE `purchase_items_pkey` on (item_id)
 - `idx_purchase_items_purchase_id` on (purchase_id)
+- UNIQUE `purchase_items_pkey` on (item_id)
+- `idx_purchase_items_material_id` on (material_id)
 
 **Check Constraints:**
 - `2200_20221_4_not_null`: quantity IS NOT NULL
@@ -1396,11 +1397,11 @@ Total Tables: 81
 | traceable_code | character varying(50) | Yes |  |  |
 
 **Indexes:**
+- UNIQUE `purchases_pkey` on (purchase_id)
 - `idx_purchases_supplier_name` on (supplier_name)
 - `idx_purchases_purchase_date` on (purchase_date)
 - `idx_purchases_batch_number` on (batch_number)
 - UNIQUE `purchases_traceable_code_key` on (traceable_code)
-- UNIQUE `purchases_pkey` on (purchase_id)
 
 **Check Constraints:**
 - `2200_17310_1_not_null`: purchase_id IS NOT NULL
@@ -1506,8 +1507,8 @@ Total Tables: 81
 | created_at | timestamp without time zone | Yes | CURRENT_TIMESTAMP |  |
 
 **Indexes:**
-- `idx_seed_batch_tracking_material` on (material_id)
 - UNIQUE `seed_batch_tracking_pkey` on (seed_purchase_code)
+- `idx_seed_batch_tracking_material` on (material_id)
 
 **Check Constraints:**
 - `2200_33151_1_not_null`: seed_purchase_code IS NOT NULL
@@ -1591,8 +1592,8 @@ Total Tables: 81
 | notes | text | Yes |  |  |
 
 **Indexes:**
-- `idx_bom_details_material` on (material_id)
 - `idx_bom_details_bom` on (bom_id)
+- `idx_bom_details_material` on (material_id)
 - UNIQUE `sku_bom_details_pkey` on (detail_id)
 
 **Check Constraints:**
@@ -1705,12 +1706,12 @@ Total Tables: 81
 | location_id | integer(32,0) | Yes |  | FK → locations_master.location_id |
 
 **Indexes:**
-- UNIQUE `sku_expiry_tracking_pkey` on (tracking_id)
+- `idx_expiry_tracking_sku` on (sku_id)
 - `idx_expiry_tracking_location` on (location_id)
 - `idx_expiry_tracking_production` on (production_id)
 - `idx_expiry_tracking_expiry` on (expiry_date)
 - `idx_expiry_tracking_status` on (status)
-- `idx_expiry_tracking_sku` on (sku_id)
+- UNIQUE `sku_expiry_tracking_pkey` on (tracking_id)
 
 **Check Constraints:**
 - `2200_27849_2_not_null`: production_id IS NOT NULL
@@ -1754,13 +1755,13 @@ Total Tables: 81
 | last_updated | timestamp without time zone | Yes | CURRENT_TIMESTAMP |  |
 
 **Indexes:**
+- `idx_sku_inventory_status` on (status)
 - `idx_sku_inventory_sku` on (sku_id)
+- `idx_sku_inventory_location` on (location_id)
+- UNIQUE `sku_inventory_pkey` on (inventory_id)
+- UNIQUE `unique_sku_location` on (sku_id,location_id)
 - `idx_sku_inventory_production` on (production_id)
 - `idx_sku_inventory_expiry` on (expiry_date)
-- `idx_sku_inventory_location` on (location_id)
-- UNIQUE `unique_sku_location` on (sku_id,location_id)
-- `idx_sku_inventory_status` on (status)
-- UNIQUE `sku_inventory_pkey` on (inventory_id)
 
 **Check Constraints:**
 - `2200_27803_4_not_null`: quantity_available IS NOT NULL
@@ -1798,10 +1799,10 @@ Total Tables: 81
 
 **Indexes:**
 - `idx_sku_oil_type` on (oil_type)
-- UNIQUE `sku_master_pkey` on (sku_id)
 - `idx_sku_active` on (is_active)
 - `idx_sku_package_size` on (package_size)
 - UNIQUE `sku_master_sku_code_key` on (sku_code)
+- UNIQUE `sku_master_pkey` on (sku_id)
 
 **Check Constraints:**
 - `sku_master_density_check`: ((density >= 0.8) AND (density <= 1.0))
@@ -1927,8 +1928,8 @@ Total Tables: 81
 | created_at | timestamp without time zone | Yes | CURRENT_TIMESTAMP |  |
 
 **Indexes:**
-- `idx_oil_allocation_production` on (production_id)
 - UNIQUE `sku_oil_allocation_pkey` on (allocation_id)
+- `idx_oil_allocation_production` on (production_id)
 
 **Check Constraints:**
 - `2200_26470_6_not_null`: quantity_allocated IS NOT NULL
@@ -1990,15 +1991,15 @@ Total Tables: 81
 | grand_total | numeric(12,2) | Yes |  |  |
 
 **Indexes:**
-- `idx_outbound_ship_to` on (ship_to_location_id)
-- `idx_outbound_customer` on (customer_id)
 - `idx_outbound_type` on (transaction_type)
-- `idx_outbound_status` on (status)
-- `idx_outbound_date` on (outbound_date)
-- `idx_outbound_to_location` on (to_location_id)
-- `idx_outbound_from_location` on (from_location_id)
-- UNIQUE `sku_outbound_outbound_code_key` on (outbound_code)
 - UNIQUE `sku_outbound_pkey` on (outbound_id)
+- UNIQUE `sku_outbound_outbound_code_key` on (outbound_code)
+- `idx_outbound_from_location` on (from_location_id)
+- `idx_outbound_ship_to` on (ship_to_location_id)
+- `idx_outbound_date` on (outbound_date)
+- `idx_outbound_status` on (status)
+- `idx_outbound_customer` on (customer_id)
+- `idx_outbound_to_location` on (to_location_id)
 
 **Check Constraints:**
 - `2200_55089_4_not_null`: from_location_id IS NOT NULL
@@ -2042,9 +2043,9 @@ Total Tables: 81
 | gst_amount | numeric(10,2) | Yes |  |  |
 
 **Indexes:**
+- `idx_outbound_items_allocation` on (allocation_data)
 - UNIQUE `sku_outbound_items_pkey` on (item_id)
 - `idx_outbound_items_outbound` on (outbound_id)
-- `idx_outbound_items_allocation` on (allocation_data)
 - `idx_outbound_items_sku` on (sku_id)
 
 **Check Constraints:**
@@ -2097,11 +2098,11 @@ Total Tables: 81
 | mrp_at_production | numeric(10,2) | Yes |  |  |
 
 **Indexes:**
-- UNIQUE `sku_production_production_code_key` on (production_code)
-- UNIQUE `sku_production_pkey` on (production_id)
-- UNIQUE `sku_production_traceable_code_key` on (traceable_code)
 - `idx_sku_production_date` on (production_dateDESC)
 - `idx_sku_production_sku` on (sku_id)
+- UNIQUE `sku_production_traceable_code_key` on (traceable_code)
+- UNIQUE `sku_production_production_code_key` on (production_code)
+- UNIQUE `sku_production_pkey` on (production_id)
 
 **Check Constraints:**
 - `2200_26439_17_not_null`: total_production_cost IS NOT NULL
@@ -2172,9 +2173,9 @@ Total Tables: 81
 | gst_rate | numeric(5,2) | Yes |  |  |
 
 **Indexes:**
-- UNIQUE `subcategories_master_subcategory_code_key` on (subcategory_code)
 - UNIQUE `subcategories_master_pkey` on (subcategory_id)
 - UNIQUE `subcategories_master_category_id_subcategory_name_key` on (category_id,subcategory_name)
+- UNIQUE `subcategories_master_subcategory_code_key` on (subcategory_code)
 
 **Check Constraints:**
 - `2200_36909_1_not_null`: subcategory_id IS NOT NULL
@@ -2208,8 +2209,8 @@ Total Tables: 81
 | is_active | boolean | Yes | true |  |
 
 **Indexes:**
-- UNIQUE `suppliers_supplier_name_key` on (supplier_name)
 - `idx_suppliers_active` on (is_active)
+- UNIQUE `suppliers_supplier_name_key` on (supplier_name)
 - UNIQUE `suppliers_pkey` on (supplier_id)
 - UNIQUE `suppliers_short_code_key` on (short_code)
 
@@ -2244,8 +2245,8 @@ Total Tables: 81
 | updated_by | character varying(100) | Yes |  |  |
 
 **Indexes:**
-- UNIQUE `system_configuration_pkey` on (config_id)
 - UNIQUE `system_configuration_config_key_key` on (config_key)
+- UNIQUE `system_configuration_pkey` on (config_id)
 
 **Check Constraints:**
 - `2200_29116_1_not_null`: config_id IS NOT NULL
@@ -2272,9 +2273,9 @@ Total Tables: 81
 | is_active | boolean | Yes | true |  |
 
 **Indexes:**
-- UNIQUE `tags_pkey` on (tag_id)
-- UNIQUE `tags_tag_name_key` on (tag_name)
 - `idx_tags_active` on (is_active)
+- UNIQUE `tags_tag_name_key` on (tag_name)
+- UNIQUE `tags_pkey` on (tag_id)
 
 **Check Constraints:**
 - `2200_20196_2_not_null`: tag_name IS NOT NULL
@@ -2309,10 +2310,10 @@ Total Tables: 81
 | updated_at | timestamp without time zone | Yes | CURRENT_TIMESTAMP |  |
 
 **Indexes:**
+- `idx_uom_active` on (is_active)
 - UNIQUE `uom_master_uom_code_key` on (uom_code)
 - UNIQUE `uom_master_pkey` on (uom_id)
 - `idx_uom_code` on (uom_code)
-- `idx_uom_active` on (is_active)
 
 **Check Constraints:**
 - `2200_44541_1_not_null`: uom_id IS NOT NULL
@@ -2752,8 +2753,8 @@ Total Tables: 81
 | notes | text | Yes |  |  |
 
 **Indexes:**
-- `idx_writeoff_impact_date` on (calculation_dateDESC)
 - UNIQUE `writeoff_impact_tracking_pkey` on (tracking_id)
+- `idx_writeoff_impact_date` on (calculation_dateDESC)
 
 **Check Constraints:**
 - `2200_47769_1_not_null`: tracking_id IS NOT NULL
@@ -2822,8 +2823,8 @@ Total Tables: 81
 | updated_at | timestamp without time zone | Yes | CURRENT_TIMESTAMP |  |
 
 **Indexes:**
-- `idx_writeoff_reasons_active` on (is_active)
 - UNIQUE `writeoff_reasons_pkey` on (reason_code)
+- `idx_writeoff_reasons_active` on (is_active)
 
 **Check Constraints:**
 - `2200_18589_1_not_null`: reason_code IS NOT NULL
@@ -2865,10 +2866,10 @@ Total Tables: 81
 | notes | text | Yes |  |  |
 
 **Indexes:**
+- UNIQUE `year_end_closing_pkey` on (closing_id)
 - `idx_year_end_material` on (material_id)
 - `idx_year_end_status` on (status)
 - `idx_year_end_fy` on (financial_year)
-- UNIQUE `year_end_closing_pkey` on (closing_id)
 
 **Check Constraints:**
 - `2200_29160_2_not_null`: financial_year IS NOT NULL

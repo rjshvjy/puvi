@@ -1,5 +1,5 @@
 # PUVI Database Schema
-# Generated: 2025-09-02 05:19:37.949297
+# Generated: 2025-09-02 07:11:49.631880
 # Total Tables: 81
 
 === available_oil_types ===
@@ -229,7 +229,7 @@ state: character varying(50)
 pincode: character varying(10)
 contact_person: character varying(100)
 contact_phone: character varying(15)
-gstin: character varying(15)
+gst_number: character varying(15)
 is_default: boolean DEFAULT false
 is_active: boolean DEFAULT true
 created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
@@ -295,6 +295,7 @@ notes: text
 contact_person: character varying(100)
 contact_phone: character varying(20)
 contact_email: character varying(100)
+gst_number: character varying(15)
 
 === masters_audit_log ===
 audit_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('masters_audit_log_audit_id_seq'::regclass)
