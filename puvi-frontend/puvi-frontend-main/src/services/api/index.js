@@ -356,6 +356,11 @@ const api = {
       return apiCall(`/api/customers/${customerId}/ship-to`);
     },
     
+    // Get all locations (warehouse + ship-to) for a customer
+    getAllLocations: async (customerId) => {
+      return apiCall(`/api/customers/${customerId}/all-locations`);
+    },
+    
     // Create ship-to location
     createShipTo: async (customerId, data) => {
       return post(`/api/customers/${customerId}/ship-to`, data);
