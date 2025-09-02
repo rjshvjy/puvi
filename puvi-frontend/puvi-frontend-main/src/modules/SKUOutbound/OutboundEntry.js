@@ -144,15 +144,16 @@ const OutboundEntry = () => {
         }
       }
 
-      // Fetch customers - ensure customer_id is treated as number
+      // Fetch customers - handle both 'value' and 'customer_id' field names
       const custResponse = await api.customers.dropdown();
       if (custResponse.success) {
-        // Ensure customer_id is a number in the customer objects
-        const customersWithNumericIds = (custResponse.customers || []).map(cust => ({
+        // Map dropdown format to expected format
+        // Backend returns 'value' for ID, but component expects 'customer_id'
+        const customersWithIds = (custResponse.customers || []).map(cust => ({
           ...cust,
-          customer_id: cust.customer_id.toString()  // Ensure it's a number
+          customer_id: (cust.customer_id || cust.value || '').toString()  // Handle both field names safely
         }));
-        setCustomers(customersWithNumericIds);
+        setCustomers(customersWithIds);
       }
 
       // Fetch SKUs
