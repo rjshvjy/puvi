@@ -874,21 +874,20 @@ const OutboundEntry = () => {
                 <>
                   <div className="form-group">
                     <label>Customer *</label>
-                    <select
-                      name="customer_id"
-                      value={outboundData.customer_id}
-                      onChange={handleInputChange}
-                      required
-                    >
-                      <option value="">Select Customer</option>
-                      {customers.map(cust => (
-                        <option key={cust.customer_id} value={cust.customer_id}>
-                          {cust.customer_name} ({cust.customer_code})
-                        </option>
-                      ))}
-                    </select>
+                    ...
                   </div>
 
+                  {outboundData.transaction_type === 'sales' && outboundData.customer_id && (
+                    <div className="form-group">
+                      <label>Delivery Location</label>
+                      ...
+                    </div>
+                  )}
+                </>
+              )}
+
+              <div className="form-group">
+                <label>Outbound Date *</label>
                   {outboundData.transaction_type === 'sales' && outboundData.customer_id && (
                     <div className="form-group">
                       <label>Delivery Location</label>
