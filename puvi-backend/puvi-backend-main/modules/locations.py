@@ -2,6 +2,7 @@
 Locations Master Module for PUVI Oil Manufacturing System
 Handles CRUD operations for locations including warehouses, factories, and customer locations
 Supports internal (own) and third-party location management with inventory validation
+Enhanced with GST number support for third-party warehouses
 File Path: puvi-backend/puvi-backend-main/modules/locations.py
 """
 
@@ -10,6 +11,7 @@ from decimal import Decimal
 from db_utils import get_db_connection, close_connection
 from utils.date_utils import get_current_day_number, integer_to_date, format_date_indian
 from utils.validation import validate_required_fields, safe_int
+import re
 
 # Create Blueprint
 locations_bp = Blueprint('locations', __name__)
@@ -17,6 +19,36 @@ locations_bp = Blueprint('locations', __name__)
 # ============================================
 # HELPER FUNCTIONS
 # ============================================
+
+def validate_gst_number(gst_number):
+    """
+    Validate GST number format
+    Format: 15 characters - ^[0-9]{2}[A-Z0-9]{10}[0-9]{1}[A-Z]{1}[A-Z0-9]{1}$
+    
+    Args:
+        gst_number: GST number to validate
+    
+    Returns:
+        tuple: (is_valid, error_message)
+    """
+    if not gst_number:
+        # GST is optional
+        return True, None
+    
+    # Convert to uppercase for validation and storage
+    gst_number = gst_number.upper()
+    
+    # Check length
+    if len(gst_number) != 15:
+        return False, "GST number must be exactly 15 characters"
+    
+    # Check pattern
+    pattern = r'^[0-9]{2}[A-Z0-9]{10}[0-9]{1}[A-Z]{1}[A-Z0-9]{1}$'
+    if not re.match(pattern, gst_number):
+        return False, "Invalid GST number format"
+    
+    return True, None
+
 
 def generate_location_code(location_name, location_type, cur):
     """
@@ -195,9 +227,14 @@ def validate_location_data(data, is_update=False):
     if data.get('ownership') == 'third_party' and not data.get('customer_id'):
         errors.append("customer_id is required for third-party locations")
     
+    # Validate GST number if provided
+    if data.get('gst_number'):
+        is_valid_gst, gst_error = validate_gst_number(data['gst_number'])
+        if not is_valid_gst:
+            errors.append(gst_error)
+    
     # Validate email format if provided
     if data.get('contact_email'):
-        import re
         email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         if not re.match(email_pattern, data['contact_email']):
             errors.append("Invalid email format")
@@ -260,7 +297,8 @@ def get_locations():
                 l.notes,
                 (SELECT COUNT(*) FROM sku_inventory 
                  WHERE location_id = l.location_id 
-                 AND quantity_available > 0) as inventory_count
+                 AND quantity_available > 0) as inventory_count,
+                l.gst_number
             FROM locations_master l
             LEFT JOIN customers c ON l.customer_id = c.customer_id
             WHERE 1=1
@@ -314,7 +352,8 @@ def get_locations():
                 'is_active': row[18],
                 'created_at': row[19].isoformat() if row[19] else None,
                 'notes': row[20],
-                'inventory_count': row[21] or 0
+                'inventory_count': row[21] or 0,
+                'gst_number': row[22]
             }
             locations.append(location)
         
@@ -395,6 +434,7 @@ def get_location_details(location_id):
                     'sku_count': location_data['inventory_count'] or 0,
                     'total_quantity': float(location_data['total_inventory']) if location_data['total_inventory'] else 0
                 },
+                'gst_number': location_data['gst_number'],
                 'is_active': location_data['is_active'],
                 'created_at': location_data['created_at'].isoformat() if location_data['created_at'] else None,
                 'updated_at': location_data['updated_at'].isoformat() if location_data['updated_at'] else None,
@@ -427,6 +467,10 @@ def create_location():
                 'success': False,
                 'errors': errors
             }), 400
+        
+        # Convert GST to uppercase if provided
+        if data.get('gst_number'):
+            data['gst_number'] = data['gst_number'].upper()
         
         # Validate customer exists if third-party
         if data.get('ownership') == 'third_party':
@@ -471,10 +515,10 @@ def create_location():
                 address_line1, address_line2, city, state, pincode,
                 contact_person, contact_phone, contact_email,
                 is_production_unit, is_sales_point, is_default,
-                is_active, notes, created_by, created_at
+                is_active, notes, gst_number, created_by, created_at
             ) VALUES (
                 %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
-                %s, %s, %s, %s, %s, %s, %s, %s, %s, CURRENT_TIMESTAMP
+                %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, CURRENT_TIMESTAMP
             ) RETURNING location_id
         """, (
             data['location_code'],
@@ -495,6 +539,7 @@ def create_location():
             data.get('is_default', False),
             data.get('is_active', True),
             data.get('notes'),
+            data.get('gst_number'),
             data.get('created_by', 'System')
         ))
         
@@ -557,6 +602,10 @@ def update_location(location_id):
                 'errors': errors
             }), 400
         
+        # Convert GST to uppercase if provided
+        if data.get('gst_number'):
+            data['gst_number'] = data['gst_number'].upper()
+        
         # Check if ownership is being changed
         if 'ownership' in data and data['ownership'] != current_ownership:
             # Check for inventory before allowing ownership change
@@ -577,7 +626,7 @@ def update_location(location_id):
             'address_line1', 'address_line2', 'city', 'state', 'pincode',
             'contact_person', 'contact_phone', 'contact_email',
             'is_production_unit', 'is_sales_point', 'is_default',
-            'is_active', 'notes'
+            'is_active', 'notes', 'gst_number'
         ]
         
         for field in allowed_fields:
@@ -727,7 +776,8 @@ def get_locations_for_transfer():
                 l.ownership,
                 c.customer_name,
                 l.city,
-                l.state
+                l.state,
+                l.gst_number
             FROM locations_master l
             LEFT JOIN customers c ON l.customer_id = c.customer_id
             WHERE l.is_active = true
@@ -758,7 +808,8 @@ def get_locations_for_transfer():
                 'ownership': row[4],
                 'customer_name': row[5],
                 'display_name': display_name,
-                'transfer_type': 'internal' if row[4] == 'own' else 'third_party'
+                'transfer_type': 'internal' if row[4] == 'own' else 'third_party',
+                'gst_number': row[8]
             })
         
         # Group by ownership for better UX
@@ -826,7 +877,6 @@ def get_locations_dropdown():
         location_type = request.args.get('type')
         ownership = request.args.get('ownership')
         
-        # FIXED: Added is_production_unit to the SELECT query
         query = """
             SELECT 
                 location_id,
@@ -835,7 +885,8 @@ def get_locations_dropdown():
                 location_type,
                 ownership,
                 is_default,
-                is_production_unit
+                is_production_unit,
+                gst_number
             FROM locations_master
             WHERE is_active = true
         """
@@ -856,17 +907,17 @@ def get_locations_dropdown():
         
         locations = []
         for row in cur.fetchall():
-            # FIXED: Added is_production_unit to the response
             locations.append({
                 'value': row[0],
                 'label': f"{row[2]} ({row[1]})",
-                'location_id': row[0],  # Added for consistency
+                'location_id': row[0],
                 'location_code': row[1],
                 'location_name': row[2],
                 'location_type': row[3],
                 'ownership': row[4],
                 'is_default': row[5],
-                'is_production_unit': row[6]  # FIXED: Added this field
+                'is_production_unit': row[6],
+                'gst_number': row[7]
             })
         
         return jsonify({
