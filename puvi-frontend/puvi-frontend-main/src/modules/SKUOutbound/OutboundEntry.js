@@ -2,7 +2,7 @@
 // SKU Outbound Entry Component - Handles creation of outbound transactions
 // Supports: Internal Transfers, Third Party Transfers, and Sales
 // Features: FEFO/FIFO batch allocation, GST calculation, multi-step workflow
-// Version: 2.4 - Fixed JSX closing tags and ship-to location display
+// Version: 2.5 - Fixed: Unified customer locations dropdown
 
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
@@ -18,7 +18,7 @@ const OutboundEntry = () => {
   const [locations, setLocations] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [skus, setSKUs] = useState([]);
-  const [shipToLocations, setShipToLocations] = useState([]);
+  const [customerLocations, setCustomerLocations] = useState([]);
   const [availableBatches, setAvailableBatches] = useState([]);
   
   // Form data - customer_id initialized as empty string but will be converted to number
@@ -28,6 +28,7 @@ const OutboundEntry = () => {
     to_location_id: '',
     customer_id: '',  // Will be converted to number when set
     ship_to_location_id: '',
+    delivery_location_type: '', // New field to track location type
     outbound_date: new Date().toISOString().split('T')[0],
     dispatch_date: '',
     customer_po_number: '',
@@ -68,16 +69,16 @@ const OutboundEntry = () => {
     fetchMasterData();
   }, []);
 
-  // Load ship-to locations when customer changes - Fixed to handle numeric customer_id
+  // Load customer locations when customer changes - Fixed to use unified endpoint
   useEffect(() => {
     if (outboundData.customer_id && outboundData.customer_id !== '') {
       // Ensure customer_id is numeric before making API call
       const customerId = parseInt(outboundData.customer_id);
       if (!isNaN(customerId)) {
-        fetchShipToLocations(customerId);
+        fetchCustomerAllLocations(customerId);
       }
     } else {
-      setShipToLocations([]);
+      setCustomerLocations([]);
     }
   }, [outboundData.customer_id]);
 
@@ -167,23 +168,23 @@ const OutboundEntry = () => {
     }
   };
 
-  const fetchShipToLocations = async (customerId) => {
+  const fetchCustomerAllLocations = async (customerId) => {
     try {
       // Ensure customerId is numeric
       const numericId = parseInt(customerId);
       if (isNaN(numericId)) {
         console.error('Invalid customer ID:', customerId);
-        setShipToLocations([]);
+        setCustomerLocations([]);
         return;
       }
       
-      const response = await api.customers.getShipTo(numericId);
+      const response = await api.customers.getAllLocations(numericId);
       if (response.success) {
-        setShipToLocations(response.locations || []);
+        setCustomerLocations(response.locations || []);
       }
     } catch (error) {
-      console.error('Error fetching ship-to locations:', error);
-      setShipToLocations([]);
+      console.error('Error fetching customer locations:', error);
+      setCustomerLocations([]);
     }
   };
 
@@ -550,13 +551,14 @@ const OutboundEntry = () => {
         throw new Error('No valid items with allocations');
       }
 
-      // Prepare payload - ensure numeric IDs
+      // Prepare payload - ensure numeric IDs and include delivery location type
       const payload = {
         ...outboundData,
         from_location_id: parseInt(outboundData.from_location_id),
         to_location_id: outboundData.to_location_id ? parseInt(outboundData.to_location_id) : null,
         customer_id: outboundData.customer_id ? parseInt(outboundData.customer_id) : null,
         ship_to_location_id: outboundData.ship_to_location_id ? parseInt(outboundData.ship_to_location_id) : null,
+        delivery_location_type: outboundData.delivery_location_type, // Include this for backend
         outbound_date: formatDateForAPI(outboundData.outbound_date),
         dispatch_date: outboundData.dispatch_date ? formatDateForAPI(outboundData.dispatch_date) : null,
         stn_date: outboundData.stn_date ? formatDateForAPI(outboundData.stn_date) : null,
@@ -611,6 +613,7 @@ const OutboundEntry = () => {
       to_location_id: '',
       customer_id: '',
       ship_to_location_id: '',
+      delivery_location_type: '',
       outbound_date: new Date().toISOString().split('T')[0],
       dispatch_date: '',
       customer_po_number: '',
@@ -896,21 +899,58 @@ const OutboundEntry = () => {
 
                   {outboundData.customer_id && (
                     <div className="form-group">
-                      <label>Delivery Location</label>
+                      <label>Delivery Location *</label>
                       <select
-                        name="ship_to_location_id"
-                        value={outboundData.ship_to_location_id}
-                        onChange={handleInputChange}
+                        name="delivery_location_id"
+                        value={outboundData.delivery_location_type === 'warehouse' 
+                          ? `location_${outboundData.to_location_id}`
+                          : `shipto_${outboundData.ship_to_location_id}`}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value.startsWith('location_')) {
+                            const locationId = value.replace('location_', '');
+                            setOutboundData(prev => ({
+                              ...prev,
+                              delivery_location_type: 'warehouse',
+                              to_location_id: locationId,
+                              ship_to_location_id: null
+                            }));
+                          } else if (value.startsWith('shipto_')) {
+                            const shipToId = value.replace('shipto_', '');
+                            setOutboundData(prev => ({
+                              ...prev,
+                              delivery_location_type: 'ship_to',
+                              ship_to_location_id: shipToId,
+                              to_location_id: null
+                            }));
+                          }
+                        }}
+                        required
                       >
-                        <option value="">Primary Address (Bill To)</option>
-                        {shipToLocations.length > 0 ? (
-                          shipToLocations.map(loc => (
-                            <option key={loc.ship_to_id} value={loc.ship_to_id}>
-                              {loc.location_name}
-                            </option>
-                          ))
-                        ) : (
-                          <option value="" disabled>No alternate delivery locations configured</option>
+                        <option value="">Select Delivery Location</option>
+                        
+                        {customerLocations.filter(loc => !loc.is_ship_to_location).length > 0 && (
+                          <optgroup label="Warehouse Locations">
+                            {customerLocations
+                              .filter(loc => !loc.is_ship_to_location)
+                              .map(loc => (
+                                <option key={`loc-${loc.location_id}`} value={`location_${loc.location_id}`}>
+                                  {loc.location_name} ({loc.location_code})
+                                </option>
+                              ))}
+                          </optgroup>
+                        )}
+                        
+                        {customerLocations.filter(loc => loc.is_ship_to_location).length > 0 && (
+                          <optgroup label="Billing/Ship-To Locations">
+                            {customerLocations
+                              .filter(loc => loc.is_ship_to_location)
+                              .map(loc => (
+                                <option key={`ship-${loc.ship_to_id}`} value={`shipto_${loc.ship_to_id}`}>
+                                  {loc.location_name} {loc.is_default ? '(Default)' : ''}
+                                </option>
+                              ))}
+                          </optgroup>
                         )}
                       </select>
                     </div>
@@ -1424,16 +1464,30 @@ const OutboundEntry = () => {
                 </div>
               )}
               {outboundData.transaction_type === 'sales' && (
-                <div className="review-item">
-                  <label>Customer:</label>
-                  <span>{customers.find(c => {
-                    const custId = (c.customer_id || c.value || '').toString();
-                    return custId === outboundData.customer_id.toString();
-                  })?.customer_name || customers.find(c => {
-                    const custId = (c.customer_id || c.value || '').toString();
-                    return custId === outboundData.customer_id.toString();
-                  })?.label || 'Unknown'}</span>
-                </div>
+                <>
+                  <div className="review-item">
+                    <label>Customer:</label>
+                    <span>{customers.find(c => {
+                      const custId = (c.customer_id || c.value || '').toString();
+                      return custId === outboundData.customer_id.toString();
+                    })?.customer_name || 'Unknown'}</span>
+                  </div>
+                  <div className="review-item">
+                    <label>Delivery Location:</label>
+                    <span>
+                      {(() => {
+                        if (outboundData.delivery_location_type === 'warehouse') {
+                          const loc = customerLocations.find(l => l.location_id === parseInt(outboundData.to_location_id));
+                          return loc ? `${loc.location_name} (${loc.location_code})` : 'Unknown';
+                        } else if (outboundData.delivery_location_type === 'ship_to') {
+                          const loc = customerLocations.find(l => l.ship_to_id === parseInt(outboundData.ship_to_location_id));
+                          return loc ? loc.location_name : 'Unknown';
+                        }
+                        return 'Not selected';
+                      })()}
+                    </span>
+                  </div>
+                </>
               )}
               <div className="review-item">
                 <label>Date:</label>
