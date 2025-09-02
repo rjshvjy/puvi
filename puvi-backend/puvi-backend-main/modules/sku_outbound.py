@@ -584,7 +584,7 @@ def get_customer_all_locations(customer_id):
                 pincode,
                 contact_person,
                 contact_phone,
-                gst_number as gstin,
+                gst_number,
                 false as is_ship_to_location,
                 location_type as facility_type
             FROM locations_master
@@ -627,7 +627,7 @@ def get_customer_all_locations(customer_id):
                 pincode,
                 contact_person,
                 contact_phone,
-                gstin,
+                gst_number,
                 is_default,
                 true as is_ship_to_location
             FROM customer_ship_to_locations
@@ -1606,7 +1606,7 @@ def get_customer_ship_to_locations(customer_id):
                 pincode,
                 contact_person,
                 contact_phone,
-                gstin,
+                gst_number,
                 is_default
             FROM customer_ship_to_locations
             WHERE customer_id = %s AND is_active = true
