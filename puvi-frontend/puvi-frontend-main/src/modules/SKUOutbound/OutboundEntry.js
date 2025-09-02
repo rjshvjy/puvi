@@ -150,7 +150,7 @@ const OutboundEntry = () => {
         // Ensure customer_id is a number in the customer objects
         const customersWithNumericIds = (custResponse.customers || []).map(cust => ({
           ...cust,
-          customer_id: parseInt(cust.customer_id)  // Ensure it's a number
+          customer_id: cust.customer_id.toString()  // Ensure it's a number
         }));
         setCustomers(customersWithNumericIds);
       }
