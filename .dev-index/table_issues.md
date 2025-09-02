@@ -1,6 +1,6 @@
 # Table Usage Issues
 
-Generated: 2025-09-02 04:53:41.254665
+Generated: 2025-09-02 05:19:37.839093
 
 ## ⚠️ Orphaned Tables
 These tables exist in database but are not used in any code:
@@ -154,6 +154,8 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/inventory_utils.py, puvi-backend/puvi-backend-main/utils/validation.py, puvi-backend/puvi-backend-main/utils/expiry_utils.py and 14 more
 - decimal_places
   Files: puvi-backend/puvi-backend-main/modules/masters_common.py, puvi-backend/puvi-backend-main/modules/masters_crud.py
+- delivery_location_type
+  Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
 - density_values
   Files: puvi-backend/puvi-backend-main/modules/system_config.py
 - dependencies
@@ -467,7 +469,7 @@ These tables are referenced in code but don't exist in database:
 - shelf_life_months
   Files: puvi-backend/puvi-backend-main/modules/sku_production.py, puvi-backend/puvi-backend-main/modules/sku_management.py
 - ship_to_locations
-  Files: puvi-backend/puvi-backend-main/modules/customers.py
+  Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py, puvi-backend/puvi-backend-main/modules/customers.py
 - size_in_liters
   Files: puvi-backend/puvi-backend-main/modules/package_sizes.py
 - sku
@@ -584,6 +586,8 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/modules/sku_production.py
 - traceable_codes
   Files: puvi-backend/puvi-backend-main/modules/purchase.py
+- tracking
+  Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
 - transaction_counts
   Files: puvi-backend/puvi-backend-main/modules/opening_balance.py
 - transaction_type
