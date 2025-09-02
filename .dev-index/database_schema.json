@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-09-01T07:57:51.075905+00:00",
+  "generated_at": "2025-09-02T05:19:33.38491+00:00",
   "database": "postgres",
   "version": "PostgreSQL 17.4 on aarch64-unknown-linux-gnu, compiled by gcc (GCC) 13.2.0, 64-bit",
   "tables": {
@@ -9129,7 +9129,7 @@
       ],
       "triggers": null,
       "row_count": 3,
-      "dead_rows": 0,
+      "dead_rows": 12,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "104 kB",
@@ -9410,8 +9410,8 @@
         }
       ],
       "triggers": null,
-      "row_count": 4,
-      "dead_rows": 0,
+      "row_count": 2,
+      "dead_rows": 9,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "120 kB",
@@ -10849,13 +10849,13 @@
         }
       ],
       "triggers": null,
-      "row_count": 0,
-      "dead_rows": 0,
+      "row_count": 2,
+      "dead_rows": 4,
       "last_vacuum": null,
       "last_autovacuum": null,
-      "total_size": "80 kB",
-      "table_size": "0 bytes",
-      "indexes_size": "72 kB"
+      "total_size": "160 kB",
+      "table_size": "8192 bytes",
+      "indexes_size": "144 kB"
     },
     "sku_outbound_items": {
       "columns": [
@@ -11138,13 +11138,13 @@
         }
       ],
       "triggers": null,
-      "row_count": 0,
+      "row_count": 2,
       "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
-      "total_size": "48 kB",
-      "table_size": "0 bytes",
-      "indexes_size": "40 kB"
+      "total_size": "88 kB",
+      "table_size": "8192 bytes",
+      "indexes_size": "72 kB"
     },
     "sku_production": {
       "columns": [

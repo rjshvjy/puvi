@@ -1,6 +1,6 @@
 # PUVI Database Schema Documentation
 
-Generated: 2025-09-01 07:57:55.695986
+Generated: 2025-09-02 05:19:37.971332
 Database Version: PostgreSQL 17.4 on aarch64-unknown-linux-gnu, compiled by gcc (GCC) 13.2.0, 64-bit
 Total Tables: 81
 
@@ -56,13 +56,13 @@ Total Tables: 81
 | sku_bom_master | 9 | 1 | 64 kB | 1 |
 | sku_cost_overrides | 11 | 0 | 24 kB | 2 |
 | sku_expiry_tracking | 11 | 3 | 104 kB | 3 |
-| sku_inventory | 14 | 4 | 120 kB | 3 |
+| sku_inventory | 14 | 2 | 120 kB | 3 |
 | sku_master | 15 | 3 | 88 kB | 0 |
 | sku_material_consumption | 10 | 8 | 48 kB | 2 |
 | sku_mrp_history | 9 | 2 | 80 kB | 1 |
 | sku_oil_allocation | 9 | 4 | 40 kB | 1 |
-| sku_outbound | 30 | 0 | 80 kB | 4 |
-| sku_outbound_items | 17 | 0 | 48 kB | 2 |
+| sku_outbound | 30 | 2 | 160 kB | 4 |
+| sku_outbound_items | 17 | 2 | 88 kB | 2 |
 | sku_production | 28 | 4 | 96 kB | 2 |
 | stock_by_location | 11 | 0 | None | 0 |
 | subcategories_master | 8 | 18 | 56 kB | 1 |
@@ -1729,7 +1729,7 @@ Total Tables: 81
 ### sku_inventory
 
 **Statistics:**
-- Rows: 4
+- Rows: 2
 - Total Size: 120 kB
 - Table Size: 8192 bytes
 - Indexes Size: 112 kB
@@ -1949,10 +1949,10 @@ Total Tables: 81
 ### sku_outbound
 
 **Statistics:**
-- Rows: 0
-- Total Size: 80 kB
-- Table Size: 0 bytes
-- Indexes Size: 72 kB
+- Rows: 2
+- Total Size: 160 kB
+- Table Size: 8192 bytes
+- Indexes Size: 144 kB
 
 **Columns:**
 
@@ -2014,10 +2014,10 @@ Total Tables: 81
 ### sku_outbound_items
 
 **Statistics:**
-- Rows: 0
-- Total Size: 48 kB
-- Table Size: 0 bytes
-- Indexes Size: 40 kB
+- Rows: 2
+- Total Size: 88 kB
+- Table Size: 8192 bytes
+- Indexes Size: 72 kB
 
 **Columns:**
 
