@@ -1,6 +1,6 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/App.js
 // Modern Professional App Component for PUVI Oil Manufacturing System
-// MODIFIED: Added SKU Outbound module integration
+// MODIFIED: Added Customer and Location Management modules
 
 import React, { useState, useEffect } from 'react';
 import './App.css';
@@ -13,10 +13,12 @@ import Blending from './modules/Blending';
 import MaterialSales from './modules/MaterialSales';
 import CostManagement from './modules/CostManagement';
 import SKUManagement from './modules/SKUManagement';
-import SKUOutbound from './modules/SKUOutbound';  // NEW - SKU Outbound module
+import SKUOutbound from './modules/SKUOutbound';
 import MastersManagement from './modules/MastersManagement';
 import OpeningBalanceModule from './modules/OpeningBalanceModule';
 import OilConfigurationDashboard from './components/Masters/OilConfigurationDashboard';
+import CustomerManager from './modules/MasterData/CustomerManager';
+import LocationsManager from './modules/MasterData/LocationsManager';
 
 function App() {
   // State Management
@@ -48,7 +50,7 @@ function App() {
         { id: 'batch', label: 'Batch Production', icon: '🏭', badge: null },
         { id: 'blending', label: 'Oil Blending', icon: '🧪', badge: null },
         { id: 'sku', label: 'SKU Management', icon: '📦', badge: null },
-        { id: 'skuOutbound', label: 'SKU Outbound', icon: '📤', badge: null },  // NEW - Added SKU Outbound
+        { id: 'skuOutbound', label: 'SKU Outbound', icon: '📤', badge: null },
         { id: 'sales', label: 'Material Sales', icon: '💰', badge: null }
       ]
     },
@@ -57,6 +59,13 @@ function App() {
       items: [
         { id: 'writeoff', label: 'Material Writeoff', icon: '📝', badge: null },
         { id: 'cost', label: 'Cost Management', icon: '💵', badge: null }
+      ]
+    },
+    {
+      section: 'MASTER DATA',
+      items: [
+        { id: 'customers', label: 'Customers', icon: '👥', badge: null },
+        { id: 'locations', label: 'Locations', icon: '📍', badge: null }
       ]
     },
     {
@@ -144,10 +153,12 @@ function App() {
       batch: 'Batch Production',
       blending: 'Oil Blending',
       sku: 'SKU Management',
-      skuOutbound: 'SKU Outbound Management',  // NEW - Added title
+      skuOutbound: 'SKU Outbound Management',
       sales: 'Material Sales',
       writeoff: 'Material Writeoff',
       cost: 'Cost Management',
+      customers: 'Customer Management',
+      locations: 'Location Management',
       masters: 'Master Data Management',
       oilConfig: 'Oil Configuration Manager'
     };
@@ -163,10 +174,12 @@ function App() {
       batch: 'Oil extraction and production tracking',
       blending: 'Create custom oil blends',
       sku: 'Stock keeping unit management with MRP',
-      skuOutbound: 'Manage SKU transfers and sales transactions',  // NEW - Added subtitle
+      skuOutbound: 'Manage SKU transfers and sales transactions',
       sales: 'Track material and by-product sales',
       writeoff: 'Record material losses and writeoffs',
       cost: 'Analyze and manage production costs',
+      customers: 'Manage customers and shipping locations',
+      locations: 'Manage warehouses, factories, and third-party locations',
       masters: 'Configure suppliers, materials, and system settings',
       oilConfig: 'Manage oil type mappings for production chain'
     };
@@ -190,8 +203,12 @@ function App() {
         return <CostManagement />;
       case 'sku':
         return <SKUManagement />;
-      case 'skuOutbound':  // NEW - Added SKU Outbound case
+      case 'skuOutbound':
         return <SKUOutbound />;
+      case 'customers':
+        return <CustomerManager />;
+      case 'locations':
+        return <LocationsManager />;
       case 'masters':
         return <MastersManagement />;
       case 'openingBalance':
@@ -293,8 +310,10 @@ const DashboardContent = ({ stats, onNavigate, onRefresh }) => {
     { id: 'purchase', icon: '🛒', title: 'New Purchase', color: '#3b82f6' },
     { id: 'batch', icon: '🏭', title: 'Start Production', color: '#10b981' },
     { id: 'sku', icon: '📦', title: 'Create SKU', color: '#8b5cf6' },
-    { id: 'skuOutbound', icon: '📤', title: 'New Outbound', color: '#ef4444' },  // NEW - Added quick action
+    { id: 'skuOutbound', icon: '📤', title: 'New Outbound', color: '#ef4444' },
     { id: 'sales', icon: '💰', title: 'Record Sale', color: '#f59e0b' },
+    { id: 'customers', icon: '👥', title: 'Add Customer', color: '#14b8a6' },
+    { id: 'locations', icon: '📍', title: 'Add Location', color: '#8b5cf6' },
     { id: 'masters', icon: '⚙️', title: 'Add Supplier', color: '#6b7280' },
     { id: 'cost', icon: '💵', title: 'View Costs', color: '#06b6d4' }
   ];
@@ -448,6 +467,7 @@ const DashboardContent = ({ stats, onNavigate, onRefresh }) => {
               <ul style={{ fontSize: '0.875rem', color: '#374151', lineHeight: 1.8 }}>
                 <li>✓ Configure suppliers in Masters</li>
                 <li>✓ Add materials and set opening balance</li>
+                <li>✓ Create customers and locations</li>
                 <li>✓ Start recording purchases</li>
                 <li>✓ Begin production tracking</li>
               </ul>
@@ -457,6 +477,7 @@ const DashboardContent = ({ stats, onNavigate, onRefresh }) => {
                 Key Features
               </h3>
               <ul style={{ fontSize: '0.875rem', color: '#374151', lineHeight: 1.8 }}>
+                <li>• Customer & location management</li>
                 <li>• Multi-item purchase management</li>
                 <li>• Batch production with cost tracking</li>
                 <li>• SKU management with MRP</li>
