@@ -1,6 +1,7 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/modules/MasterData/LocationsManager.js
 // Locations Manager Component - Manage factory, warehouse, and customer locations
 // Handles ownership-based validation and inventory tracking
+// Enhanced with GST number support for third-party warehouses
 
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
@@ -30,6 +31,7 @@ const LocationsManager = () => {
     pincode: '',
     contact_person: '',
     contact_phone: '',
+    gst_number: '',
     is_default: false,
     is_active: true
   });
@@ -139,6 +141,7 @@ const LocationsManager = () => {
       pincode: '',
       contact_person: '',
       contact_phone: '',
+      gst_number: '',
       is_default: false,
       is_active: true
     });
@@ -160,6 +163,7 @@ const LocationsManager = () => {
       pincode: location.pincode || '',
       contact_person: location.contact_person || '',
       contact_phone: location.contact_phone || '',
+      gst_number: location.gst_number || '',
       is_default: location.is_default || false,
       is_active: location.is_active
     });
@@ -171,6 +175,11 @@ const LocationsManager = () => {
 
   // Handle form field change
   const handleFieldChange = (field, value) => {
+    // Convert GST to uppercase automatically
+    if (field === 'gst_number') {
+      value = value.toUpperCase();
+    }
+    
     setFormData(prev => ({
       ...prev,
       [field]: value
@@ -223,6 +232,16 @@ const LocationsManager = () => {
     
     if (formData.pincode && !/^\d{6}$/.test(formData.pincode)) {
       newErrors.pincode = 'Pincode must be 6 digits';
+    }
+    
+    // GST validation
+    if (formData.gst_number) {
+      const gstPattern = /^[0-9]{2}[A-Z0-9]{10}[0-9]{1}[A-Z]{1}[A-Z0-9]{1}$/;
+      if (formData.gst_number.length !== 15) {
+        newErrors.gst_number = 'GST must be exactly 15 characters';
+      } else if (!gstPattern.test(formData.gst_number)) {
+        newErrors.gst_number = 'Invalid GST format';
+      }
     }
     
     setErrors(newErrors);
@@ -447,6 +466,12 @@ const LocationsManager = () => {
                   {location.customer_name && (
                     <div className="location-customer">
                       Customer: <strong>{location.customer_name}</strong>
+                    </div>
+                  )}
+                  
+                  {location.gst_number && (
+                    <div className="location-customer">
+                      GST: <strong>{location.gst_number}</strong>
                     </div>
                   )}
                   
@@ -721,6 +746,26 @@ const LocationsManager = () => {
                     <span className="error-text">{errors.contact_phone}</span>
                   )}
                 </div>
+              </div>
+              
+              <div className="form-group">
+                <label className="form-label">
+                  GST Number
+                  <span className="form-help" style={{ marginLeft: '8px', fontWeight: 'normal' }}>
+                    15 characters (optional)
+                  </span>
+                </label>
+                <input
+                  type="text"
+                  value={formData.gst_number}
+                  onChange={(e) => handleFieldChange('gst_number', e.target.value)}
+                  className={`form-input ${errors.gst_number ? 'error' : ''}`}
+                  placeholder="e.g., 27AABCU9603R1ZM"
+                  maxLength="15"
+                />
+                {errors.gst_number && (
+                  <span className="error-text">{errors.gst_number}</span>
+                )}
               </div>
               
               <div className="form-row">
