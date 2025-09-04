@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-09-02T07:17:58.569469+00:00",
+  "generated_at": "2025-09-04T14:42:09.474934+00:00",
   "database": "postgres",
   "version": "PostgreSQL 17.4 on aarch64-unknown-linux-gnu, compiled by gcc (GCC) 13.2.0, 64-bit",
   "tables": {
@@ -516,8 +516,8 @@
           "statement": "EXECUTE FUNCTION validate_batch_dates()"
         }
       ],
-      "row_count": 6,
-      "dead_rows": 25,
+      "row_count": 7,
+      "dead_rows": 26,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "88 kB",
@@ -1143,8 +1143,8 @@
         }
       ],
       "triggers": null,
-      "row_count": 54,
-      "dead_rows": 8,
+      "row_count": 63,
+      "dead_rows": 10,
       "last_vacuum": null,
       "last_autovacuum": "2025-08-23T21:05:07.723557+00:00",
       "total_size": "112 kB",
@@ -1534,7 +1534,7 @@
         }
       ],
       "triggers": null,
-      "row_count": 6,
+      "row_count": 7,
       "dead_rows": 15,
       "last_vacuum": null,
       "last_autovacuum": null,
@@ -3750,7 +3750,7 @@
       ],
       "triggers": null,
       "row_count": 14,
-      "dead_rows": 10,
+      "dead_rows": 12,
       "last_vacuum": null,
       "last_autovacuum": "2025-08-23T21:05:07.714283+00:00",
       "total_size": "72 kB",
@@ -5423,7 +5423,7 @@
         }
       ],
       "triggers": null,
-      "row_count": 6,
+      "row_count": 7,
       "dead_rows": 19,
       "last_vacuum": null,
       "last_autovacuum": null,
@@ -7990,7 +7990,7 @@
       ],
       "triggers": null,
       "row_count": 4,
-      "dead_rows": 34,
+      "dead_rows": 36,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "40 kB",
@@ -9141,7 +9141,7 @@
       ],
       "triggers": null,
       "row_count": 3,
-      "dead_rows": 12,
+      "dead_rows": 16,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "104 kB",
@@ -9423,7 +9423,7 @@
       ],
       "triggers": null,
       "row_count": 2,
-      "dead_rows": 9,
+      "dead_rows": 13,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "120 kB",
@@ -10861,8 +10861,8 @@
         }
       ],
       "triggers": null,
-      "row_count": 2,
-      "dead_rows": 4,
+      "row_count": 3,
+      "dead_rows": 6,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "160 kB",
@@ -11150,7 +11150,7 @@
         }
       ],
       "triggers": null,
-      "row_count": 2,
+      "row_count": 3,
       "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,

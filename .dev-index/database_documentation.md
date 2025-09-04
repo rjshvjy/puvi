@@ -1,6 +1,6 @@
 # PUVI Database Schema Documentation
 
-Generated: 2025-09-02 07:18:06.776717
+Generated: 2025-09-04 14:42:14.395079
 Database Version: PostgreSQL 17.4 on aarch64-unknown-linux-gnu, compiled by gcc (GCC) 13.2.0, 64-bit
 Total Tables: 81
 
@@ -9,13 +9,13 @@ Total Tables: 81
 | Table | Columns | Rows | Size | Foreign Keys |
 |-------|---------|------|------|-------------|
 | available_oil_types | 1 | 0 | None | 0 |
-| batch | 31 | 6 | 88 kB | 2 |
+| batch | 31 | 7 | 88 kB | 2 |
 | batch_cost_details | 8 | 0 | 48 kB | 1 |
 | batch_cost_details_backup | 8 | 7 | 8192 bytes | 0 |
 | batch_cost_summary | 12 | 0 | None | 0 |
-| batch_extended_costs | 11 | 54 | 112 kB | 2 |
+| batch_extended_costs | 11 | 63 | 112 kB | 2 |
 | batch_summary | 16 | 0 | None | 0 |
-| batch_time_tracking | 10 | 6 | 64 kB | 1 |
+| batch_time_tracking | 10 | 7 | 64 kB | 1 |
 | blend_batch_components | 11 | 4 | 56 kB | 1 |
 | blend_batches | 10 | 2 | 72 kB | 0 |
 | bom_category_mapping | 7 | 8 | 48 kB | 0 |
@@ -35,7 +35,7 @@ Total Tables: 81
 | material_tags_view | 8 | 0 | None | 0 |
 | material_writeoffs | 15 | 1 | 128 kB | 1 |
 | materials | 17 | 9 | 112 kB | 3 |
-| oil_cake_inventory | 8 | 6 | 40 kB | 1 |
+| oil_cake_inventory | 8 | 7 | 40 kB | 1 |
 | oil_cake_sale_allocations | 9 | 0 | 8192 bytes | 2 |
 | oil_cake_sales | 14 | 0 | 16 kB | 0 |
 | opening_balances | 13 | 0 | 56 kB | 1 |
@@ -61,8 +61,8 @@ Total Tables: 81
 | sku_material_consumption | 10 | 8 | 48 kB | 2 |
 | sku_mrp_history | 9 | 2 | 80 kB | 1 |
 | sku_oil_allocation | 9 | 4 | 40 kB | 1 |
-| sku_outbound | 30 | 2 | 160 kB | 4 |
-| sku_outbound_items | 17 | 2 | 88 kB | 2 |
+| sku_outbound | 30 | 3 | 160 kB | 4 |
+| sku_outbound_items | 17 | 3 | 88 kB | 2 |
 | sku_production | 28 | 4 | 96 kB | 2 |
 | stock_by_location | 11 | 0 | None | 0 |
 | subcategories_master | 8 | 18 | 56 kB | 1 |
@@ -111,7 +111,7 @@ Total Tables: 81
 ### batch
 
 **Statistics:**
-- Rows: 6
+- Rows: 7
 - Total Size: 88 kB
 - Table Size: 8192 bytes
 - Indexes Size: 80 kB
@@ -256,7 +256,7 @@ Total Tables: 81
 ### batch_extended_costs
 
 **Statistics:**
-- Rows: 54
+- Rows: 63
 - Total Size: 112 kB
 - Table Size: 24 kB
 - Indexes Size: 48 kB
@@ -321,7 +321,7 @@ Total Tables: 81
 ### batch_time_tracking
 
 **Statistics:**
-- Rows: 6
+- Rows: 7
 - Total Size: 64 kB
 - Table Size: 8192 bytes
 - Indexes Size: 48 kB
@@ -1025,7 +1025,7 @@ Total Tables: 81
 ### oil_cake_inventory
 
 **Statistics:**
-- Rows: 6
+- Rows: 7
 - Total Size: 40 kB
 - Table Size: 8192 bytes
 - Indexes Size: 32 kB
@@ -1950,7 +1950,7 @@ Total Tables: 81
 ### sku_outbound
 
 **Statistics:**
-- Rows: 2
+- Rows: 3
 - Total Size: 160 kB
 - Table Size: 8192 bytes
 - Indexes Size: 144 kB
@@ -2015,7 +2015,7 @@ Total Tables: 81
 ### sku_outbound_items
 
 **Statistics:**
-- Rows: 2
+- Rows: 3
 - Total Size: 88 kB
 - Table Size: 8192 bytes
 - Indexes Size: 72 kB
