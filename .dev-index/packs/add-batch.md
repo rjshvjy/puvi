@@ -1,5 +1,5 @@
 # Feature Pack: ADD-BATCH
-Generated: 2025-09-04T14:42:11.231Z
+Generated: 2025-09-04T14:52:32.463Z
 Routes: 1 | Tables: 9 | Files: 1
 
 ## Table of Contents
@@ -21,7 +21,7 @@ POST   /api/add_batch
 |-------|-------------|------|--------|
 | available_oil_types | batch-production, system-config | 🟡 MEDIUM | Changes affect 2 other modules |
 | batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 10 other modules |
-| batch_extended_costs | batch-production, cost-management | 🟡 MEDIUM | Changes affect 2 other modules |
+| batch_extended_costs | batch-production, cost-management, masters-crud | 🔴 HIGH | Changes affect 3 other modules |
 | inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
 | materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
 | oil_cake_inventory | batch-production, material-sales, material-writeoff | 🔴 HIGH | Changes affect 3 other modules |

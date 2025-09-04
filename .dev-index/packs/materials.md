@@ -1,5 +1,5 @@
 # Feature Pack: MATERIALS
-Generated: 2025-09-04T14:42:11.241Z
+Generated: 2025-09-04T14:52:32.473Z
 Routes: 4 | Tables: 15 | Files: 2
 
 ## Table of Contents
@@ -28,7 +28,7 @@ GET    /api/materials/units
 | available_oil_types | batch-production, system-config | 🟡 MEDIUM | Changes affect 2 other modules |
 | bom_category_mapping | system-config | 🟡 MEDIUM | Changes affect 1 other modules |
 | categories_master | blending, masters-crud, material-writeoff | 🔴 HIGH | Changes affect 5 other modules |
-| cost_elements_master | cost-management, package-sizes, sku-production | 🔴 HIGH | Changes affect 4 other modules |
+| cost_elements_master | cost-management, masters-crud, package-sizes | 🔴 HIGH | Changes affect 5 other modules |
 | inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
 | material_tags | purchase | 🟡 MEDIUM | Changes affect 1 other modules |
 | materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
@@ -55,7 +55,7 @@ GET    /api/materials/units
   - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, unknown
   - Impact: Changes will cascade to these modules
 - **cost_elements_master** (HIGH RISK)
-  - Shared with: cost-management, package-sizes, sku-production, system-config
+  - Shared with: cost-management, masters-crud, package-sizes, sku-production, system-config
   - Impact: Changes will cascade to these modules
 - **suppliers** (HIGH RISK)
   - Shared with: opening-balance, purchase, sku-production, system-config, unknown

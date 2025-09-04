@@ -1,5 +1,5 @@
 # Feature Pack: SKU
-Generated: 2025-09-04T14:42:11.242Z
+Generated: 2025-09-04T14:52:32.474Z
 Routes: 25 | Tables: 31 | Files: 11
 
 ## Table of Contents
@@ -73,7 +73,7 @@ POST   /api/sku/production/allocate-oil
 | blend_batch_components | blending, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
 | blend_batches | blending, masters-crud, sku-production | 🔴 HIGH | Changes affect 3 other modules |
 | categories_master | blending, masters-crud, material-writeoff | 🔴 HIGH | Changes affect 5 other modules |
-| cost_elements_master | cost-management, package-sizes, sku-production | 🔴 HIGH | Changes affect 4 other modules |
+| cost_elements_master | cost-management, masters-crud, package-sizes | 🔴 HIGH | Changes affect 5 other modules |
 | created_at | sku-production | 🟡 MEDIUM | Changes affect 1 other modules |
 | customer_ship_to_locations | customers, sku-outbound | 🟡 MEDIUM | Changes affect 2 other modules |
 | customers | customers, locations, sku-outbound | 🔴 HIGH | Changes affect 4 other modules |
@@ -81,7 +81,7 @@ POST   /api/sku/production/allocate-oil
 | locations_master | locations, sku-outbound, sku-production | 🔴 HIGH | Changes affect 4 other modules |
 | masters_audit_log | masters-common, opening-balance, sku-management | 🔴 HIGH | Changes affect 3 other modules |
 | materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
-| package_sizes_master | package-sizes, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
+| package_sizes_master | masters-crud, package-sizes, sku-production | 🔴 HIGH | Changes affect 3 other modules |
 | purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 6 other modules |
 | query | masters-common, sku-management | 🟡 MEDIUM | Changes affect 2 other modules |
 | sku_bom_details | sku-management, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
@@ -119,7 +119,7 @@ POST   /api/sku/production/allocate-oil
   - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, unknown
   - Impact: Changes will cascade to these modules
 - **cost_elements_master** (HIGH RISK)
-  - Shared with: cost-management, package-sizes, sku-production, system-config
+  - Shared with: cost-management, masters-crud, package-sizes, sku-production, system-config
   - Impact: Changes will cascade to these modules
 - **suppliers** (HIGH RISK)
   - Shared with: opening-balance, purchase, sku-production, system-config, unknown

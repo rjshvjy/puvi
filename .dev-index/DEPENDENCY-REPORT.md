@@ -1,12 +1,12 @@
 # PUVI System - Dependency Analysis Report
 
-**Generated:** 2025-09-04T14:42:11.169Z
+**Generated:** 2025-09-04T14:52:32.405Z
 **Version:** 1.0
 
 ## Executive Summary
 
 - **Total Tables:** 65
-- **Shared Tables:** 37 (cross-module dependencies)
+- **Shared Tables:** 38 (cross-module dependencies)
 - **Hardcoded Categories:** 0
 - **Migration Opportunities:** 0
 
@@ -54,9 +54,9 @@ Tables used by multiple modules (changes have cascading effects):
 
 ### cost_elements_master
 - **Risk Level:** HIGH
-- **Shared By:** cost-management, package-sizes, sku-production, system-config
-- **File Count:** 4
-- **Recommendation:** ⚠️ CRITICAL: Changes require coordination across 4 modules
+- **Shared By:** cost-management, masters-crud, package-sizes, sku-production, system-config
+- **File Count:** 5
+- **Recommendation:** ⚠️ CRITICAL: Changes require coordination across 5 modules
 
 ### customers
 - **Risk Level:** HIGH
@@ -100,6 +100,12 @@ Tables used by multiple modules (changes have cascading effects):
 - **File Count:** 6
 - **Recommendation:** ⚠️ CRITICAL: Changes require coordination across 5 modules
 
+### batch_extended_costs
+- **Risk Level:** MEDIUM
+- **Shared By:** batch-production, cost-management, masters-crud
+- **File Count:** 3
+- **Recommendation:** Changes will affect batch-production, cost-management, masters-crud
+
 ### oil_cake_inventory
 - **Risk Level:** MEDIUM
 - **Shared By:** batch-production, material-sales, material-writeoff
@@ -123,6 +129,12 @@ Tables used by multiple modules (changes have cascading effects):
 - **Shared By:** masters-common, opening-balance, sku-management
 - **File Count:** 3
 - **Recommendation:** Changes will affect masters-common, opening-balance, sku-management
+
+### package_sizes_master
+- **Risk Level:** MEDIUM
+- **Shared By:** masters-crud, package-sizes, sku-production
+- **File Count:** 3
+- **Recommendation:** Changes will affect masters-crud, package-sizes, sku-production
 
 ### writeoff_reasons
 - **Risk Level:** MEDIUM
@@ -148,7 +160,7 @@ Hardcoded values that should be moved to database:
 - **sku_master**: Used by masters-crud, material-writeoff, package-sizes, sku-management, sku-outbound, sku-production, system-config, unknown (8 files)
 - **purchases**: Used by batch-production, blending, opening-balance, purchase, sku-production, unknown (6 files)
 - **categories_master**: Used by blending, masters-crud, material-writeoff, purchase, sku-outbound (5 files)
+- **cost_elements_master**: Used by cost-management, masters-crud, package-sizes, sku-production, system-config (5 files)
 - **sku_inventory**: Used by locations, material-writeoff, sku-outbound, sku-production, unknown (5 files)
 - **sku_production**: Used by material-writeoff, sku-management, sku-outbound, sku-production, unknown (5 files)
 - **suppliers**: Used by opening-balance, purchase, sku-production, system-config, unknown (6 files)
-- **subcategories_master**: Used by blending, masters-crud, purchase, sku-outbound (4 files)

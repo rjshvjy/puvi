@@ -1,9 +1,9 @@
 {
   "version": "1.0",
-  "generatedAt": "2025-09-04T14:42:11.169Z",
+  "generatedAt": "2025-09-04T14:52:32.405Z",
   "summary": {
     "totalTables": 65,
-    "sharedTables": 37,
+    "sharedTables": 38,
     "hardcodedCategories": 0,
     "migrationOpportunities": 0
   },
@@ -335,9 +335,10 @@
     "batch_extended_costs": {
       "usedBy": [
         "batch-production",
-        "cost-management"
+        "cost-management",
+        "masters-crud"
       ],
-      "fileCount": 2,
+      "fileCount": 3,
       "operations": {
         "batch-production": {
           "files": [
@@ -348,6 +349,12 @@
         "cost-management": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/cost_management.py"
+          ],
+          "queryCount": 0
+        },
+        "masters-crud": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/masters_crud.py"
           ],
           "queryCount": 0
         }
@@ -510,15 +517,22 @@
     "cost_elements_master": {
       "usedBy": [
         "cost-management",
+        "masters-crud",
         "package-sizes",
         "sku-production",
         "system-config"
       ],
-      "fileCount": 4,
+      "fileCount": 5,
       "operations": {
         "cost-management": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/cost_management.py"
+          ],
+          "queryCount": 0
+        },
+        "masters-crud": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/masters_crud.py"
           ],
           "queryCount": 0
         },
@@ -586,13 +600,20 @@
     },
     "cost_element_rate_history": {
       "usedBy": [
-        "cost-management"
+        "cost-management",
+        "masters-crud"
       ],
-      "fileCount": 1,
+      "fileCount": 2,
       "operations": {
         "cost-management": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/cost_management.py"
+          ],
+          "queryCount": 0
+        },
+        "masters-crud": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/masters_crud.py"
           ],
           "queryCount": 0
         }
@@ -881,6 +902,34 @@
         "sku-management": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/sku_management.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "package_sizes_master": {
+      "usedBy": [
+        "masters-crud",
+        "package-sizes",
+        "sku-production"
+      ],
+      "fileCount": 3,
+      "operations": {
+        "masters-crud": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+          ],
+          "queryCount": 0
+        },
+        "package-sizes": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/package_sizes.py"
+          ],
+          "queryCount": 0
+        },
+        "sku-production": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_production.py"
           ],
           "queryCount": 0
         }
@@ -1260,27 +1309,6 @@
         "unknown": {
           "files": [
             "puvi-backend/puvi-backend-main/utils/traceability.py"
-          ],
-          "queryCount": 0
-        }
-      }
-    },
-    "package_sizes_master": {
-      "usedBy": [
-        "package-sizes",
-        "sku-production"
-      ],
-      "fileCount": 2,
-      "operations": {
-        "package-sizes": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/package_sizes.py"
-          ],
-          "queryCount": 0
-        },
-        "sku-production": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/sku_production.py"
           ],
           "queryCount": 0
         }
@@ -1706,14 +1734,15 @@
       "table": "cost_elements_master",
       "sharedBy": [
         "cost-management",
+        "masters-crud",
         "package-sizes",
         "sku-production",
         "system-config"
       ],
-      "moduleCount": 4,
-      "fileCount": 4,
+      "moduleCount": 5,
+      "fileCount": 5,
       "risk": "HIGH",
-      "recommendation": "⚠️ CRITICAL: Changes require coordination across 4 modules"
+      "recommendation": "⚠️ CRITICAL: Changes require coordination across 5 modules"
     },
     {
       "table": "customers",
@@ -1814,6 +1843,18 @@
       "recommendation": "⚠️ CRITICAL: Changes require coordination across 5 modules"
     },
     {
+      "table": "batch_extended_costs",
+      "sharedBy": [
+        "batch-production",
+        "cost-management",
+        "masters-crud"
+      ],
+      "moduleCount": 3,
+      "fileCount": 3,
+      "risk": "MEDIUM",
+      "recommendation": "Changes will affect batch-production, cost-management, masters-crud"
+    },
+    {
       "table": "oil_cake_inventory",
       "sharedBy": [
         "batch-production",
@@ -1862,6 +1903,18 @@
       "recommendation": "Changes will affect masters-common, opening-balance, sku-management"
     },
     {
+      "table": "package_sizes_master",
+      "sharedBy": [
+        "masters-crud",
+        "package-sizes",
+        "sku-production"
+      ],
+      "moduleCount": 3,
+      "fileCount": 3,
+      "risk": "MEDIUM",
+      "recommendation": "Changes will affect masters-crud, package-sizes, sku-production"
+    },
+    {
       "table": "writeoff_reasons",
       "sharedBy": [
         "material-writeoff",
@@ -1908,17 +1961,6 @@
       "recommendation": "Changes will affect batch-production, system-config"
     },
     {
-      "table": "batch_extended_costs",
-      "sharedBy": [
-        "batch-production",
-        "cost-management"
-      ],
-      "moduleCount": 2,
-      "fileCount": 2,
-      "risk": "LOW",
-      "recommendation": "Changes will affect batch-production, cost-management"
-    },
-    {
       "table": "blend_batch_components",
       "sharedBy": [
         "blending",
@@ -1928,6 +1970,17 @@
       "fileCount": 2,
       "risk": "LOW",
       "recommendation": "Changes will affect blending, sku-production"
+    },
+    {
+      "table": "cost_element_rate_history",
+      "sharedBy": [
+        "cost-management",
+        "masters-crud"
+      ],
+      "moduleCount": 2,
+      "fileCount": 2,
+      "risk": "LOW",
+      "recommendation": "Changes will affect cost-management, masters-crud"
     },
     {
       "table": "customer_ship_to_locations",
@@ -2027,17 +2080,6 @@
       "fileCount": 2,
       "risk": "LOW",
       "recommendation": "Changes will affect opening-balance, unknown"
-    },
-    {
-      "table": "package_sizes_master",
-      "sharedBy": [
-        "package-sizes",
-        "sku-production"
-      ],
-      "moduleCount": 2,
-      "fileCount": 2,
-      "risk": "LOW",
-      "recommendation": "Changes will affect package-sizes, sku-production"
     },
     {
       "table": "sku_mrp_history",

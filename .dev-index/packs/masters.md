@@ -1,6 +1,6 @@
 # Feature Pack: MASTERS
-Generated: 2025-09-04T14:42:11.234Z
-Routes: 22 | Tables: 11 | Files: 4
+Generated: 2025-09-04T14:52:32.465Z
+Routes: 27 | Tables: 13 | Files: 4
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -12,12 +12,22 @@ Routes: 22 | Tables: 11 | Files: 4
 
 ## API Endpoints
 ```
+# get_field_options
+GET    /api/masters/<master_type>/field-options/<field_name>
 # list_master_types
 GET    /api/masters/types
 # get_master_schema
 GET    /api/masters/<master_type>/schema
 # list_master_records
 GET    /api/masters/<master_type>
+# cost_elements_validation_report
+GET    /api/masters/cost_elements/validation_report
+# cost_elements_usage_stats
+GET    /api/masters/cost_elements/usage_stats
+# bulk_update_cost_elements
+POST   /api/masters/cost_elements/bulk_update
+# get_cost_element_history
+GET    /api/masters/cost_elements/<int:element_id>/history
 # get_single_record
 GET    /api/masters/<master_type>/<record_id>
 # create_record
@@ -62,20 +72,21 @@ POST   /api/masters/package_sizes/validate
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
 | batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 10 other modules |
+| batch_extended_costs | batch-production, cost-management, masters-crud | 🔴 HIGH | Changes affect 3 other modules |
 | blend_batches | blending, masters-crud, sku-production | 🔴 HIGH | Changes affect 3 other modules |
 | categories_master | blending, masters-crud, material-writeoff | 🔴 HIGH | Changes affect 5 other modules |
 | cost | package-sizes | 🟡 MEDIUM | Changes affect 1 other modules |
-| cost_elements_master | cost-management, package-sizes, sku-production | 🔴 HIGH | Changes affect 4 other modules |
+| cost_element_rate_history | cost-management, masters-crud | 🟡 MEDIUM | Changes affect 2 other modules |
+| cost_elements_master | cost-management, masters-crud, package-sizes | 🔴 HIGH | Changes affect 5 other modules |
 | information_schema | masters-common, masters-crud | 🟡 MEDIUM | Changes affect 2 other modules |
 | inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |
 | materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
-| package_sizes_master | package-sizes, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
+| package_sizes_master | masters-crud, package-sizes, sku-production | 🔴 HIGH | Changes affect 3 other modules |
 | sku_master | masters-crud, material-writeoff, package-sizes | 🔴 HIGH | Changes affect 8 other modules |
 | subcategories_master | blending, masters-crud, purchase | 🔴 HIGH | Changes affect 4 other modules |
 
 ### ⚠️ Hardcoded Values Detected
-- `masters_crud.py:107` - object
-- `masters_crud.py:1518` - object
+- `masters_crud.py:108` - object
 
 ## Backend Implementation
 
@@ -90,7 +101,7 @@ POST   /api/masters/package_sizes/validate
   - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, unknown
   - Impact: Changes will cascade to these modules
 - **cost_elements_master** (HIGH RISK)
-  - Shared with: cost-management, package-sizes, sku-production, system-config
+  - Shared with: cost-management, masters-crud, package-sizes, sku-production, system-config
   - Impact: Changes will cascade to these modules
 
 ### Integration Points

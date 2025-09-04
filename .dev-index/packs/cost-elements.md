@@ -1,5 +1,5 @@
 # Feature Pack: COST-ELEMENTS
-Generated: 2025-09-04T14:42:11.233Z
+Generated: 2025-09-04T14:52:32.464Z
 Routes: 12 | Tables: 7 | Files: 1
 
 ## Table of Contents
@@ -42,11 +42,11 @@ GET    /api/cost_elements/<int:element_id>/rate_history
 | Table | Shared With | Risk | Impact |
 |-------|-------------|------|--------|
 | batch | batch-production, blending, cost-management | 🔴 HIGH | Changes affect 10 other modules |
-| batch_extended_costs | batch-production, cost-management | 🟡 MEDIUM | Changes affect 2 other modules |
+| batch_extended_costs | batch-production, cost-management, masters-crud | 🔴 HIGH | Changes affect 3 other modules |
 | batch_time_tracking | cost-management | 🟡 MEDIUM | Changes affect 1 other modules |
-| cost_element_rate_history | cost-management | 🟡 MEDIUM | Changes affect 1 other modules |
+| cost_element_rate_history | cost-management, masters-crud | 🟡 MEDIUM | Changes affect 2 other modules |
 | cost_element_usage_stats | cost-management | 🟡 MEDIUM | Changes affect 1 other modules |
-| cost_elements_master | cost-management, package-sizes, sku-production | 🔴 HIGH | Changes affect 4 other modules |
+| cost_elements_master | cost-management, masters-crud, package-sizes | 🔴 HIGH | Changes affect 5 other modules |
 | cost_override_log | cost-management | 🟡 MEDIUM | Changes affect 1 other modules |
 
 ## Backend Implementation
@@ -54,7 +54,7 @@ GET    /api/cost_elements/<int:element_id>/rate_history
 ## Data Flow & Integration
 ### 🔗 Cascading Dependencies
 - **cost_elements_master** (HIGH RISK)
-  - Shared with: cost-management, package-sizes, sku-production, system-config
+  - Shared with: cost-management, masters-crud, package-sizes, sku-production, system-config
   - Impact: Changes will cascade to these modules
 
 ### Integration Points
