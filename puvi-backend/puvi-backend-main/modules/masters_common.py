@@ -3,6 +3,7 @@ Common utilities and configurations for Masters CRUD operations
 File Path: puvi-backend/puvi-backend-main/modules/masters_common.py
 Updated: Fixed category options and activity typo for cost_elements
 Enhanced: Added GST support for subcategories
+FIXED: Added missing package_size_id field to cost_elements configuration
 """
 
 import re
@@ -347,7 +348,10 @@ MASTERS_CONFIG = {
             'uom_category': {
                 'type': 'select',
                 'required': True,
-                'options': ['Weight', 'Volume', 'Count', 'Other'],
+                # DYNAMIC: Options loaded from database via API
+                'options': 'dynamic',
+                'options_source': 'api',
+                'options_endpoint': '/api/masters/uom/field-options/uom_category',
                 'label': 'Category',
                 'help_text': 'Type of measurement this unit represents'
             },
@@ -772,6 +776,16 @@ MASTERS_CONFIG = {
                 'max_length': 100,
                 'label': 'Module Specific',
                 'placeholder': 'batch, sku, blend, etc.'
+            },
+            # FIXED: Added missing package_size_id field from database schema
+            'package_size_id': {
+                'type': 'reference',
+                'required': False,
+                'reference_table': 'package_sizes_master',
+                'reference_field': 'size_id',
+                'display_field': 'size_name',
+                'label': 'Package Size',
+                'help_text': 'Link to specific package size (for packaging-related costs)'
             },
             'display_order': {
                 'type': 'integer',
