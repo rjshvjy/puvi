@@ -1,6 +1,6 @@
 # Table Usage Issues
 
-Generated: 2025-09-07 17:29:33.271980
+Generated: 2025-09-07 18:09:51.036136
 
 ## ⚠️ Orphaned Tables
 These tables exist in database but are not used in any code:
@@ -121,7 +121,7 @@ These tables are referenced in code but don't exist in database:
 - cost_element_usage_stats
   Files: puvi-backend/puvi-backend-main/modules/cost_management.py
 - cost_elements
-  Files: puvi-backend/puvi-backend-main/modules/cost_management.py, puvi-backend/puvi-backend-main/modules/batch_production.py, puvi-backend/puvi-backend-main/modules/masters_common.py and 22 more
+  Files: puvi-backend/puvi-backend-main/modules/cost_management.py, puvi-backend/puvi-backend-main/modules/batch_production.py, puvi-backend/puvi-backend-main/modules/masters_common.py and 21 more
 - costcapture
   Files: puvi-backend/puvi-backend-main/modules/sku_production.py
 - costs
@@ -283,7 +283,7 @@ These tables are referenced in code but don't exist in database:
 - master_types
   Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
 - masters
-  Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/modules/batch_production.py, puvi-frontend/puvi-frontend-main/src/index.js and 43 more
+  Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/modules/batch_production.py, puvi-frontend/puvi-frontend-main/src/index.js and 34 more
 - masters_common
   Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
 - material
