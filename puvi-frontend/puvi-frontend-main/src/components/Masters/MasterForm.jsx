@@ -992,6 +992,19 @@ const MasterForm = ({
     
     // Package size reference field for cost_elements
     if (masterType === 'cost_elements' && field.name === 'package_size_id') {
+      // Show loading state if package sizes are being loaded
+      if (loadingPackageSizes) {
+        return (
+          <div className="field">
+            <label htmlFor={fieldId} className="label">
+              {field.label}
+              {field.required && <span className="required">*</span>}
+            </label>
+            <div className="form-help">Loading package sizes...</div>
+          </div>
+        );
+      }
+      
       return (
         <ReferenceField
           {...commonProps}
