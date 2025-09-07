@@ -396,14 +396,11 @@ def startup_sequence_sync():
         sequence_sync_results['status'] = 'failed'
         sequence_sync_results['summary'] = {'error': str(e)}
 
-# ADDED: Debug log for Flask-CORS
+# ADDED: Debug log for CORS implementation
 print("="*60, file=sys.stderr)
-print("PUVI Backend initializing with Flask-CORS", file=sys.stderr)
-try:
-    import flask_cors
-    print(f"Flask-CORS version: {flask_cors.__version__}", file=sys.stderr)
-except:
-    print("WARNING: Flask-CORS not found! CORS will not work!", file=sys.stderr)
+print("PUVI Backend initializing with MANUAL CORS implementation", file=sys.stderr)
+print("Flask-CORS disabled due to configuration issues", file=sys.stderr)
+print("Using @app.after_request for CORS headers", file=sys.stderr)
 print("="*60, file=sys.stderr)
 
 if __name__ == '__main__':
