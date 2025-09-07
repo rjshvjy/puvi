@@ -2,8 +2,7 @@
 Batch Production Module for PUVI Oil Manufacturing System
 Handles oil extraction from seeds, cost allocation, by-product tracking, and traceability
 File Path: puvi-backend/puvi-backend-main/modules/batch_production.py
-UPDATED: Uses Masters endpoints for cost elements (proxy approach - no fallbacks)
-Version: 2.0 - Masters Integration
+Version: 3.0 - Direct SQL Implementation with element_id support
 """
 
 from flask import Blueprint, request, jsonify
@@ -24,8 +23,7 @@ def get_seeds_for_batch():
     cur = conn.cursor()
     
     try:
-        # FIXED: Properly get the purchase code for each SPECIFIC material
-        # Using a subquery to ensure we get the right purchase for the right material
+        # Get seeds with their latest purchase codes
         cur.execute("""
             SELECT DISTINCT ON (i.material_id)
                 i.inventory_id,
@@ -36,12 +34,12 @@ def get_seeds_for_batch():
                 i.weighted_avg_cost,
                 m.category,
                 m.short_code,
-                -- FIXED: Get purchase code for THIS SPECIFIC material only
+                -- Get purchase code for THIS SPECIFIC material only
                 (
                     SELECT p.traceable_code 
                     FROM purchases p
                     JOIN purchase_items pi ON p.purchase_id = pi.purchase_id
-                    WHERE pi.material_id = i.material_id  -- Match specific material
+                    WHERE pi.material_id = i.material_id
                         AND p.traceable_code IS NOT NULL
                     ORDER BY p.purchase_date DESC
                     LIMIT 1
@@ -59,13 +57,6 @@ def get_seeds_for_batch():
         for row in cur.fetchall():
             value = float(row[4]) * float(row[5])
             total_value += value
-            
-            # Log for debugging if codes don't match
-            if row[7] and row[8]:  # If both short_code and purchase_code exist
-                material_prefix = row[7].split('-')[0] if row[7] else ''
-                purchase_prefix = row[8].split('-')[0] if row[8] else ''
-                if material_prefix and purchase_prefix and material_prefix != purchase_prefix:
-                    print(f"WARNING: Material {row[2]} has code {row[7]} but purchase code {row[8]}")
             
             seeds.append({
                 'inventory_id': row[0],
@@ -97,15 +88,15 @@ def get_seeds_for_batch():
 @batch_bp.route('/api/cost_elements_for_batch', methods=['GET'])
 def get_cost_elements_for_batch():
     """
-    Get applicable cost elements for batch production from Masters
-    UPDATED: Uses Masters endpoints as single source of truth (no fallbacks)
+    Get applicable cost elements for batch production - DIRECT SQL VERSION
+    No proxy to Masters, direct database query for efficiency
     """
     conn = get_db_connection()
     cur = conn.cursor()
     
     try:
         # Get stage parameter for activity-based filtering
-        stage = request.args.get('stage', None)
+        stage = request.args.get('stage')
         
         # Map frontend stage to database activity
         activity_map = {
@@ -117,102 +108,75 @@ def get_cost_elements_for_batch():
         
         activity = activity_map.get(stage)
         
-        # Import Masters functions (will fail if not available - as intended)
-        from modules.masters_crud import list_cost_elements_enhanced
-        from modules.masters_common import get_master_config
+        # Build query with filters
+        query = """
+            SELECT 
+                element_id,
+                element_name,
+                category,
+                unit_type,
+                default_rate,
+                calculation_method,
+                is_optional,
+                applicable_to,
+                display_order,
+                activity,
+                module_specific,
+                notes
+            FROM cost_elements_master
+            WHERE is_active = true
+                AND applicable_to IN ('batch', 'all')
+        """
         
-        # Build parameters for Masters endpoint
-        params = {
-            'module': 'batch',
-            'include_common': 'true',
-            'include_inactive': 'false',
-            'per_page': 200,  # Get all elements
-            'page': 1
-        }
+        params = []
         
-        # Add activity filter if stage is specified
+        # Add activity filter if specified
         if activity:
-            params['activity'] = activity
+            query += " AND (activity = %s OR activity = 'Common')"
+            params.append(activity)
         
-        # Call Masters function directly
-        mock_request_args = params
+        query += " ORDER BY display_order, category, element_name"
         
-        # Temporarily store original request args
-        original_args = request.args
+        # Execute query
+        if params:
+            cur.execute(query, params)
+        else:
+            cur.execute(query)
         
-        # Create a mock args object
-        class MockArgs:
-            def get(self, key, default=None):
-                return mock_request_args.get(key, default)
-        
-        # Replace request.args temporarily
-        request.args = MockArgs()
-        
-        # Get cost elements from Masters
-        config = get_master_config('cost_elements')
-        
-        response_json = list_cost_elements_enhanced(
-            config=config,
-            page=params['page'],
-            per_page=params['per_page'],
-            search='',
-            include_inactive=False,
-            sort_by='display_order',
-            sort_order='ASC'
-        )
-        
-        # Restore original request args
-        request.args = original_args
-        
-        # Parse the response
-        response_data = json.loads(response_json.data.decode('utf-8'))
-        
-        # Check if Masters call succeeded
-        if not response_data.get('success'):
-            # Let the error bubble up - no fallback
-            error_msg = response_data.get('error', 'Unknown error from Masters endpoint')
-            return jsonify({
-                'success': False,
-                'error': f'Masters endpoint failed: {error_msg}'
-            }), 500
-        
-        # Extract cost elements from Masters response
-        cost_elements = response_data.get('records', [])
-        
-        # Transform to match expected format
-        # Group by category
+        cost_elements = []
         categories = {}
         activities = {}
         
-        for element in cost_elements:
-            # Ensure all required fields are present
-            element_formatted = {
-                'element_id': element.get('element_id'),
-                'element_name': element.get('element_name'),
-                'category': element.get('category'),
-                'unit_type': element.get('unit_type'),
-                'default_rate': float(element.get('default_rate', 0)),
-                'calculation_method': element.get('calculation_method'),
-                'is_optional': element.get('is_optional', False),
-                'applicable_to': element.get('applicable_to'),
-                'display_order': element.get('display_order', 0),
-                'activity': element.get('activity', 'General'),
-                'module_specific': element.get('module_specific')
+        for row in cur.fetchall():
+            element = {
+                'element_id': row[0],  # IMPORTANT: Include element_id
+                'element_name': row[1],
+                'category': row[2],
+                'unit_type': row[3],
+                'default_rate': float(row[4]) if row[4] else 0,
+                'calculation_method': row[5],
+                'is_optional': row[6] if row[6] is not None else False,
+                'applicable_to': row[7],
+                'display_order': row[8] if row[8] else 0,
+                'activity': row[9] if row[9] else 'General',
+                'module_specific': row[10],
+                'notes': row[11]
             }
             
+            cost_elements.append(element)
+            
             # Group by category
-            category = element_formatted['category']
+            category = element['category']
             if category not in categories:
                 categories[category] = []
-            categories[category].append(element_formatted)
+            categories[category].append(element)
             
             # Group by activity
-            element_activity = element_formatted['activity']
+            element_activity = element['activity']
             if element_activity not in activities:
                 activities[element_activity] = []
-            activities[element_activity].append(element_formatted)
+            activities[element_activity].append(element)
         
-        # Return in expected format
         return jsonify({
             'success': True,
             'cost_elements': cost_elements,
@@ -220,11 +184,10 @@ def get_cost_elements_for_batch():
             'cost_elements_by_activity': activities,
             'count': len(cost_elements),
             'stage': stage if stage else 'all',
-            'source': 'masters'  # Indicate data source for debugging
+            'source': 'direct_sql'  # Indicate data source for debugging
         })
         
     except Exception as e:
-        # Let the error bubble up - no masking
         print(f"Error in get_cost_elements_for_batch: {str(e)}")
         return jsonify({'success': False, 'error': str(e)}), 500
     finally:
@@ -233,12 +196,12 @@ def get_cost_elements_for_batch():
 
 @batch_bp.route('/api/oil_cake_rates', methods=['GET'])
 def get_oil_cake_rates():
-    """Get current oil cake and sludge rates for estimation"""
+    """Get current oil cake and sludge rates for estimation based on last saved rates"""
     conn = get_db_connection()
     cur = conn.cursor()
     
     try:
-        # Try to get rates from database if table exists
+        # First, try to get rates from dedicated rate master table if exists
         try:
             cur.execute("""
                 SELECT oil_type, cake_rate, sludge_rate 
@@ -257,24 +220,117 @@ def get_oil_cake_rates():
                 return jsonify({
                     'success': True,
                     'rates': rates,
-                    'source': 'database'
+                    'source': 'rate_master'
                 })
         except:
-            # Table doesn't exist, use defaults
+            # Table doesn't exist, continue with other methods
             pass
         
-        # Default rates if no table or no data
-        oil_cake_rates = {
-            'Groundnut': {'cake_rate': 30.00, 'sludge_rate': 10.00},
-            'Sesame': {'cake_rate': 35.00, 'sludge_rate': 12.00},
-            'Coconut': {'cake_rate': 25.00, 'sludge_rate': 8.00},
-            'Mustard': {'cake_rate': 28.00, 'sludge_rate': 9.00}
-        }
+        # Get all oil types from the system
+        cur.execute("""
+            SELECT DISTINCT oil_type FROM (
+                SELECT DISTINCT produces_oil_type as oil_type
+                FROM materials
+                WHERE produces_oil_type IS NOT NULL
+                
+                UNION
+                
+                SELECT DISTINCT oil_type
+                FROM batch
+                WHERE oil_type IS NOT NULL
+            ) combined_types
+            WHERE oil_type IS NOT NULL AND oil_type != ''
+        """)
+        
+        oil_types = [row[0] for row in cur.fetchall()]
+        
+        oil_cake_rates = {}
+        
+        for oil_type in oil_types:
+            # Method 1: Get the most recent rates from batch records
+            cur.execute("""
+                SELECT 
+                    cake_estimated_rate,
+                    sludge_estimated_rate
+                FROM batch
+                WHERE oil_type = %s 
+                    AND cake_estimated_rate IS NOT NULL
+                ORDER BY production_date DESC, batch_id DESC
+                LIMIT 1
+            """, (oil_type,))
+            
+            batch_result = cur.fetchone()
+            
+            if batch_result and batch_result[0]:
+                # Use the most recent batch rates
+                cake_rate = float(batch_result[0])
+                sludge_rate = float(batch_result[1]) if batch_result[1] else cake_rate / 3
+            else:
+                # Method 2: Get average from recent oil cake sales
+                cur.execute("""
+                    SELECT AVG(actual_rate) as avg_cake_rate
+                    FROM oil_cake_sales ocs
+                    JOIN oil_cake_inventory oci ON ocs.cake_inventory_id = oci.cake_inventory_id
+                    WHERE oci.oil_type = %s
+                        AND ocs.sale_date >= (
+                            SELECT MAX(sale_date) - 90 
+                            FROM oil_cake_sales
+                        )
+                """, (oil_type,))
+                
+                sales_result = cur.fetchone()
+                
+                if sales_result and sales_result[0]:
+                    cake_rate = float(sales_result[0])
+                    sludge_rate = cake_rate / 3
+                else:
+                    # Method 3: Get from inventory estimated rates
+                    cur.execute("""
+                        SELECT AVG(estimated_rate) as avg_rate
+                        FROM oil_cake_inventory
+                        WHERE oil_type = %s
+                            AND estimated_rate > 0
+                            AND quantity_remaining > 0
+                    """, (oil_type,))
+                    
+                    inv_result = cur.fetchone()
+                    
+                    if inv_result and inv_result[0]:
+                        cake_rate = float(inv_result[0])
+                        sludge_rate = cake_rate / 3
+                    else:
+                        # Method 4: Use system-wide average as last resort
+                        cur.execute("""
+                            SELECT 
+                                AVG(cake_estimated_rate) as avg_cake,
+                                AVG(sludge_estimated_rate) as avg_sludge
+                            FROM batch
+                            WHERE cake_estimated_rate > 0
+                        """)
+                        
+                        avg_result = cur.fetchone()
+                        
+                        if avg_result and avg_result[0]:
+                            cake_rate = float(avg_result[0])
+                            sludge_rate = float(avg_result[1]) if avg_result[1] else cake_rate / 3
+                        else:
+                            # Absolute fallback - minimal defaults only if no data exists
+                            cake_rate = 25.00
+                            sludge_rate = 8.00
+            
+            oil_cake_rates[oil_type] = {
+                'cake_rate': round(cake_rate, 2),
+                'sludge_rate': round(sludge_rate, 2)
+            }
+        
+        # Add source information for transparency
+        source_info = "last_batch_rates"
         
         return jsonify({
             'success': True,
             'rates': oil_cake_rates,
-            'source': 'default'
+            'source': source_info,
+            'message': 'Rates based on most recent production/sales data'
         })
         
     except Exception as e:
@@ -285,18 +341,45 @@ def get_oil_cake_rates():
 
 @batch_bp.route('/api/oil_types', methods=['GET'])
 def get_oil_types():
-    """
-    Get distinct oil types from existing production data
-    Simple query from batch and sku_master tables only
-    """
+    """Get distinct oil types from materials and production data"""
     conn = get_db_connection()
     cur = conn.cursor()
     
     try:
-        # Simple UNION query to get all distinct oil types
-        cur.execute("SELECT oil_type FROM available_oil_types")
+        # Get oil types from multiple sources
+        cur.execute("""
+            SELECT DISTINCT oil_type FROM (
+                -- From materials that produce oil
+                SELECT DISTINCT produces_oil_type as oil_type
+                FROM materials
+                WHERE produces_oil_type IS NOT NULL
+                
+                UNION
+                
+                -- From existing batches
+                SELECT DISTINCT oil_type
+                FROM batch
+                WHERE oil_type IS NOT NULL
+                
+                UNION
+                
+                -- From SKU master
+                SELECT DISTINCT oil_type
+                FROM sku_master
+                WHERE oil_type IS NOT NULL
+                
+                UNION
+                
+                -- From subcategories (oil products)
+                SELECT DISTINCT oil_type
+                FROM subcategories_master
+                WHERE oil_type IS NOT NULL
+            ) combined_types
+            WHERE oil_type IS NOT NULL AND oil_type != ''
+            ORDER BY oil_type
+        """)
         
-        oil_types = [row[0] for row in cur.fetchall() if row[0]]
+        oil_types = [row[0] for row in cur.fetchall()]
         
         return jsonify({
             'success': True,
@@ -317,7 +400,7 @@ def get_oil_types():
 
 @batch_bp.route('/api/add_batch', methods=['POST'])
 def add_batch():
-    """Create a new batch production record with auto oil type detection"""
+    """Create a new batch production record with auto oil type detection and proper element_id handling"""
     conn = get_db_connection()
     cur = conn.cursor()
     
@@ -349,12 +432,12 @@ def add_batch():
                 'error': f'Selected material does not produce oil or oil type not configured. Please update materials.produces_oil_type for this seed.'
             }), 400
         
-        oil_type = result[0]  # Auto-detected from database
+        oil_type = result[0]
         material_name = result[1]
         
         print(f"Auto-detected oil type: {oil_type} from material: {material_name}")
         
-        # Validate required fields (oil_type no longer required from frontend)
+        # Validate required fields
         required_fields = ['batch_description', 'production_date', 
                           'material_id', 'seed_quantity_before_drying', 
                           'seed_quantity_after_drying', 'oil_yield', 
@@ -377,7 +460,7 @@ def add_batch():
         # Generate batch code
         batch_code = generate_batch_code(production_date, data['batch_description'], cur)
         
-        # Get seed purchase traceable code for this material
+        # Get seed purchase traceable code
         seed_purchase_code = data.get('seed_purchase_code')
         if not seed_purchase_code:
             # Try to get the latest purchase code for this material
@@ -414,7 +497,7 @@ def add_batch():
                 'error': f'Error generating batch traceable code: {str(e)}'
             }), 500
         
-        # Safely convert values to Decimal with validation
+        # Safely convert values
         seed_qty_before = safe_decimal(data.get('seed_quantity_before_drying', 0))
         seed_qty_after = safe_decimal(data.get('seed_quantity_after_drying', 0))
         oil_yield = safe_decimal(data.get('oil_yield', 0))
@@ -462,7 +545,7 @@ def add_batch():
         # Begin transaction
         cur.execute("BEGIN")
         
-        # Insert batch record with auto-detected oil type
+        # Insert batch record
         cur.execute("""
             INSERT INTO batch (
                 batch_code, oil_type, seed_quantity_before_drying,
@@ -474,7 +557,7 @@ def add_batch():
             RETURNING batch_id
         """, (
             batch_code,
-            oil_type,  # Auto-detected from materials.produces_oil_type
+            oil_type,
             float(seed_qty_before),
             float(seed_qty_after),
             float(drying_loss),
@@ -485,7 +568,7 @@ def add_batch():
             float(sludge_yield),
             float(sludge_yield_percent),
             production_date,
-            None,  # recipe_id - can be added later
+            None,  # recipe_id
             batch_traceable_code,
             seed_purchase_code,
             material_id
@@ -493,13 +576,28 @@ def add_batch():
         
         batch_id = cur.fetchone()[0]
         
-        # Process cost details with activity information
+        # Process cost details with element_id support
         total_production_cost = safe_decimal(data.get('seed_cost_total', 0))
         
-        # FIXED: Insert all cost elements to batch_extended_costs instead of batch_cost_details
+        # FIXED: Insert cost elements with element_id
         cost_details = data.get('cost_details', [])
         for cost_item in cost_details:
             element_name = cost_item.get('element_name', '')
+            element_id = cost_item.get('element_id')  # Get element_id from frontend
+            
+            # If element_id not provided, try to look it up
+            if not element_id and element_name:
+                cur.execute("""
+                    SELECT element_id 
+                    FROM cost_elements_master 
+                    WHERE element_name = %s 
+                        AND is_active = true
+                    LIMIT 1
+                """, (element_name,))
+                
+                result = cur.fetchone()
+                element_id = result[0] if result else None
+            
             master_rate = safe_float(cost_item.get('master_rate', 0))
             
             # Handle override rate
@@ -516,24 +614,32 @@ def add_batch():
             total_production_cost += Decimal(str(total_cost))
             
             # Check if cost already exists (might be from time tracking)
-            cur.execute("""
-                SELECT cost_id FROM batch_extended_costs
-                WHERE batch_id = %s AND element_name = %s
-            """, (batch_id, element_name))
+            if element_id:
+                cur.execute("""
+                    SELECT cost_id FROM batch_extended_costs
+                    WHERE batch_id = %s AND element_id = %s
+                """, (batch_id, element_id))
+            else:
+                cur.execute("""
+                    SELECT cost_id FROM batch_extended_costs
+                    WHERE batch_id = %s AND element_name = %s
+                """, (batch_id, element_name))
             
             existing = cur.fetchone()
             
             if existing:
-                # Update existing cost (probably from time tracking)
+                # Update existing cost
                 cur.execute("""
                     UPDATE batch_extended_costs
-                    SET quantity_or_hours = %s,
+                    SET element_id = %s,
+                        quantity_or_hours = %s,
                         rate_used = %s,
                         total_cost = %s,
                         is_applied = %s,
                         created_by = %s
                     WHERE cost_id = %s
                 """, (
+                    element_id,
                     quantity,
                     override_rate,
                     total_cost,
@@ -542,15 +648,16 @@ def add_batch():
                     existing[0]
                 ))
             else:
-                # Insert new cost into batch_extended_costs
+                # Insert new cost with element_id
                 cur.execute("""
                     INSERT INTO batch_extended_costs (
-                        batch_id, element_name,
+                        batch_id, element_id, element_name,
                         quantity_or_hours, rate_used, total_cost,
                         is_applied, created_by
-                    ) VALUES (%s, %s, %s, %s, %s, %s, %s)
+                    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)
                 """, (
                     batch_id,
+                    element_id,  # Now properly included
                     element_name,
                     quantity,
                     override_rate,
@@ -602,7 +709,6 @@ def add_batch():
         ))
         
         # 2. Add oil to inventory
-        # Check if oil inventory exists
         cur.execute("""
             SELECT inventory_id, closing_stock, weighted_avg_cost 
             FROM inventory 
@@ -671,14 +777,14 @@ def add_batch():
         # Commit transaction
         conn.commit()
         
-        print(f"Batch created successfully with auto-detected oil type: {oil_type}")
+        print(f"Batch created successfully with oil type: {oil_type}")
         
         return jsonify({
             'success': True,
             'batch_id': batch_id,
             'batch_code': batch_code,
             'traceable_code': batch_traceable_code,
-            'oil_type': oil_type,  # Include auto-detected oil type in response
+            'oil_type': oil_type,
             'oil_cost_per_kg': float(oil_cost_per_kg),
             'total_oil_produced': float(oil_yield),
             'net_oil_cost': float(net_oil_cost),
@@ -847,6 +953,67 @@ def get_batch_history():
                 'total_net_oil_cost': float(stats[8])
             },
             'oil_type_summary': oil_type_summary
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+@batch_bp.route('/api/batch/<int:batch_id>', methods=['GET'])
+def get_batch_details(batch_id):
+    """Get detailed information about a specific batch"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        # Get batch details
+        cur.execute("""
+            SELECT 
+                b.*,
+                m.material_name as seed_material_name
+            FROM batch b
+            LEFT JOIN materials m ON b.seed_material_id = m.material_id
+            WHERE b.batch_id = %s
+        """, (batch_id,))
+        
+        columns = [desc[0] for desc in cur.description]
+        batch_data = cur.fetchone()
+        
+        if not batch_data:
+            return jsonify({'success': False, 'error': 'Batch not found'}), 404
+        
+        batch = dict(zip(columns, batch_data))
+        
+        # Format dates and numbers
+        if batch.get('production_date'):
+            batch['production_date'] = integer_to_date(batch['production_date'], '%d-%m-%Y')
+        
+        # Get extended costs
+        cur.execute("""
+            SELECT 
+                bec.*,
+                cem.category,
+                cem.activity,
+                cem.unit_type,
+                cem.calculation_method
+            FROM batch_extended_costs bec
+            LEFT JOIN cost_elements_master cem ON bec.element_id = cem.element_id
+            WHERE bec.batch_id = %s
+            ORDER BY cem.display_order, bec.element_name
+        """, (batch_id,))
+        
+        costs = []
+        for row in cur.fetchall():
+            cost_columns = [desc[0] for desc in cur.description]
+            costs.append(dict(zip(cost_columns, row)))
+        
+        batch['extended_costs'] = costs
+        
+        return jsonify({
+            'success': True,
+            'batch': batch
         })
         
     except Exception as e:
