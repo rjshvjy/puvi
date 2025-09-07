@@ -1,6 +1,6 @@
 # Table Usage Issues
 
-Generated: 2025-09-07 14:18:23.811501
+Generated: 2025-09-07 16:47:26.134972
 
 ## ⚠️ Orphaned Tables
 These tables exist in database but are not used in any code:
@@ -285,7 +285,7 @@ These tables are referenced in code but don't exist in database:
 - master_types
   Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
 - masters
-  Files: puvi-backend/puvi-backend-main/app.py, puvi-frontend/puvi-frontend-main/src/index.js, puvi-frontend/puvi-frontend-main/src/index.js and 42 more
+  Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/modules/batch_production.py, puvi-frontend/puvi-frontend-main/src/index.js and 43 more
 - masters_common
   Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
 - material
@@ -311,7 +311,7 @@ These tables are referenced in code but don't exist in database:
 - mixed_oil_types
   Files: puvi-backend/puvi-backend-main/modules/blending.py
 - modules
-  Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/modules/masters_crud.py
+  Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/modules/batch_production.py, puvi-backend/puvi-backend-main/modules/masters_crud.py
 - month_writeoffs
   Files: puvi-backend/puvi-backend-main/modules/writeoff_analytics.py
 - monthly
@@ -429,7 +429,7 @@ These tables are referenced in code but don't exist in database:
 - record
   Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
 - records
-  Files: puvi-backend/puvi-backend-main/utils/expiry_utils.py, puvi-backend/puvi-backend-main/modules/masters_crud.py
+  Files: puvi-backend/puvi-backend-main/utils/expiry_utils.py, puvi-backend/puvi-backend-main/modules/batch_production.py, puvi-backend/puvi-backend-main/modules/masters_crud.py
 - reference_documents
   Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
 - remaining
