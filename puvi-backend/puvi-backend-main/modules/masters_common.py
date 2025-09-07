@@ -1,7 +1,7 @@
 """
 Common utilities and configurations for Masters CRUD operations
 File Path: puvi-backend/puvi-backend-main/modules/masters_common.py
-Updated: Fixed category options and activity typo for cost_elements
+Updated: Changed cost_elements from static to dynamic options
 Enhanced: Added GST support for subcategories
 FIXED: Added missing package_size_id field to cost_elements configuration
 """
@@ -709,6 +709,7 @@ MASTERS_CONFIG = {
         }
     },
     
+    # UPDATED: Changed from static to dynamic options for cost_elements
     'cost_elements': {
         'table': 'cost_elements_master',
         'primary_key': 'element_id',
@@ -725,22 +726,29 @@ MASTERS_CONFIG = {
             'category': {
                 'type': 'select',
                 'required': True,
-                # FIXED: Keep these as STATIC options for cost_elements, NOT dynamic
-                'options': ['Fixed', 'Variable', 'Semi-Variable', 'Labor', 'Utilities', 'Consumables', 'Transport', 'Quality', 'Maintenance', 'Overhead', 'Packing Material'],
+                # CHANGED: From static array to dynamic
+                'options': 'dynamic',
+                'options_source': 'api',
+                'options_endpoint': '/api/masters/cost_elements/field-options/category',
                 'label': 'Category'
             },
             'activity': {
                 'type': 'select',
                 'required': True,
-                # FIXED: Removed extra quote from 'Packing'
-                'options': ['Drying', 'Crushing', 'Filtering', 'Common', 'Quality', 'Transport', 'Maintenance', 'General', 'Packing'],
+                # CHANGED: From static array to dynamic
+                'options': 'dynamic',
+                'options_source': 'api',
+                'options_endpoint': '/api/masters/cost_elements/field-options/activity',
                 'label': 'Activity',
                 'default': 'General'
             },
             'unit_type': {
                 'type': 'select',
                 'required': True,
-                'options': ['per_kg', 'per_hour', 'per_unit', 'fixed', 'actual'],
+                # CHANGED: From static array to dynamic
+                'options': 'dynamic',
+                'options_source': 'api',
+                'options_endpoint': '/api/masters/cost_elements/field-options/unit_type',
                 'label': 'Unit Type',
                 'help_text': 'per_kg: Rate × Weight | per_hour: Rate × Hours | per_unit: Rate × Units | fixed: Flat amount | actual: Manual entry'
             },
@@ -754,7 +762,10 @@ MASTERS_CONFIG = {
             'calculation_method': {
                 'type': 'select',
                 'required': True,
-                'options': ['per_kg', 'per_hour', 'per_unit', 'fixed', 'actual'],
+                # CHANGED: From static array to dynamic
+                'options': 'dynamic',
+                'options_source': 'api',
+                'options_endpoint': '/api/masters/cost_elements/field-options/calculation_method',
                 'label': 'Calculation Method',
                 'help_text': 'per_kg: Cost = Quantity(kg) × Rate | per_hour: Cost = Hours × Rate | per_unit: Cost = Units × Rate | fixed: Cost = Rate (flat) | actual: Manual cost entry'
             },
@@ -767,7 +778,10 @@ MASTERS_CONFIG = {
             'applicable_to': {
                 'type': 'select',
                 'required': True,
-                'options': ['Purchase', 'Production', 'Both', 'all', 'batch', 'sku', 'blend', 'sales'],
+                # CHANGED: From static array to dynamic
+                'options': 'dynamic',
+                'options_source': 'api',
+                'options_endpoint': '/api/masters/cost_elements/field-options/applicable_to',
                 'label': 'Applicable To'
             },
             'module_specific': {
