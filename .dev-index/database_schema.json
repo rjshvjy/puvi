@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-09-07T16:47:24.501021+00:00",
+  "generated_at": "2025-09-07T17:29:28.483083+00:00",
   "database": "postgres",
   "version": "PostgreSQL 17.4 on aarch64-unknown-linux-gnu, compiled by gcc (GCC) 13.2.0, 64-bit",
   "tables": {
@@ -516,8 +516,8 @@
           "statement": "EXECUTE FUNCTION validate_batch_dates()"
         }
       ],
-      "row_count": 7,
-      "dead_rows": 26,
+      "row_count": 8,
+      "dead_rows": 27,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "88 kB",
@@ -1143,8 +1143,8 @@
         }
       ],
       "triggers": null,
-      "row_count": 63,
-      "dead_rows": 10,
+      "row_count": 72,
+      "dead_rows": 12,
       "last_vacuum": null,
       "last_autovacuum": "2025-08-23T21:05:07.723557+00:00",
       "total_size": "112 kB",
@@ -1534,7 +1534,7 @@
         }
       ],
       "triggers": null,
-      "row_count": 7,
+      "row_count": 8,
       "dead_rows": 15,
       "last_vacuum": null,
       "last_autovacuum": null,
@@ -4089,7 +4089,7 @@
       ],
       "triggers": null,
       "row_count": 14,
-      "dead_rows": 12,
+      "dead_rows": 14,
       "last_vacuum": null,
       "last_autovacuum": "2025-08-23T21:05:07.714283+00:00",
       "total_size": "72 kB",
@@ -5762,7 +5762,7 @@
         }
       ],
       "triggers": null,
-      "row_count": 7,
+      "row_count": 8,
       "dead_rows": 19,
       "last_vacuum": null,
       "last_autovacuum": null,
@@ -8329,7 +8329,7 @@
       ],
       "triggers": null,
       "row_count": 4,
-      "dead_rows": 36,
+      "dead_rows": 38,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "40 kB",
