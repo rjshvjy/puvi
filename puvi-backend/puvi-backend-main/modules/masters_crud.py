@@ -5,7 +5,7 @@ Provides unified API for suppliers, materials, tags, writeoff_reasons, cost_elem
 Enhanced with GST support for subcategories
 Enhanced with dynamic field options and cost elements filtering
 File Path: puvi-backend/puvi-backend-main/modules/masters_crud.py
-Version: 3.0 - Dynamic Options and Cost Elements Enhancement
+Version: 3.1 - Added Cost Elements Dynamic Field Options
 """
 
 from flask import Blueprint, request, jsonify, send_file
@@ -160,6 +160,153 @@ def get_field_options(master_type, field_name):
         close_connection(conn, cur)
 
 # =====================================================
+# NEW: COST ELEMENTS SPECIFIC FIELD OPTIONS ENDPOINTS
+# =====================================================
+
+@masters_crud_bp.route('/api/masters/cost_elements/field-options/category', methods=['GET'])
+def get_cost_element_categories():
+    """Get categories from cost_element_categories table"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        cur.execute("""
+            SELECT category_name
+            FROM cost_element_categories
+            WHERE is_active = true
+            ORDER BY display_order, category_name
+        """)
+        
+        options = [row[0] for row in cur.fetchall()]
+        
+        return jsonify({
+            'success': True,
+            'options': options
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+@masters_crud_bp.route('/api/masters/cost_elements/field-options/activity', methods=['GET'])
+def get_cost_element_activities():
+    """Get activities from cost_element_activities table"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        cur.execute("""
+            SELECT activity_name
+            FROM cost_element_activities
+            WHERE is_active = true
+            ORDER BY display_order, activity_name
+        """)
+        
+        options = [row[0] for row in cur.fetchall()]
+        
+        return jsonify({
+            'success': True,
+            'options': options
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+@masters_crud_bp.route('/api/masters/cost_elements/field-options/unit_type', methods=['GET'])
+def get_cost_element_unit_types():
+    """Get unit types from cost_element_unit_types table"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        cur.execute("""
+            SELECT unit_type
+            FROM cost_element_unit_types
+            WHERE is_active = true
+            ORDER BY display_order, unit_type
+        """)
+        
+        options = [row[0] for row in cur.fetchall()]
+        
+        return jsonify({
+            'success': True,
+            'options': options
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+@masters_crud_bp.route('/api/masters/cost_elements/field-options/calculation_method', methods=['GET'])
+def get_cost_element_calculation_methods():
+    """Get calculation methods (same as unit_types for now)"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        cur.execute("""
+            SELECT unit_type
+            FROM cost_element_unit_types
+            WHERE is_active = true
+            ORDER BY display_order, unit_type
+        """)
+        
+        options = [row[0] for row in cur.fetchall()]
+        
+        return jsonify({
+            'success': True,
+            'options': options
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+
+@masters_crud_bp.route('/api/masters/cost_elements/field-options/applicable_to', methods=['GET'])
+def get_cost_element_applicable_to():
+    """Get distinct applicable_to values from cost_elements_master"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        cur.execute("""
+            SELECT DISTINCT applicable_to
+            FROM cost_elements_master
+            WHERE applicable_to IS NOT NULL
+                AND is_active = true
+            ORDER BY applicable_to
+        """)
+        
+        options = [row[0] for row in cur.fetchall()]
+        
+        # Add any missing standard options
+        standard_options = ['all', 'batch', 'sku', 'blend', 'purchase', 'sales']
+        for opt in standard_options:
+            if opt not in options:
+                options.append(opt)
+        
+        options.sort()
+        
+        return jsonify({
+            'success': True,
+            'options': options
+        })
+        
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
+    finally:
+        close_connection(conn, cur)
+
+# =====================================================
 # LIST MASTER TYPES
 # =====================================================
 
@@ -221,6 +368,8 @@ def get_master_schema(master_type):
                 'max_length': field_config.get('max_length'),
                 'pattern': field_config.get('pattern'),
                 'options': field_config.get('options'),
+                'options_source': field_config.get('options_source'),
+                'options_endpoint': field_config.get('options_endpoint'),
                 'min': field_config.get('min'),
                 'max': field_config.get('max'),
                 'decimal_places': field_config.get('decimal_places'),
