@@ -992,6 +992,21 @@ const MasterForm = ({
     
     // Package size reference field for cost_elements
     if (masterType === 'cost_elements' && field.name === 'package_size_id') {
+      // Only render the field after package sizes are loaded
+      if (!packageSizesLoaded) {
+        return (
+          <div className="field">
+            <label htmlFor={fieldId} className="label">
+              {field.label}
+              {field.required && <span className="required">*</span>}
+            </label>
+            <div className="form-help">Loading package sizes...</div>
+          </div>
+        );
+      }
+      
+      // Render the reference field with loaded package sizes
+      console.log('Rendering package size field with options:', packageSizes);
       return (
         <ReferenceField
           {...commonProps}
