@@ -1,6 +1,6 @@
 # Table Usage Issues
 
-Generated: 2025-09-04 14:52:28.701708
+Generated: 2025-09-07 10:42:48.851656
 
 ## ⚠️ Orphaned Tables
 These tables exist in database but are not used in any code:
@@ -445,7 +445,7 @@ These tables are referenced in code but don't exist in database:
 - rounded_hours
   Files: puvi-backend/puvi-backend-main/modules/cost_management.py
 - sales
-  Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/modules/material_sales.py, puvi-backend/puvi-backend-main/modules/masters_common.py and 1 more
+  Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/modules/material_sales.py, puvi-backend/puvi-backend-main/modules/masters_common.py and 2 more
 - same
   Files: puvi-backend/puvi-backend-main/utils/traceability.py, puvi-backend/puvi-backend-main/modules/sku_production.py
 - saved_costs
