@@ -1,6 +1,6 @@
 # Table Usage Issues
 
-Generated: 2025-09-07 11:09:20.542675
+Generated: 2025-09-07 11:47:19.112285
 
 ## ⚠️ Orphaned Tables
 These tables exist in database but are not used in any code:
@@ -412,6 +412,8 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
 - query
   Files: puvi-backend/puvi-backend-main/modules/package_sizes.py, puvi-backend/puvi-backend-main/modules/masters_common.py, puvi-backend/puvi-backend-main/modules/customers.py and 3 more
+- r
+  Files: puvi-backend/puvi-backend-main/app.py
 - rate
   Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
 - rates
