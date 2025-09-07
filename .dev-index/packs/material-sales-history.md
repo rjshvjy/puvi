@@ -1,5 +1,5 @@
 # Feature Pack: MATERIAL-SALES-HISTORY
-Generated: 2025-09-07T10:55:48.423Z
+Generated: 2025-09-07T11:09:19.041Z
 Routes: 1 | Tables: 5 | Files: 1
 
 ## Table of Contents
