@@ -587,6 +587,7 @@ const MasterForm = ({
       setAlert(null);
       setDynamicOptions({});
       setLoadingDynamicOptions({});
+      setPackageSizesLoaded(false); // Reset loaded state
     }
   }, [masterType, editData, isOpen]);
   
