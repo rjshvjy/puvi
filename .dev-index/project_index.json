@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-09-07T13:18:11.091Z",
+  "generatedAt": "2025-09-07T13:22:50.275Z",
   "filesScanned": 70,
   "jsFilesScanned": 43,
   "pyFilesScanned": 27,
@@ -14431,7 +14431,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 1122,
+      "line": 1137,
       "name": "renderProducesOilTypeField",
       "params": "",
       "type": "arrow",
@@ -14439,7 +14439,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx",
-      "line": 1155,
+      "line": 1170,
       "name": "getFieldSections",
       "params": "",
       "type": "arrow",
