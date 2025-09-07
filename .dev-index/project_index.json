@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-09-07T16:47:39.142Z",
+  "generatedAt": "2025-09-07T17:29:32.029Z",
   "filesScanned": 70,
   "jsFilesScanned": 43,
   "pyFilesScanned": 27,
@@ -107,16 +107,25 @@
       "method": "GET",
       "path": "/api/cost_elements/master",
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 44,
+      "line": 50,
       "blueprint": "cost_management_bp",
-      "function": "get_cost_elements_master",
+      "function": "redirect_to_masters",
+      "source": "backend"
+    },
+    {
+      "method": "GET",
+      "path": "/api/cost_elements/configure",
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
+      "line": 76,
+      "blueprint": "cost_management_bp",
+      "function": "configuration_info",
       "source": "backend"
     },
     {
       "method": "GET",
       "path": "/api/cost_elements/by_stage",
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 131,
+      "line": 105,
       "blueprint": "cost_management_bp",
       "function": "get_cost_elements_by_stage",
       "source": "backend"
@@ -125,25 +134,16 @@
       "method": "GET",
       "path": "/api/cost_elements/by_activity",
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 185,
+      "line": 159,
       "blueprint": "cost_management_bp",
       "function": "get_cost_elements_by_activity",
       "source": "backend"
     },
     {
       "method": "POST",
-      "path": "/api/cost_elements/populate_activities",
-      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 282,
-      "blueprint": "cost_management_bp",
-      "function": "populate_activities",
-      "source": "backend"
-    },
-    {
-      "method": "POST",
       "path": "/api/cost_elements/time_tracking",
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 351,
+      "line": 256,
       "blueprint": "cost_management_bp",
       "function": "save_time_tracking",
       "source": "backend"
@@ -152,7 +152,7 @@
       "method": "POST",
       "path": "/api/cost_elements/calculate",
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 453,
+      "line": 358,
       "blueprint": "cost_management_bp",
       "function": "calculate_batch_costs",
       "source": "backend"
@@ -161,7 +161,7 @@
       "method": "POST",
       "path": "/api/cost_elements/save_batch_costs",
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 650,
+      "line": 555,
       "blueprint": "cost_management_bp",
       "function": "save_batch_costs",
       "source": "backend"
@@ -170,7 +170,7 @@
       "method": "GET",
       "path": "/api/cost_elements/validation_report",
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 783,
+      "line": 688,
       "blueprint": "cost_management_bp",
       "function": "get_validation_report",
       "source": "backend"
@@ -179,7 +179,7 @@
       "method": "GET",
       "path": "/api/cost_elements/batch_summary/<int:batch_id>",
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 843,
+      "line": 748,
       "blueprint": "cost_management_bp",
       "function": "get_batch_cost_summary",
       "source": "backend"
@@ -188,7 +188,7 @@
       "method": "GET",
       "path": "/api/cost_elements/usage_stats",
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 981,
+      "line": 882,
       "blueprint": "cost_management_bp",
       "function": "get_usage_stats",
       "source": "backend"
@@ -197,7 +197,7 @@
       "method": "POST",
       "path": "/api/cost_elements/bulk_update",
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 1064,
+      "line": 965,
       "blueprint": "cost_management_bp",
       "function": "bulk_update_cost_elements",
       "source": "backend"
@@ -206,7 +206,7 @@
       "method": "GET",
       "path": "/api/cost_elements/<int:element_id>/rate_history",
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 1188,
+      "line": 980,
       "blueprint": "cost_management_bp",
       "function": "get_rate_history",
       "source": "backend"
@@ -1478,9 +1478,9 @@
       "usedIn": [
         "puvi-frontend/puvi-frontend-main/src/App.js",
         "puvi-frontend/puvi-frontend-main/src/index.js",
+        "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
         "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/BatchProductionReport.js",
         "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
-        "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
         "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
         "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostElementsManager.js",
         "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/TimeTracker.js",
@@ -2158,6 +2158,12 @@
       "type": "default-export"
     },
     {
+      "name": "Blending",
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 9,
+      "type": "const"
+    },
+    {
       "name": "BatchProductionReport",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/BatchProductionReport.js",
       "line": 7,
@@ -2173,12 +2179,6 @@
       "name": "StepIndicator",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
       "line": 772,
-      "type": "const"
-    },
-    {
-      "name": "Blending",
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 9,
       "type": "const"
     },
     {
@@ -3298,21 +3298,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 72,
-      "type": "OTHER",
-      "tables": [],
-      "preview": "cur.execute(query)"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 92,
-      "type": "OTHER",
-      "tables": [],
-      "preview": "cur.execute(query, (applicable_to,))"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 141,
+      "line": 115,
       "type": "SELECT",
       "tables": [
         "cost_elements_master"
@@ -3321,7 +3307,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 220,
+      "line": 194,
       "type": "OTHER",
       "tables": [
         "cost_elements_master"
@@ -3330,7 +3316,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 241,
+      "line": 215,
       "type": "OTHER",
       "tables": [
         "cost_elements_master"
@@ -3339,7 +3325,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 293,
+      "line": 294,
       "type": "OTHER",
       "tables": [
         "cost_elements_master"
@@ -3348,34 +3334,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 314,
-      "type": "OTHER",
-      "tables": [
-        "cost_elements_master"
-      ],
-      "preview": "cur.execute(query)"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 324,
-      "type": "SELECT",
-      "tables": [
-        "cost_elements_master"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 389,
-      "type": "OTHER",
-      "tables": [
-        "cost_elements_master"
-      ],
-      "preview": "cur.execute(\"BEGIN\")"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 392,
+      "line": 297,
       "type": "INSERT",
       "tables": [
         "cost_elements_master",
@@ -3385,7 +3344,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 416,
+      "line": 321,
       "type": "INSERT",
       "tables": [
         "cost_elements_master",
@@ -3396,7 +3355,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 470,
+      "line": 375,
       "type": "SELECT",
       "tables": [
         "cost_elements_master",
@@ -3408,7 +3367,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 495,
+      "line": 400,
       "type": "SELECT",
       "tables": [
         "cost_elements_master",
@@ -3420,7 +3379,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 516,
+      "line": 421,
       "type": "SELECT",
       "tables": [
         "cost_elements_master",
@@ -3432,7 +3391,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 530,
+      "line": 435,
       "type": "SELECT",
       "tables": [
         "cost_elements_master",
@@ -3444,7 +3403,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 579,
+      "line": 484,
       "type": "SELECT",
       "tables": [
         "cost_elements_master",
@@ -3456,7 +3415,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 589,
+      "line": 494,
       "type": "SELECT",
       "tables": [
         "cost_elements_master",
@@ -3468,7 +3427,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 666,
+      "line": 571,
       "type": "OTHER",
       "tables": [
         "cost_elements_master",
@@ -3480,7 +3439,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 685,
+      "line": 590,
       "type": "INSERT",
       "tables": [
         "cost_elements_master",
@@ -3493,7 +3452,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 706,
+      "line": 611,
       "type": "SELECT",
       "tables": [
         "cost_elements_master",
@@ -3506,7 +3465,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 715,
+      "line": 620,
       "type": "UPDATE",
       "tables": [
         "cost_elements_master",
@@ -3519,7 +3478,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 734,
+      "line": 639,
       "type": "INSERT",
       "tables": [
         "cost_elements_master",
@@ -3532,7 +3491,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 793,
+      "line": 698,
       "type": "SELECT",
       "tables": [
         "cost_elements_master",
@@ -3545,7 +3504,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 851,
+      "line": 756,
       "type": "SELECT",
       "tables": [
         "cost_elements_master",
@@ -3558,7 +3517,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 873,
+      "line": 778,
       "type": "SELECT",
       "tables": [
         "cost_elements_master",
@@ -3571,7 +3530,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 905,
+      "line": 810,
       "type": "SELECT",
       "tables": [
         "cost_elements_master",
@@ -3584,7 +3543,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 931,
+      "line": 836,
       "type": "SELECT",
       "tables": [
         "cost_elements_master",
@@ -3597,7 +3556,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 989,
+      "line": 890,
       "type": "SELECT",
       "tables": [
         "cost_elements_master",
@@ -3611,7 +3570,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 1026,
+      "line": 927,
       "type": "SELECT",
       "tables": [
         "cost_elements_master",
@@ -3625,21 +3584,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 1090,
-      "type": "OTHER",
-      "tables": [
-        "cost_elements_master",
-        "batch_time_tracking",
-        "batch_extended_costs",
-        "batch",
-        "cost_override_log",
-        "cost_element_usage_stats"
-      ],
-      "preview": "cur.execute(\"BEGIN\")"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 1108,
+      "line": 988,
       "type": "SELECT",
       "tables": [
         "cost_elements_master",
@@ -3653,36 +3598,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 1129,
-      "type": "UPDATE",
-      "tables": [
-        "cost_elements_master",
-        "batch_time_tracking",
-        "batch_extended_costs",
-        "batch",
-        "cost_override_log",
-        "cost_element_usage_stats"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 1138,
-      "type": "INSERT",
-      "tables": [
-        "cost_elements_master",
-        "batch_time_tracking",
-        "batch_extended_costs",
-        "batch",
-        "cost_override_log",
-        "cost_element_usage_stats",
-        "cost_element_rate_history"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 1196,
+      "line": 1007,
       "type": "SELECT",
       "tables": [
         "cost_elements_master",
@@ -3697,7 +3613,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 1215,
+      "line": 1040,
       "type": "SELECT",
       "tables": [
         "cost_elements_master",
@@ -3712,22 +3628,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 1248,
-      "type": "SELECT",
-      "tables": [
-        "cost_elements_master",
-        "batch_time_tracking",
-        "batch_extended_costs",
-        "batch",
-        "cost_override_log",
-        "cost_element_usage_stats",
-        "cost_element_rate_history"
-      ],
-      "preview": "cur.execute(\"\"\""
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 1286,
+      "line": 1078,
       "type": "SELECT",
       "tables": [
         "cost_elements_master",
@@ -11288,6 +11189,118 @@
       "isAsync": false
     },
     {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 9,
+      "name": "Blending",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 49,
+      "name": "fetchOilTypes",
+      "params": "",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 64,
+      "name": "fetchAvailableResultTypes",
+      "params": "",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 77,
+      "name": "checkResultOilTypeNeeded",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 100,
+      "name": "fetchBatchesForOilType",
+      "params": "oilType, componentId",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 115,
+      "name": "fetchBlendHistory",
+      "params": "",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 127,
+      "name": "handleOilTypeChange",
+      "params": "componentId, oilType",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 147,
+      "name": "handleBatchChange",
+      "params": "componentId, batchId",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 171,
+      "name": "handlePercentageChange",
+      "params": "componentId, percentage",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 181,
+      "name": "addComponent",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 197,
+      "name": "removeComponent",
+      "params": "componentId",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 204,
+      "name": "calculateTotals",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 231,
+      "name": "isDifferentOilsMix",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 237,
+      "name": "handleSubmit",
+      "params": "",
+      "type": "arrow",
+      "isAsync": true
+    },
+    {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/BatchProductionReport.js",
       "line": 7,
       "name": "BatchProductionReport",
@@ -11478,118 +11491,6 @@
       "params": "",
       "type": "arrow",
       "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 9,
-      "name": "Blending",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 49,
-      "name": "fetchOilTypes",
-      "params": "",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 64,
-      "name": "fetchAvailableResultTypes",
-      "params": "",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 77,
-      "name": "checkResultOilTypeNeeded",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 100,
-      "name": "fetchBatchesForOilType",
-      "params": "oilType, componentId",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 115,
-      "name": "fetchBlendHistory",
-      "params": "",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 127,
-      "name": "handleOilTypeChange",
-      "params": "componentId, oilType",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 147,
-      "name": "handleBatchChange",
-      "params": "componentId, batchId",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 171,
-      "name": "handlePercentageChange",
-      "params": "componentId, percentage",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 181,
-      "name": "addComponent",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 197,
-      "name": "removeComponent",
-      "params": "componentId",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 204,
-      "name": "calculateTotals",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 231,
-      "name": "isDifferentOilsMix",
-      "params": "",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 237,
-      "name": "handleSubmit",
-      "params": "",
-      "type": "arrow",
-      "isAsync": true
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostCapture.js",
@@ -15217,15 +15118,23 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 45,
-      "name": "get_cost_elements_master",
+      "line": 51,
+      "name": "redirect_to_masters",
       "params": "",
       "type": "python",
       "isRoute": true
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 132,
+      "line": 77,
+      "name": "configuration_info",
+      "params": "",
+      "type": "python",
+      "isRoute": true
+    },
+    {
+      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
+      "line": 106,
       "name": "get_cost_elements_by_stage",
       "params": "",
       "type": "python",
@@ -15233,7 +15142,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 186,
+      "line": 160,
       "name": "get_cost_elements_by_activity",
       "params": "",
       "type": "python",
@@ -15241,15 +15150,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 283,
-      "name": "populate_activities",
-      "params": "",
-      "type": "python",
-      "isRoute": true
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 352,
+      "line": 257,
       "name": "save_time_tracking",
       "params": "",
       "type": "python",
@@ -15257,7 +15158,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 454,
+      "line": 359,
       "name": "calculate_batch_costs",
       "params": "",
       "type": "python",
@@ -15265,7 +15166,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 651,
+      "line": 556,
       "name": "save_batch_costs",
       "params": "",
       "type": "python",
@@ -15273,7 +15174,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 784,
+      "line": 689,
       "name": "get_validation_report",
       "params": "",
       "type": "python",
@@ -15281,7 +15182,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 844,
+      "line": 749,
       "name": "get_batch_cost_summary",
       "params": "batch_id",
       "type": "python",
@@ -15289,7 +15190,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 982,
+      "line": 883,
       "name": "get_usage_stats",
       "params": "",
       "type": "python",
@@ -15297,7 +15198,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 1065,
+      "line": 966,
       "name": "bulk_update_cost_elements",
       "params": "",
       "type": "python",
@@ -15305,7 +15206,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 1189,
+      "line": 981,
       "name": "get_rate_history",
       "params": "element_id",
       "type": "python",
@@ -15313,7 +15214,7 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 1284,
+      "line": 1076,
       "name": "calculate_time_based_costs",
       "params": "cur, hours",
       "type": "python",
@@ -17214,6 +17115,158 @@
       "hook": "useEffect"
     },
     {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 10,
+      "type": "useState",
+      "name": "oilTypes",
+      "setter": "setOilTypes",
+      "initial": "[]"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 10,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 11,
+      "type": "useState",
+      "name": "blendHistory",
+      "setter": "setBlendHistory",
+      "initial": "[]"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 11,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 12,
+      "type": "useState",
+      "name": "showHistory",
+      "setter": "setShowHistory",
+      "initial": null
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 12,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 13,
+      "type": "useState",
+      "name": "loading",
+      "setter": "setLoading",
+      "initial": null
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 13,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 14,
+      "type": "useState",
+      "name": "message",
+      "setter": "setMessage",
+      "initial": ""
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 14,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 17,
+      "type": "useState",
+      "name": "resultOilType",
+      "setter": "setResultOilType",
+      "initial": ""
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 17,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 18,
+      "type": "useState",
+      "name": "availableResultTypes",
+      "setter": "setAvailableResultTypes",
+      "initial": "[]"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 18,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 21,
+      "type": "useState",
+      "name": "blendData",
+      "setter": "setBlendData",
+      "initial": "{}"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 21,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 29,
+      "type": "useState",
+      "name": "components",
+      "setter": "setComponents",
+      "initial": "[]"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 29,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 35,
+      "type": "useState",
+      "name": "batchesForComponents",
+      "setter": "setBatchesForComponents",
+      "initial": "{}"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 35,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 40,
+      "type": "useEffect",
+      "hook": "useEffect"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 45,
+      "type": "useEffect",
+      "hook": "useEffect"
+    },
+    {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/BatchProductionReport.js",
       "line": 8,
       "type": "useRef",
@@ -17438,158 +17491,6 @@
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
       "line": 187,
-      "type": "useEffect",
-      "hook": "useEffect"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 10,
-      "type": "useState",
-      "name": "oilTypes",
-      "setter": "setOilTypes",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 10,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 11,
-      "type": "useState",
-      "name": "blendHistory",
-      "setter": "setBlendHistory",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 11,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 12,
-      "type": "useState",
-      "name": "showHistory",
-      "setter": "setShowHistory",
-      "initial": null
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 12,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 13,
-      "type": "useState",
-      "name": "loading",
-      "setter": "setLoading",
-      "initial": null
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 13,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 14,
-      "type": "useState",
-      "name": "message",
-      "setter": "setMessage",
-      "initial": ""
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 14,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 17,
-      "type": "useState",
-      "name": "resultOilType",
-      "setter": "setResultOilType",
-      "initial": ""
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 17,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 18,
-      "type": "useState",
-      "name": "availableResultTypes",
-      "setter": "setAvailableResultTypes",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 18,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 21,
-      "type": "useState",
-      "name": "blendData",
-      "setter": "setBlendData",
-      "initial": "{}"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 21,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 29,
-      "type": "useState",
-      "name": "components",
-      "setter": "setComponents",
-      "initial": "[]"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 29,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 35,
-      "type": "useState",
-      "name": "batchesForComponents",
-      "setter": "setBatchesForComponents",
-      "initial": "{}"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 35,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 40,
-      "type": "useEffect",
-      "hook": "useEffect"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 45,
       "type": "useEffect",
       "hook": "useEffect"
     },
@@ -22838,84 +22739,84 @@
         "method": "GET",
         "path": "/api/cost_elements/master",
         "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-        "line": 44,
-        "function": "get_cost_elements_master"
+        "line": 50,
+        "function": "redirect_to_masters"
+      },
+      {
+        "method": "GET",
+        "path": "/api/cost_elements/configure",
+        "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
+        "line": 76,
+        "function": "configuration_info"
       },
       {
         "method": "GET",
         "path": "/api/cost_elements/by_stage",
         "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-        "line": 131,
+        "line": 105,
         "function": "get_cost_elements_by_stage"
       },
       {
         "method": "GET",
         "path": "/api/cost_elements/by_activity",
         "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-        "line": 185,
+        "line": 159,
         "function": "get_cost_elements_by_activity"
-      },
-      {
-        "method": "POST",
-        "path": "/api/cost_elements/populate_activities",
-        "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-        "line": 282,
-        "function": "populate_activities"
       },
       {
         "method": "POST",
         "path": "/api/cost_elements/time_tracking",
         "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-        "line": 351,
+        "line": 256,
         "function": "save_time_tracking"
       },
       {
         "method": "POST",
         "path": "/api/cost_elements/calculate",
         "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-        "line": 453,
+        "line": 358,
         "function": "calculate_batch_costs"
       },
       {
         "method": "POST",
         "path": "/api/cost_elements/save_batch_costs",
         "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-        "line": 650,
+        "line": 555,
         "function": "save_batch_costs"
       },
       {
         "method": "GET",
         "path": "/api/cost_elements/validation_report",
         "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-        "line": 783,
+        "line": 688,
         "function": "get_validation_report"
       },
       {
         "method": "GET",
         "path": "/api/cost_elements/batch_summary/<int:batch_id>",
         "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-        "line": 843,
+        "line": 748,
         "function": "get_batch_cost_summary"
       },
       {
         "method": "GET",
         "path": "/api/cost_elements/usage_stats",
         "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-        "line": 981,
+        "line": 882,
         "function": "get_usage_stats"
       },
       {
         "method": "POST",
         "path": "/api/cost_elements/bulk_update",
         "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-        "line": 1064,
+        "line": 965,
         "function": "bulk_update_cost_elements"
       },
       {
         "method": "GET",
         "path": "/api/cost_elements/<int:element_id>/rate_history",
         "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-        "line": 1188,
+        "line": 980,
         "function": "get_rate_history"
       }
     ],
@@ -24003,6 +23904,66 @@
       "code": "} catch (error) {"
     },
     {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 50,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 58,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 65,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 72,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 101,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 110,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 116,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 122,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 266,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
+      "line": 329,
+      "type": "catch",
+      "code": "} catch (error) {"
+    },
+    {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
       "line": 197,
       "type": "try-catch",
@@ -24071,66 +24032,6 @@
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/BatchProduction/index.js",
       "line": 731,
-      "type": "catch",
-      "code": "} catch (error) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 50,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 58,
-      "type": "catch",
-      "code": "} catch (error) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 65,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 72,
-      "type": "catch",
-      "code": "} catch (error) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 101,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 110,
-      "type": "catch",
-      "code": "} catch (error) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 116,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 122,
-      "type": "catch",
-      "code": "} catch (error) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 266,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/Blending/index.js",
-      "line": 329,
       "type": "catch",
       "code": "} catch (error) {"
     },
@@ -26122,182 +26023,117 @@
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 50,
+      "line": 111,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 125,
+      "line": 153,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 137,
+      "line": 168,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 179,
+      "line": 250,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 194,
+      "line": 262,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 276,
+      "line": 351,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 291,
+      "line": 364,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 344,
+      "line": 549,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 357,
+      "line": 561,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 446,
+      "line": 681,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 459,
+      "line": 694,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 644,
+      "line": 742,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 656,
+      "line": 754,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 776,
+      "line": 876,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 789,
+      "line": 888,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 837,
+      "line": 959,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 849,
+      "line": 986,
       "type": "try-catch",
       "code": "try:"
     },
     {
       "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 971,
-      "type": "except",
-      "exception": "Exception",
-      "code": "except Exception as e:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 987,
-      "type": "try-catch",
-      "code": "try:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 1058,
-      "type": "except",
-      "exception": "Exception",
-      "code": "except Exception as e:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 1070,
-      "type": "try-catch",
-      "code": "try:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 1082,
-      "type": "try-catch",
-      "code": "try:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 1084,
-      "type": "except",
-      "exception": "generic",
-      "code": "except:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 1106,
-      "type": "try-catch",
-      "code": "try:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 1160,
-      "type": "except",
-      "exception": "Exception",
-      "code": "except Exception as e:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 1181,
-      "type": "except",
-      "exception": "Exception",
-      "code": "except Exception as e:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 1194,
-      "type": "try-catch",
-      "code": "try:"
-    },
-    {
-      "file": "puvi-backend/puvi-backend-main/modules/cost_management.py",
-      "line": 1274,
+      "line": 1066,
       "type": "except",
       "exception": "Exception",
       "code": "except Exception as e:"
@@ -28699,11 +28535,11 @@
     "exports": 45,
     "imports": 65,
     "hardcodedValues": 31,
-    "databaseQueries": 535,
+    "databaseQueries": 526,
     "databaseTables": 68,
     "functions": 761,
     "stateHooks": 809,
     "missingEndpoints": 1,
-    "errorHandlers": 759
+    "errorHandlers": 749
   }
 }

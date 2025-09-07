@@ -1,5 +1,5 @@
 # Feature Pack: COST-ELEMENTS
-Generated: 2025-09-07T16:47:40.190Z
+Generated: 2025-09-07T17:29:33.134Z
 Routes: 12 | Tables: 7 | Files: 1
 
 ## Table of Contents
@@ -12,14 +12,14 @@ Routes: 12 | Tables: 7 | Files: 1
 
 ## API Endpoints
 ```
-# get_cost_elements_master
+# redirect_to_masters
 GET    /api/cost_elements/master
+# configuration_info
+GET    /api/cost_elements/configure
 # get_cost_elements_by_stage
 GET    /api/cost_elements/by_stage
 # get_cost_elements_by_activity
 GET    /api/cost_elements/by_activity
-# populate_activities
-POST   /api/cost_elements/populate_activities
 # save_time_tracking
 POST   /api/cost_elements/time_tracking
 # calculate_batch_costs
