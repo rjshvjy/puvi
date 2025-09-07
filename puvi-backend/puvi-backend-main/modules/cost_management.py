@@ -1,10 +1,12 @@
 """
 Cost Management Module for PUVI Oil Manufacturing System
-Handles all cost elements, time tracking, activity-based filtering, and Phase 1 validation
+Handles cost analytics, validation, time tracking, and monitoring
+CRUD operations have been moved to Masters module
 File Path: puvi-backend/puvi-backend-main/modules/cost_management.py
+Version: 2.0 - Post-consolidation (Analytics Only)
 """
 
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, redirect
 from decimal import Decimal
 from datetime import datetime, timedelta
 from db_utils import get_db_connection, close_connection
@@ -41,92 +43,64 @@ class CostValidationWarning:
         }
 
 
-@cost_management_bp.route('/api/cost_elements/master', methods=['GET'])
-def get_cost_elements_master():
-    """Get all active cost elements with their default rates and activity field"""
-    conn = get_db_connection()
-    cur = conn.cursor()
-    
-    try:
-        # Get applicable_to filter if provided
-        applicable_to = request.args.get('applicable_to', 'all')
-        
-        if applicable_to == 'all':
-            query = """
-                SELECT 
-                    element_id,
-                    element_name,
-                    category,
-                    unit_type,
-                    default_rate,
-                    calculation_method,
-                    is_optional,
-                    applicable_to,
-                    display_order,
-                    activity,
-                    module_specific
-                FROM cost_elements_master
-                WHERE is_active = true
-                ORDER BY display_order, category, element_name
-            """
-            cur.execute(query)
-        else:
-            query = """
-                SELECT 
-                    element_id,
-                    element_name,
-                    category,
-                    unit_type,
-                    default_rate,
-                    calculation_method,
-                    is_optional,
-                    applicable_to,
-                    display_order,
-                    activity,
-                    module_specific
-                FROM cost_elements_master
-                WHERE is_active = true 
-                    AND applicable_to IN (%s, 'all')
-                ORDER BY display_order, category, element_name
-            """
-            cur.execute(query, (applicable_to,))
-        
-        cost_elements = []
-        for row in cur.fetchall():
-            cost_elements.append({
-                'element_id': row[0],
-                'element_name': row[1],
-                'category': row[2],
-                'unit_type': row[3],
-                'default_rate': float(row[4]),
-                'calculation_method': row[5],
-                'is_optional': row[6],
-                'applicable_to': row[7],
-                'display_order': row[8],
-                'activity': row[9] if row[9] else 'General',
-                'module_specific': row[10]
-            })
-        
-        # Group by category for easier UI rendering
-        by_category = {}
-        for element in cost_elements:
-            category = element['category']
-            if category not in by_category:
-                by_category[category] = []
-            by_category[category].append(element)
-        
-        return jsonify({
-            'success': True,
-            'cost_elements': cost_elements,
-            'by_category': by_category,
-            'count': len(cost_elements)
-        })
-        
-    except Exception as e:
-        return jsonify({'success': False, 'error': str(e)}), 500
-    finally:
-        close_connection(conn, cur)
+# =====================================================
+# REDIRECT TO MASTERS FOR CONFIGURATION
+# =====================================================
 
+@cost_management_bp.route('/api/cost_elements/master', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def redirect_to_masters():
+    """
+    Cost element configuration has moved to Masters module.
+    This endpoint redirects to the appropriate Masters endpoint.
+    """
+    method = request.method
+    
+    if method == 'GET':
+        # Redirect GET requests to Masters with same parameters
+        return jsonify({
+            'success': False,
+            'message': 'Cost element configuration has moved to Masters',
+            'redirect_url': '/api/masters/cost_elements',
+            'note': 'Please update your application to use the Masters endpoint'
+        }), 301
+    else:
+        # For POST, PUT, DELETE - inform about the move
+        return jsonify({
+            'success': False,
+            'error': 'Cost element CRUD operations have moved to Masters module',
+            'message': 'Please use /api/masters/cost_elements for configuration',
+            'configuration_url': '/masters?tab=cost_elements'
+        }), 410  # 410 Gone - indicates the resource has been intentionally removed
+
+
+@cost_management_bp.route('/api/cost_elements/configure', methods=['GET'])
+def configuration_info():
+    """Provide information about where to configure cost elements"""
+    return jsonify({
+        'success': True,
+        'message': 'Cost element configuration is managed in Masters',
+        'configuration_url': '/masters?tab=cost_elements',
+        'api_endpoint': '/api/masters/cost_elements',
+        'features_available': [
+            'Create new cost elements',
+            'Edit existing elements',
+            'Set activity associations',
+            'Configure package-specific costs',
+            'Manage display order',
+            'Bulk rate updates'
+        ],
+        'monitoring_features_here': [
+            'Validation reports',
+            'Usage statistics',
+            'Batch cost summaries',
+            'Rate history tracking'
+        ]
+    })
+
+
+# =====================================================
+# ANALYTICS & MONITORING ENDPOINTS (KEPT)
+# =====================================================
 
 @cost_management_bp.route('/api/cost_elements/by_stage', methods=['GET'])
 def get_cost_elements_by_stage():
@@ -185,8 +159,8 @@ def get_cost_elements_by_stage():
 @cost_management_bp.route('/api/cost_elements/by_activity', methods=['GET'])
 def get_cost_elements_by_activity():
     """
-    NEW ENDPOINT: Get cost elements filtered by activity
-    This replaces name-based filtering with proper activity-based filtering
+    Get cost elements filtered by activity
+    This provides activity-based filtering for modules that need it
     """
     conn = get_db_connection()
     cur = conn.cursor()
@@ -274,75 +248,6 @@ def get_cost_elements_by_activity():
         })
         
     except Exception as e:
-        return jsonify({'success': False, 'error': str(e)}), 500
-    finally:
-        close_connection(conn, cur)
-
-
-@cost_management_bp.route('/api/cost_elements/populate_activities', methods=['POST'])
-def populate_activities():
-    """
-    One-time endpoint to populate activity field based on element names
-    This should be run once to set up the activity field
-    """
-    conn = get_db_connection()
-    cur = conn.cursor()
-    
-    try:
-        # Begin transaction
-        cur.execute("BEGIN")
-        
-        # Update activities based on element names
-        updates = [
-            ("UPDATE cost_elements_master SET activity = 'Drying' WHERE LOWER(element_name) LIKE '%drying%' AND activity IS NULL", "Drying"),
-            ("UPDATE cost_elements_master SET activity = 'Drying' WHERE LOWER(element_name) LIKE '%loading after drying%' AND activity IS NULL", "Drying"),
-            ("UPDATE cost_elements_master SET activity = 'Crushing' WHERE LOWER(element_name) LIKE '%crushing%' AND activity IS NULL", "Crushing"),
-            ("UPDATE cost_elements_master SET activity = 'Crushing' WHERE LOWER(element_name) LIKE '%electricity%' AND activity IS NULL", "Crushing"),
-            ("UPDATE cost_elements_master SET activity = 'Filtering' WHERE LOWER(element_name) LIKE '%filter%' AND activity IS NULL", "Filtering"),
-            ("UPDATE cost_elements_master SET activity = 'Common' WHERE LOWER(element_name) LIKE '%common%' AND activity IS NULL", "Common"),
-            ("UPDATE cost_elements_master SET activity = 'Quality' WHERE LOWER(element_name) LIKE '%quality%' AND activity IS NULL", "Quality"),
-            ("UPDATE cost_elements_master SET activity = 'Quality' WHERE LOWER(element_name) LIKE '%testing%' AND activity IS NULL", "Quality"),
-            ("UPDATE cost_elements_master SET activity = 'Transport' WHERE LOWER(element_name) LIKE '%transport%' AND activity IS NULL", "Transport"),
-            ("UPDATE cost_elements_master SET activity = 'Maintenance' WHERE LOWER(element_name) LIKE '%maintenance%' AND activity IS NULL", "Maintenance"),
-            ("UPDATE cost_elements_master SET activity = 'General' WHERE activity IS NULL", "General")
-        ]
-        
-        total_updated = 0
-        update_details = []
-        
-        for query, activity_name in updates:
-            cur.execute(query)
-            count = cur.rowcount
-            total_updated += count
-            if count > 0:
-                update_details.append(f"{activity_name}: {count} elements")
-        
-        # Commit transaction
-        conn.commit()
-        
-        # Get summary of activities
-        cur.execute("""
-            SELECT activity, COUNT(*) as count
-            FROM cost_elements_master
-            WHERE is_active = true
-            GROUP BY activity
-            ORDER BY activity
-        """)
-        
-        activity_summary = {}
-        for row in cur.fetchall():
-            activity_summary[row[0] if row[0] else 'NULL'] = row[1]
-        
-        return jsonify({
-            'success': True,
-            'total_updated': total_updated,
-            'updates': update_details,
-            'activity_summary': activity_summary,
-            'message': f'Successfully populated activities for {total_updated} cost elements'
-        })
-        
-    except Exception as e:
-        conn.rollback()
         return jsonify({'success': False, 'error': str(e)}), 500
     finally:
         close_connection(conn, cur)
@@ -974,10 +879,6 @@ def get_batch_cost_summary(batch_id):
         close_connection(conn, cur)
 
 
-# =====================================================
-# NEW ENDPOINTS - Added to fix CostElementsManager.js 404 errors
-# =====================================================
-
 @cost_management_bp.route('/api/cost_elements/usage_stats', methods=['GET'])
 def get_usage_stats():
     """Get usage statistics for all cost elements from the view"""
@@ -1063,126 +964,17 @@ def get_usage_stats():
 
 @cost_management_bp.route('/api/cost_elements/bulk_update', methods=['POST'])
 def bulk_update_cost_elements():
-    """Bulk update cost element rates with history tracking"""
-    conn = get_db_connection()
-    cur = conn.cursor()
-    
-    try:
-        data = request.json
-        updates = data.get('updates', [])
-        reason = data.get('reason', 'Periodic rate revision')
-        changed_by = data.get('changed_by', 'System')
-        effective_from = data.get('effective_from')
-        
-        if not updates:
-            return jsonify({'success': False, 'error': 'No updates provided'}), 400
-        
-        # Parse effective_from date if provided
-        if effective_from:
-            try:
-                effective_from = datetime.strptime(effective_from, '%Y-%m-%d').date()
-            except:
-                effective_from = datetime.now().date()
-        else:
-            effective_from = datetime.now().date()
-        
-        # Begin transaction
-        cur.execute("BEGIN")
-        
-        successful_updates = []
-        failed_updates = []
-        
-        for update in updates:
-            element_id = update.get('element_id')
-            new_rate = safe_decimal(update.get('new_rate'))
-            
-            if not element_id or new_rate is None:
-                failed_updates.append({
-                    'element_id': element_id,
-                    'error': 'Missing element_id or new_rate'
-                })
-                continue
-            
-            try:
-                # Get current rate
-                cur.execute("""
-                    SELECT element_name, default_rate 
-                    FROM cost_elements_master 
-                    WHERE element_id = %s AND is_active = true
-                """, (element_id,))
-                
-                result = cur.fetchone()
-                if not result:
-                    failed_updates.append({
-                        'element_id': element_id,
-                        'error': 'Element not found or inactive'
-                    })
-                    continue
-                
-                element_name, old_rate = result
-                
-                # Skip if rate hasn't changed
-                if float(old_rate) == float(new_rate):
-                    continue
-                
-                # Update the master table
-                cur.execute("""
-                    UPDATE cost_elements_master
-                    SET default_rate = %s,
-                        updated_at = CURRENT_TIMESTAMP,
-                        created_by = %s
-                    WHERE element_id = %s
-                """, (float(new_rate), changed_by, element_id))
-                
-                # Add to rate history
-                cur.execute("""
-                    INSERT INTO cost_element_rate_history (
-                        element_id, old_rate, new_rate,
-                        effective_from, changed_by, change_reason
-                    ) VALUES (%s, %s, %s, %s, %s, %s)
-                """, (
-                    element_id,
-                    float(old_rate),
-                    float(new_rate),
-                    effective_from,
-                    changed_by,
-                    reason
-                ))
-                
-                successful_updates.append({
-                    'element_id': element_id,
-                    'element_name': element_name,
-                    'old_rate': float(old_rate),
-                    'new_rate': float(new_rate),
-                    'percentage_change': round(((float(new_rate) - float(old_rate)) / float(old_rate) * 100) if float(old_rate) > 0 else 0, 2)
-                })
-                
-            except Exception as e:
-                failed_updates.append({
-                    'element_id': element_id,
-                    'error': str(e)
-                })
-        
-        # Commit transaction
-        conn.commit()
-        
-        return jsonify({
-            'success': True,
-            'successful_updates': successful_updates,
-            'failed_updates': failed_updates,
-            'summary': {
-                'total_attempted': len(updates),
-                'successful': len(successful_updates),
-                'failed': len(failed_updates)
-            },
-            'message': f'Successfully updated {len(successful_updates)} cost elements'
-        })
-        
-    except Exception as e:
-        conn.rollback()
-        return jsonify({'success': False, 'error': str(e)}), 500
-    finally:
-        close_connection(conn, cur)
+    """
+    Bulk update cost element rates.
+    Note: This is kept for compatibility but users should use Masters for rate updates.
+    This endpoint will proxy to Masters in future versions.
+    """
+    return jsonify({
+        'success': False,
+        'message': 'Bulk rate updates should be performed through Masters module',
+        'redirect_url': '/api/masters/cost_elements/bulk_update',
+        'configuration_url': '/masters?tab=cost_elements'
+    }), 301
 
 
 @cost_management_bp.route('/api/cost_elements/<int:element_id>/rate_history', methods=['GET'])
