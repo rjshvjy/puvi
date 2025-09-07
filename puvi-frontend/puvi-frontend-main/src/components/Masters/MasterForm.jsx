@@ -518,6 +518,7 @@ const MasterForm = ({
   const [suppliers, setSuppliers] = useState([]);
   const [packageSizes, setPackageSizes] = useState([]);
   const [alert, setAlert] = useState(null);
+  const [packageSizesLoaded, setPackageSizesLoaded] = useState(false);
   const [expandedGuidelines, setExpandedGuidelines] = useState({
     'supplier-short-code': true,
     'material-short-code': true,
@@ -587,7 +588,7 @@ const MasterForm = ({
       setAlert(null);
       setDynamicOptions({});
       setLoadingDynamicOptions({});
-      setPackageSizesLoaded(false); // Reset loaded state
+      if (masterType === 'cost_elements') setPackageSizesLoaded(false); // Reset only for cost elements
     }
   }, [masterType, editData, isOpen]);
   
@@ -773,9 +774,11 @@ const MasterForm = ({
         name: size.size_name,  // Note: it's size_name not name
         code: size.size_code
       })));
+      setPackageSizesLoaded(true);
     } catch (error) {
       console.error('Failed to load package sizes:', error);
       setPackageSizes([]);
+      setPackageSizesLoaded(true); // avoid endless "Loading..." UI on error
     }
   };
   
