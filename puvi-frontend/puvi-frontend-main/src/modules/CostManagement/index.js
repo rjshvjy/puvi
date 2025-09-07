@@ -1,10 +1,11 @@
 // Cost Management Module - Reporting Dashboard
 // File Path: puvi-frontend/puvi-frontend-main/src/modules/CostManagement/index.js
-// Purpose: Cost reporting, validation, and master rate management (Phase 1 - Warnings Only)
+// Purpose: Cost reporting, validation, and master rate viewing (Phase 2 - Configuration moved to Masters)
+// Version: 2.0 - Post-consolidation (Analytics Only)
 
 import React, { useState, useEffect } from 'react';
 import api from '../../services/api';
-import CostElementsManager from './CostElementsManager'; // Added for CRUD integration
+import CostElementsManager from './CostElementsManager'; // Analytics-only component
 import { formatDateToDDMMYYYY, extractDateFromBatchCode } from '../../utils/dateUtils';
 import './CostManagement.css';
 
@@ -21,10 +22,8 @@ const CostManagement = () => {
     recentBatches: []
   });
   
-  // Master rates state
+  // Master rates state (read-only now)
   const [costElements, setCostElements] = useState([]);
-  const [editingElement, setEditingElement] = useState(null);
-  const [newRate, setNewRate] = useState('');
   
   // Batch analysis state
   const [batches, setBatches] = useState([]);
@@ -103,13 +102,14 @@ const CostManagement = () => {
     }
   };
 
-  // Master rates functions
+  // Master rates functions - UPDATED to use Masters endpoint
   const loadCostElements = async () => {
     try {
       setLoading(true);
-      const response = await api.costManagement.getCostElementsMaster();
+      // Changed to use Masters endpoint directly
+      const response = await api.masters.getCostElements();
       if (response.success) {
-        setCostElements(response.cost_elements);
+        setCostElements(response.records || response.data || response.cost_elements || []);
       }
     } catch (error) {
       setMessage(`Error loading cost elements: ${error.message}`);
@@ -118,24 +118,7 @@ const CostManagement = () => {
     }
   };
 
-  const handleRateUpdate = async (elementId) => {
-    if (!newRate || parseFloat(newRate) <= 0) {
-      setMessage('Please enter a valid rate');
-      return;
-    }
-    
-    try {
-      // Note: Backend endpoint for rate update would need to be implemented
-      setMessage(`✅ Rate updated for element ${elementId} to ₹${newRate}`);
-      setEditingElement(null);
-      setNewRate('');
-      loadCostElements(); // Reload
-    } catch (error) {
-      setMessage(`Error updating rate: ${error.message}`);
-    }
-  };
-
-  // Batch analysis functions - UPDATED with date formatting
+  // Batch analysis functions
   const loadBatches = async () => {
     try {
       setLoading(true);
@@ -145,7 +128,6 @@ const CostManagement = () => {
         const formattedBatches = response.batches.map(batch => ({
           ...batch,
           production_date: formatDateToDDMMYYYY(batch.production_date),
-          // Clean display text - remove any (Invalid Date) suffixes
           display_date: formatDateToDDMMYYYY(batch.production_date)
         }));
         setBatches(formattedBatches);
@@ -234,7 +216,7 @@ const CostManagement = () => {
     }
   };
 
-  // Helper functions - UPDATED with centralized date utility
+  // Helper functions
   const formatDate = (dateStr) => {
     return formatDateToDDMMYYYY(dateStr);
   };
@@ -247,6 +229,18 @@ const CostManagement = () => {
     if (missingCount === 0) return 'success';
     if (missingCount <= 2) return 'warning';
     return 'danger';
+  };
+
+  const getCategoryColor = (category) => {
+    const colors = {
+      'Labor': '#d4edda',
+      'Utilities': '#cce5ff',
+      'Consumables': '#fff3cd',
+      'Materials': '#f8d7da',
+      'Equipment': '#e2e3e5',
+      'Quality': '#d1ecf1'
+    };
+    return colors[category] || '#e9ecef';
   };
 
   const styles = {
@@ -274,8 +268,8 @@ const CostManagement = () => {
     phaseIndicator: {
       display: 'inline-block',
       padding: '4px 12px',
-      backgroundColor: '#fff3cd',
-      color: '#856404',
+      backgroundColor: '#d4edda',
+      color: '#155724',
       borderRadius: '4px',
       fontSize: '12px',
       fontWeight: '600',
@@ -344,6 +338,44 @@ const CostManagement = () => {
       color: '#6c757d',
       textTransform: 'uppercase',
       letterSpacing: '0.5px'
+    },
+    // NEW: Configuration banner styles
+    configBanner: {
+      padding: '20px',
+      marginBottom: '25px',
+      backgroundColor: '#e3f2fd',
+      borderRadius: '8px',
+      border: '2px solid #2196f3',
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center'
+    },
+    bannerText: {
+      flex: 1
+    },
+    bannerTitle: {
+      fontSize: '18px',
+      fontWeight: '600',
+      color: '#1565c0',
+      marginBottom: '5px'
+    },
+    bannerMessage: {
+      fontSize: '14px',
+      color: '#424242'
+    },
+    configButton: {
+      padding: '12px 24px',
+      backgroundColor: '#2196f3',
+      color: 'white',
+      border: 'none',
+      borderRadius: '6px',
+      cursor: 'pointer',
+      fontSize: '15px',
+      fontWeight: '600',
+      transition: 'background-color 0.2s',
+      '&:hover': {
+        backgroundColor: '#1976d2'
+      }
     },
     // Table styles
     table: {
@@ -435,10 +467,10 @@ const CostManagement = () => {
       <div style={styles.header}>
         <h2 style={styles.title}>
           📊 Cost Management Dashboard
-          <span style={styles.phaseIndicator}>PHASE 1 - Warnings Only</span>
+          <span style={styles.phaseIndicator}>PHASE 2 - Analytics & Monitoring</span>
         </h2>
         <p style={styles.subtitle}>
-          Monitor costs, validate batches, and manage master rates. Operations are not blocked in Phase 1.
+          Monitor costs, validate batches, and analyze trends. Configuration has moved to Masters module.
         </p>
       </div>
 
@@ -514,7 +546,7 @@ const CostManagement = () => {
           </div>
         )}
 
-        {/* Dashboard Tab - UPDATED with date formatting */}
+        {/* Dashboard Tab */}
         {activeTab === 'dashboard' && !loading && (
           <div>
             {/* Stats Cards */}
@@ -541,7 +573,7 @@ const CostManagement = () => {
               </div>
             </div>
 
-            {/* Recent Batches - UPDATED with date formatting */}
+            {/* Recent Batches */}
             <div style={styles.card}>
               <h3 style={styles.cardTitle}>📅 Recent Production Batches</h3>
               <table style={styles.table}>
@@ -601,23 +633,35 @@ const CostManagement = () => {
               <ul style={{ marginTop: '10px', marginBottom: 0 }}>
                 <li>Review batches with warnings in the Validation tab</li>
                 <li>Check cost trends to identify anomalies</li>
-                <li>Update master rates if market prices have changed</li>
+                <li>View current master rates (configuration in Masters module)</li>
                 <li>Analyze batch costs for optimization opportunities</li>
               </ul>
             </div>
           </div>
         )}
 
-        {/* Master Rates Tab */}
+        {/* Master Rates Tab - UPDATED to be read-only with redirect */}
         {activeTab === 'master' && !loading && (
           <div>
-            <div style={styles.infoBox}>
-              <strong>💡 Master Cost Elements</strong>
-              <p style={{ marginTop: '5px', marginBottom: 0 }}>
-                These are the default rates used across all modules. Changes here affect future batches only.
-              </p>
+            <div style={styles.configBanner}>
+              <div style={styles.bannerText}>
+                <div style={styles.bannerTitle}>
+                  📍 Cost Element Configuration Has Moved
+                </div>
+                <div style={styles.bannerMessage}>
+                  To add, edit, or manage cost elements and rates, please use the Masters module.
+                  This dashboard now focuses on monitoring and analytics only.
+                </div>
+              </div>
+              <button
+                style={styles.configButton}
+                onClick={() => window.location.href = '/masters?tab=cost_elements'}
+              >
+                Go to Masters Configuration →
+              </button>
             </div>
 
+            {/* Read-only rates table */}
             <table style={styles.table}>
               <thead>
                 <tr>
@@ -626,24 +670,17 @@ const CostManagement = () => {
                   <th style={styles.th}>Unit Type</th>
                   <th style={styles.th}>Current Rate</th>
                   <th style={styles.th}>Method</th>
-                  <th style={styles.th}>Required</th>
-                  <th style={styles.th}>Actions</th>
+                  <th style={styles.th}>Type</th>
                 </tr>
               </thead>
               <tbody>
                 {costElements.map(element => (
                   <tr key={element.element_id}>
-                    <td style={styles.td}>
-                      <strong>{element.element_name}</strong>
-                    </td>
+                    <td style={styles.td}><strong>{element.element_name}</strong></td>
                     <td style={styles.td}>
                       <span style={{
                         ...styles.badge,
-                        backgroundColor: 
-                          element.category === 'Labor' ? '#d4edda' :
-                          element.category === 'Utilities' ? '#cce5ff' :
-                          element.category === 'Consumables' ? '#fff3cd' :
-                          '#e9ecef',
+                        backgroundColor: getCategoryColor(element.category),
                         color: '#495057'
                       }}>
                         {element.category}
@@ -651,66 +688,30 @@ const CostManagement = () => {
                     </td>
                     <td style={styles.td}>{element.unit_type}</td>
                     <td style={styles.td}>
-                      {editingElement === element.element_id ? (
-                        <input
-                          type="number"
-                          value={newRate}
-                          onChange={(e) => setNewRate(e.target.value)}
-                          style={{ width: '100px', padding: '4px' }}
-                          placeholder={element.default_rate}
-                        />
-                      ) : (
-                        <strong>₹{element.default_rate.toFixed(2)}</strong>
-                      )}
+                      <strong>₹{(element.default_rate || 0).toFixed(2)}</strong>
                     </td>
                     <td style={styles.td}>{element.calculation_method}</td>
                     <td style={styles.td}>
-                      {element.is_optional ? (
-                        <span style={{ color: '#ffc107' }}>Optional</span>
-                      ) : (
+                      {element.is_optional ? 
+                        <span style={{ color: '#ffc107' }}>Optional</span> : 
                         <span style={{ color: '#28a745' }}>Required</span>
-                      )}
-                    </td>
-                    <td style={styles.td}>
-                      {editingElement === element.element_id ? (
-                        <>
-                          <button
-                            style={{...styles.button, padding: '4px 8px', fontSize: '12px'}}
-                            onClick={() => handleRateUpdate(element.element_id)}
-                          >
-                            Save
-                          </button>
-                          {' '}
-                          <button
-                            style={{...styles.secondaryButton, padding: '4px 8px', fontSize: '12px'}}
-                            onClick={() => {
-                              setEditingElement(null);
-                              setNewRate('');
-                            }}
-                          >
-                            Cancel
-                          </button>
-                        </>
-                      ) : (
-                        <button
-                          style={{...styles.button, padding: '4px 12px', fontSize: '13px'}}
-                          onClick={() => {
-                            setEditingElement(element.element_id);
-                            setNewRate(element.default_rate.toString());
-                          }}
-                        >
-                          Edit Rate
-                        </button>
-                      )}
+                      }
                     </td>
                   </tr>
                 ))}
               </tbody>
             </table>
+
+            <div style={styles.infoBox}>
+              <strong>💡 Viewing Master Cost Elements</strong>
+              <p style={{ marginTop: '5px', marginBottom: 0 }}>
+                These are the current default rates used across all modules. Changes can only be made in the Masters module.
+              </p>
+            </div>
           </div>
         )}
 
-        {/* Batch Analysis Tab - UPDATED with proper date formatting */}
+        {/* Batch Analysis Tab */}
         {activeTab === 'analysis' && !loading && (
           <div>
             <div style={styles.card}>
@@ -745,7 +746,7 @@ const CostManagement = () => {
 
             {batchCostDetails && (
               <>
-                {/* Batch Summary - UPDATED with date formatting */}
+                {/* Batch Summary */}
                 <div style={styles.card}>
                   <h3 style={styles.cardTitle}>📋 Batch Summary</h3>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
@@ -799,10 +800,7 @@ const CostManagement = () => {
                             <td style={styles.td}>
                               <span style={{
                                 ...styles.badge,
-                                backgroundColor: 
-                                  cost.category === 'Labor' ? '#d4edda' :
-                                  cost.category === 'Utilities' ? '#cce5ff' :
-                                  '#fff3cd',
+                                backgroundColor: getCategoryColor(cost.category),
                                 color: '#495057'
                               }}>
                                 {cost.category}
@@ -907,7 +905,7 @@ const CostManagement = () => {
                   <div style={styles.warningBox}>
                     <strong>Found {validationReport.length} batches with missing cost elements</strong>
                     <p style={{ marginTop: '5px', marginBottom: 0, fontSize: '13px' }}>
-                      Phase 1 Mode: These are warnings only. Operations are not blocked.
+                      Review these batches to ensure complete cost capture.
                     </p>
                   </div>
 
@@ -1067,7 +1065,7 @@ const CostManagement = () => {
           </div>
         )}
 
-        {/* Cost Elements Tab - NEW ADDITION */}
+        {/* Cost Elements Tab - Analytics Only */}
         {activeTab === 'elements' && (
           <CostElementsManager embedded={false} />
         )}
