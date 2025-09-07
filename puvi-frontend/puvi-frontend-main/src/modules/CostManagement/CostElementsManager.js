@@ -1,11 +1,11 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/modules/CostManagement/CostElementsManager.js
-// Purpose: Comprehensive cost elements management with CRUD, bulk operations, and analytics
-// This file consolidates patterns from all modules to minimize dependencies in next session
+// Purpose: Cost elements monitoring, validation, and analytics (Configuration moved to Masters)
+// Version: 2.0 - Post-consolidation (Analytics Only)
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 
 // =====================================================
-// API CONFIGURATION - Consolidated from api/index.js
+// API CONFIGURATION
 // =====================================================
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://puvi-backend.onrender.com';
 
@@ -29,93 +29,44 @@ const apiCall = async (url, options = {}) => {
   }
 };
 
-// Cost Management API endpoints
+// Analytics-only API endpoints (no CRUD)
 const costAPI = {
-  // Masters CRUD endpoints
-  getAll: (params) => apiCall('/api/masters/cost_elements' + (params ? `?${new URLSearchParams(params)}` : '')),
-  getById: (id) => apiCall(`/api/masters/cost_elements/${id}`),
-  create: (data) => apiCall('/api/masters/cost_elements', { method: 'POST', body: JSON.stringify(data) }),
-  update: (id, data) => apiCall(`/api/masters/cost_elements/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
-  delete: (id) => apiCall(`/api/masters/cost_elements/${id}`, { method: 'DELETE' }),
-  restore: (id) => apiCall(`/api/masters/cost_elements/${id}/restore`, { method: 'POST' }),
-  checkDependencies: (id) => apiCall(`/api/masters/cost_elements/${id}/dependencies`),
-  export: (params) => apiCall('/api/masters/cost_elements/export' + (params ? `?${new URLSearchParams(params)}` : '')),
-  import: (data) => apiCall('/api/masters/cost_elements/import', { method: 'POST', body: JSON.stringify(data) }),
-  
-  // Cost management specific endpoints
-  getMaster: () => apiCall('/api/cost_elements/master'),
-  getByActivity: (activity, module) => apiCall(`/api/cost_elements/by_activity?activity=${activity}&module=${module}`),
+  // Monitoring & Analytics endpoints
+  getValidationReport: (days = 30) => apiCall(`/api/cost_elements/validation_report?days=${days}`),
+  getUsageStats: () => apiCall('/api/cost_elements/usage_stats'),
+  getBatchSummary: (batchId) => apiCall(`/api/cost_elements/batch_summary/${batchId}`),
+  getByActivity: (activity, module = 'batch') => 
+    apiCall(`/api/cost_elements/by_activity?activity=${activity}&module=${module}`),
   getByStage: (stage) => apiCall(`/api/cost_elements/by_stage?stage=${stage}`),
-  getValidationReport: (days) => apiCall(`/api/cost_elements/validation_report?days=${days}`),
-  bulkUpdateRates: (data) => apiCall('/api/cost_elements/bulk_update', { method: 'POST', body: JSON.stringify(data) }),
-  getRateHistory: (elementId) => apiCall(`/api/cost_elements/${elementId}/rate_history`),
-  getUsageStats: () => apiCall('/api/cost_elements/usage_stats')
+  
+  // Configuration info endpoint
+  getConfigInfo: () => apiCall('/api/cost_elements/configure')
 };
 
 // =====================================================
-// MAIN COMPONENT
+// MAIN COMPONENT - ANALYTICS ONLY
 // =====================================================
-const CostElementsManager = ({ embedded = false, onClose = null }) => {
+const CostElementsManager = ({ embedded = false }) => {
   // State Management
-  const [activeView, setActiveView] = useState('dashboard'); // dashboard, list, form, bulk, history
+  const [activeView, setActiveView] = useState('dashboard');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
-  const [messageType, setMessageType] = useState('info'); // info, success, warning, error
+  const [messageType, setMessageType] = useState('info');
   
-  // Data states
-  const [costElements, setCostElements] = useState([]);
-  const [filteredElements, setFilteredElements] = useState([]);
-  const [selectedElement, setSelectedElement] = useState(null);
-  const [editingElement, setEditingElement] = useState(null);
+  // Analytics data
+  const [validationReport, setValidationReport] = useState([]);
+  const [usageStats, setUsageStats] = useState([]);
   const [statistics, setStatistics] = useState({
     totalElements: 0,
-    activeElements: 0,
-    byCategory: {},
-    byActivity: {},
-    recentChanges: [],
-    validationWarnings: []
+    totalUsage: 0,
+    totalCostIncurred: 0,
+    elementsNeverUsed: 0,
+    batchesWithWarnings: 0,
+    categorySummary: []
   });
-  
-  // Filter states
-  const [filters, setFilters] = useState({
-    search: '',
-    category: 'all',
-    activity: 'all',
-    module: 'all',
-    isOptional: 'all',
-    showInactive: false
-  });
-  
-  // Form states
-  const [formData, setFormData] = useState({
-    element_name: '',
-    category: 'Labor',
-    activity: 'General',
-    unit_type: 'per_kg',
-    default_rate: '',
-    calculation_method: 'per_kg',
-    is_optional: false,
-    applicable_to: 'all',
-    display_order: 0,
-    module_specific: '',
-    notes: ''
-  });
-  
-  // Bulk operation states
-  const [bulkMode, setBulkMode] = useState(false);
-  const [selectedIds, setSelectedIds] = useState([]);
-  const [bulkAction, setBulkAction] = useState('');
-  
-  // Pagination
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(20);
-  
-  // Configuration from backend
-  const categories = ['Labor', 'Utilities', 'Consumables', 'Transport', 'Quality', 'Maintenance', 'Overhead', 'Fixed', 'Variable'];
-  const activities = ['Drying', 'Crushing', 'Filtering', 'Common', 'Quality', 'Transport', 'Maintenance', 'General'];
-  const unitTypes = ['per_kg', 'per_hour', 'per_bag', 'per_unit', 'fixed', 'percentage', 'actual'];
-  const calculationMethods = ['per_kg', 'per_hour', 'per_bag', 'fixed', 'actual', 'formula'];
-  const modules = ['all', 'batch', 'sku', 'blend', 'sales'];
+  const [selectedBatchId, setSelectedBatchId] = useState(null);
+  const [batchSummary, setBatchSummary] = useState(null);
+  const [reportPeriod, setReportPeriod] = useState(30);
 
   // =====================================================
   // LIFECYCLE & DATA LOADING
@@ -125,16 +76,19 @@ const CostElementsManager = ({ embedded = false, onClose = null }) => {
   }, []);
 
   useEffect(() => {
-    applyFilters();
-  }, [filters, costElements]);
+    if (activeView === 'validation') {
+      loadValidationReport();
+    } else if (activeView === 'usage') {
+      loadUsageStats();
+    }
+  }, [activeView, reportPeriod]);
 
   const loadInitialData = async () => {
     try {
       setLoading(true);
       await Promise.all([
-        loadCostElements(),
-        loadStatistics(),
-        loadValidationReport()
+        loadValidationReport(),
+        loadUsageStats()
       ]);
     } catch (error) {
       showMessage(`Error loading data: ${error.message}`, 'error');
@@ -143,55 +97,14 @@ const CostElementsManager = ({ embedded = false, onClose = null }) => {
     }
   };
 
-  const loadCostElements = async () => {
-    try {
-      const response = await costAPI.getAll({ include_inactive: filters.showInactive });
-      if (response.success) {
-        setCostElements(response.data || response.cost_elements || []);
-      }
-    } catch (error) {
-      console.error('Error loading cost elements:', error);
-      throw error;
-    }
-  };
-
-  const loadStatistics = async () => {
-    try {
-      const [master, usage, validation] = await Promise.all([
-        costAPI.getMaster(),
-        costAPI.getUsageStats().catch(() => ({ usage_stats: [] })),
-        costAPI.getValidationReport(7)
-      ]);
-      
-      // Process statistics
-      const stats = {
-        totalElements: master.cost_elements?.length || 0,
-        activeElements: master.cost_elements?.filter(e => !e.is_optional).length || 0,
-        byCategory: {},
-        byActivity: {},
-        recentChanges: [],
-        validationWarnings: validation.batches_with_warnings || []
-      };
-      
-      // Count by category and activity
-      master.cost_elements?.forEach(element => {
-        stats.byCategory[element.category] = (stats.byCategory[element.category] || 0) + 1;
-        stats.byActivity[element.activity || 'General'] = (stats.byActivity[element.activity || 'General'] || 0) + 1;
-      });
-      
-      setStatistics(stats);
-    } catch (error) {
-      console.error('Error loading statistics:', error);
-    }
-  };
-
   const loadValidationReport = async () => {
     try {
-      const response = await costAPI.getValidationReport(30);
-      if (response.success && response.batches_with_warnings) {
+      const response = await costAPI.getValidationReport(reportPeriod);
+      if (response.success) {
+        setValidationReport(response.batches_with_warnings || []);
         setStatistics(prev => ({
           ...prev,
-          validationWarnings: response.batches_with_warnings
+          batchesWithWarnings: response.total_batches_with_warnings || 0
         }));
       }
     } catch (error) {
@@ -199,201 +112,35 @@ const CostElementsManager = ({ embedded = false, onClose = null }) => {
     }
   };
 
-  // =====================================================
-  // FILTERING & SEARCH
-  // =====================================================
-  const applyFilters = () => {
-    let filtered = [...costElements];
-    
-    // Search filter
-    if (filters.search) {
-      const searchLower = filters.search.toLowerCase();
-      filtered = filtered.filter(e => 
-        e.element_name.toLowerCase().includes(searchLower) ||
-        e.category?.toLowerCase().includes(searchLower) ||
-        e.activity?.toLowerCase().includes(searchLower)
-      );
-    }
-    
-    // Category filter
-    if (filters.category !== 'all') {
-      filtered = filtered.filter(e => e.category === filters.category);
-    }
-    
-    // Activity filter
-    if (filters.activity !== 'all') {
-      filtered = filtered.filter(e => e.activity === filters.activity);
-    }
-    
-    // Module filter
-    if (filters.module !== 'all') {
-      filtered = filtered.filter(e => 
-        e.applicable_to === filters.module || e.applicable_to === 'all'
-      );
-    }
-    
-    // Optional filter
-    if (filters.isOptional !== 'all') {
-      filtered = filtered.filter(e => e.is_optional === (filters.isOptional === 'optional'));
-    }
-    
-    // Active filter
-    if (!filters.showInactive) {
-      filtered = filtered.filter(e => e.is_active !== false);
-    }
-    
-    setFilteredElements(filtered);
-  };
-
-  // =====================================================
-  // CRUD OPERATIONS
-  // =====================================================
-  const handleCreate = async () => {
+  const loadUsageStats = async () => {
     try {
-      setLoading(true);
-      const response = await costAPI.create(formData);
+      const response = await costAPI.getUsageStats();
       if (response.success) {
-        showMessage('Cost element created successfully', 'success');
-        await loadCostElements();
-        setActiveView('list');
-        resetForm();
+        setUsageStats(response.usage_stats || []);
+        setStatistics(prev => ({
+          ...prev,
+          totalElements: response.summary?.total_elements || 0,
+          totalCostIncurred: response.summary?.total_cost_incurred || 0,
+          elementsNeverUsed: response.summary?.elements_never_used || 0,
+          categorySummary: response.category_summary || []
+        }));
       }
     } catch (error) {
-      showMessage(`Error creating element: ${error.message}`, 'error');
-    } finally {
-      setLoading(false);
+      console.error('Error loading usage stats:', error);
     }
   };
 
-  const handleUpdate = async () => {
-    if (!editingElement) return;
-    
+  const loadBatchSummary = async (batchId) => {
     try {
       setLoading(true);
-      const response = await costAPI.update(editingElement.element_id, formData);
+      const response = await costAPI.getBatchSummary(batchId);
       if (response.success) {
-        showMessage('Cost element updated successfully', 'success');
-        await loadCostElements();
-        setActiveView('list');
-        setEditingElement(null);
-        resetForm();
+        setBatchSummary(response.summary);
+        setSelectedBatchId(batchId);
+        setActiveView('batch-detail');
       }
     } catch (error) {
-      showMessage(`Error updating element: ${error.message}`, 'error');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleDelete = async (elementId) => {
-    if (!window.confirm('Are you sure you want to delete this cost element?')) return;
-    
-    try {
-      setLoading(true);
-      
-      // Check dependencies first
-      const deps = await costAPI.checkDependencies(elementId);
-      if (deps.has_dependencies && !deps.can_soft_delete) {
-        showMessage(`Cannot delete: ${deps.message}`, 'warning');
-        return;
-      }
-      
-      const response = await costAPI.delete(elementId);
-      if (response.success) {
-        showMessage('Cost element deleted successfully', 'success');
-        await loadCostElements();
-      }
-    } catch (error) {
-      showMessage(`Error deleting element: ${error.message}`, 'error');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleRestore = async (elementId) => {
-    try {
-      setLoading(true);
-      const response = await costAPI.restore(elementId);
-      if (response.success) {
-        showMessage('Cost element restored successfully', 'success');
-        await loadCostElements();
-      }
-    } catch (error) {
-      showMessage(`Error restoring element: ${error.message}`, 'error');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // =====================================================
-  // BULK OPERATIONS
-  // =====================================================
-  const handleBulkUpdate = async () => {
-    if (selectedIds.length === 0) {
-      showMessage('Please select elements to update', 'warning');
-      return;
-    }
-    
-    try {
-      setLoading(true);
-      const updates = selectedIds.map(id => ({
-        element_id: id,
-        rate: parseFloat(prompt('Enter new rate:') || 0)
-      }));
-      
-      const response = await costAPI.bulkUpdateRates({ updates });
-      if (response.success) {
-        showMessage(`Updated ${selectedIds.length} elements successfully`, 'success');
-        await loadCostElements();
-        setBulkMode(false);
-        setSelectedIds([]);
-      }
-    } catch (error) {
-      showMessage(`Error in bulk update: ${error.message}`, 'error');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleExport = async () => {
-    try {
-      setLoading(true);
-      const response = await costAPI.export({ 
-        format: 'csv',
-        include_inactive: filters.showInactive 
-      });
-      
-      // Create download link
-      const blob = new Blob([response.data], { type: 'text/csv' });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `cost_elements_${new Date().toISOString().split('T')[0]}.csv`;
-      a.click();
-      
-      showMessage('Export completed successfully', 'success');
-    } catch (error) {
-      showMessage(`Export failed: ${error.message}`, 'error');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleImport = async (file) => {
-    try {
-      setLoading(true);
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        const csv = e.target.result;
-        const response = await costAPI.import({ csv_data: csv });
-        if (response.success) {
-          showMessage(`Imported ${response.imported_count} elements successfully`, 'success');
-          await loadCostElements();
-        }
-      };
-      reader.readAsText(file);
-    } catch (error) {
-      showMessage(`Import failed: ${error.message}`, 'error');
+      showMessage(`Error loading batch details: ${error.message}`, 'error');
     } finally {
       setLoading(false);
     }
@@ -408,30 +155,13 @@ const CostElementsManager = ({ embedded = false, onClose = null }) => {
     setTimeout(() => setMessage(''), 5000);
   };
 
-  const resetForm = () => {
-    setFormData({
-      element_name: '',
-      category: 'Labor',
-      activity: 'General',
-      unit_type: 'per_kg',
-      default_rate: '',
-      calculation_method: 'per_kg',
-      is_optional: false,
-      applicable_to: 'all',
-      display_order: 0,
-      module_specific: '',
-      notes: ''
-    });
-  };
-
   const formatCurrency = (amount) => {
     return `₹${(amount || 0).toFixed(2)}`;
   };
 
   const formatDate = (dateStr) => {
     if (!dateStr) return '';
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('en-GB');
+    return dateStr; // Already formatted from backend
   };
 
   const getCategoryColor = (category) => {
@@ -449,22 +179,8 @@ const CostElementsManager = ({ embedded = false, onClose = null }) => {
     return colors[category] || '#f8f9fa';
   };
 
-  const getActivityColor = (activity) => {
-    const colors = {
-      'Drying': '#ffc107',
-      'Crushing': '#17a2b8',
-      'Filtering': '#6c757d',
-      'Common': '#28a745',
-      'Quality': '#6610f2',
-      'Transport': '#dc3545',
-      'Maintenance': '#fd7e14',
-      'General': '#6c757d'
-    };
-    return colors[activity] || '#6c757d';
-  };
-
   // =====================================================
-  // STYLES (Consolidated from all modules)
+  // STYLES
   // =====================================================
   const styles = {
     container: {
@@ -487,6 +203,47 @@ const CostElementsManager = ({ embedded = false, onClose = null }) => {
     subtitle: {
       fontSize: '14px',
       color: '#6c757d'
+    },
+    configBanner: {
+      padding: '20px',
+      marginBottom: '25px',
+      backgroundColor: '#e3f2fd',
+      borderRadius: '8px',
+      border: '2px solid #2196f3',
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center'
+    },
+    bannerText: {
+      flex: 1
+    },
+    bannerTitle: {
+      fontSize: '18px',
+      fontWeight: '600',
+      color: '#1565c0',
+      marginBottom: '5px'
+    },
+    bannerMessage: {
+      fontSize: '14px',
+      color: '#424242'
+    },
+    configButton: {
+      padding: '12px 24px',
+      backgroundColor: '#2196f3',
+      color: 'white',
+      border: 'none',
+      borderRadius: '6px',
+      cursor: 'pointer',
+      fontSize: '15px',
+      fontWeight: '600',
+      textDecoration: 'none',
+      display: 'inline-flex',
+      alignItems: 'center',
+      gap: '8px',
+      transition: 'background-color 0.2s',
+      '&:hover': {
+        backgroundColor: '#1976d2'
+      }
     },
     message: {
       padding: '15px',
@@ -559,23 +316,6 @@ const CostElementsManager = ({ embedded = false, onClose = null }) => {
       textTransform: 'uppercase',
       letterSpacing: '0.5px'
     },
-    filterBar: {
-      display: 'flex',
-      gap: '10px',
-      marginBottom: '20px',
-      padding: '15px',
-      backgroundColor: 'white',
-      borderRadius: '5px',
-      flexWrap: 'wrap',
-      alignItems: 'center'
-    },
-    filterInput: {
-      padding: '8px 12px',
-      border: '1px solid #ced4da',
-      borderRadius: '4px',
-      fontSize: '14px',
-      minWidth: '150px'
-    },
     table: {
       width: '100%',
       borderCollapse: 'collapse',
@@ -589,9 +329,7 @@ const CostElementsManager = ({ embedded = false, onClose = null }) => {
       backgroundColor: '#e9ecef',
       fontWeight: '600',
       fontSize: '14px',
-      color: '#495057',
-      position: 'sticky',
-      top: 0
+      color: '#495057'
     },
     td: {
       padding: '12px',
@@ -616,86 +354,32 @@ const CostElementsManager = ({ embedded = false, onClose = null }) => {
       fontWeight: '500',
       transition: 'background-color 0.2s'
     },
-    secondaryButton: {
-      padding: '8px 16px',
-      backgroundColor: '#6c757d',
-      color: 'white',
-      border: 'none',
-      borderRadius: '4px',
-      cursor: 'pointer',
-      fontSize: '14px',
-      fontWeight: '500'
-    },
-    dangerButton: {
-      padding: '8px 16px',
-      backgroundColor: '#dc3545',
-      color: 'white',
-      border: 'none',
-      borderRadius: '4px',
-      cursor: 'pointer',
-      fontSize: '14px',
-      fontWeight: '500'
-    },
-    form: {
+    card: {
       backgroundColor: 'white',
       padding: '20px',
       borderRadius: '8px',
+      marginBottom: '20px',
       boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
     },
-    formGroup: {
-      marginBottom: '15px'
-    },
-    formLabel: {
-      display: 'block',
-      marginBottom: '5px',
+    cardTitle: {
+      fontSize: '18px',
       fontWeight: '600',
-      color: '#495057',
-      fontSize: '14px'
+      marginBottom: '15px',
+      color: '#333'
     },
-    formInput: {
-      width: '100%',
-      padding: '10px',
-      border: '1px solid #ced4da',
-      borderRadius: '4px',
-      fontSize: '15px'
+    warningBox: {
+      padding: '15px',
+      backgroundColor: '#fff3cd',
+      borderRadius: '5px',
+      marginBottom: '20px',
+      borderLeft: '4px solid #ffc107'
     },
-    formSelect: {
-      width: '100%',
-      padding: '10px',
-      border: '1px solid #ced4da',
-      borderRadius: '4px',
-      fontSize: '15px',
-      backgroundColor: 'white'
-    },
-    formCheckbox: {
-      marginRight: '8px',
-      width: '18px',
-      height: '18px'
-    },
-    formActions: {
-      display: 'flex',
-      gap: '10px',
-      marginTop: '20px',
-      paddingTop: '20px',
-      borderTop: '1px solid #dee2e6'
-    },
-    pagination: {
-      display: 'flex',
-      justifyContent: 'center',
-      gap: '5px',
-      marginTop: '20px'
-    },
-    pageButton: {
-      padding: '5px 10px',
-      border: '1px solid #dee2e6',
-      backgroundColor: 'white',
-      cursor: 'pointer',
-      borderRadius: '3px'
-    },
-    activePage: {
-      backgroundColor: '#007bff',
-      color: 'white',
-      borderColor: '#007bff'
+    infoBox: {
+      padding: '15px',
+      backgroundColor: '#e9ecef',
+      borderRadius: '5px',
+      marginBottom: '20px',
+      borderLeft: '4px solid #007bff'
     }
   };
 
@@ -711,526 +395,321 @@ const CostElementsManager = ({ embedded = false, onClose = null }) => {
           <div style={styles.statLabel}>Total Elements</div>
         </div>
         <div style={{...styles.statCard, borderLeftColor: '#28a745'}}>
-          <div style={styles.statValue}>{statistics.activeElements}</div>
-          <div style={styles.statLabel}>Required Elements</div>
+          <div style={styles.statValue}>{formatCurrency(statistics.totalCostIncurred)}</div>
+          <div style={styles.statLabel}>Total Cost Incurred</div>
         </div>
         <div style={{...styles.statCard, borderLeftColor: '#ffc107'}}>
-          <div style={styles.statValue}>{statistics.validationWarnings.length}</div>
-          <div style={styles.statLabel}>Validation Warnings</div>
+          <div style={styles.statValue}>{statistics.batchesWithWarnings}</div>
+          <div style={styles.statLabel}>Batches with Warnings</div>
         </div>
-        <div style={{...styles.statCard, borderLeftColor: '#17a2b8'}}>
-          <div style={styles.statValue}>{Object.keys(statistics.byCategory).length}</div>
-          <div style={styles.statLabel}>Categories</div>
-        </div>
-      </div>
-
-      {/* Category Distribution */}
-      <div style={{ marginBottom: '30px' }}>
-        <h3 style={{ fontSize: '18px', marginBottom: '15px' }}>📊 Elements by Category</h3>
-        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-          {Object.entries(statistics.byCategory).map(([category, count]) => (
-            <div
-              key={category}
-              style={{
-                ...styles.badge,
-                backgroundColor: getCategoryColor(category),
-                color: '#495057',
-                padding: '8px 12px',
-                fontSize: '14px'
-              }}
-            >
-              {category}: {count}
-            </div>
-          ))}
+        <div style={{...styles.statCard, borderLeftColor: '#dc3545'}}>
+          <div style={styles.statValue}>{statistics.elementsNeverUsed}</div>
+          <div style={styles.statLabel}>Unused Elements</div>
         </div>
       </div>
 
-      {/* Activity Distribution */}
-      <div style={{ marginBottom: '30px' }}>
-        <h3 style={{ fontSize: '18px', marginBottom: '15px' }}>🎯 Elements by Activity</h3>
-        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-          {Object.entries(statistics.byActivity).map(([activity, count]) => (
-            <div
-              key={activity}
-              style={{
-                ...styles.badge,
-                backgroundColor: getActivityColor(activity),
-                color: 'white',
-                padding: '8px 12px',
-                fontSize: '14px'
-              }}
-            >
-              {activity}: {count}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Validation Warnings */}
-      {statistics.validationWarnings.length > 0 && (
-        <div style={{ backgroundColor: '#fff3cd', padding: '15px', borderRadius: '5px' }}>
-          <h3 style={{ fontSize: '16px', marginBottom: '10px' }}>
-            ⚠️ Recent Batches with Missing Cost Elements
-          </h3>
-          <ul style={{ marginBottom: 0 }}>
-            {statistics.validationWarnings.slice(0, 5).map((batch, idx) => (
-              <li key={idx}>
-                {batch.batch_code} - {batch.missing_count} elements missing
-                ({batch.production_date})
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
-    </div>
-  );
-
-  const renderList = () => {
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    const paginatedElements = filteredElements.slice(startIndex, endIndex);
-    const totalPages = Math.ceil(filteredElements.length / itemsPerPage);
-
-    return (
-      <div>
-        {/* Filter Bar */}
-        <div style={styles.filterBar}>
-          <input
-            type="text"
-            placeholder="Search elements..."
-            style={styles.filterInput}
-            value={filters.search}
-            onChange={(e) => setFilters({...filters, search: e.target.value})}
-          />
-          <select
-            style={styles.filterInput}
-            value={filters.category}
-            onChange={(e) => setFilters({...filters, category: e.target.value})}
-          >
-            <option value="all">All Categories</option>
-            {categories.map(cat => (
-              <option key={cat} value={cat}>{cat}</option>
-            ))}
-          </select>
-          <select
-            style={styles.filterInput}
-            value={filters.activity}
-            onChange={(e) => setFilters({...filters, activity: e.target.value})}
-          >
-            <option value="all">All Activities</option>
-            {activities.map(act => (
-              <option key={act} value={act}>{act}</option>
-            ))}
-          </select>
-          <select
-            style={styles.filterInput}
-            value={filters.module}
-            onChange={(e) => setFilters({...filters, module: e.target.value})}
-          >
-            <option value="all">All Modules</option>
-            {modules.map(mod => (
-              <option key={mod} value={mod}>{mod}</option>
-            ))}
-          </select>
-          <select
-            style={styles.filterInput}
-            value={filters.isOptional}
-            onChange={(e) => setFilters({...filters, isOptional: e.target.value})}
-          >
-            <option value="all">All Types</option>
-            <option value="required">Required Only</option>
-            <option value="optional">Optional Only</option>
-          </select>
-          <label style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-            <input
-              type="checkbox"
-              checked={filters.showInactive}
-              onChange={(e) => setFilters({...filters, showInactive: e.target.checked})}
-            />
-            Show Inactive
-          </label>
-          {bulkMode && (
-            <button
-              style={styles.secondaryButton}
-              onClick={handleBulkUpdate}
-              disabled={selectedIds.length === 0}
-            >
-              Update Selected ({selectedIds.length})
-            </button>
-          )}
-        </div>
-
-        {/* Actions Bar */}
-        <div style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>
-          <button
-            style={styles.button}
-            onClick={() => {
-              resetForm();
-              setActiveView('form');
-            }}
-          >
-            ➕ Add New Element
-          </button>
-          <button
-            style={styles.secondaryButton}
-            onClick={() => setBulkMode(!bulkMode)}
-          >
-            {bulkMode ? '✖ Cancel Bulk' : '☑️ Bulk Mode'}
-          </button>
-          <button
-            style={styles.secondaryButton}
-            onClick={handleExport}
-          >
-            📥 Export CSV
-          </button>
-          <label style={styles.secondaryButton}>
-            📤 Import CSV
-            <input
-              type="file"
-              accept=".csv"
-              style={{ display: 'none' }}
-              onChange={(e) => e.target.files[0] && handleImport(e.target.files[0])}
-            />
-          </label>
-        </div>
-
-        {/* Table */}
-        <div style={{ overflowX: 'auto' }}>
+      {/* Category Summary */}
+      {statistics.categorySummary.length > 0 && (
+        <div style={styles.card}>
+          <h3 style={styles.cardTitle}>📊 Cost by Category</h3>
           <table style={styles.table}>
             <thead>
               <tr>
-                {bulkMode && (
-                  <th style={styles.th}>
-                    <input
-                      type="checkbox"
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          setSelectedIds(paginatedElements.map(e => e.element_id));
-                        } else {
-                          setSelectedIds([]);
-                        }
-                      }}
-                    />
-                  </th>
-                )}
-                <th style={styles.th}>Element Name</th>
                 <th style={styles.th}>Category</th>
-                <th style={styles.th}>Activity</th>
-                <th style={styles.th}>Unit Type</th>
-                <th style={styles.th}>Default Rate</th>
-                <th style={styles.th}>Method</th>
-                <th style={styles.th}>Type</th>
-                <th style={styles.th}>Module</th>
-                <th style={styles.th}>Status</th>
-                <th style={styles.th}>Actions</th>
+                <th style={styles.th}>Element Count</th>
+                <th style={styles.th}>Total Uses</th>
+                <th style={styles.th}>Total Cost</th>
               </tr>
             </thead>
             <tbody>
-              {paginatedElements.map(element => (
-                <tr key={element.element_id}>
-                  {bulkMode && (
-                    <td style={styles.td}>
-                      <input
-                        type="checkbox"
-                        checked={selectedIds.includes(element.element_id)}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setSelectedIds([...selectedIds, element.element_id]);
-                          } else {
-                            setSelectedIds(selectedIds.filter(id => id !== element.element_id));
-                          }
-                        }}
-                      />
-                    </td>
-                  )}
-                  <td style={styles.td}>
-                    <strong>{element.element_name}</strong>
-                  </td>
+              {statistics.categorySummary.map((cat, idx) => (
+                <tr key={idx}>
                   <td style={styles.td}>
                     <span style={{
                       ...styles.badge,
-                      backgroundColor: getCategoryColor(element.category),
+                      backgroundColor: getCategoryColor(cat.category),
                       color: '#495057'
                     }}>
-                      {element.category}
+                      {cat.category}
                     </span>
                   </td>
+                  <td style={styles.td}>{cat.element_count}</td>
+                  <td style={styles.td}>{cat.total_uses}</td>
                   <td style={styles.td}>
-                    <span style={{
-                      ...styles.badge,
-                      backgroundColor: getActivityColor(element.activity || 'General'),
-                      color: 'white'
-                    }}>
-                      {element.activity || 'General'}
-                    </span>
-                  </td>
-                  <td style={styles.td}>{element.unit_type}</td>
-                  <td style={styles.td}>
-                    <strong>{formatCurrency(element.default_rate)}</strong>
-                  </td>
-                  <td style={styles.td}>{element.calculation_method}</td>
-                  <td style={styles.td}>
-                    {element.is_optional ? (
-                      <span style={{ color: '#ffc107' }}>Optional</span>
-                    ) : (
-                      <span style={{ color: '#28a745' }}>Required</span>
-                    )}
-                  </td>
-                  <td style={styles.td}>{element.applicable_to}</td>
-                  <td style={styles.td}>
-                    {element.is_active !== false ? (
-                      <span style={{ color: '#28a745' }}>✓ Active</span>
-                    ) : (
-                      <span style={{ color: '#dc3545' }}>✗ Inactive</span>
-                    )}
-                  </td>
-                  <td style={styles.td}>
-                    <div style={{ display: 'flex', gap: '5px' }}>
-                      <button
-                        style={{ ...styles.button, padding: '4px 8px', fontSize: '12px' }}
-                        onClick={() => {
-                          setEditingElement(element);
-                          setFormData(element);
-                          setActiveView('form');
-                        }}
-                      >
-                        Edit
-                      </button>
-                      {element.is_active !== false ? (
-                        <button
-                          style={{ ...styles.dangerButton, padding: '4px 8px', fontSize: '12px' }}
-                          onClick={() => handleDelete(element.element_id)}
-                        >
-                          Delete
-                        </button>
-                      ) : (
-                        <button
-                          style={{ ...styles.secondaryButton, padding: '4px 8px', fontSize: '12px' }}
-                          onClick={() => handleRestore(element.element_id)}
-                        >
-                          Restore
-                        </button>
-                      )}
-                    </div>
+                    <strong>{formatCurrency(cat.total_cost)}</strong>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
+      )}
 
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div style={styles.pagination}>
-            <button
-              style={styles.pageButton}
-              onClick={() => setCurrentPage(1)}
-              disabled={currentPage === 1}
-            >
-              First
-            </button>
-            <button
-              style={styles.pageButton}
-              onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-              disabled={currentPage === 1}
-            >
-              Previous
-            </button>
-            {[...Array(Math.min(5, totalPages))].map((_, i) => {
-              const pageNum = i + 1;
-              return (
-                <button
-                  key={pageNum}
-                  style={{
-                    ...styles.pageButton,
-                    ...(currentPage === pageNum ? styles.activePage : {})
-                  }}
-                  onClick={() => setCurrentPage(pageNum)}
-                >
-                  {pageNum}
-                </button>
-              );
-            })}
-            <button
-              style={styles.pageButton}
-              onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </button>
-            <button
-              style={styles.pageButton}
-              onClick={() => setCurrentPage(totalPages)}
-              disabled={currentPage === totalPages}
-            >
-              Last
-            </button>
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  const renderForm = () => (
-    <div style={styles.form}>
-      <h3 style={{ marginBottom: '20px' }}>
-        {editingElement ? '✏️ Edit Cost Element' : '➕ Add New Cost Element'}
-      </h3>
-      
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-        <div style={styles.formGroup}>
-          <label style={styles.formLabel}>Element Name *</label>
-          <input
-            type="text"
-            style={styles.formInput}
-            value={formData.element_name}
-            onChange={(e) => setFormData({...formData, element_name: e.target.value})}
-            placeholder="e.g., Drying Labour"
-          />
-        </div>
-
-        <div style={styles.formGroup}>
-          <label style={styles.formLabel}>Category *</label>
-          <select
-            style={styles.formSelect}
-            value={formData.category}
-            onChange={(e) => setFormData({...formData, category: e.target.value})}
-          >
-            {categories.map(cat => (
-              <option key={cat} value={cat}>{cat}</option>
-            ))}
-          </select>
-        </div>
-
-        <div style={styles.formGroup}>
-          <label style={styles.formLabel}>Activity</label>
-          <select
-            style={styles.formSelect}
-            value={formData.activity}
-            onChange={(e) => setFormData({...formData, activity: e.target.value})}
-          >
-            {activities.map(act => (
-              <option key={act} value={act}>{act}</option>
-            ))}
-          </select>
-        </div>
-
-        <div style={styles.formGroup}>
-          <label style={styles.formLabel}>Unit Type *</label>
-          <select
-            style={styles.formSelect}
-            value={formData.unit_type}
-            onChange={(e) => setFormData({...formData, unit_type: e.target.value})}
-          >
-            {unitTypes.map(unit => (
-              <option key={unit} value={unit}>{unit.replace('_', ' ')}</option>
-            ))}
-          </select>
-        </div>
-
-        <div style={styles.formGroup}>
-          <label style={styles.formLabel}>Default Rate *</label>
-          <input
-            type="number"
-            step="0.01"
-            style={styles.formInput}
-            value={formData.default_rate}
-            onChange={(e) => setFormData({...formData, default_rate: e.target.value})}
-            placeholder="0.00"
-          />
-        </div>
-
-        <div style={styles.formGroup}>
-          <label style={styles.formLabel}>Calculation Method *</label>
-          <select
-            style={styles.formSelect}
-            value={formData.calculation_method}
-            onChange={(e) => setFormData({...formData, calculation_method: e.target.value})}
-          >
-            {calculationMethods.map(method => (
-              <option key={method} value={method}>{method.replace('_', ' ')}</option>
-            ))}
-          </select>
-        </div>
-
-        <div style={styles.formGroup}>
-          <label style={styles.formLabel}>Applicable To</label>
-          <select
-            style={styles.formSelect}
-            value={formData.applicable_to}
-            onChange={(e) => setFormData({...formData, applicable_to: e.target.value})}
-          >
-            {modules.map(mod => (
-              <option key={mod} value={mod}>{mod}</option>
-            ))}
-          </select>
-        </div>
-
-        <div style={styles.formGroup}>
-          <label style={styles.formLabel}>Display Order</label>
-          <input
-            type="number"
-            style={styles.formInput}
-            value={formData.display_order}
-            onChange={(e) => setFormData({...formData, display_order: parseInt(e.target.value) || 0})}
-          />
-        </div>
-
-        <div style={styles.formGroup}>
-          <label style={styles.formLabel}>Module Specific</label>
-          <input
-            type="text"
-            style={styles.formInput}
-            value={formData.module_specific || ''}
-            onChange={(e) => setFormData({...formData, module_specific: e.target.value})}
-            placeholder="batch, sku, blend"
-          />
-        </div>
-
-        <div style={styles.formGroup}>
-          <label style={{ ...styles.formLabel, display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <input
-              type="checkbox"
-              style={styles.formCheckbox}
-              checked={formData.is_optional}
-              onChange={(e) => setFormData({...formData, is_optional: e.target.checked})}
-            />
-            Optional Element
-          </label>
-        </div>
-      </div>
-
-      <div style={styles.formGroup}>
-        <label style={styles.formLabel}>Notes</label>
-        <textarea
-          style={{ ...styles.formInput, minHeight: '80px' }}
-          value={formData.notes || ''}
-          onChange={(e) => setFormData({...formData, notes: e.target.value})}
-          placeholder="Additional notes or instructions..."
-        />
-      </div>
-
-      <div style={styles.formActions}>
-        <button
-          style={styles.button}
-          onClick={editingElement ? handleUpdate : handleCreate}
-          disabled={!formData.element_name || !formData.default_rate}
-        >
-          {editingElement ? 'Update Element' : 'Create Element'}
-        </button>
-        <button
-          style={styles.secondaryButton}
-          onClick={() => {
-            setActiveView('list');
-            setEditingElement(null);
-            resetForm();
-          }}
-        >
-          Cancel
-        </button>
+      {/* Quick Actions */}
+      <div style={styles.infoBox}>
+        <strong>🎯 Available Actions:</strong>
+        <ul style={{ marginTop: '10px', marginBottom: 0 }}>
+          <li>View validation reports to identify batches with missing costs</li>
+          <li>Check usage statistics to find unused or overused elements</li>
+          <li>Analyze batch cost breakdowns for optimization opportunities</li>
+          <li>Configure new cost elements in the Masters module</li>
+        </ul>
       </div>
     </div>
   );
+
+  const renderValidationReport = () => (
+    <div>
+      <div style={styles.card}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+          <h3 style={{ ...styles.cardTitle, marginBottom: 0 }}>⚠️ Cost Validation Report</h3>
+          <select
+            value={reportPeriod}
+            onChange={(e) => setReportPeriod(parseInt(e.target.value))}
+            style={{ padding: '8px 12px', fontSize: '14px', border: '1px solid #ced4da', borderRadius: '4px' }}
+          >
+            <option value={7}>Last 7 days</option>
+            <option value={30}>Last 30 days</option>
+            <option value={60}>Last 60 days</option>
+            <option value={90}>Last 90 days</option>
+          </select>
+        </div>
+
+        {validationReport.length === 0 ? (
+          <div style={{...styles.infoBox, backgroundColor: '#d4edda', borderLeftColor: '#28a745'}}>
+            ✅ All batches in the selected period have complete cost allocations!
+          </div>
+        ) : (
+          <>
+            <div style={styles.warningBox}>
+              <strong>Found {validationReport.length} batches with missing cost elements</strong>
+              <p style={{ marginTop: '5px', marginBottom: 0, fontSize: '13px' }}>
+                Phase 1 Mode: These are warnings only. Operations are not blocked.
+              </p>
+            </div>
+
+            <table style={styles.table}>
+              <thead>
+                <tr>
+                  <th style={styles.th}>Batch Code</th>
+                  <th style={styles.th}>Oil Type</th>
+                  <th style={styles.th}>Production Date</th>
+                  <th style={styles.th}>Captured</th>
+                  <th style={styles.th}>Expected</th>
+                  <th style={styles.th}>Missing</th>
+                  <th style={styles.th}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {validationReport.map(batch => (
+                  <tr key={batch.batch_id}>
+                    <td style={styles.td}>
+                      <strong>{batch.batch_code}</strong>
+                    </td>
+                    <td style={styles.td}>{batch.oil_type}</td>
+                    <td style={styles.td}>{batch.production_date}</td>
+                    <td style={styles.td}>
+                      <span style={{
+                        ...styles.badge,
+                        backgroundColor: '#d4edda',
+                        color: '#155724'
+                      }}>
+                        {batch.costs_captured}
+                      </span>
+                    </td>
+                    <td style={styles.td}>
+                      <span style={{
+                        ...styles.badge,
+                        backgroundColor: '#cce5ff',
+                        color: '#004085'
+                      }}>
+                        {batch.costs_expected}
+                      </span>
+                    </td>
+                    <td style={styles.td}>
+                      <span style={{
+                        ...styles.badge,
+                        backgroundColor: batch.missing_count > 2 ? '#f8d7da' : '#fff3cd',
+                        color: batch.missing_count > 2 ? '#721c24' : '#856404'
+                      }}>
+                        {batch.missing_count}
+                      </span>
+                    </td>
+                    <td style={styles.td}>
+                      <button
+                        style={{...styles.button, padding: '4px 12px', fontSize: '13px'}}
+                        onClick={() => loadBatchSummary(batch.batch_id)}
+                      >
+                        View Details
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
+        )}
+      </div>
+    </div>
+  );
+
+  const renderUsageStats = () => (
+    <div>
+      <div style={styles.card}>
+        <h3 style={styles.cardTitle}>📈 Cost Element Usage Statistics</h3>
+        
+        {usageStats.length === 0 ? (
+          <div style={styles.infoBox}>
+            No usage data available. Start using cost elements in batch production to see statistics.
+          </div>
+        ) : (
+          <table style={styles.table}>
+            <thead>
+              <tr>
+                <th style={styles.th}>Element Name</th>
+                <th style={styles.th}>Category</th>
+                <th style={styles.th}>Default Rate</th>
+                <th style={styles.th}>Times Used</th>
+                <th style={styles.th}>Avg Rate Used</th>
+                <th style={styles.th}>Total Cost</th>
+                <th style={styles.th}>Overrides</th>
+              </tr>
+            </thead>
+            <tbody>
+              {usageStats.map(stat => (
+                <tr key={stat.element_id}>
+                  <td style={styles.td}>
+                    <strong>{stat.element_name}</strong>
+                  </td>
+                  <td style={styles.td}>
+                    <span style={{
+                      ...styles.badge,
+                      backgroundColor: getCategoryColor(stat.category),
+                      color: '#495057'
+                    }}>
+                      {stat.category}
+                    </span>
+                  </td>
+                  <td style={styles.td}>{formatCurrency(stat.default_rate)}</td>
+                  <td style={styles.td}>
+                    {stat.times_used === 0 ? (
+                      <span style={{ color: '#dc3545' }}>Never used</span>
+                    ) : (
+                      stat.times_used
+                    )}
+                  </td>
+                  <td style={styles.td}>{formatCurrency(stat.avg_rate_used)}</td>
+                  <td style={styles.td}>
+                    <strong>{formatCurrency(stat.total_cost_incurred)}</strong>
+                  </td>
+                  <td style={styles.td}>
+                    {stat.override_count > 0 && (
+                      <span style={{
+                        ...styles.badge,
+                        backgroundColor: '#fff3cd',
+                        color: '#856404'
+                      }}>
+                        {stat.override_count} ({stat.override_percentage}%)
+                      </span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </div>
+  );
+
+  const renderBatchDetail = () => {
+    if (!batchSummary) return null;
+
+    return (
+      <div>
+        <button
+          style={{...styles.button, marginBottom: '20px'}}
+          onClick={() => setActiveView('validation')}
+        >
+          ← Back to Validation Report
+        </button>
+
+        <div style={styles.card}>
+          <h3 style={styles.cardTitle}>📋 Batch Cost Summary: {batchSummary.batch_code}</h3>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '20px' }}>
+            <div><strong>Oil Type:</strong> {batchSummary.oil_type}</div>
+            <div><strong>Production Date:</strong> {batchSummary.production_date}</div>
+            <div><strong>Oil Yield:</strong> {batchSummary.oil_yield} kg</div>
+            <div><strong>Cost per kg:</strong> {formatCurrency(batchSummary.oil_cost_per_kg)}</div>
+            <div><strong>Base Cost:</strong> {formatCurrency(batchSummary.base_production_cost)}</div>
+            <div><strong>Extended Costs:</strong> {formatCurrency(batchSummary.total_extended_costs)}</div>
+          </div>
+
+          {/* Extended Costs Breakdown */}
+          {batchSummary.extended_costs?.length > 0 && (
+            <>
+              <h4 style={{ fontSize: '16px', marginTop: '20px', marginBottom: '10px' }}>
+                Extended Costs Breakdown
+              </h4>
+              <table style={styles.table}>
+                <thead>
+                  <tr>
+                    <th style={styles.th}>Element</th>
+                    <th style={styles.th}>Category</th>
+                    <th style={styles.th}>Activity</th>
+                    <th style={styles.th}>Quantity</th>
+                    <th style={styles.th}>Rate</th>
+                    <th style={styles.th}>Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {batchSummary.extended_costs.map((cost, idx) => (
+                    <tr key={idx}>
+                      <td style={styles.td}>{cost.element_name}</td>
+                      <td style={styles.td}>
+                        <span style={{
+                          ...styles.badge,
+                          backgroundColor: getCategoryColor(cost.category),
+                          color: '#495057'
+                        }}>
+                          {cost.category}
+                        </span>
+                      </td>
+                      <td style={styles.td}>{cost.activity}</td>
+                      <td style={styles.td}>{cost.quantity.toFixed(2)}</td>
+                      <td style={styles.td}>{formatCurrency(cost.rate)}</td>
+                      <td style={styles.td}>
+                        <strong>{formatCurrency(cost.total_cost)}</strong>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </>
+          )}
+
+          {/* Validation Warnings */}
+          {batchSummary.validation?.has_warnings && (
+            <div style={styles.warningBox}>
+              <strong>⚠️ Validation Warnings</strong>
+              <ul style={{ marginTop: '10px', marginBottom: 0 }}>
+                {batchSummary.validation.warnings.map((warning, idx) => (
+                  <li key={idx}>
+                    {warning.message}
+                    {warning.amount && <strong> ({formatCurrency(warning.amount)})</strong>}
+                  </li>
+                ))}
+              </ul>
+              <div style={{ marginTop: '10px', fontWeight: 'bold' }}>
+                Total Unallocated: {formatCurrency(batchSummary.validation.total_unallocated)}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
 
   // =====================================================
   // MAIN RENDER
@@ -1240,21 +719,31 @@ const CostElementsManager = ({ embedded = false, onClose = null }) => {
       {!embedded && (
         <div style={styles.header}>
           <h2 style={styles.title}>
-            ⚙️ Cost Elements Management
-            {embedded && (
-              <button
-                style={{ ...styles.secondaryButton, marginLeft: '20px' }}
-                onClick={onClose}
-              >
-                ✕ Close
-              </button>
-            )}
+            📊 Cost Elements Monitoring & Analytics
           </h2>
           <p style={styles.subtitle}>
-            Configure cost elements, rates, activities, and calculation methods for the production system
+            View usage statistics, validation reports, and cost analysis. Configuration has moved to Masters.
           </p>
         </div>
       )}
+
+      {/* Configuration Banner */}
+      <div style={styles.configBanner}>
+        <div style={styles.bannerText}>
+          <div style={styles.bannerTitle}>
+            📍 Cost Element Configuration Has Moved
+          </div>
+          <div style={styles.bannerMessage}>
+            To add, edit, or manage cost elements, rates, and activities, please use the Masters module.
+          </div>
+        </div>
+        <button
+          style={styles.configButton}
+          onClick={() => window.location.href = '/masters?tab=cost_elements'}
+        >
+          Go to Masters Configuration →
+        </button>
+      </div>
 
       {message && (
         <div style={styles.message}>
@@ -1276,21 +765,32 @@ const CostElementsManager = ({ embedded = false, onClose = null }) => {
         <button
           style={{
             ...styles.viewButton,
-            ...(activeView === 'list' ? styles.activeViewButton : {})
+            ...(activeView === 'validation' ? styles.activeViewButton : {})
           }}
-          onClick={() => setActiveView('list')}
+          onClick={() => setActiveView('validation')}
         >
-          📋 Elements List
+          ⚠️ Validation Report
         </button>
         <button
           style={{
             ...styles.viewButton,
-            ...(activeView === 'form' ? styles.activeViewButton : {})
+            ...(activeView === 'usage' ? styles.activeViewButton : {})
           }}
-          onClick={() => setActiveView('form')}
+          onClick={() => setActiveView('usage')}
         >
-          {editingElement ? '✏️ Edit Element' : '➕ New Element'}
+          📈 Usage Statistics
         </button>
+        {selectedBatchId && (
+          <button
+            style={{
+              ...styles.viewButton,
+              ...(activeView === 'batch-detail' ? styles.activeViewButton : {})
+            }}
+            onClick={() => setActiveView('batch-detail')}
+          >
+            📋 Batch Details
+          </button>
+        )}
       </div>
 
       {/* Content */}
@@ -1302,8 +802,9 @@ const CostElementsManager = ({ embedded = false, onClose = null }) => {
         )}
 
         {!loading && activeView === 'dashboard' && renderDashboard()}
-        {!loading && activeView === 'list' && renderList()}
-        {!loading && activeView === 'form' && renderForm()}
+        {!loading && activeView === 'validation' && renderValidationReport()}
+        {!loading && activeView === 'usage' && renderUsageStats()}
+        {!loading && activeView === 'batch-detail' && renderBatchDetail()}
       </div>
     </div>
   );
