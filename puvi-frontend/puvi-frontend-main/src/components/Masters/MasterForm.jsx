@@ -1,7 +1,7 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/components/Masters/MasterForm.jsx
 // Professional Master Form Component with Enterprise UI
-// Fixed: Categories dropdown and added produces_oil_type field
-// UPDATED: Fixed unit dropdown to load from /api/materials/units
+// ENHANCED: Full support for cost_elements fields (activity, package_size_id, module_specific, display_order)
+// Version: 2.0 - Complete cost elements field exposure
 
 import React, { useState, useEffect, useRef } from 'react';
 import './MasterForm.css';
@@ -135,6 +135,49 @@ const Guidelines = ({ type, category, expanded, onToggle }) => {
       };
     }
     
+    if (type === 'cost-element-activity') {
+      return {
+        title: 'Activity Classification',
+        content: (
+          <>
+            <p>Activity determines when this cost is applied:</p>
+            <ul>
+              <li><strong>Drying:</strong> Costs during seed drying process</li>
+              <li><strong>Crushing:</strong> Costs during oil extraction</li>
+              <li><strong>Filtering:</strong> Costs during oil filtering</li>
+              <li><strong>Packing:</strong> Packaging-related costs</li>
+              <li><strong>Common:</strong> Shared across multiple activities</li>
+              <li><strong>General:</strong> Not activity-specific</li>
+            </ul>
+            <p className="guidelines-info">
+              Activity filtering helps in accurate cost allocation to batches
+            </p>
+          </>
+        )
+      };
+    }
+    
+    if (type === 'cost-calculation-method') {
+      return {
+        title: 'Calculation Method Guide',
+        content: (
+          <>
+            <p>How the cost is calculated:</p>
+            <ul>
+              <li><strong>per_kg:</strong> Rate × Weight in kg</li>
+              <li><strong>per_hour:</strong> Rate × Hours worked</li>
+              <li><strong>per_unit:</strong> Rate × Number of units</li>
+              <li><strong>fixed:</strong> Flat amount (rate only)</li>
+              <li><strong>actual:</strong> Manual entry required</li>
+            </ul>
+            <p className="guidelines-warning">
+              ⚠ Unit type and calculation method should align
+            </p>
+          </>
+        )
+      };
+    }
+    
     return null;
   };
   
@@ -239,6 +282,26 @@ const SelectField = ({ id, label, value, onChange, options, error, required, dis
   </div>
 );
 
+const CheckboxField = ({ id, label, value, onChange, error, disabled, help }) => (
+  <div className="field checkbox-field">
+    <label htmlFor={id} className="checkbox-label">
+      <input
+        type="checkbox"
+        id={id}
+        className="checkbox"
+        checked={value || false}
+        onChange={(e) => onChange(e.target.checked)}
+        disabled={disabled}
+        aria-invalid={!!error}
+        aria-describedby={error ? `${id}-error` : help ? `${id}-help` : undefined}
+      />
+      <span className="checkbox-text">{label}</span>
+    </label>
+    {error && <div id={`${id}-error`} className="form-error">{error}</div>}
+    {help && !error && <div id={`${id}-help`} className="form-help">{help}</div>}
+  </div>
+);
+
 const TextareaField = ({ id, label, value, onChange, error, required, disabled, placeholder, help, rows = 3 }) => (
   <div className="field">
     <label htmlFor={id} className="label">
@@ -261,10 +324,10 @@ const TextareaField = ({ id, label, value, onChange, error, required, disabled, 
   </div>
 );
 
-const ReferenceField = ({ id, label, value, onChange, options, error, required, disabled, help }) => {
+const ReferenceField = ({ id, label, value, onChange, options, error, required, disabled, help, displayField = 'name' }) => {
   const [filter, setFilter] = useState('');
   
-  // Check if suppliers are loaded
+  // Check if options are loaded
   if (!options || options.length === 0) {
     return (
       <div className="field reference-field">
@@ -276,7 +339,7 @@ const ReferenceField = ({ id, label, value, onChange, options, error, required, 
           <div className="inline-alert-icon"></div>
           <div className="inline-alert-content">
             <div className="inline-alert-message">
-              No suppliers found. Please add suppliers first in the Suppliers master.
+              No {label.toLowerCase()} found. Please add {label.toLowerCase()} first.
             </div>
           </div>
         </div>
@@ -284,10 +347,10 @@ const ReferenceField = ({ id, label, value, onChange, options, error, required, 
     );
   }
   
-  const filteredOptions = options.filter(opt => 
-    opt.supplier_name.toLowerCase().includes(filter.toLowerCase()) ||
-    opt.short_code.toLowerCase().includes(filter.toLowerCase())
-  );
+  const filteredOptions = options.filter(opt => {
+    const searchText = opt[displayField] || opt.name || opt.code || '';
+    return searchText.toLowerCase().includes(filter.toLowerCase());
+  });
   
   const showFilter = options.length > 10;
   
@@ -303,7 +366,7 @@ const ReferenceField = ({ id, label, value, onChange, options, error, required, 
           <input
             type="text"
             className="reference-filter-input"
-            placeholder="Filter suppliers..."
+            placeholder={`Filter ${label.toLowerCase()}...`}
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
           />
@@ -320,9 +383,10 @@ const ReferenceField = ({ id, label, value, onChange, options, error, required, 
         aria-describedby={error ? `${id}-error` : help ? `${id}-help` : undefined}
       >
         <option value="">Select {label}</option>
-        {filteredOptions.map(supplier => (
-          <option key={supplier.supplier_id} value={supplier.supplier_id}>
-            {supplier.supplier_name} ({supplier.short_code})
+        {filteredOptions.map(option => (
+          <option key={option.id || option.size_id || option.supplier_id} value={option.id || option.size_id || option.supplier_id}>
+            {option[displayField] || option.name || option.code} 
+            {option.code && option.name ? ` (${option.code})` : ''}
           </option>
         ))}
       </select>
@@ -452,18 +516,21 @@ const MasterForm = ({
   const [loadingSchema, setLoadingSchema] = useState(false);
   const [saving, setSaving] = useState(false);
   const [suppliers, setSuppliers] = useState([]);
+  const [packageSizes, setPackageSizes] = useState([]);
   const [alert, setAlert] = useState(null);
   const [expandedGuidelines, setExpandedGuidelines] = useState({
     'supplier-short-code': true,
     'material-short-code': true,
-    'material-naming': true
+    'material-naming': true,
+    'cost-element-activity': true,
+    'cost-calculation-method': false
   });
   
   // State for dynamic options
   const [dynamicOptions, setDynamicOptions] = useState({});
   const [loadingDynamicOptions, setLoadingDynamicOptions] = useState({});
   
-  // NEW: State for categories and oil types
+  // State for categories and oil types
   const [categories, setCategories] = useState([]);
   const [oilTypes, setOilTypes] = useState([]);
   const [showProducesOilType, setShowProducesOilType] = useState(false);
@@ -499,7 +566,20 @@ const MasterForm = ({
           setShowProducesOilType(true);
         }
       } else {
-        setFormData({});
+        // Set defaults for cost elements
+        if (masterType === 'cost_elements') {
+          setFormData({
+            activity: 'General',
+            module_specific: 'all',
+            display_order: 0,
+            is_optional: false,
+            calculation_method: 'per_kg',
+            unit_type: 'per_kg',
+            applicable_to: 'all'
+          });
+        } else {
+          setFormData({});
+        }
         setShowProducesOilType(false);
       }
       setErrors({});
@@ -545,12 +625,11 @@ const MasterForm = ({
     console.log('Loading dynamic options for schema:', schema);
     
     for (const field of schema.fields) {
-      // FIXED: Special handling for category field
+      // Handle category field for materials
       if (field.name === 'category' && masterType === 'materials') {
         console.log('Loading material categories from /api/categories');
         
         try {
-          // Use the correct categories endpoint
           const response = await apiCall('/api/categories');
           const categoryNames = response.categories ? 
             response.categories.map(cat => cat.category_name) : [];
@@ -573,7 +652,7 @@ const MasterForm = ({
         continue;
       }
       
-      // UPDATED: Special handling for unit field
+      // Handle unit field
       if (field.name === 'unit') {
         console.log('Loading units from /api/materials/units');
         setLoadingDynamicOptions(prev => ({ ...prev, unit: true }));
@@ -582,7 +661,6 @@ const MasterForm = ({
           const response = await apiCall('/api/materials/units');
           console.log('Units API response:', response);
           
-          // Handle the response structure properly
           const unitsData = response.units || response.data || [];
           
           console.log('Loaded units:', unitsData);
@@ -606,7 +684,7 @@ const MasterForm = ({
         continue;
       }
       
-      // Handle other dynamic fields
+      // Handle other dynamic fields with specific endpoints
       if (field.options === 'dynamic' && field.options_endpoint) {
         console.log(`Loading dynamic options for field: ${field.name} from ${field.options_endpoint}`);
         
@@ -615,10 +693,12 @@ const MasterForm = ({
         try {
           let optionsData = [];
           
-          // UPDATED: Better handling for units endpoint
-          if (field.options_endpoint.includes('/api/materials/units')) {
+          // Special handling for cost_elements field options
+          if (masterType === 'cost_elements' && field.options_endpoint.includes('/api/masters/cost_elements/field-options/')) {
+            const response = await apiCall(field.options_endpoint);
+            optionsData = response.options || response.data || [];
+          } else if (field.options_endpoint.includes('/api/materials/units')) {
             const response = await apiCall('/api/materials/units');
-            console.log('Units response from options_endpoint:', response);
             optionsData = response.units || response.data || [];
           } else if (field.options_endpoint.includes('/api/config/gst_rates')) {
             const response = await apiCall('/api/config/gst_rates');
@@ -654,9 +734,14 @@ const MasterForm = ({
     if (masterType === 'materials') {
       loadOilTypes();
     }
+    
+    // Load package sizes for cost_elements form
+    if (masterType === 'cost_elements') {
+      loadPackageSizes();
+    }
   };
   
-  // NEW: Load oil types
+  // Load oil types
   const loadOilTypes = async () => {
     try {
       console.log('Loading oil types from /api/config/oil_types');
@@ -667,6 +752,24 @@ const MasterForm = ({
     } catch (error) {
       console.error('Failed to load oil types:', error);
       setOilTypes([]);
+    }
+  };
+  
+  // Load package sizes for cost_elements
+  const loadPackageSizes = async () => {
+    try {
+      console.log('Loading package sizes for cost elements');
+      const response = await apiCall('/api/masters/package_sizes');
+      const sizes = response.records || response.data || [];
+      console.log('Loaded package sizes:', sizes);
+      setPackageSizes(sizes.map(size => ({
+        size_id: size.size_id,
+        name: size.size_name,
+        code: size.size_code
+      })));
+    } catch (error) {
+      console.error('Failed to load package sizes:', error);
+      setPackageSizes([]);
     }
   };
   
@@ -701,11 +804,10 @@ const MasterForm = ({
       [fieldName]: value
     }));
     
-    // NEW: Check if category changed to Seeds
-    if (fieldName === 'category') {
+    // Check if category changed to Seeds (materials)
+    if (fieldName === 'category' && masterType === 'materials') {
       setShowProducesOilType(value === 'Seeds');
       if (value !== 'Seeds') {
-        // Clear produces_oil_type if not Seeds
         setFormData(prev => ({
           ...prev,
           produces_oil_type: null
@@ -820,7 +922,7 @@ const MasterForm = ({
         }
       });
       
-      // NEW: Include produces_oil_type if it's a seed material
+      // Include produces_oil_type if it's a seed material
       if (masterType === 'materials' && formData.category === 'Seeds' && formData.produces_oil_type) {
         dataToSend.produces_oil_type = formData.produces_oil_type;
       }
@@ -868,7 +970,7 @@ const MasterForm = ({
       onBlur: () => handleFieldBlur(field)
     };
     
-    // Reference field (supplier dropdown)
+    // Reference field (supplier dropdown for materials)
     if (field.type === 'reference' || 
         field.reference_table === 'suppliers' || 
         field.name === 'supplier_id' ||
@@ -877,12 +979,25 @@ const MasterForm = ({
         <ReferenceField
           {...commonProps}
           options={suppliers}
+          displayField="supplier_name"
           help={field.help || 'Select from existing suppliers'}
         />
       );
     }
     
-    // FIXED: Handle category field specifically
+    // Package size reference field for cost_elements
+    if (masterType === 'cost_elements' && field.name === 'package_size_id') {
+      return (
+        <ReferenceField
+          {...commonProps}
+          options={packageSizes}
+          displayField="name"
+          help={field.help_text || 'Link to specific package size (optional)'}
+        />
+      );
+    }
+    
+    // Handle category field for materials
     if (field.name === 'category' && masterType === 'materials') {
       return (
         <SelectField
@@ -894,12 +1009,11 @@ const MasterForm = ({
       );
     }
     
-    // UPDATED: Handle unit field specifically
+    // Handle unit field
     if (field.name === 'unit') {
       const unitOptions = dynamicOptions.unit || [];
       const isLoadingUnits = loadingDynamicOptions.unit;
       
-      // Show error if no units are available after loading
       if (!isLoadingUnits && unitOptions.length === 0 && field.required) {
         return (
           <div className="field">
@@ -929,6 +1043,16 @@ const MasterForm = ({
       );
     }
     
+    // Boolean fields
+    if (field.type === 'boolean') {
+      return (
+        <CheckboxField
+          {...commonProps}
+          help={field.help_text || field.help}
+        />
+      );
+    }
+    
     // Handle other select fields
     if (field.type === 'select') {
       const isDynamic = field.options === 'dynamic';
@@ -947,7 +1071,7 @@ const MasterForm = ({
           {...commonProps}
           options={fieldOptions}
           loading={isLoading}
-          help={field.help || (isLoading ? 'Loading options...' : undefined)}
+          help={field.help_text || field.help || (isLoading ? 'Loading options...' : undefined)}
         />
       );
     }
@@ -958,7 +1082,7 @@ const MasterForm = ({
         <TextareaField
           {...commonProps}
           placeholder={field.placeholder}
-          help={field.help}
+          help={field.help_text || field.help}
           rows={field.rows || 3}
         />
       );
@@ -972,8 +1096,8 @@ const MasterForm = ({
           {...commonProps}
           min={field.min}
           max={field.max}
-          step={field.type === 'decimal' ? 0.01 : 1}
-          help={field.help || (isDensityField ? 'Density value (specific gravity)' : undefined)}
+          step={field.type === 'decimal' ? (field.decimal_places ? 1 / Math.pow(10, field.decimal_places) : 0.01) : 1}
+          help={field.help_text || field.help || (isDensityField ? 'Density value (specific gravity)' : undefined)}
         />
       );
     }
@@ -983,13 +1107,13 @@ const MasterForm = ({
       <TextField
         {...commonProps}
         placeholder={field.placeholder}
-        help={field.help || (field.name === 'short_code' ? `Example: ${masterType === 'suppliers' ? 'SKM' : 'GNS-K'}` : '')}
+        help={field.help_text || field.help || (field.name === 'short_code' ? `Example: ${masterType === 'suppliers' ? 'SKM' : 'GNS-K'}` : '')}
         maxLength={field.max_length}
       />
     );
   };
   
-  // NEW: Render produces_oil_type field
+  // Render produces_oil_type field for materials
   const renderProducesOilTypeField = () => {
     if (!showProducesOilType || masterType !== 'materials') {
       return null;
@@ -1026,6 +1150,56 @@ const MasterForm = ({
   const getFieldSections = () => {
     if (!schema || !schema.fields) return [];
     
+    // ENHANCED: Special sections for cost_elements
+    if (masterType === 'cost_elements') {
+      return [
+        {
+          title: 'Basic Information',
+          description: 'Core cost element details',
+          fields: schema.fields.filter(f => 
+            ['element_name', 'category'].includes(f.name)
+          )
+        },
+        {
+          title: 'Activity & Module',
+          description: 'When and where this cost applies',
+          fields: schema.fields.filter(f => 
+            ['activity', 'module_specific', 'applicable_to'].includes(f.name)
+          ),
+          guidelines: ['cost-element-activity']
+        },
+        {
+          title: 'Calculation Settings',
+          description: 'How the cost is calculated',
+          fields: schema.fields.filter(f => 
+            ['unit_type', 'calculation_method', 'default_rate'].includes(f.name)
+          ),
+          guidelines: ['cost-calculation-method']
+        },
+        {
+          title: 'Package Association',
+          description: 'Link to specific package sizes (optional)',
+          fields: schema.fields.filter(f => 
+            ['package_size_id'].includes(f.name)
+          )
+        },
+        {
+          title: 'Display Settings',
+          description: 'UI presentation options',
+          fields: schema.fields.filter(f => 
+            ['display_order', 'is_optional'].includes(f.name)
+          )
+        },
+        {
+          title: 'Additional Information',
+          description: 'Notes and documentation',
+          fields: schema.fields.filter(f => 
+            ['notes'].includes(f.name)
+          )
+        }
+      ];
+    }
+    
     if (masterType === 'materials') {
       return [
         {
@@ -1041,7 +1215,6 @@ const MasterForm = ({
           fields: schema.fields.filter(f => 
             ['category', 'unit'].includes(f.name)
           ),
-          // NEW: Add produces_oil_type after category
           extraContent: renderProducesOilTypeField()
         },
         {
@@ -1238,7 +1411,7 @@ const MasterForm = ({
                 </React.Fragment>
               ))}
               
-              {/* NEW: Extra content (produces_oil_type) */}
+              {/* Extra content (e.g., produces_oil_type) */}
               {section.extraContent}
             </FormSection>
           ))}
