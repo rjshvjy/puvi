@@ -1,5 +1,5 @@
 # Feature Pack: COST-ELEMENTS
-Generated: 2025-09-04T14:52:32.464Z
+Generated: 2025-09-07T10:42:50.051Z
 Routes: 12 | Tables: 7 | Files: 1
 
 ## Table of Contents

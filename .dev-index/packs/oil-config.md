@@ -1,6 +1,6 @@
 # Feature Pack: OIL-CONFIG
-Generated: 2025-09-04T14:52:32.467Z
-Routes: 6 | Tables: 12 | Files: 1
+Generated: 2025-09-07T10:42:50.054Z
+Routes: 6 | Tables: 15 | Files: 1
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -33,7 +33,10 @@ POST   /api/oil-config/apply-suggestions
 | batch_extended_costs | batch-production, cost-management, masters-crud | 🔴 HIGH | Changes affect 3 other modules |
 | blend_batches | blending, masters-crud, sku-production | 🔴 HIGH | Changes affect 3 other modules |
 | categories_master | blending, masters-crud, material-writeoff | 🔴 HIGH | Changes affect 5 other modules |
+| cost_element_activities | masters-crud | 🟡 MEDIUM | Changes affect 1 other modules |
+| cost_element_categories | masters-crud | 🟡 MEDIUM | Changes affect 1 other modules |
 | cost_element_rate_history | cost-management, masters-crud | 🟡 MEDIUM | Changes affect 2 other modules |
+| cost_element_unit_types | masters-crud | 🟡 MEDIUM | Changes affect 1 other modules |
 | cost_elements_master | cost-management, masters-crud, package-sizes | 🔴 HIGH | Changes affect 5 other modules |
 | information_schema | masters-common, masters-crud | 🟡 MEDIUM | Changes affect 2 other modules |
 | inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |

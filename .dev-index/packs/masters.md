@@ -1,6 +1,6 @@
 # Feature Pack: MASTERS
-Generated: 2025-09-04T14:52:32.465Z
-Routes: 27 | Tables: 13 | Files: 4
+Generated: 2025-09-07T10:42:50.052Z
+Routes: 32 | Tables: 16 | Files: 4
 
 ## Table of Contents
 1. [API Endpoints](#api-endpoints)
@@ -14,6 +14,16 @@ Routes: 27 | Tables: 13 | Files: 4
 ```
 # get_field_options
 GET    /api/masters/<master_type>/field-options/<field_name>
+# get_cost_element_categories
+GET    /api/masters/cost_elements/field-options/category
+# get_cost_element_activities
+GET    /api/masters/cost_elements/field-options/activity
+# get_cost_element_unit_types
+GET    /api/masters/cost_elements/field-options/unit_type
+# get_cost_element_calculation_methods
+GET    /api/masters/cost_elements/field-options/calculation_method
+# get_cost_element_applicable_to
+GET    /api/masters/cost_elements/field-options/applicable_to
 # list_master_types
 GET    /api/masters/types
 # get_master_schema
@@ -76,7 +86,10 @@ POST   /api/masters/package_sizes/validate
 | blend_batches | blending, masters-crud, sku-production | 🔴 HIGH | Changes affect 3 other modules |
 | categories_master | blending, masters-crud, material-writeoff | 🔴 HIGH | Changes affect 5 other modules |
 | cost | package-sizes | 🟡 MEDIUM | Changes affect 1 other modules |
+| cost_element_activities | masters-crud | 🟡 MEDIUM | Changes affect 1 other modules |
+| cost_element_categories | masters-crud | 🟡 MEDIUM | Changes affect 1 other modules |
 | cost_element_rate_history | cost-management, masters-crud | 🟡 MEDIUM | Changes affect 2 other modules |
+| cost_element_unit_types | masters-crud | 🟡 MEDIUM | Changes affect 1 other modules |
 | cost_elements_master | cost-management, masters-crud, package-sizes | 🔴 HIGH | Changes affect 5 other modules |
 | information_schema | masters-common, masters-crud | 🟡 MEDIUM | Changes affect 2 other modules |
 | inventory | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 8 other modules |

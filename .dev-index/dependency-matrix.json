@@ -1,8 +1,8 @@
 {
   "version": "1.0",
-  "generatedAt": "2025-09-04T14:52:32.405Z",
+  "generatedAt": "2025-09-07T10:42:49.993Z",
   "summary": {
-    "totalTables": 65,
+    "totalTables": 68,
     "sharedTables": 38,
     "hardcodedCategories": 0,
     "migrationOpportunities": 0
@@ -902,6 +902,48 @@
         "sku-management": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/sku_management.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "cost_element_categories": {
+      "usedBy": [
+        "masters-crud"
+      ],
+      "fileCount": 1,
+      "operations": {
+        "masters-crud": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "cost_element_activities": {
+      "usedBy": [
+        "masters-crud"
+      ],
+      "fileCount": 1,
+      "operations": {
+        "masters-crud": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "cost_element_unit_types": {
+      "usedBy": [
+        "masters-crud"
+      ],
+      "fileCount": 1,
+      "operations": {
+        "masters-crud": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/masters_crud.py"
           ],
           "queryCount": 0
         }
