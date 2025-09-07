@@ -1,6 +1,6 @@
 # Table Usage Issues
 
-Generated: 2025-09-07 18:09:51.036136
+Generated: 2025-09-07 18:51:59.791817
 
 ## ⚠️ Orphaned Tables
 These tables exist in database but are not used in any code:
@@ -53,7 +53,7 @@ These tables are referenced in code but don't exist in database:
 - available_oil
   Files: puvi-backend/puvi-backend-main/modules/sku_production.py
 - available_oil_types
-  Files: puvi-backend/puvi-backend-main/modules/batch_production.py, puvi-backend/puvi-backend-main/modules/system_config.py
+  Files: puvi-backend/puvi-backend-main/modules/system_config.py
 - available_types
   Files: puvi-backend/puvi-backend-main/modules/blending.py
 - base
@@ -135,7 +135,7 @@ These tables are referenced in code but don't exist in database:
 - current_date
   Files: puvi-backend/puvi-backend-main/utils/expiry_utils.py, puvi-backend/puvi-backend-main/modules/sku_production.py
 - database
-  Files: puvi-backend/puvi-backend-main/utils/traceability.py, puvi-backend/puvi-backend-main/modules/blending.py, puvi-backend/puvi-backend-main/modules/cost_management.py and 6 more
+  Files: puvi-backend/puvi-backend-main/utils/traceability.py, puvi-backend/puvi-backend-main/modules/blending.py, puvi-backend/puvi-backend-main/modules/cost_management.py and 5 more
 - date
   Files: puvi-backend/puvi-backend-main/utils/traceability.py
 - datetime
@@ -150,6 +150,8 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/inventory_utils.py, puvi-backend/puvi-backend-main/utils/validation.py, puvi-backend/puvi-backend-main/utils/expiry_utils.py and 14 more
 - decimal_places
   Files: puvi-backend/puvi-backend-main/modules/masters_common.py, puvi-backend/puvi-backend-main/modules/masters_crud.py
+- dedicated
+  Files: puvi-backend/puvi-backend-main/modules/batch_production.py
 - delivery_location_type
   Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
 - density_values
@@ -183,7 +185,7 @@ These tables are referenced in code but don't exist in database:
 - expose_headers
   Files: puvi-backend/puvi-backend-main/app.py
 - extended_costs
-  Files: puvi-backend/puvi-backend-main/modules/cost_management.py
+  Files: puvi-backend/puvi-backend-main/modules/cost_management.py, puvi-backend/puvi-backend-main/modules/batch_production.py
 - failed_updates
   Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
 - features
@@ -264,6 +266,8 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/modules/system_config.py
 - labor_rates
   Files: puvi-backend/puvi-backend-main/modules/system_config.py
+- last_batch_rates
+  Files: puvi-backend/puvi-backend-main/modules/batch_production.py
 - last_updated
   Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
 - litres
@@ -283,7 +287,7 @@ These tables are referenced in code but don't exist in database:
 - master_types
   Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
 - masters
-  Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/modules/batch_production.py, puvi-frontend/puvi-frontend-main/src/index.js and 34 more
+  Files: puvi-backend/puvi-backend-main/app.py, puvi-frontend/puvi-frontend-main/src/index.js, puvi-frontend/puvi-frontend-main/src/index.js and 33 more
 - masters_common
   Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
 - material
@@ -309,7 +313,7 @@ These tables are referenced in code but don't exist in database:
 - mixed_oil_types
   Files: puvi-backend/puvi-backend-main/modules/blending.py
 - modules
-  Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/modules/batch_production.py, puvi-backend/puvi-backend-main/modules/masters_crud.py
+  Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/modules/masters_crud.py
 - month_writeoffs
   Files: puvi-backend/puvi-backend-main/modules/writeoff_analytics.py
 - monthly
@@ -318,6 +322,8 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
 - mrp_history
   Files: puvi-backend/puvi-backend-main/modules/sku_production.py
+- multiple
+  Files: puvi-backend/puvi-backend-main/modules/batch_production.py
 - mus
   Files: puvi-backend/puvi-backend-main/utils/traceability.py
 - net
@@ -329,7 +335,7 @@ These tables are referenced in code but don't exist in database:
 - nos
   Files: puvi-backend/puvi-backend-main/modules/material_sales.py
 - notes
-  Files: puvi-backend/puvi-backend-main/modules/opening_balance.py, puvi-backend/puvi-backend-main/modules/material_sales.py, puvi-backend/puvi-backend-main/modules/cost_management.py and 6 more
+  Files: puvi-backend/puvi-backend-main/modules/opening_balance.py, puvi-backend/puvi-backend-main/modules/material_sales.py, puvi-backend/puvi-backend-main/modules/cost_management.py and 7 more
 - numbers
   Files: puvi-backend/puvi-backend-main/modules/masters_common.py
 - oil
@@ -414,12 +420,16 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/app.py
 - rate
   Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
+- rate_master
+  Files: puvi-backend/puvi-backend-main/modules/batch_production.py
 - rates
   Files: puvi-backend/puvi-backend-main/modules/batch_production.py, puvi-backend/puvi-backend-main/modules/system_config.py, puvi-backend/puvi-backend-main/modules/masters_crud.py
 - readonly_fields
   Files: puvi-backend/puvi-backend-main/modules/masters_common.py
 - reasons
   Files: puvi-backend/puvi-backend-main/modules/system_config.py, puvi-backend/puvi-backend-main/modules/material_writeoff.py
+- recent
+  Files: puvi-backend/puvi-backend-main/modules/batch_production.py
 - recent_writeoffs
   Files: puvi-backend/puvi-backend-main/modules/writeoff_analytics.py, puvi-backend/puvi-backend-main/modules/material_writeoff.py
 - recommendations
@@ -427,7 +437,7 @@ These tables are referenced in code but don't exist in database:
 - record
   Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
 - records
-  Files: puvi-backend/puvi-backend-main/utils/expiry_utils.py, puvi-backend/puvi-backend-main/modules/batch_production.py, puvi-backend/puvi-backend-main/modules/masters_crud.py
+  Files: puvi-backend/puvi-backend-main/utils/expiry_utils.py, puvi-backend/puvi-backend-main/modules/masters_crud.py
 - reference_documents
   Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
 - remaining
@@ -477,7 +487,7 @@ These tables are referenced in code but don't exist in database:
 - size_in_liters
   Files: puvi-backend/puvi-backend-main/modules/package_sizes.py
 - sku
-  Files: puvi-backend/puvi-backend-main/modules/system_config.py, puvi-backend/puvi-backend-main/modules/sku_outbound.py, puvi-backend/puvi-backend-main/modules/material_writeoff.py and 54 more
+  Files: puvi-backend/puvi-backend-main/modules/batch_production.py, puvi-backend/puvi-backend-main/modules/system_config.py, puvi-backend/puvi-backend-main/modules/sku_outbound.py and 55 more
 - sku_details
   Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
 - skus
@@ -497,7 +507,7 @@ These tables are referenced in code but don't exist in database:
 - status
   Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/modules/opening_balance.py, puvi-backend/puvi-backend-main/modules/sku_production.py and 2 more
 - subcategories
-  Files: puvi-backend/puvi-backend-main/modules/masters_common.py, puvi-backend/puvi-backend-main/modules/masters_crud.py, puvi-frontend/puvi-frontend-main/src/services/api/index.js and 4 more
+  Files: puvi-backend/puvi-backend-main/modules/batch_production.py, puvi-backend/puvi-backend-main/modules/masters_common.py, puvi-backend/puvi-backend-main/modules/masters_crud.py and 5 more
 - subcategory
   Files: puvi-backend/puvi-backend-main/modules/purchase.py, puvi-backend/puvi-backend-main/modules/masters_crud.py
 - subcategory_code
@@ -515,7 +525,7 @@ These tables are referenced in code but don't exist in database:
 - system
   Files: puvi-backend/puvi-backend-main/modules/opening_balance.py, puvi-frontend/puvi-frontend-main/src/index.js, puvi-frontend/puvi-frontend-main/src/index.js
 - the
-  Files: puvi-backend/puvi-backend-main/db_utils.py, puvi-backend/puvi-backend-main/utils/traceability.py, puvi-backend/puvi-backend-main/modules/cost_management.py and 1 more
+  Files: puvi-backend/puvi-backend-main/db_utils.py, puvi-backend/puvi-backend-main/utils/traceability.py, puvi-backend/puvi-backend-main/modules/cost_management.py and 2 more
 - this
   Files: puvi-backend/puvi-backend-main/utils/traceability.py, puvi-backend/puvi-backend-main/utils/expiry_utils.py
 - time
