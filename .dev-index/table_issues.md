@@ -1,6 +1,6 @@
 # Table Usage Issues
 
-Generated: 2025-09-07 10:42:48.851656
+Generated: 2025-09-07 10:55:44.812936
 
 ## ⚠️ Orphaned Tables
 These tables exist in database but are not used in any code:
@@ -114,8 +114,6 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/modules/opening_balance.py
 - configured_materials
   Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
-- consumables
-  Files: puvi-backend/puvi-backend-main/modules/masters_common.py
 - cos
   Files: puvi-backend/puvi-backend-main/utils/traceability.py
 - cost
@@ -445,7 +443,7 @@ These tables are referenced in code but don't exist in database:
 - rounded_hours
   Files: puvi-backend/puvi-backend-main/modules/cost_management.py
 - sales
-  Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/modules/material_sales.py, puvi-backend/puvi-backend-main/modules/masters_common.py and 2 more
+  Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/modules/material_sales.py, puvi-backend/puvi-backend-main/modules/sku_outbound.py and 1 more
 - same
   Files: puvi-backend/puvi-backend-main/utils/traceability.py, puvi-backend/puvi-backend-main/modules/sku_production.py
 - saved_costs
@@ -489,6 +487,8 @@ These tables are referenced in code but don't exist in database:
 - source
   Files: puvi-backend/puvi-backend-main/utils/traceability.py, puvi-backend/puvi-backend-main/modules/blending.py, puvi-backend/puvi-backend-main/modules/sku_outbound.py
 - special_validations
+  Files: puvi-backend/puvi-backend-main/modules/masters_common.py
+- static
   Files: puvi-backend/puvi-backend-main/modules/masters_common.py
 - statistics
   Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/modules/opening_balance.py, puvi-backend/puvi-backend-main/modules/writeoff_analytics.py and 1 more
@@ -628,8 +628,6 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/modules/cost_management.py, puvi-backend/puvi-backend-main/modules/masters_crud.py
 - user
   Files: puvi-backend/puvi-backend-main/utils/traceability.py
-- utilities
-  Files: puvi-backend/puvi-backend-main/modules/masters_common.py
 - utils
   Files: puvi-backend/puvi-backend-main/utils/expiry_utils.py, puvi-backend/puvi-backend-main/modules/opening_balance.py, puvi-backend/puvi-backend-main/modules/material_sales.py and 12 more
 - v_writeoff_trends
