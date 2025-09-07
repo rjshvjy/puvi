@@ -2,7 +2,8 @@
 Batch Production Module for PUVI Oil Manufacturing System
 Handles oil extraction from seeds, cost allocation, by-product tracking, and traceability
 File Path: puvi-backend/puvi-backend-main/modules/batch_production.py
-UPDATED: Auto-detects oil type from materials.produces_oil_type
+UPDATED: Uses Masters endpoints for cost elements (proxy approach - no fallbacks)
+Version: 2.0 - Masters Integration
 """
 
 from flask import Blueprint, request, jsonify
@@ -11,6 +12,7 @@ from db_utils import get_db_connection, close_connection
 from utils.date_utils import parse_date, integer_to_date
 from utils.validation import safe_decimal, safe_float, validate_positive_number
 from utils.traceability import generate_batch_traceable_code, generate_batch_code
+import json
 
 # Create Blueprint
 batch_bp = Blueprint('batch', __name__)
@@ -95,8 +97,8 @@ def get_seeds_for_batch():
 @batch_bp.route('/api/cost_elements_for_batch', methods=['GET'])
 def get_cost_elements_for_batch():
     """
-    Get applicable cost elements for batch production from cost_elements_master
-    ENHANCED: Now includes activity field for proper frontend filtering
+    Get applicable cost elements for batch production from Masters
+    UPDATED: Uses Masters endpoints as single source of truth (no fallbacks)
     """
     conn = get_db_connection()
     cur = conn.cursor()
@@ -105,91 +107,125 @@ def get_cost_elements_for_batch():
         # Get stage parameter for activity-based filtering
         stage = request.args.get('stage', None)
         
-        # Build query with activity field included
-        base_query = """
-            SELECT 
-                element_id,
-                element_name,
-                category,
-                unit_type,
-                default_rate,
-                calculation_method,
-                is_optional,
-                applicable_to,
-                display_order,
-                activity,
-                module_specific
-            FROM cost_elements_master
-            WHERE is_active = true 
-                AND applicable_to IN ('batch', 'all')
-        """
+        # Map frontend stage to database activity
+        activity_map = {
+            'drying': 'Drying',
+            'crushing': 'Crushing',
+            'filtering': 'Filtering',
+            'batch': None  # Get all for complete batch view
+        }
         
-        # Add activity filtering if stage is provided
-        if stage:
-            # Map frontend stage to database activity
-            activity_map = {
-                'drying': 'Drying',
-                'crushing': 'Crushing',
-                'filtering': 'Filtering',
-                'batch': None  # Get all for complete batch view
-            }
-            
-            activity = activity_map.get(stage)
-            
-            if activity:
-                # Filter by specific activity plus Common costs
-                cur.execute(
-                    base_query + " AND (activity = %s OR activity = 'Common') ORDER BY display_order, category, element_name",
-                    (activity,)
-                )
-            else:
-                # Get all elements for batch stage
-                cur.execute(base_query + " ORDER BY display_order, category, element_name")
-        else:
-            # No stage specified - get all batch elements
-            cur.execute(base_query + " ORDER BY display_order, category, element_name")
+        activity = activity_map.get(stage)
         
-        cost_elements = []
+        # Import Masters functions (will fail if not available - as intended)
+        from modules.masters_crud import list_cost_elements_enhanced
+        from modules.masters_common import get_master_config
+        
+        # Build parameters for Masters endpoint
+        params = {
+            'module': 'batch',
+            'include_common': 'true',
+            'include_inactive': 'false',
+            'per_page': 200,  # Get all elements
+            'page': 1
+        }
+        
+        # Add activity filter if stage is specified
+        if activity:
+            params['activity'] = activity
+        
+        # Call Masters function directly
+        mock_request_args = params
+        
+        # Temporarily store original request args
+        original_args = request.args
+        
+        # Create a mock args object
+        class MockArgs:
+            def get(self, key, default=None):
+                return mock_request_args.get(key, default)
+        
+        # Replace request.args temporarily
+        request.args = MockArgs()
+        
+        # Get cost elements from Masters
+        config = get_master_config('cost_elements')
+        
+        response_json = list_cost_elements_enhanced(
+            config=config,
+            page=params['page'],
+            per_page=params['per_page'],
+            search='',
+            include_inactive=False,
+            sort_by='display_order',
+            sort_order='ASC'
+        )
+        
+        # Restore original request args
+        request.args = original_args
+        
+        # Parse the response
+        response_data = json.loads(response_json.data.decode('utf-8'))
+        
+        # Check if Masters call succeeded
+        if not response_data.get('success'):
+            # Let the error bubble up - no fallback
+            error_msg = response_data.get('error', 'Unknown error from Masters endpoint')
+            return jsonify({
+                'success': False,
+                'error': f'Masters endpoint failed: {error_msg}'
+            }), 500
+        
+        # Extract cost elements from Masters response
+        cost_elements = response_data.get('records', [])
+        
+        # Transform to match expected format
+        # Group by category
         categories = {}
         activities = {}
         
-        for row in cur.fetchall():
-            element = {
-                'element_id': row[0],
-                'element_name': row[1],
-                'category': row[2],
-                'unit_type': row[3],
-                'default_rate': float(row[4]),
-                'calculation_method': row[5],
-                'is_optional': row[6],
-                'applicable_to': row[7],
-                'display_order': row[8],
-                'activity': row[9] if row[9] else 'General',  # Default to 'General' if NULL
-                'module_specific': row[10]
+        for element in cost_elements:
+            # Ensure all required fields are present
+            element_formatted = {
+                'element_id': element.get('element_id'),
+                'element_name': element.get('element_name'),
+                'category': element.get('category'),
+                'unit_type': element.get('unit_type'),
+                'default_rate': float(element.get('default_rate', 0)),
+                'calculation_method': element.get('calculation_method'),
+                'is_optional': element.get('is_optional', False),
+                'applicable_to': element.get('applicable_to'),
+                'display_order': element.get('display_order', 0),
+                'activity': element.get('activity', 'General'),
+                'module_specific': element.get('module_specific')
             }
-            cost_elements.append(element)
             
             # Group by category
-            if row[2] not in categories:
-                categories[row[2]] = []
-            categories[row[2]].append(element)
+            category = element_formatted['category']
+            if category not in categories:
+                categories[category] = []
+            categories[category].append(element_formatted)
             
-            # Group by activity for frontend reference
-            element_activity = row[9] if row[9] else 'General'
+            # Group by activity
+            element_activity = element_formatted['activity']
             if element_activity not in activities:
                 activities[element_activity] = []
-            activities[element_activity].append(element)
+            activities[element_activity].append(element_formatted)
         
+        # Return in expected format
         return jsonify({
             'success': True,
             'cost_elements': cost_elements,
             'cost_elements_by_category': categories,
-            'cost_elements_by_activity': activities,  # New grouping for frontend
+            'cost_elements_by_activity': activities,
             'count': len(cost_elements),
-            'stage': stage if stage else 'all'  # Include stage in response
+            'stage': stage if stage else 'all',
+            'source': 'masters'  # Indicate data source for debugging
         })
         
     except Exception as e:
+        # Let the error bubble up - no masking
+        print(f"Error in get_cost_elements_for_batch: {str(e)}")
         return jsonify({'success': False, 'error': str(e)}), 500
     finally:
         close_connection(conn, cur)
