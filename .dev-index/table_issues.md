@@ -1,6 +1,6 @@
 # Table Usage Issues
 
-Generated: 2025-09-07 14:05:30.833562
+Generated: 2025-09-07 14:18:23.811501
 
 ## ⚠️ Orphaned Tables
 These tables exist in database but are not used in any code:
@@ -97,7 +97,7 @@ These tables are referenced in code but don't exist in database:
 - caps
   Files: puvi-backend/puvi-backend-main/modules/system_config.py
 - categories
-  Files: puvi-backend/puvi-backend-main/modules/sku_production.py, puvi-backend/puvi-backend-main/modules/masters_common.py, puvi-backend/puvi-backend-main/modules/system_config.py and 7 more
+  Files: puvi-backend/puvi-backend-main/modules/sku_production.py, puvi-backend/puvi-backend-main/modules/masters_common.py, puvi-backend/puvi-backend-main/modules/system_config.py and 6 more
 - codes
   Files: puvi-backend/puvi-backend-main/utils/traceability.py
 - completed
@@ -107,7 +107,7 @@ These tables are referenced in code but don't exist in database:
 - components
   Files: puvi-backend/puvi-backend-main/modules/blending.py
 - config
-  Files: puvi-backend/puvi-backend-main/db_utils.py, puvi-frontend/puvi-frontend-main/src/services/configService.js, puvi-frontend/puvi-frontend-main/src/services/api/index.js and 21 more
+  Files: puvi-backend/puvi-backend-main/db_utils.py, puvi-frontend/puvi-frontend-main/src/services/configService.js, puvi-frontend/puvi-frontend-main/src/services/api/index.js and 20 more
 - configuration_status
   Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
 - configurations
