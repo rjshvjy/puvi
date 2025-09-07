@@ -1,6 +1,6 @@
 # PUVI Database Schema
-# Generated: 2025-09-07 01:54:11.658958
-# Total Tables: 81
+# Generated: 2025-09-07 10:42:54.154135
+# Total Tables: 84
 
 === available_oil_types ===
 oil_type: character varying(50)
@@ -156,6 +156,20 @@ requires_subcategory: boolean DEFAULT false
 is_active: boolean DEFAULT true
 created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 
+=== cost_element_activities ===
+id: integer(32,0) [PK] NOT NULL DEFAULT nextval('cost_element_activities_id_seq'::regclass)
+activity_name: character varying(50) [UQ] NOT NULL
+description: text
+display_order: integer(32,0) DEFAULT 0
+is_active: boolean DEFAULT true
+
+=== cost_element_categories ===
+id: integer(32,0) [PK] NOT NULL DEFAULT nextval('cost_element_categories_id_seq'::regclass)
+category_name: character varying(50) [UQ] NOT NULL
+description: text
+display_order: integer(32,0) DEFAULT 0
+is_active: boolean DEFAULT true
+
 === cost_element_rate_history ===
 history_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('cost_element_rate_history_history_id_seq'::regclass)
 element_id: integer(32,0) [FK] -> cost_elements_master.element_id
@@ -166,6 +180,13 @@ effective_to: date
 changed_by: character varying(100)
 change_reason: text
 created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+
+=== cost_element_unit_types ===
+id: integer(32,0) [PK] NOT NULL DEFAULT nextval('cost_element_unit_types_id_seq'::regclass)
+unit_type: character varying(50) [UQ] NOT NULL
+description: text
+display_order: integer(32,0) DEFAULT 0
+is_active: boolean DEFAULT true
 
 === cost_element_usage_stats ===
 element_id: integer(32,0)

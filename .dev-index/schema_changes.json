@@ -1,49 +1,53 @@
 {
-  "timestamp": "2025-09-02 07:11:49.635675",
+  "timestamp": "2025-09-07 10:42:54.157979",
   "changes": {
-    "added": [],
-    "removed": [],
-    "modified": [
-      {
-        "table": "locations_master",
-        "added_columns": [
-          "gst_number"
-        ],
-        "removed_columns": []
-      },
-      {
-        "table": "customer_ship_to_locations",
-        "added_columns": [
-          "gst_number"
-        ],
-        "removed_columns": [
-          "gstin"
-        ]
-      }
+    "added": [
+      "cost_element_activities",
+      "cost_element_categories",
+      "cost_element_unit_types"
     ],
+    "removed": [],
+    "modified": [],
     "index_changes": [
-      "purchases",
-      "tags",
-      "seed_batch_tracking",
-      "sku_bom_details",
-      "uom_master",
-      "suppliers",
-      "sku_master",
-      "sku_inventory",
-      "system_configuration",
-      "blend_batch_components",
-      "sku_outbound",
-      "writeoff_reasons",
-      "sku_expiry_tracking",
-      "sku_oil_allocation",
-      "year_end_closing",
-      "subcategories_master",
-      "production_units",
       "purchase_items",
-      "writeoff_impact_tracking",
-      "sku_production",
+      "masters_audit_log",
+      "writeoff_monthly_summary",
+      "sku_inventory",
+      "sku_bom_master",
+      "cost_elements_master",
+      "customer_ship_to_locations",
       "sku_outbound_items",
-      "batch"
+      "year_end_closing",
+      "inventory",
+      "customers",
+      "subcategories_master",
+      "material_writeoffs",
+      "production_units",
+      "sku_mrp_history",
+      "writeoff_reasons",
+      "tags",
+      "purchases",
+      "locations_master",
+      "material_tags",
+      "batch_extended_costs",
+      "seed_batch_tracking",
+      "sku_production",
+      "bom_category_mapping",
+      "sku_outbound",
+      "batch",
+      "blend_batch_components",
+      "categories_master",
+      "sku_expiry_tracking",
+      "sku_material_consumption",
+      "cost_override_log",
+      "materials",
+      "package_sizes_master",
+      "uom_master",
+      "opening_balances",
+      "sku_master",
+      "sku_bom_details",
+      "suppliers",
+      "batch_time_tracking"
     ]
   }
 }
