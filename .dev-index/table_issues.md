@@ -1,6 +1,6 @@
 # Table Usage Issues
 
-Generated: 2025-09-07 11:56:08.362434
+Generated: 2025-09-07 12:37:14.554477
 
 ## ⚠️ Orphaned Tables
 These tables exist in database but are not used in any code:
@@ -285,7 +285,7 @@ These tables are referenced in code but don't exist in database:
 - master_types
   Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
 - masters
-  Files: puvi-backend/puvi-backend-main/app.py, puvi-frontend/puvi-frontend-main/src/index.js, puvi-frontend/puvi-frontend-main/src/index.js and 40 more
+  Files: puvi-backend/puvi-backend-main/app.py, puvi-frontend/puvi-frontend-main/src/index.js, puvi-frontend/puvi-frontend-main/src/index.js and 42 more
 - masters_common
   Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
 - material
