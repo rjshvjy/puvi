@@ -1,6 +1,6 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/services/api/index.js
 // Consolidated API Service for PUVI Oil Manufacturing System
-// Version: 2.4 - Enhanced with Unified Material Writeoff
+// Version: 2.5 - Cost Elements Configuration Moved to Masters
 // This file consolidates all API services and utilities
 
 const API_URL = process.env.REACT_APP_API_URL || 'https://puvi-backend.onrender.com';
@@ -509,15 +509,34 @@ const api = {
     }
   },
   
-  // Cost Management module - COMPLETE FIX WITH ALL ENDPOINTS
+  // ============================================
+  // COST MANAGEMENT MODULE - UPDATED FOR MASTERS CONSOLIDATION
+  // ============================================
   costManagement: {
-    // Master data endpoint - FIXED to use correct endpoint
+    // ============================================
+    // CONFIGURATION - Redirects to Masters
+    // ============================================
+    
+    // Get cost elements master data - NOW USES MASTERS
     getCostElementsMaster: async (params = {}) => {
+      // Redirect to Masters endpoint
       const queryParams = new URLSearchParams();
       if (params.applicable_to) queryParams.append('applicable_to', params.applicable_to);
+      if (params.activity) queryParams.append('activity', params.activity);
+      if (params.module) queryParams.append('module', params.module);
+      if (params.include_inactive) queryParams.append('include_inactive', params.include_inactive);
       const queryString = queryParams.toString();
-      return apiCall(`/api/cost_elements/master${queryString ? `?${queryString}` : ''}`);
+      return apiCall(`/api/masters/cost_elements${queryString ? `?${queryString}` : ''}`);
     },
+    
+    // Configuration info - tells user where to go
+    getConfigurationInfo: async () => {
+      return apiCall('/api/cost_elements/configure');
+    },
+    
+    // ============================================
+    // ANALYTICS & MONITORING - Keep these
+    // ============================================
     
     // Get cost elements by stage (drying, crushing, filtering, batch, sales)
     getCostElementsByStage: async (stage) => {
@@ -546,6 +565,11 @@ const api = {
       return apiCall(`/api/cost_elements/batch_summary/${batchId}`);
     },
     
+    // Get usage statistics
+    getUsageStats: async () => {
+      return apiCall('/api/cost_elements/usage_stats');
+    },
+    
     // Save time tracking data
     saveTimeTracking: async (data) => {
       return post('/api/cost_elements/time_tracking', data);
@@ -561,14 +585,36 @@ const api = {
       return post('/api/cost_elements/save_batch_costs', data);
     },
     
-    // One-time endpoint to populate activity field
-    populateActivities: async () => {
-      return post('/api/cost_elements/populate_activities', {});
+    // ============================================
+    // DEPRECATED - These redirect to Masters
+    // ============================================
+    
+    // Bulk update - DEPRECATED, use Masters
+    bulkUpdateRates: async (data) => {
+      console.warn('bulkUpdateRates is deprecated. Use masters.updateCostElements instead');
+      return post('/api/masters/cost_elements/bulk_update', data);
     },
     
-    // Legacy naming support for backward compatibility
+    // Create element - DEPRECATED
+    createElement: async (data) => {
+      console.warn('createElement is deprecated. Use masters.createCostElement instead');
+      return post('/api/masters/cost_elements', data);
+    },
+    
+    // Update element - DEPRECATED
+    updateElement: async (id, data) => {
+      console.warn('updateElement is deprecated. Use masters.updateCostElement instead');
+      return put(`/api/masters/cost_elements/${id}`, data);
+    },
+    
+    // Delete element - DEPRECATED
+    deleteElement: async (id) => {
+      console.warn('deleteElement is deprecated. Use masters.deleteCostElement instead');
+      return del(`/api/masters/cost_elements/${id}`);
+    },
+    
+    // Legacy support - redirect to batch module
     getCostElementsForBatch: async (params) => {
-      // This redirects to the batch module's endpoint for backward compatibility
       return apiCall('/api/cost_elements_for_batch');
     }
   },
@@ -838,7 +884,9 @@ const api = {
     }
   },
 
-  // Masters module  
+  // ============================================
+  // MASTERS MODULE - ENHANCED WITH COST ELEMENTS
+  // ============================================
   masters: {
     // Existing methods
     getSuppliers: async () => apiCall('/api/masters/suppliers'),
@@ -846,7 +894,74 @@ const api = {
     getCategories: async () => apiCall('/api/categories'),
     getSubcategories: async (categoryId) => apiCall(`/api/subcategories?category_id=${categoryId}`),
     
-    // NEW: Package Sizes Management
+    // ============================================
+    // COST ELEMENTS MANAGEMENT - NEW
+    // ============================================
+    
+    // Get all cost elements with filters
+    getCostElements: async (params = {}) => {
+      const queryParams = new URLSearchParams();
+      if (params.activity) queryParams.append('activity', params.activity);
+      if (params.module) queryParams.append('module', params.module);
+      if (params.include_inactive) queryParams.append('include_inactive', params.include_inactive);
+      if (params.search) queryParams.append('search', params.search);
+      if (params.page) queryParams.append('page', params.page);
+      if (params.per_page) queryParams.append('per_page', params.per_page);
+      const queryString = queryParams.toString();
+      return apiCall(`/api/masters/cost_elements${queryString ? `?${queryString}` : ''}`);
+    },
+    
+    // Get single cost element by ID
+    getCostElement: async (id) => {
+      return apiCall(`/api/masters/cost_elements/${id}`);
+    },
+    
+    // Create new cost element
+    createCostElement: async (data) => {
+      return post('/api/masters/cost_elements', data);
+    },
+    
+    // Update cost element
+    updateCostElement: async (id, data) => {
+      return put(`/api/masters/cost_elements/${id}`, data);
+    },
+    
+    // Delete cost element
+    deleteCostElement: async (id) => {
+      return del(`/api/masters/cost_elements/${id}`);
+    },
+    
+    // Bulk update cost element rates
+    bulkUpdateCostElements: async (data) => {
+      return post('/api/masters/cost_elements/bulk_update', data);
+    },
+    
+    // Get cost element rate history
+    getCostElementHistory: async (id) => {
+      return apiCall(`/api/masters/cost_elements/${id}/history`);
+    },
+    
+    // Get validation report for cost elements
+    getCostElementValidation: async (params = {}) => {
+      const queryParams = new URLSearchParams();
+      if (params.days) queryParams.append('days', params.days);
+      const queryString = queryParams.toString();
+      return apiCall(`/api/masters/cost_elements/validation_report${queryString ? `?${queryString}` : ''}`);
+    },
+    
+    // Get usage statistics for cost elements
+    getCostElementUsageStats: async () => {
+      return apiCall('/api/masters/cost_elements/usage_stats');
+    },
+    
+    // Get field options for dropdowns
+    getCostElementFieldOptions: async (field) => {
+      return apiCall(`/api/masters/cost_elements/field-options/${field}`);
+    },
+    
+    // ============================================
+    // PACKAGE SIZES MANAGEMENT
+    // ============================================
     getPackageSizes: async (includeInactive = false) => {
       const params = includeInactive ? '?include_inactive=true' : '';
       return apiCall(`/api/masters/package_sizes${params}`);
