@@ -1,5 +1,5 @@
 # Feature Pack: SEEDS-FOR-BATCH
-Generated: 2025-09-07T14:18:28.244Z
+Generated: 2025-09-07T16:47:40.186Z
 Routes: 1 | Tables: 9 | Files: 1
 
 ## Table of Contents
@@ -30,10 +30,10 @@ GET    /api/seeds_for_batch
 | purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 6 other modules |
 
 ### ⚠️ Hardcoded Values Detected
-- `batch_production.py:232` - object
-- `batch_production.py:233` - object
-- `batch_production.py:234` - object
-- `batch_production.py:235` - object
+- `batch_production.py:268` - object
+- `batch_production.py:269` - object
+- `batch_production.py:270` - object
+- `batch_production.py:271` - object
 
 ## Backend Implementation
 
