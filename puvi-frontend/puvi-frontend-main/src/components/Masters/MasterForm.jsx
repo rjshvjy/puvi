@@ -760,11 +760,16 @@ const MasterForm = ({
     try {
       console.log('Loading package sizes for cost elements');
       const response = await apiCall('/api/masters/package_sizes');
-      const sizes = response.records || response.data || [];
+      
+      // Package sizes endpoint returns data in 'package_sizes' field, not 'records'
+      const sizes = response.package_sizes || [];
+      
       console.log('Loaded package sizes:', sizes);
+      
+      // Map to the structure needed for the reference field
       setPackageSizes(sizes.map(size => ({
         size_id: size.size_id,
-        name: size.size_name,
+        name: size.size_name,  // Note: it's size_name not name
         code: size.size_code
       })));
     } catch (error) {
