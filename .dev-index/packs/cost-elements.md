@@ -1,5 +1,5 @@
 # Feature Pack: COST-ELEMENTS
-Generated: 2025-09-07T18:09:56.508Z
+Generated: 2025-09-07T18:52:02.543Z
 Routes: 12 | Tables: 7 | Files: 1
 
 ## Table of Contents
@@ -46,7 +46,7 @@ GET    /api/cost_elements/<int:element_id>/rate_history
 | batch_time_tracking | cost-management | 🟡 MEDIUM | Changes affect 1 other modules |
 | cost_element_rate_history | cost-management, masters-crud | 🟡 MEDIUM | Changes affect 2 other modules |
 | cost_element_usage_stats | cost-management | 🟡 MEDIUM | Changes affect 1 other modules |
-| cost_elements_master | cost-management, masters-crud, package-sizes | 🔴 HIGH | Changes affect 5 other modules |
+| cost_elements_master | batch-production, cost-management, masters-crud | 🔴 HIGH | Changes affect 6 other modules |
 | cost_override_log | cost-management | 🟡 MEDIUM | Changes affect 1 other modules |
 
 ## Backend Implementation
@@ -54,7 +54,7 @@ GET    /api/cost_elements/<int:element_id>/rate_history
 ## Data Flow & Integration
 ### 🔗 Cascading Dependencies
 - **cost_elements_master** (HIGH RISK)
-  - Shared with: cost-management, masters-crud, package-sizes, sku-production, system-config
+  - Shared with: batch-production, cost-management, masters-crud, package-sizes, sku-production, system-config
   - Impact: Changes will cascade to these modules
 
 ### Integration Points

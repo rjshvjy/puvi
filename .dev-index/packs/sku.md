@@ -1,5 +1,5 @@
 # Feature Pack: SKU
-Generated: 2025-09-07T18:09:56.517Z
+Generated: 2025-09-07T18:52:02.552Z
 Routes: 25 | Tables: 31 | Files: 11
 
 ## Table of Contents
@@ -73,7 +73,7 @@ POST   /api/sku/production/allocate-oil
 | blend_batch_components | blending, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
 | blend_batches | blending, masters-crud, sku-production | 🔴 HIGH | Changes affect 3 other modules |
 | categories_master | blending, masters-crud, material-writeoff | 🔴 HIGH | Changes affect 5 other modules |
-| cost_elements_master | cost-management, masters-crud, package-sizes | 🔴 HIGH | Changes affect 5 other modules |
+| cost_elements_master | batch-production, cost-management, masters-crud | 🔴 HIGH | Changes affect 6 other modules |
 | created_at | sku-production | 🟡 MEDIUM | Changes affect 1 other modules |
 | customer_ship_to_locations | customers, sku-outbound | 🟡 MEDIUM | Changes affect 2 other modules |
 | customers | customers, locations, sku-outbound | 🔴 HIGH | Changes affect 4 other modules |
@@ -89,7 +89,7 @@ POST   /api/sku/production/allocate-oil
 | sku_cost_overrides | sku-production | 🟡 MEDIUM | Changes affect 1 other modules |
 | sku_expiry_tracking | locations, sku-outbound, unknown | 🔴 HIGH | Changes affect 3 other modules |
 | sku_inventory | locations, material-writeoff, sku-outbound | 🔴 HIGH | Changes affect 5 other modules |
-| sku_master | masters-crud, material-writeoff, package-sizes | 🔴 HIGH | Changes affect 8 other modules |
+| sku_master | batch-production, masters-crud, material-writeoff | 🔴 HIGH | Changes affect 9 other modules |
 | sku_material_consumption | sku-production | 🟡 MEDIUM | Changes affect 1 other modules |
 | sku_mrp_history | sku-management, sku-production | 🟡 MEDIUM | Changes affect 2 other modules |
 | sku_oil_allocation | sku-production | 🟡 MEDIUM | Changes affect 1 other modules |
@@ -119,7 +119,7 @@ POST   /api/sku/production/allocate-oil
   - Shared with: batch-production, blending, masters-crud, material-writeoff, opening-balance, purchase, sku-production, unknown
   - Impact: Changes will cascade to these modules
 - **cost_elements_master** (HIGH RISK)
-  - Shared with: cost-management, masters-crud, package-sizes, sku-production, system-config
+  - Shared with: batch-production, cost-management, masters-crud, package-sizes, sku-production, system-config
   - Impact: Changes will cascade to these modules
 - **suppliers** (HIGH RISK)
   - Shared with: opening-balance, purchase, sku-production, system-config, unknown

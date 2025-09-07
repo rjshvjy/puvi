@@ -1,5 +1,5 @@
 # Feature Pack: COST-RECONCILIATION-REPORT
-Generated: 2025-09-07T18:09:56.512Z
+Generated: 2025-09-07T18:52:02.547Z
 Routes: 1 | Tables: 5 | Files: 1
 
 ## Table of Contents
@@ -23,7 +23,7 @@ GET    /api/cost_reconciliation_report
 | batches | material-sales | 🟡 MEDIUM | Changes affect 1 other modules |
 | oil_cake_inventory | batch-production, material-sales, material-writeoff | 🔴 HIGH | Changes affect 3 other modules |
 | oil_cake_sale_allocations | material-sales | 🟡 MEDIUM | Changes affect 1 other modules |
-| oil_cake_sales | material-sales | 🟡 MEDIUM | Changes affect 1 other modules |
+| oil_cake_sales | batch-production, material-sales | 🟡 MEDIUM | Changes affect 2 other modules |
 
 ## Backend Implementation
 

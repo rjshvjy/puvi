@@ -1,5 +1,5 @@
 # Feature Pack: SEQUENCE-STATUS
-Generated: 2025-09-07T18:09:56.518Z
+Generated: 2025-09-07T18:52:02.553Z
 Routes: 1 | Tables: 10 | Files: 1
 
 ## Table of Contents
@@ -24,7 +24,7 @@ GET    /api/sequence_status
 | locations_master | locations, sku-outbound, sku-production | 🔴 HIGH | Changes affect 4 other modules |
 | materials | batch-production, blending, masters-crud | 🔴 HIGH | Changes affect 10 other modules |
 | purchases | batch-production, blending, opening-balance | 🔴 HIGH | Changes affect 6 other modules |
-| sku_master | masters-crud, material-writeoff, package-sizes | 🔴 HIGH | Changes affect 8 other modules |
+| sku_master | batch-production, masters-crud, material-writeoff | 🔴 HIGH | Changes affect 9 other modules |
 | sku_outbound | customers, locations, sku-outbound | 🔴 HIGH | Changes affect 4 other modules |
 | sku_production | material-writeoff, sku-management, sku-outbound | 🔴 HIGH | Changes affect 5 other modules |
 | suppliers | opening-balance, purchase, sku-production | 🔴 HIGH | Changes affect 5 other modules |

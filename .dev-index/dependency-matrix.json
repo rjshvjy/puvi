@@ -1,9 +1,9 @@
 {
   "version": "1.0",
-  "generatedAt": "2025-09-07T18:09:56.450Z",
+  "generatedAt": "2025-09-07T18:52:02.483Z",
   "summary": {
-    "totalTables": 68,
-    "sharedTables": 38,
+    "totalTables": 69,
+    "sharedTables": 39,
     "hardcodedCategories": 0,
     "migrationOpportunities": 0
   },
@@ -92,27 +92,6 @@
         }
       }
     },
-    "available_oil_types": {
-      "usedBy": [
-        "batch-production",
-        "system-config"
-      ],
-      "fileCount": 2,
-      "operations": {
-        "batch-production": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/batch_production.py"
-          ],
-          "queryCount": 0
-        },
-        "system-config": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/system_config.py"
-          ],
-          "queryCount": 0
-        }
-      }
-    },
     "materials": {
       "usedBy": [
         "batch-production",
@@ -186,69 +165,6 @@
           "files": [
             "puvi-backend/puvi-backend-main/utils/traceability.py",
             "puvi-backend/puvi-backend-main/app.py"
-          ],
-          "queryCount": 0
-        }
-      }
-    },
-    "inventory": {
-      "usedBy": [
-        "batch-production",
-        "blending",
-        "masters-crud",
-        "material-writeoff",
-        "opening-balance",
-        "purchase",
-        "sku-production",
-        "unknown"
-      ],
-      "fileCount": 8,
-      "operations": {
-        "batch-production": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/batch_production.py"
-          ],
-          "queryCount": 0
-        },
-        "blending": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/blending.py"
-          ],
-          "queryCount": 0
-        },
-        "masters-crud": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/masters_crud.py"
-          ],
-          "queryCount": 0
-        },
-        "material-writeoff": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/material_writeoff.py"
-          ],
-          "queryCount": 0
-        },
-        "opening-balance": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/opening_balance.py"
-          ],
-          "queryCount": 0
-        },
-        "purchase": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/purchase.py"
-          ],
-          "queryCount": 0
-        },
-        "sku-production": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/sku_production.py"
-          ],
-          "queryCount": 0
-        },
-        "unknown": {
-          "files": [
-            "puvi-backend/puvi-backend-main/inventory_utils.py"
           ],
           "queryCount": 0
         }
@@ -332,13 +248,12 @@
         }
       }
     },
-    "batch_extended_costs": {
+    "oil_cake_sales": {
       "usedBy": [
         "batch-production",
-        "cost-management",
-        "masters-crud"
+        "material-sales"
       ],
-      "fileCount": 3,
+      "fileCount": 2,
       "operations": {
         "batch-production": {
           "files": [
@@ -346,15 +261,9 @@
           ],
           "queryCount": 0
         },
-        "cost-management": {
+        "material-sales": {
           "files": [
-            "puvi-backend/puvi-backend-main/modules/cost_management.py"
-          ],
-          "queryCount": 0
-        },
-        "masters-crud": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+            "puvi-backend/puvi-backend-main/modules/material_sales.py"
           ],
           "queryCount": 0
         }
@@ -383,6 +292,252 @@
         "material-writeoff": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/material_writeoff.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "existing": {
+      "usedBy": [
+        "batch-production",
+        "unknown"
+      ],
+      "fileCount": 3,
+      "operations": {
+        "batch-production": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/batch_production.py"
+          ],
+          "queryCount": 0
+        },
+        "unknown": {
+          "files": [
+            "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
+            "puvi-backend/puvi-backend-main/inventory_utils.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "SKU": {
+      "usedBy": [
+        "batch-production"
+      ],
+      "fileCount": 1,
+      "operations": {
+        "batch-production": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/batch_production.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "sku_master": {
+      "usedBy": [
+        "batch-production",
+        "masters-crud",
+        "material-writeoff",
+        "package-sizes",
+        "sku-management",
+        "sku-outbound",
+        "sku-production",
+        "system-config",
+        "unknown"
+      ],
+      "fileCount": 9,
+      "operations": {
+        "batch-production": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/batch_production.py"
+          ],
+          "queryCount": 0
+        },
+        "masters-crud": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+          ],
+          "queryCount": 0
+        },
+        "material-writeoff": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/material_writeoff.py"
+          ],
+          "queryCount": 0
+        },
+        "package-sizes": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/package_sizes.py"
+          ],
+          "queryCount": 0
+        },
+        "sku-management": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_management.py"
+          ],
+          "queryCount": 0
+        },
+        "sku-outbound": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_outbound.py"
+          ],
+          "queryCount": 0
+        },
+        "sku-production": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_production.py"
+          ],
+          "queryCount": 0
+        },
+        "system-config": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/system_config.py"
+          ],
+          "queryCount": 0
+        },
+        "unknown": {
+          "files": [
+            "puvi-backend/puvi-backend-main/app.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "inventory": {
+      "usedBy": [
+        "batch-production",
+        "blending",
+        "masters-crud",
+        "material-writeoff",
+        "opening-balance",
+        "purchase",
+        "sku-production",
+        "unknown"
+      ],
+      "fileCount": 8,
+      "operations": {
+        "batch-production": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/batch_production.py"
+          ],
+          "queryCount": 0
+        },
+        "blending": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/blending.py"
+          ],
+          "queryCount": 0
+        },
+        "masters-crud": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+          ],
+          "queryCount": 0
+        },
+        "material-writeoff": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/material_writeoff.py"
+          ],
+          "queryCount": 0
+        },
+        "opening-balance": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/opening_balance.py"
+          ],
+          "queryCount": 0
+        },
+        "purchase": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/purchase.py"
+          ],
+          "queryCount": 0
+        },
+        "sku-production": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_production.py"
+          ],
+          "queryCount": 0
+        },
+        "unknown": {
+          "files": [
+            "puvi-backend/puvi-backend-main/inventory_utils.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "cost_elements_master": {
+      "usedBy": [
+        "batch-production",
+        "cost-management",
+        "masters-crud",
+        "package-sizes",
+        "sku-production",
+        "system-config"
+      ],
+      "fileCount": 6,
+      "operations": {
+        "batch-production": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/batch_production.py"
+          ],
+          "queryCount": 0
+        },
+        "cost-management": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/cost_management.py"
+          ],
+          "queryCount": 0
+        },
+        "masters-crud": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/masters_crud.py"
+          ],
+          "queryCount": 0
+        },
+        "package-sizes": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/package_sizes.py"
+          ],
+          "queryCount": 0
+        },
+        "sku-production": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/sku_production.py"
+          ],
+          "queryCount": 0
+        },
+        "system-config": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/system_config.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
+    "batch_extended_costs": {
+      "usedBy": [
+        "batch-production",
+        "cost-management",
+        "masters-crud"
+      ],
+      "fileCount": 3,
+      "operations": {
+        "batch-production": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/batch_production.py"
+          ],
+          "queryCount": 0
+        },
+        "cost-management": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/cost_management.py"
+          ],
+          "queryCount": 0
+        },
+        "masters-crud": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/masters_crud.py"
           ],
           "queryCount": 0
         }
@@ -509,48 +664,6 @@
         "sku-production": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/sku_production.py"
-          ],
-          "queryCount": 0
-        }
-      }
-    },
-    "cost_elements_master": {
-      "usedBy": [
-        "cost-management",
-        "masters-crud",
-        "package-sizes",
-        "sku-production",
-        "system-config"
-      ],
-      "fileCount": 5,
-      "operations": {
-        "cost-management": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/cost_management.py"
-          ],
-          "queryCount": 0
-        },
-        "masters-crud": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/masters_crud.py"
-          ],
-          "queryCount": 0
-        },
-        "package-sizes": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/package_sizes.py"
-          ],
-          "queryCount": 0
-        },
-        "sku-production": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/sku_production.py"
-          ],
-          "queryCount": 0
-        },
-        "system-config": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/system_config.py"
           ],
           "queryCount": 0
         }
@@ -977,84 +1090,7 @@
         }
       }
     },
-    "sku_master": {
-      "usedBy": [
-        "masters-crud",
-        "material-writeoff",
-        "package-sizes",
-        "sku-management",
-        "sku-outbound",
-        "sku-production",
-        "system-config",
-        "unknown"
-      ],
-      "fileCount": 8,
-      "operations": {
-        "masters-crud": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/masters_crud.py"
-          ],
-          "queryCount": 0
-        },
-        "material-writeoff": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/material_writeoff.py"
-          ],
-          "queryCount": 0
-        },
-        "package-sizes": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/package_sizes.py"
-          ],
-          "queryCount": 0
-        },
-        "sku-management": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/sku_management.py"
-          ],
-          "queryCount": 0
-        },
-        "sku-outbound": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/sku_outbound.py"
-          ],
-          "queryCount": 0
-        },
-        "sku-production": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/sku_production.py"
-          ],
-          "queryCount": 0
-        },
-        "system-config": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/system_config.py"
-          ],
-          "queryCount": 0
-        },
-        "unknown": {
-          "files": [
-            "puvi-backend/puvi-backend-main/app.py"
-          ],
-          "queryCount": 0
-        }
-      }
-    },
     "batches": {
-      "usedBy": [
-        "material-sales"
-      ],
-      "fileCount": 1,
-      "operations": {
-        "material-sales": {
-          "files": [
-            "puvi-backend/puvi-backend-main/modules/material_sales.py"
-          ],
-          "queryCount": 0
-        }
-      }
-    },
-    "oil_cake_sales": {
       "usedBy": [
         "material-sales"
       ],
@@ -1559,6 +1595,20 @@
         }
       }
     },
+    "available_oil_types": {
+      "usedBy": [
+        "system-config"
+      ],
+      "fileCount": 1,
+      "operations": {
+        "system-config": {
+          "files": [
+            "puvi-backend/puvi-backend-main/modules/system_config.py"
+          ],
+          "queryCount": 0
+        }
+      }
+    },
     "bom_category_mapping": {
       "usedBy": [
         "system-config"
@@ -1596,21 +1646,6 @@
         "writeoff-analytics": {
           "files": [
             "puvi-backend/puvi-backend-main/modules/writeoff_analytics.py"
-          ],
-          "queryCount": 0
-        }
-      }
-    },
-    "existing": {
-      "usedBy": [
-        "unknown"
-      ],
-      "fileCount": 2,
-      "operations": {
-        "unknown": {
-          "files": [
-            "puvi-backend/puvi-backend-main/utils/expiry_utils.py",
-            "puvi-backend/puvi-backend-main/inventory_utils.py"
           ],
           "queryCount": 0
         }
@@ -1710,23 +1745,6 @@
       "recommendation": "⚠️ CRITICAL: Changes require coordination across 10 modules"
     },
     {
-      "table": "inventory",
-      "sharedBy": [
-        "batch-production",
-        "blending",
-        "masters-crud",
-        "material-writeoff",
-        "opening-balance",
-        "purchase",
-        "sku-production",
-        "unknown"
-      ],
-      "moduleCount": 8,
-      "fileCount": 8,
-      "risk": "HIGH",
-      "recommendation": "⚠️ CRITICAL: Changes require coordination across 8 modules"
-    },
-    {
       "table": "batch",
       "sharedBy": [
         "batch-production",
@@ -1744,6 +1762,56 @@
       "fileCount": 11,
       "risk": "HIGH",
       "recommendation": "⚠️ CRITICAL: Changes require coordination across 10 modules"
+    },
+    {
+      "table": "sku_master",
+      "sharedBy": [
+        "batch-production",
+        "masters-crud",
+        "material-writeoff",
+        "package-sizes",
+        "sku-management",
+        "sku-outbound",
+        "sku-production",
+        "system-config",
+        "unknown"
+      ],
+      "moduleCount": 9,
+      "fileCount": 9,
+      "risk": "HIGH",
+      "recommendation": "⚠️ CRITICAL: Changes require coordination across 9 modules"
+    },
+    {
+      "table": "inventory",
+      "sharedBy": [
+        "batch-production",
+        "blending",
+        "masters-crud",
+        "material-writeoff",
+        "opening-balance",
+        "purchase",
+        "sku-production",
+        "unknown"
+      ],
+      "moduleCount": 8,
+      "fileCount": 8,
+      "risk": "HIGH",
+      "recommendation": "⚠️ CRITICAL: Changes require coordination across 8 modules"
+    },
+    {
+      "table": "cost_elements_master",
+      "sharedBy": [
+        "batch-production",
+        "cost-management",
+        "masters-crud",
+        "package-sizes",
+        "sku-production",
+        "system-config"
+      ],
+      "moduleCount": 6,
+      "fileCount": 6,
+      "risk": "HIGH",
+      "recommendation": "⚠️ CRITICAL: Changes require coordination across 6 modules"
     },
     {
       "table": "subcategories_master",
@@ -1766,20 +1834,6 @@
         "material-writeoff",
         "purchase",
         "sku-outbound"
-      ],
-      "moduleCount": 5,
-      "fileCount": 5,
-      "risk": "HIGH",
-      "recommendation": "⚠️ CRITICAL: Changes require coordination across 5 modules"
-    },
-    {
-      "table": "cost_elements_master",
-      "sharedBy": [
-        "cost-management",
-        "masters-crud",
-        "package-sizes",
-        "sku-production",
-        "system-config"
       ],
       "moduleCount": 5,
       "fileCount": 5,
@@ -1840,23 +1894,6 @@
       "recommendation": "⚠️ CRITICAL: Changes require coordination across 5 modules"
     },
     {
-      "table": "sku_master",
-      "sharedBy": [
-        "masters-crud",
-        "material-writeoff",
-        "package-sizes",
-        "sku-management",
-        "sku-outbound",
-        "sku-production",
-        "system-config",
-        "unknown"
-      ],
-      "moduleCount": 8,
-      "fileCount": 8,
-      "risk": "HIGH",
-      "recommendation": "⚠️ CRITICAL: Changes require coordination across 8 modules"
-    },
-    {
       "table": "sku_production",
       "sharedBy": [
         "material-writeoff",
@@ -1885,18 +1922,6 @@
       "recommendation": "⚠️ CRITICAL: Changes require coordination across 5 modules"
     },
     {
-      "table": "batch_extended_costs",
-      "sharedBy": [
-        "batch-production",
-        "cost-management",
-        "masters-crud"
-      ],
-      "moduleCount": 3,
-      "fileCount": 3,
-      "risk": "MEDIUM",
-      "recommendation": "Changes will affect batch-production, cost-management, masters-crud"
-    },
-    {
       "table": "oil_cake_inventory",
       "sharedBy": [
         "batch-production",
@@ -1907,6 +1932,18 @@
       "fileCount": 3,
       "risk": "MEDIUM",
       "recommendation": "Changes will affect batch-production, material-sales, material-writeoff"
+    },
+    {
+      "table": "batch_extended_costs",
+      "sharedBy": [
+        "batch-production",
+        "cost-management",
+        "masters-crud"
+      ],
+      "moduleCount": 3,
+      "fileCount": 3,
+      "risk": "MEDIUM",
+      "recommendation": "Changes will affect batch-production, cost-management, masters-crud"
     },
     {
       "table": "blend_batches",
@@ -1992,15 +2029,26 @@
       "recommendation": "Changes will affect batch-production, purchase"
     },
     {
-      "table": "available_oil_types",
+      "table": "oil_cake_sales",
       "sharedBy": [
         "batch-production",
-        "system-config"
+        "material-sales"
       ],
       "moduleCount": 2,
       "fileCount": 2,
       "risk": "LOW",
-      "recommendation": "Changes will affect batch-production, system-config"
+      "recommendation": "Changes will affect batch-production, material-sales"
+    },
+    {
+      "table": "existing",
+      "sharedBy": [
+        "batch-production",
+        "unknown"
+      ],
+      "moduleCount": 2,
+      "fileCount": 3,
+      "risk": "LOW",
+      "recommendation": "Changes will affect batch-production, unknown"
     },
     {
       "table": "blend_batch_components",
