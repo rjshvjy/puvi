@@ -6,6 +6,7 @@ Version: 11.0.0 - Enhanced with SKU Outbound, Locations, and Customers modules
 """
 
 import re
+import sys
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from datetime import datetime
@@ -35,12 +36,13 @@ from modules.sku_outbound import sku_outbound_bp
 app = Flask(__name__)
 
 # Enable CORS for all routes with proper preflight handling
+# FIXED: Changed from r"/api/*" to r"/*" to ensure CORS applies to all routes
 CORS(app, resources={
-    r"/api/*": {
+    r"/*": {  # Changed from r"/api/*" to cover all routes
         "origins": [
             "http://localhost:3000",
             "http://localhost:3001",
-            "https://puvi-frontend.vercel.app",
+            "https://puvi-frontend.vercel.app",  # Your production frontend
             re.compile(r"^https://puvi-frontend-.*\.vercel\.app$"),
             re.compile(r"^https://.*-rajeshs-projects-8be31e4e\.vercel\.app$"),
             re.compile(r"^https://.*\.vercel\.app$")
@@ -61,11 +63,38 @@ def handle_preflight():
     if request.method == "OPTIONS":
         response = jsonify({"status": "ok"})
         response.headers.add("Access-Control-Allow-Origin", request.headers.get("Origin", "*"))
-        response.headers.add("Access-Control-Allow-Headers", "Content-Type,Authorization")
+        response.headers.add("Access-Control-Allow-Headers", "Content-Type,Authorization,X-Requested-With")
         response.headers.add("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS,PATCH")
         response.headers.add("Access-Control-Max-Age", "3600")
         response.headers.add("Access-Control-Allow-Credentials", "true")
         return response, 200
+
+# ADDED: Ensure CORS headers are always present as a backup
+@app.after_request
+def ensure_cors_headers(response):
+    """Fallback to ensure CORS headers are always present"""
+    origin = request.headers.get('Origin')
+    
+    # Only add if not already set by Flask-CORS
+    if 'Access-Control-Allow-Origin' not in response.headers:
+        if origin:
+            # Allow known origins
+            if 'puvi-frontend.vercel.app' in origin or 'localhost' in origin or '.vercel.app' in origin:
+                response.headers['Access-Control-Allow-Origin'] = origin
+            else:
+                response.headers['Access-Control-Allow-Origin'] = 'https://puvi-frontend.vercel.app'
+        else:
+            response.headers['Access-Control-Allow-Origin'] = 'https://puvi-frontend.vercel.app'
+    
+    # Ensure other CORS headers are set
+    if 'Access-Control-Allow-Methods' not in response.headers:
+        response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS, PATCH'
+    if 'Access-Control-Allow-Headers' not in response.headers:
+        response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With'
+    if 'Access-Control-Allow-Credentials' not in response.headers:
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+    
+    return response
 
 # Register all blueprints
 app.register_blueprint(purchase_bp)
@@ -97,13 +126,21 @@ sequence_sync_results = {
     'summary': {}
 }
 
-# Root endpoint
+# Root endpoint - ADDED: Debug info for CORS
 @app.route('/', methods=['GET'])
 def home():
     """Root endpoint to verify API is running"""
+    # Check Flask-CORS version for debugging
+    try:
+        import flask_cors
+        cors_version = flask_cors.__version__
+    except:
+        cors_version = "Not installed"
+    
     return jsonify({
         'status': 'PUVI Backend API is running!',
         'version': '11.0.0',
+        'cors_version': cors_version,  # ADDED: Show Flask-CORS version
         'features': {
             'sequence_sync': 'Automatic sequence synchronization enabled',
             'self_healing': 'Database sequences auto-repair on startup',
@@ -164,6 +201,17 @@ def health_check():
         'timestamp': datetime.now().isoformat(),
         'modules_loaded': 13,
         'version': '11.0.0'
+    })
+
+# ADDED: Test endpoint to verify CORS
+@app.route('/api/test-cors', methods=['GET', 'OPTIONS'])
+def test_cors():
+    """Test endpoint to verify CORS is working"""
+    return jsonify({
+        'success': True,
+        'message': 'CORS is working!',
+        'origin': request.headers.get('Origin', 'No origin header'),
+        'timestamp': datetime.now().isoformat()
     })
 
 # New endpoint to check sequence synchronization status
@@ -347,6 +395,16 @@ def startup_sequence_sync():
         sequence_sync_results['last_run'] = datetime.now().isoformat()
         sequence_sync_results['status'] = 'failed'
         sequence_sync_results['summary'] = {'error': str(e)}
+
+# ADDED: Debug log for Flask-CORS
+print("="*60, file=sys.stderr)
+print("PUVI Backend initializing with Flask-CORS", file=sys.stderr)
+try:
+    import flask_cors
+    print(f"Flask-CORS version: {flask_cors.__version__}", file=sys.stderr)
+except:
+    print("WARNING: Flask-CORS not found! CORS will not work!", file=sys.stderr)
+print("="*60, file=sys.stderr)
 
 if __name__ == '__main__':
     # Run sequence synchronization before starting the server
