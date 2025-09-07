@@ -1,6 +1,22 @@
-# File Path: puvi-backend/requirements.txt
-flask
-flask_cors
-psycopg2-binary
-gunicorn
-python-dateutil
+# File Path: puvi-backend/puvi-backend-main/requirements.txt
+# PUVI Oil Manufacturing System - Backend Dependencies
+# Version ranges allow patch and minor updates while preventing breaking changes
+
+# Core Framework
+Flask>=2.3.0,<3.0.0
+
+# CORS Support - CRITICAL for frontend communication
+Flask-CORS>=4.0.0,<5.0.0
+
+# Database
+psycopg2-binary>=2.9.0,<3.0.0
+
+# Production Server
+gunicorn>=21.0.0,<23.0.0
+
+# Date/Time Utilities
+python-dateutil>=2.8.0,<3.0.0
+
+# Optional: For better error tracking in production
+# Uncomment if you want to add error monitoring
+# sentry-sdk[flask]>=1.0.0,<2.0.0
