@@ -1,6 +1,6 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/App.js
 // Modern Professional App Component for PUVI Oil Manufacturing System
-// MODIFIED: Added Customer and Location Management modules
+// MODIFIED: Added Transaction Manager module for centralized edit/delete operations
 
 import React, { useState, useEffect } from 'react';
 import './App.css';
@@ -19,6 +19,7 @@ import OpeningBalanceModule from './modules/OpeningBalanceModule';
 import OilConfigurationDashboard from './components/Masters/OilConfigurationDashboard';
 import CustomerManager from './modules/MasterData/CustomerManager';
 import LocationsManager from './modules/MasterData/LocationsManager';
+import TransactionManager from './modules/TransactionManager';
 
 function App() {
   // State Management
@@ -73,6 +74,12 @@ function App() {
       items: [
         { id: 'masters', label: 'Masters', icon: '⚙️', badge: null },
         { id: 'oilConfig', label: 'Oil Configuration', icon: '🛢️', badge: null }
+      ]
+    },
+    {
+      section: 'ADMINISTRATION',
+      items: [
+        { id: 'transactionManager', label: 'Transaction Manager', icon: '🔧', badge: 'NEW' }
       ]
     }
   ];
@@ -160,7 +167,8 @@ function App() {
       customers: 'Customer Management',
       locations: 'Location Management',
       masters: 'Master Data Management',
-      oilConfig: 'Oil Configuration Manager'
+      oilConfig: 'Oil Configuration Manager',
+      transactionManager: 'Transaction Management Console'
     };
     return titles[activeModule] || 'Dashboard';
   };
@@ -181,7 +189,8 @@ function App() {
       customers: 'Manage customers and shipping locations',
       locations: 'Manage warehouses, factories, and third-party locations',
       masters: 'Configure suppliers, materials, and system settings',
-      oilConfig: 'Manage oil type mappings for production chain'
+      oilConfig: 'Manage oil type mappings for production chain',
+      transactionManager: 'Centralized edit and delete operations with complete audit trail'
     };
     return subtitles[activeModule] || '';
   };
@@ -215,6 +224,8 @@ function App() {
         return <OpeningBalanceModule />;
       case 'oilConfig':
         return <OilConfigurationDashboard />;
+      case 'transactionManager':
+        return <TransactionManager />;
       case 'dashboard':
       default:
         return <DashboardContent stats={systemStats} onNavigate={setActiveModule} onRefresh={fetchSystemStats} />;
@@ -315,7 +326,7 @@ const DashboardContent = ({ stats, onNavigate, onRefresh }) => {
     { id: 'customers', icon: '👥', title: 'Add Customer', color: '#14b8a6' },
     { id: 'locations', icon: '📍', title: 'Add Location', color: '#8b5cf6' },
     { id: 'masters', icon: '⚙️', title: 'Add Supplier', color: '#6b7280' },
-    { id: 'cost', icon: '💵', title: 'View Costs', color: '#06b6d4' }
+    { id: 'transactionManager', icon: '🔧', title: 'Manage Transactions', color: '#ec4899' }
   ];
 
   // Only show real data from API
@@ -353,7 +364,8 @@ const DashboardContent = ({ stats, onNavigate, onRefresh }) => {
         <h1>Welcome to PUVI Oil Manufacturing System</h1>
         <p>
           Comprehensive solution for oil manufacturing operations, inventory management, 
-          and cost tracking with advanced MRP and expiry management features.
+          and cost tracking with advanced MRP and expiry management features. Now with 
+          centralized transaction management for complete audit trail and edit/delete operations.
         </p>
         
         {/* System Status - Only show real status */}
@@ -482,17 +494,18 @@ const DashboardContent = ({ stats, onNavigate, onRefresh }) => {
                 <li>• Batch production with cost tracking</li>
                 <li>• SKU management with MRP</li>
                 <li>• SKU outbound with GST</li>
-                <li>• Inventory and expiry tracking</li>
+                <li>• Transaction Manager with audit trail</li>
               </ul>
             </div>
             <div>
               <h3 style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '0.5rem' }}>
-                Support
+                What's New
               </h3>
               <div style={{ fontSize: '0.875rem', color: '#374151', lineHeight: 1.8 }}>
-                <p>For assistance, please contact:</p>
-                <p>• System Administrator</p>
-                <p>• Technical Support Team</p>
+                <p><strong>🔧 Transaction Manager</strong></p>
+                <p>• Edit/delete any transaction</p>
+                <p>• Complete audit trail</p>
+                <p>• Boundary crossing protection</p>
               </div>
             </div>
           </div>
