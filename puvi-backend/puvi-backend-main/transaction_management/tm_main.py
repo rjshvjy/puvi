@@ -210,6 +210,24 @@ def get_transaction(module, record_id):
         result = get_func(record_id)
         
         if result.get('success'):
+            # Normalize response format for frontend
+            # Backend returns module-specific keys (purchase, batch, etc.)
+            # Frontend expects 'data' or 'record'
+            module_data_keys = {
+                'purchases': 'purchase',
+                'material_writeoffs': 'writeoff',
+                'batch': 'batch',
+                'blend_batches': 'blend',
+                'sku_production': 'production',
+                'sku_outbound': 'outbound',
+                'oil_cake_sales': 'sale'
+            }
+            
+            data_key = module_data_keys.get(module)
+            if data_key and data_key in result:
+                result['record'] = result[data_key]
+                result['data'] = result[data_key]  # Support both keys
+            
             return jsonify(result)
         else:
             return jsonify(result), 404 if 'not found' in result.get('error', '').lower() else 500
