@@ -2,7 +2,7 @@
 Transaction Manager - Main Orchestrator Module
 File Path: puvi-backend/puvi-backend-main/transaction_management/tm_main.py
 Purpose: Flask routes and orchestration for centralized edit/delete functionality
-Version: 1.0.1 - FIXED import names for batch and blend delete functions
+Version: 1.0.2 - FIXED all import names and MODULE_OPERATIONS
 
 This module provides the main API endpoints for the Transaction Management Console,
 routing requests to appropriate operation modules based on transaction type.
@@ -20,17 +20,18 @@ from transaction_management.tm_input_operations import (
     check_edit_permissions
 )
 
-# FIXED: Changed delete_batch to soft_delete_batch, delete_blend to soft_delete_blend
+# FIXED: Using soft_delete_* names for all functions
 from transaction_management.tm_production_operations import (
     get_batch_for_edit, update_batch, soft_delete_batch,
     get_blend_for_edit, update_blend, soft_delete_blend,
     list_batches_with_status, list_blends_with_status
 )
 
+# FIXED: Using soft_delete_* names for all output operations
 from transaction_management.tm_output_operations import (
-    get_sku_production_for_edit, update_sku_production, delete_sku_production,
-    get_outbound_for_edit, update_outbound, delete_outbound,
-    get_oil_cake_sale_for_edit, update_oil_cake_sale, delete_oil_cake_sale,
+    get_sku_production_for_edit, update_sku_production, soft_delete_sku_production,
+    get_outbound_for_edit, update_outbound, soft_delete_outbound,
+    get_oil_cake_sale_for_edit, update_oil_cake_sale, soft_delete_oil_cake_sale,
     list_sku_productions_with_status, list_outbounds_with_status, list_oil_cake_sales_with_status,
     trigger_invoice_boundary
 )
@@ -65,35 +66,35 @@ MODULE_OPERATIONS = {
     'batch': {
         'get': get_batch_for_edit,
         'update': update_batch,
-        'delete': soft_delete_batch,  # FIXED: Was delete_batch
+        'delete': soft_delete_batch,  # FIXED: Using soft_delete_batch
         'list': list_batches_with_status,
         'type': 'production'
     },
     'blend_batches': {
         'get': get_blend_for_edit,
         'update': update_blend,
-        'delete': soft_delete_blend,  # FIXED: Was delete_blend
+        'delete': soft_delete_blend,  # FIXED: Using soft_delete_blend
         'list': list_blends_with_status,
         'type': 'production'
     },
     'sku_production': {
         'get': get_sku_production_for_edit,
         'update': update_sku_production,
-        'delete': delete_sku_production,
+        'delete': soft_delete_sku_production,  # FIXED: Using soft_delete_sku_production
         'list': list_sku_productions_with_status,
         'type': 'output'
     },
     'sku_outbound': {
         'get': get_outbound_for_edit,
         'update': update_outbound,
-        'delete': delete_outbound,
+        'delete': soft_delete_outbound,  # FIXED: Using soft_delete_outbound
         'list': list_outbounds_with_status,
         'type': 'output'
     },
     'oil_cake_sales': {
         'get': get_oil_cake_sale_for_edit,
         'update': update_oil_cake_sale,
-        'delete': delete_oil_cake_sale,
+        'delete': soft_delete_oil_cake_sale,  # FIXED: Using soft_delete_oil_cake_sale
         'list': list_oil_cake_sales_with_status,
         'type': 'output'
     }
