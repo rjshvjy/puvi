@@ -31,6 +31,7 @@ from modules.package_sizes import package_sizes_bp
 from modules.locations import locations_bp
 from modules.customers import customers_bp
 from modules.sku_outbound import sku_outbound_bp
+from transaction_management.tm_main import tm_bp
 
 # Create Flask app
 app = Flask(__name__)
@@ -114,6 +115,7 @@ app.register_blueprint(package_sizes_bp)
 app.register_blueprint(locations_bp)
 app.register_blueprint(customers_bp)
 app.register_blueprint(sku_outbound_bp)
+app.register_blueprint(tm_bp)
 
 # Configuration
 app.config['JSON_SORT_KEYS'] = False
