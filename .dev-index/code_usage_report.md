@@ -1,6 +1,6 @@
 # Code-Table Usage Report
 
-Generated: 2025-09-08 13:57:46.711462
+Generated: 2025-09-08 14:02:47.316711
 
 ## Summary
 - Tables found in code: 447
@@ -105,7 +105,7 @@ Tables used: app
 ## Detailed Table Usage
 
 ### a
-- Used by modules: tm_main, date_utils
+- Used by modules: date_utils, tm_main
 - Files: 2
 - Functions using this table:
   - get_month_year in puvi-backend/puvi-backend-main/utils/date_utils.py
@@ -132,7 +132,7 @@ Tables used: app
 - Files: 1
 
 ### address
-- Used by modules: masters_common, customers, locations
+- Used by modules: customers, masters_common, locations
 - Files: 3
 
 ### age_days
@@ -140,7 +140,7 @@ Tables used: app
 - Files: 2
 
 ### alerts
-- Used by modules: writeoff_analytics, material_writeoff
+- Used by modules: material_writeoff, writeoff_analytics
 - Files: 2
 
 ### allocation_id
@@ -148,7 +148,7 @@ Tables used: app
 - Files: 1
 
 ### allocations
-- Used by modules: tm_configs, sku_production, tm_output_operations, sku_outbound, material_sales, expiry_utils
+- Used by modules: tm_configs, tm_output_operations, material_sales, expiry_utils, sku_outbound, sku_production
 - Files: 6
 
 ### allow_backdated_entries
@@ -160,7 +160,7 @@ Tables used: app
 - Files: 1
 
 ### an
-- Used by modules: locations, customers, masters_crud, sku_management
+- Used by modules: customers, masters_crud, locations, sku_management
 - Files: 4
 - Functions using this table:
   - update_customer in puvi-backend/puvi-backend-main/modules/customers.py
@@ -186,7 +186,7 @@ Tables used: app
   - get_financial_year in puvi-backend/puvi-backend-main/utils/traceability.py
 
 ### args
-- Used by modules: locations, customers
+- Used by modules: customers, locations
 - Files: 2
 - Functions using this table:
   - validate_customer_data in puvi-backend/puvi-backend-main/modules/customers.py
@@ -231,7 +231,7 @@ Tables used: app
   - calculate_gst_amount in puvi-backend/puvi-backend-main/modules/sku_outbound.py
 
 ### batch
-- Used by modules: cost_management, db_utils, tm_input_operations, tm_configs, tm_production_operations, blending, sku_production, batch_production, material_writeoff, tm_output_operations, masters_crud, material_sales, app, opening_balance, writeoff_analytics, traceability
+- Used by modules: tm_production_operations, tm_configs, app, masters_crud, tm_output_operations, opening_balance, writeoff_analytics, material_writeoff, material_sales, tm_input_operations, cost_management, db_utils, blending, sku_production, traceability, batch_production
 - Files: 18
 - Functions using this table:
   - system_info in puvi-backend/puvi-backend-main/app.py
@@ -262,7 +262,7 @@ Tables used: app
 - Files: 1
 
 ### batch_extended_costs
-- Used by modules: cost_management, db_utils, tm_configs, tm_production_operations, batch_production, masters_crud, masters_common
+- Used by modules: tm_production_operations, tm_configs, masters_crud, masters_common, cost_management, db_utils, batch_production
 - Files: 7
 - Functions using this table:
   - save_time_tracking in puvi-backend/puvi-backend-main/modules/cost_management.py
@@ -277,7 +277,7 @@ Tables used: app
 - Files: 1
 
 ### batch_time_tracking
-- Used by modules: cost_management, db_utils
+- Used by modules: db_utils, cost_management
 - Files: 2
 - Functions using this table:
   - save_time_tracking in puvi-backend/puvi-backend-main/modules/cost_management.py
@@ -285,7 +285,7 @@ Tables used: app
   - get_batch_cost_summary in puvi-backend/puvi-backend-main/modules/cost_management.py
 
 ### batches
-- Used by modules: tm_production_operations, sku_production, blending, batch_production, material_writeoff, material_sales, opening_balance, app
+- Used by modules: tm_production_operations, app, opening_balance, material_writeoff, material_sales, sku_production, blending, batch_production
 - Files: 8
 - Functions using this table:
   - get_material_sales_inventory in puvi-backend/puvi-backend-main/modules/material_sales.py
@@ -308,7 +308,7 @@ Tables used: app
   - update_blend in puvi-backend/puvi-backend-main/transaction_management/tm_production_operations.py
 
 ### blend_batch_components
-- Used by modules: db_utils, tm_configs, tm_production_operations, sku_production, blending
+- Used by modules: tm_configs, tm_production_operations, db_utils, blending, sku_production
 - Files: 5
 - Functions using this table:
   - get_batches_for_oil_type in puvi-backend/puvi-backend-main/modules/blending.py
@@ -319,7 +319,7 @@ Tables used: app
   - ... and 5 more
 
 ### blend_batches
-- Used by modules: tm_main, db_utils, tm_configs, tm_production_operations, sku_production, blending, tm_output_operations, masters_crud
+- Used by modules: tm_production_operations, tm_configs, masters_crud, tm_output_operations, tm_main, db_utils, blending, sku_production
 - Files: 8
 - Functions using this table:
   - get_batches_for_oil_type in puvi-backend/puvi-backend-main/modules/blending.py
@@ -346,7 +346,7 @@ Tables used: app
 - Files: 1
 
 ### bom_category_mapping
-- Used by modules: masters_common, db_utils, system_config
+- Used by modules: db_utils, masters_common, system_config
 - Files: 3
 - Functions using this table:
   - standardize_select_value in puvi-backend/puvi-backend-main/modules/masters_common.py
@@ -359,7 +359,7 @@ Tables used: app
 - Files: 1
 
 ### bottles
-- Used by modules: system_config, tm_input_operations, material_writeoff
+- Used by modules: tm_input_operations, system_config, material_writeoff
 - Files: 3
 
 ### byproduct_types
@@ -403,15 +403,15 @@ Tables used: app
 - Files: 1
 
 ### cascade_fields
-- Used by modules: tm_main, tm_production_operations, tm_input_operations, tm_configs
+- Used by modules: tm_production_operations, tm_input_operations, tm_main, tm_configs
 - Files: 4
 
 ### categories
-- Used by modules: sku_production, material_writeoff, masters_crud, system_config, masters_common
+- Used by modules: masters_crud, material_writeoff, masters_common, sku_production, system_config
 - Files: 9
 
 ### categories_master
-- Used by modules: db_utils, blending, material_writeoff, purchase, masters_crud, sku_outbound, masters_common
+- Used by modules: masters_crud, material_writeoff, masters_common, sku_outbound, db_utils, blending, purchase
 - Files: 7
 - Functions using this table:
   - get_oil_types_for_blending in puvi-backend/puvi-backend-main/modules/blending.py
@@ -470,7 +470,7 @@ Tables used: app
 - Files: 3
 
 ### config
-- Used by modules: tm_main, db_utils
+- Used by modules: db_utils, tm_main
 - Files: 24
 - Functions using this table:
   - check_permissions in puvi-backend/puvi-backend-main/transaction_management/tm_main.py
@@ -496,7 +496,7 @@ Tables used: app
 - Files: 1
 
 ### cost
-- Used by modules: cost_management, package_sizes
+- Used by modules: package_sizes, cost_management
 - Files: 2
 - Functions using this table:
   - bulk_update_cost_elements in puvi-backend/puvi-backend-main/modules/cost_management.py
@@ -520,7 +520,7 @@ Tables used: app
   - get_cost_element_categories in puvi-backend/puvi-backend-main/modules/masters_crud.py
 
 ### cost_element_rate_history
-- Used by modules: cost_management, db_utils, masters_crud
+- Used by modules: db_utils, masters_crud, cost_management
 - Files: 3
 - Functions using this table:
   - get_rate_history in puvi-backend/puvi-backend-main/modules/cost_management.py
@@ -541,11 +541,11 @@ Tables used: app
   - get_usage_stats in puvi-backend/puvi-backend-main/modules/cost_management.py
 
 ### cost_elements
-- Used by modules: cost_management, batch_production, masters_crud, system_config, masters_common
+- Used by modules: masters_crud, masters_common, cost_management, batch_production, system_config
 - Files: 24
 
 ### cost_elements_master
-- Used by modules: cost_management, db_utils, tm_production_operations, sku_production, batch_production, masters_crud, system_config, masters_common, package_sizes
+- Used by modules: tm_production_operations, masters_crud, masters_common, cost_management, db_utils, sku_production, batch_production, system_config, package_sizes
 - Files: 9
 - Functions using this table:
   - get_cost_elements_by_stage in puvi-backend/puvi-backend-main/modules/cost_management.py
@@ -556,7 +556,7 @@ Tables used: app
   - ... and 23 more
 
 ### cost_override_log
-- Used by modules: masters_common, cost_management, db_utils, tm_configs
+- Used by modules: db_utils, masters_common, tm_configs, cost_management
 - Files: 4
 - Functions using this table:
   - save_batch_costs in puvi-backend/puvi-backend-main/modules/cost_management.py
@@ -568,7 +568,7 @@ Tables used: app
   - create_sku_production in puvi-backend/puvi-backend-main/modules/sku_production.py
 
 ### costs
-- Used by modules: cost_management, sku_outbound
+- Used by modules: sku_outbound, cost_management
 - Files: 2
 
 ### created_at
@@ -611,7 +611,7 @@ Tables used: app
   - ... and 6 more
 
 ### customers
-- Used by modules: customers, tm_output_operations, locations, sku_outbound, app
+- Used by modules: app, tm_output_operations, customers, sku_outbound, locations
 - Files: 16
 - Functions using this table:
   - system_info in puvi-backend/puvi-backend-main/app.py
@@ -628,7 +628,7 @@ Tables used: app
   - edit_record in puvi-backend/puvi-backend-main/transaction_management/tm_main.py
 
 ### database
-- Used by modules: cost_management, blending, sku_production, material_writeoff, masters_crud, system_config, masters_common, traceability
+- Used by modules: masters_crud, material_writeoff, masters_common, cost_management, blending, sku_production, traceability, system_config
 - Files: 8
 - Functions using this table:
   - generate_batch_traceable_code in puvi-backend/puvi-backend-main/utils/traceability.py
@@ -645,7 +645,7 @@ Tables used: app
   - get_financial_year in puvi-backend/puvi-backend-main/utils/traceability.py
 
 ### datetime
-- Used by modules: tm_main, sku_management, inventory_utils, package_sizes, tm_input_operations, tm_configs, tm_output_operations, app, expiry_utils, traceability, cost_management, tm_production_operations, sku_production, masters_crud, sku_outbound, opening_balance, date_utils, masters_common, blending
+- Used by modules: expiry_utils, inventory_utils, package_sizes, app, cost_management, tm_production_operations, tm_configs, tm_output_operations, date_utils, tm_main, sku_outbound, blending, traceability, sku_management, masters_crud, opening_balance, tm_input_operations, masters_common, sku_production
 - Files: 19
 - Functions using this table:
   - calculate_expiry_date in puvi-backend/puvi-backend-main/utils/expiry_utils.py
@@ -656,15 +656,15 @@ Tables used: app
 - Files: 1
 
 ### days
-- Used by modules: cost_management, sku_production, masters_crud
+- Used by modules: sku_production, masters_crud, cost_management
 - Files: 3
 
 ### db_utils
-- Used by modules: tm_main, customers, material_sales, sku_management, package_sizes, tm_input_operations, tm_output_operations, locations, system_config, app, cost_management, tm_production_operations, sku_production, batch_production, material_writeoff, purchase, masters_crud, sku_outbound, opening_balance, masters_common, blending, writeoff_analytics
+- Used by modules: material_sales, package_sizes, app, material_writeoff, cost_management, batch_production, purchase, tm_production_operations, tm_output_operations, customers, tm_main, sku_outbound, blending, locations, sku_management, system_config, masters_crud, opening_balance, writeoff_analytics, tm_input_operations, masters_common, sku_production
 - Files: 22
 
 ### decimal
-- Used by modules: material_sales, sku_management, inventory_utils, package_sizes, tm_input_operations, tm_output_operations, locations, expiry_utils, validation, cost_management, tm_production_operations, sku_production, batch_production, purchase, masters_crud, sku_outbound, opening_balance, masters_common, blending, writeoff_analytics
+- Used by modules: material_sales, expiry_utils, validation, inventory_utils, package_sizes, cost_management, batch_production, purchase, tm_production_operations, tm_output_operations, sku_outbound, blending, locations, sku_management, masters_crud, opening_balance, writeoff_analytics, tm_input_operations, masters_common, sku_production
 - Files: 20
 
 ### decimal_places
@@ -692,7 +692,7 @@ Tables used: app
 - Files: 1
 
 ### dependencies
-- Used by modules: tm_production_operations, tm_output_operations, locations, masters_crud, masters_common, sku_management
+- Used by modules: tm_production_operations, masters_crud, tm_output_operations, masters_common, locations, sku_management
 - Files: 6
 
 ### details
@@ -706,7 +706,7 @@ Tables used: app
   - bulk_update_package_sizes in puvi-backend/puvi-backend-main/modules/package_sizes.py
 
 ### drying_loss
-- Used by modules: tm_production_operations, batch_production, tm_configs
+- Used by modules: batch_production, tm_configs, tm_production_operations
 - Files: 3
 
 ### edit_status
@@ -736,11 +736,11 @@ Tables used: app
 - Files: 1
 
 ### errors
-- Used by modules: customers, db_utils, locations, masters_crud, opening_balance, app, sku_management
+- Used by modules: app, masters_crud, opening_balance, customers, db_utils, locations, sku_management
 - Files: 7
 
 ### existing
-- Used by modules: cost_management, tm_production_operations, batch_production, opening_balance, expiry_utils, traceability, inventory_utils, package_sizes
+- Used by modules: tm_production_operations, opening_balance, expiry_utils, cost_management, traceability, batch_production, inventory_utils, package_sizes
 - Files: 8
 - Functions using this table:
   - update_inventory in puvi-backend/puvi-backend-main/inventory_utils.py
@@ -763,7 +763,7 @@ Tables used: app
 - Files: 1
 
 ### expiry_status
-- Used by modules: sku_outbound, sku_production
+- Used by modules: sku_production, sku_outbound
 - Files: 2
 
 ### expiry_tracking_status
@@ -775,7 +775,7 @@ Tables used: app
 - Files: 1
 
 ### extended_costs
-- Used by modules: tm_production_operations, cost_management, batch_production
+- Used by modules: batch_production, tm_production_operations, cost_management
 - Files: 3
 
 ### failed_updates
@@ -795,7 +795,7 @@ Tables used: app
 - Files: 1
 
 ### first
-- Used by modules: purchase, sku_outbound
+- Used by modules: sku_outbound, purchase
 - Files: 2
 - Functions using this table:
   - get_gst_rate_for_sku in puvi-backend/puvi-backend-main/modules/sku_outbound.py
@@ -806,7 +806,7 @@ Tables used: app
 - Files: 1
 
 ### flask
-- Used by modules: tm_main, customers, material_sales, sku_management, package_sizes, tm_input_operations, tm_output_operations, locations, system_config, app, cost_management, tm_production_operations, sku_production, batch_production, material_writeoff, purchase, masters_crud, sku_outbound, opening_balance, blending, writeoff_analytics
+- Used by modules: material_sales, package_sizes, app, material_writeoff, cost_management, batch_production, purchase, tm_production_operations, tm_output_operations, customers, tm_main, sku_outbound, blending, locations, sku_management, system_config, masters_crud, opening_balance, writeoff_analytics, tm_input_operations, sku_production
 - Files: 21
 
 ### flask_cors
@@ -824,7 +824,7 @@ Tables used: app
 - Files: 1
 
 ### frontend
-- Used by modules: sku_production, batch_production
+- Used by modules: batch_production, sku_production
 - Files: 2
 - Functions using this table:
   - create_sku_production in puvi-backend/puvi-backend-main/modules/sku_production.py
@@ -869,11 +869,11 @@ Tables used: app
 - Files: 1
 
 ### handling_charges
-- Used by modules: purchase, tm_input_operations, tm_configs
+- Used by modules: tm_configs, tm_input_operations, purchase
 - Files: 3
 
 ### has_dependencies
-- Used by modules: tm_input_operations, tm_production_operations, tm_output_operations, locations, masters_crud, masters_common
+- Used by modules: tm_production_operations, masters_crud, tm_output_operations, tm_input_operations, masters_common, locations
 - Files: 6
 
 ### has_items
@@ -923,7 +923,7 @@ Tables used: app
 - Files: 2
 
 ### immutable_fields
-- Used by modules: tm_main, tm_production_operations, tm_input_operations, tm_configs
+- Used by modules: tm_production_operations, tm_input_operations, tm_main, tm_configs
 - Files: 4
 
 ### immutable_item_fields
@@ -931,7 +931,7 @@ Tables used: app
 - Files: 1
 
 ### impact
-- Used by modules: tm_input_operations, writeoff_analytics, material_writeoff
+- Used by modules: material_writeoff, tm_input_operations, writeoff_analytics
 - Files: 3
 - Functions using this table:
   - refresh_writeoff_metrics in puvi-backend/puvi-backend-main/modules/writeoff_analytics.py
@@ -960,7 +960,7 @@ Tables used: app
   - create_outbound in puvi-backend/puvi-backend-main/modules/sku_outbound.py
 
 ### inventory
-- Used by modules: db_utils, tm_input_operations, tm_production_operations, blending, sku_production, batch_production, material_writeoff, purchase, masters_crud, material_sales, opening_balance, inventory_utils
+- Used by modules: tm_production_operations, masters_crud, opening_balance, material_writeoff, material_sales, tm_input_operations, db_utils, blending, sku_production, batch_production, inventory_utils, purchase
 - Files: 14
 - Functions using this table:
   - update_inventory in puvi-backend/puvi-backend-main/inventory_utils.py
@@ -989,7 +989,7 @@ Tables used: app
   - calculate_recommended_weights in puvi-backend/puvi-backend-main/modules/sku_management.py
 
 ### issues
-- Used by modules: masters_crud, blending
+- Used by modules: blending, masters_crud
 - Files: 2
 - Functions using this table:
   - get_batches_for_oil_type in puvi-backend/puvi-backend-main/modules/blending.py
@@ -1003,7 +1003,7 @@ Tables used: app
 - Files: 1
 
 ### items
-- Used by modules: tm_input_operations, tm_configs, sku_production, tm_output_operations, material_writeoff, purchase, sku_outbound
+- Used by modules: tm_configs, tm_output_operations, material_writeoff, tm_input_operations, sku_outbound, sku_production, purchase
 - Files: 7
 
 ### javascript
@@ -1048,7 +1048,7 @@ Tables used: app
 - Files: 1
 
 ### list_fields
-- Used by modules: tm_main, tm_configs
+- Used by modules: tm_configs, tm_main
 - Files: 2
 
 ### list_outbounds_with_status
@@ -1064,7 +1064,7 @@ Tables used: app
 - Files: 1
 
 ### loading_charges
-- Used by modules: tm_input_operations, tm_configs
+- Used by modules: tm_configs, tm_input_operations
 - Files: 2
 
 ### location
@@ -1076,11 +1076,11 @@ Tables used: app
   - check_location_dependencies in puvi-backend/puvi-backend-main/modules/locations.py
 
 ### locations
-- Used by modules: locations, sku_outbound, app
+- Used by modules: app, sku_outbound, locations
 - Files: 11
 
 ### locations_master
-- Used by modules: sku_production, tm_output_operations, locations, sku_outbound, app, expiry_utils
+- Used by modules: app, tm_output_operations, expiry_utils, sku_outbound, sku_production, locations
 - Files: 6
 - Functions using this table:
   - system_info in puvi-backend/puvi-backend-main/app.py
@@ -1115,7 +1115,7 @@ Tables used: app
 - Files: 51
 
 ### masters_audit_log
-- Used by modules: masters_common, sku_management, opening_balance, db_utils
+- Used by modules: db_utils, masters_common, opening_balance, sku_management
 - Files: 4
 - Functions using this table:
   - initialize_system in puvi-backend/puvi-backend-main/modules/opening_balance.py
@@ -1129,7 +1129,7 @@ Tables used: app
 - Files: 1
 
 ### material
-- Used by modules: purchase, masters_crud, batch_production
+- Used by modules: batch_production, masters_crud, purchase
 - Files: 3
 - Functions using this table:
   - add_batch in puvi-backend/puvi-backend-main/modules/batch_production.py
@@ -1165,7 +1165,7 @@ Tables used: app
   - create_material in puvi-backend/puvi-backend-main/modules/purchase.py
 
 ### material_writeoffs
-- Used by modules: tm_main, db_utils, tm_input_operations, tm_configs, material_writeoff, opening_balance, writeoff_analytics, masters_common
+- Used by modules: tm_configs, opening_balance, material_writeoff, writeoff_analytics, tm_input_operations, tm_main, masters_common, db_utils
 - Files: 8
 - Functions using this table:
   - get_system_status in puvi-backend/puvi-backend-main/modules/opening_balance.py
@@ -1176,7 +1176,7 @@ Tables used: app
   - ... and 12 more
 
 ### materials
-- Used by modules: db_utils, tm_input_operations, tm_production_operations, blending, sku_production, batch_production, material_writeoff, tm_output_operations, purchase, masters_crud, opening_balance, app, writeoff_analytics, system_config, masters_common, traceability
+- Used by modules: tm_production_operations, app, masters_crud, tm_output_operations, opening_balance, writeoff_analytics, material_writeoff, tm_input_operations, masters_common, db_utils, blending, sku_production, traceability, batch_production, system_config, purchase
 - Files: 27
 - Functions using this table:
   - system_info in puvi-backend/puvi-backend-main/app.py
@@ -1209,7 +1209,7 @@ Tables used: app
 - Files: 1
 
 ### modules
-- Used by modules: tm_main, masters_crud, app
+- Used by modules: app, masters_crud, tm_main
 - Files: 3
 
 ### month_writeoffs
@@ -1255,7 +1255,7 @@ Tables used: app
   - add_material_sale in puvi-backend/puvi-backend-main/modules/material_sales.py
 
 ### net_loss
-- Used by modules: tm_configs, tm_input_operations, writeoff_analytics, material_writeoff
+- Used by modules: tm_configs, material_writeoff, tm_input_operations, writeoff_analytics
 - Files: 4
 
 ### new_location_id
@@ -1269,7 +1269,7 @@ Tables used: app
 - Files: 1
 
 ### notes
-- Used by modules: cost_management, tm_input_operations, tm_configs, tm_production_operations, sku_production, batch_production, tm_output_operations, material_writeoff, locations, sku_outbound, material_sales, opening_balance, writeoff_analytics, masters_common
+- Used by modules: tm_production_operations, tm_configs, tm_output_operations, opening_balance, writeoff_analytics, material_writeoff, material_sales, tm_input_operations, masters_common, sku_outbound, cost_management, sku_production, locations, batch_production
 - Files: 14
 
 ### numbers
@@ -1290,7 +1290,7 @@ Tables used: app
 - Files: 2
 
 ### oil_cake_inventory
-- Used by modules: db_utils, tm_input_operations, tm_production_operations, batch_production, tm_output_operations, material_writeoff, material_sales
+- Used by modules: tm_production_operations, tm_output_operations, material_writeoff, material_sales, tm_input_operations, db_utils, batch_production
 - Files: 8
 - Functions using this table:
   - get_material_sales_inventory in puvi-backend/puvi-backend-main/modules/material_sales.py
@@ -1307,7 +1307,7 @@ Tables used: app
   - get_oil_cake_rates in puvi-backend/puvi-backend-main/modules/batch_production.py
 
 ### oil_cake_sale_allocations
-- Used by modules: db_utils, tm_configs, tm_production_operations, tm_output_operations, material_sales
+- Used by modules: tm_configs, tm_production_operations, tm_output_operations, material_sales, db_utils
 - Files: 5
 - Functions using this table:
   - add_material_sale in puvi-backend/puvi-backend-main/modules/material_sales.py
@@ -1317,7 +1317,7 @@ Tables used: app
   - check_batch_dependencies in puvi-backend/puvi-backend-main/transaction_management/tm_production_operations.py
 
 ### oil_cake_sales
-- Used by modules: tm_main, db_utils, tm_configs, batch_production, tm_output_operations, material_sales
+- Used by modules: tm_configs, tm_output_operations, material_sales, tm_main, db_utils, batch_production
 - Files: 7
 - Functions using this table:
   - add_material_sale in puvi-backend/puvi-backend-main/modules/material_sales.py
@@ -1346,7 +1346,7 @@ Tables used: app
   - get_production_flow in puvi-backend/puvi-backend-main/modules/masters_crud.py
 
 ### oil_types
-- Used by modules: blending, batch_production, material_writeoff, material_sales, system_config
+- Used by modules: material_writeoff, material_sales, blending, batch_production, system_config
 - Files: 7
 
 ### oil_used_liters
@@ -1370,7 +1370,7 @@ Tables used: app
   - save_opening_balances in puvi-backend/puvi-backend-main/modules/opening_balance.py
 
 ### opening_balances
-- Used by modules: opening_balance, db_utils
+- Used by modules: db_utils, opening_balance
 - Files: 2
 - Functions using this table:
   - get_system_status in puvi-backend/puvi-backend-main/modules/opening_balance.py
@@ -1381,14 +1381,14 @@ Tables used: app
   - ... and 2 more
 
 ### operation
-- Used by modules: locations, customers
+- Used by modules: customers, locations
 - Files: 2
 - Functions using this table:
   - validate_customer_data in puvi-backend/puvi-backend-main/modules/customers.py
   - validate_location_data in puvi-backend/puvi-backend-main/modules/locations.py
 
 ### options
-- Used by modules: masters_common, masters_crud, app, package_sizes
+- Used by modules: app, masters_common, package_sizes, masters_crud
 - Files: 4
 
 ### origins
@@ -1423,7 +1423,7 @@ Tables used: app
 - Files: 1
 
 ### outbounds
-- Used by modules: sku_outbound, app, tm_output_operations
+- Used by modules: app, sku_outbound, tm_output_operations
 - Files: 3
 
 ### outsourced
@@ -1451,7 +1451,7 @@ Tables used: app
 - Files: 2
 
 ### package_sizes_master
-- Used by modules: db_utils, sku_production, masters_crud, masters_common, package_sizes
+- Used by modules: masters_crud, masters_common, db_utils, sku_production, package_sizes
 - Files: 5
 - Functions using this table:
   - create_sku_production in puvi-backend/puvi-backend-main/modules/sku_production.py
@@ -1480,7 +1480,7 @@ Tables used: app
 - Files: 2
 
 ### parameters
-- Used by modules: cost_management, sku_outbound, masters_crud
+- Used by modules: masters_crud, sku_outbound, cost_management
 - Files: 3
 - Functions using this table:
   - get_validation_report in puvi-backend/puvi-backend-main/modules/cost_management.py
@@ -1504,7 +1504,7 @@ Tables used: app
 - Files: 1
 
 ### permissions
-- Used by modules: tm_main, tm_production_operations, tm_input_operations, tm_output_operations
+- Used by modules: tm_production_operations, tm_input_operations, tm_main, tm_output_operations
 - Files: 4
 
 ### prev_month_writeoffs
@@ -1550,7 +1550,7 @@ Tables used: app
 - Files: 1
 
 ### production_units
-- Used by modules: traceability, db_utils
+- Used by modules: db_utils, traceability
 - Files: 2
 - Functions using this table:
   - generate_batch_traceable_code in puvi-backend/puvi-backend-main/utils/traceability.py
@@ -1558,15 +1558,15 @@ Tables used: app
   - generate_blend_traceable_code in puvi-backend/puvi-backend-main/utils/traceability.py
 
 ### productions
-- Used by modules: sku_management, sku_production, app, tm_output_operations
+- Used by modules: sku_management, app, tm_output_operations, sku_production
 - Files: 4
 
 ### products
-- Used by modules: masters_crud, db_utils
+- Used by modules: db_utils, masters_crud
 - Files: 2
 
 ### purchase
-- Used by modules: purchase, tm_input_operations
+- Used by modules: tm_input_operations, purchase
 - Files: 2
 - Functions using this table:
   - add_purchase in puvi-backend/puvi-backend-main/modules/purchase.py
@@ -1581,7 +1581,7 @@ Tables used: app
 - Files: 1
 
 ### purchase_items
-- Used by modules: db_utils, tm_input_operations, tm_configs, batch_production, purchase, masters_common
+- Used by modules: tm_configs, tm_input_operations, masters_common, db_utils, batch_production, purchase
 - Files: 6
 - Functions using this table:
   - get_seeds_for_batch in puvi-backend/puvi-backend-main/modules/batch_production.py
@@ -1592,7 +1592,7 @@ Tables used: app
   - ... and 4 more
 
 ### purchases
-- Used by modules: tm_main, db_utils, tm_input_operations, tm_configs, sku_production, blending, batch_production, tm_output_operations, purchase, opening_balance, app, masters_common
+- Used by modules: tm_configs, app, tm_output_operations, opening_balance, tm_input_operations, tm_main, masters_common, db_utils, sku_production, blending, batch_production, purchase
 - Files: 16
 - Functions using this table:
   - system_info in puvi-backend/puvi-backend-main/app.py
@@ -1611,7 +1611,7 @@ Tables used: app
 - Files: 1
 
 ### query
-- Used by modules: tm_main, customers, tm_input_operations, tm_production_operations, tm_output_operations, locations, masters_crud, masters_common, sku_management, package_sizes
+- Used by modules: tm_production_operations, masters_crud, tm_output_operations, customers, tm_input_operations, tm_main, masters_common, locations, sku_management, package_sizes
 - Files: 10
 - Functions using this table:
   - update_package_size in puvi-backend/puvi-backend-main/modules/package_sizes.py
@@ -1636,7 +1636,7 @@ Tables used: app
 - Files: 1
 
 ### rates
-- Used by modules: masters_crud, system_config, batch_production
+- Used by modules: batch_production, system_config, masters_crud
 - Files: 3
 - Functions using this table:
   - bulk_update_cost_elements in puvi-backend/puvi-backend-main/modules/masters_crud.py
@@ -1656,7 +1656,7 @@ Tables used: app
   - get_oil_cake_rates in puvi-backend/puvi-backend-main/modules/batch_production.py
 
 ### recent_writeoffs
-- Used by modules: writeoff_analytics, material_writeoff
+- Used by modules: material_writeoff, writeoff_analytics
 - Files: 2
 
 ### recipes
@@ -1699,7 +1699,7 @@ Tables used: app
 - Files: 2
 
 ### report_period_days
-- Used by modules: cost_management, masters_crud
+- Used by modules: masters_crud, cost_management
 - Files: 2
 
 ### request
@@ -1726,15 +1726,15 @@ Tables used: app
 - Files: 1
 
 ### safe_fields
-- Used by modules: tm_main, tm_production_operations, tm_input_operations, tm_configs
+- Used by modules: tm_production_operations, tm_input_operations, tm_main, tm_configs
 - Files: 4
 
 ### sales
-- Used by modules: masters_crud, sku_outbound, material_sales, app
+- Used by modules: material_sales, app, masters_crud, sku_outbound
 - Files: 4
 
 ### same
-- Used by modules: traceability, sku_production
+- Used by modules: sku_production, traceability
 - Files: 2
 - Functions using this table:
   - get_next_batch_serial in puvi-backend/puvi-backend-main/utils/traceability.py
@@ -1782,7 +1782,7 @@ Tables used: app
 - Files: 1
 
 ### seeds
-- Used by modules: purchase, masters_crud, batch_production
+- Used by modules: batch_production, masters_crud, purchase
 - Files: 3
 
 ### sequence_sync_status
@@ -1801,7 +1801,7 @@ Tables used: app
 - Files: 1
 
 ### set
-- Used by modules: traceability, opening_balance, sku_outbound
+- Used by modules: sku_outbound, traceability, opening_balance
 - Files: 3
 - Functions using this table:
   - get_next_serial in puvi-backend/puvi-backend-main/utils/traceability.py
@@ -1829,7 +1829,7 @@ Tables used: app
   - update_package_size in puvi-backend/puvi-backend-main/modules/package_sizes.py
 
 ### sku
-- Used by modules: batch_production, tm_output_operations, material_writeoff, sku_outbound, system_config
+- Used by modules: tm_output_operations, material_writeoff, sku_outbound, batch_production, system_config
 - Files: 59
 - Functions using this table:
   - get_oil_types in puvi-backend/puvi-backend-main/modules/batch_production.py
@@ -1844,7 +1844,7 @@ Tables used: app
 - Files: 1
 
 ### sku_bom_details
-- Used by modules: sku_management, sku_production, db_utils
+- Used by modules: db_utils, sku_production, sku_management
 - Files: 3
 - Functions using this table:
   - create_sku_production in puvi-backend/puvi-backend-main/modules/sku_production.py
@@ -1852,7 +1852,7 @@ Tables used: app
   - delete_sku in puvi-backend/puvi-backend-main/modules/sku_management.py
 
 ### sku_bom_master
-- Used by modules: sku_management, sku_production, db_utils
+- Used by modules: db_utils, sku_production, sku_management
 - Files: 3
 - Functions using this table:
   - create_sku_production in puvi-backend/puvi-backend-main/modules/sku_production.py
@@ -1862,7 +1862,7 @@ Tables used: app
   - delete_sku in puvi-backend/puvi-backend-main/modules/sku_management.py
 
 ### sku_cost_overrides
-- Used by modules: sku_production, db_utils
+- Used by modules: db_utils, sku_production
 - Files: 2
 - Functions using this table:
   - create_sku_production in puvi-backend/puvi-backend-main/modules/sku_production.py
@@ -1872,7 +1872,7 @@ Tables used: app
 - Files: 1
 
 ### sku_expiry_tracking
-- Used by modules: db_utils, sku_production, tm_output_operations, locations, sku_outbound, expiry_utils
+- Used by modules: tm_output_operations, expiry_utils, sku_outbound, db_utils, sku_production, locations
 - Files: 6
 - Functions using this table:
   - check_near_expiry_items in puvi-backend/puvi-backend-main/utils/expiry_utils.py
@@ -1883,7 +1883,7 @@ Tables used: app
   - ... and 8 more
 
 ### sku_inventory
-- Used by modules: db_utils, tm_input_operations, sku_production, tm_output_operations, material_writeoff, locations, sku_outbound, expiry_utils
+- Used by modules: tm_output_operations, material_writeoff, tm_input_operations, expiry_utils, sku_outbound, db_utils, sku_production, locations
 - Files: 8
 - Functions using this table:
   - repair_missing_locations in puvi-backend/puvi-backend-main/utils/expiry_utils.py
@@ -1894,7 +1894,7 @@ Tables used: app
   - ... and 9 more
 
 ### sku_master
-- Used by modules: db_utils, tm_input_operations, sku_production, batch_production, tm_output_operations, material_writeoff, masters_crud, sku_outbound, system_config, app, expiry_utils, sku_management, package_sizes
+- Used by modules: app, masters_crud, tm_output_operations, material_writeoff, tm_input_operations, expiry_utils, sku_outbound, sku_management, db_utils, sku_production, batch_production, system_config, package_sizes
 - Files: 13
 - Functions using this table:
   - system_info in puvi-backend/puvi-backend-main/app.py
@@ -1905,7 +1905,7 @@ Tables used: app
   - ... and 28 more
 
 ### sku_material_consumption
-- Used by modules: sku_production, db_utils, tm_output_operations
+- Used by modules: db_utils, sku_production, tm_output_operations
 - Files: 3
 - Functions using this table:
   - create_sku_production in puvi-backend/puvi-backend-main/modules/sku_production.py
@@ -1913,7 +1913,7 @@ Tables used: app
   - get_sku_production_for_edit in puvi-backend/puvi-backend-main/transaction_management/tm_output_operations.py
 
 ### sku_mrp_history
-- Used by modules: sku_management, sku_production, db_utils
+- Used by modules: db_utils, sku_production, sku_management
 - Files: 3
 - Functions using this table:
   - get_mrp_history in puvi-backend/puvi-backend-main/modules/sku_production.py
@@ -1923,7 +1923,7 @@ Tables used: app
   - delete_sku in puvi-backend/puvi-backend-main/modules/sku_management.py
 
 ### sku_oil_allocation
-- Used by modules: db_utils, tm_configs, tm_production_operations, sku_production, tm_output_operations
+- Used by modules: tm_configs, tm_production_operations, tm_output_operations, db_utils, sku_production
 - Files: 5
 - Functions using this table:
   - create_sku_production in puvi-backend/puvi-backend-main/modules/sku_production.py
@@ -1934,7 +1934,7 @@ Tables used: app
   - ... and 5 more
 
 ### sku_outbound
-- Used by modules: customers, tm_output_operations, locations, sku_outbound, app
+- Used by modules: app, tm_output_operations, customers, sku_outbound, locations
 - Files: 5
 - Functions using this table:
   - system_info in puvi-backend/puvi-backend-main/app.py
@@ -1945,7 +1945,7 @@ Tables used: app
   - ... and 14 more
 
 ### sku_outbound_items
-- Used by modules: sku_outbound, tm_output_operations, tm_configs
+- Used by modules: tm_configs, sku_outbound, tm_output_operations
 - Files: 3
 - Functions using this table:
   - create_outbound in puvi-backend/puvi-backend-main/modules/sku_outbound.py
@@ -1956,7 +1956,7 @@ Tables used: app
   - ... and 5 more
 
 ### sku_production
-- Used by modules: db_utils, sku_production, tm_output_operations, material_writeoff, sku_outbound, app, expiry_utils, sku_management
+- Used by modules: app, tm_output_operations, material_writeoff, expiry_utils, sku_outbound, db_utils, sku_production, sku_management
 - Files: 8
 - Functions using this table:
   - system_info in puvi-backend/puvi-backend-main/app.py
@@ -1975,7 +1975,7 @@ Tables used: app
 - Files: 1
 
 ### source
-- Used by modules: traceability, blending, sku_outbound
+- Used by modules: blending, sku_outbound, traceability
 - Files: 3
 - Functions using this table:
   - generate_blend_traceable_code in puvi-backend/puvi-backend-main/utils/traceability.py
@@ -1997,7 +1997,7 @@ Tables used: app
   - standardize_select_value in puvi-backend/puvi-backend-main/modules/masters_common.py
 
 ### statistics
-- Used by modules: tm_main, masters_crud, opening_balance, app, writeoff_analytics
+- Used by modules: app, masters_crud, opening_balance, writeoff_analytics, tm_main
 - Files: 5
 
 ### stats
@@ -2005,19 +2005,19 @@ Tables used: app
 - Files: 1
 
 ### status
-- Used by modules: tm_main, tm_input_operations, tm_configs, tm_production_operations, sku_production, tm_output_operations, masters_crud, sku_outbound, opening_balance, app
+- Used by modules: tm_production_operations, tm_configs, app, masters_crud, tm_output_operations, opening_balance, tm_input_operations, tm_main, sku_outbound, sku_production
 - Files: 10
 - Functions using this table:
   - update_outbound_status in puvi-backend/puvi-backend-main/modules/sku_outbound.py
 
 ### subcategories
-- Used by modules: masters_common, masters_crud, batch_production
+- Used by modules: batch_production, masters_common, masters_crud
 - Files: 8
 - Functions using this table:
   - get_oil_types in puvi-backend/puvi-backend-main/modules/batch_production.py
 
 ### subcategories_master
-- Used by modules: db_utils, blending, batch_production, purchase, masters_crud, sku_outbound, masters_common
+- Used by modules: masters_crud, masters_common, sku_outbound, db_utils, blending, batch_production, purchase
 - Files: 7
 - Functions using this table:
   - get_oil_types_for_blending in puvi-backend/puvi-backend-main/modules/blending.py
@@ -2028,7 +2028,7 @@ Tables used: app
   - ... and 16 more
 
 ### subcategory
-- Used by modules: purchase, masters_crud
+- Used by modules: masters_crud, purchase
 - Files: 2
 - Functions using this table:
   - create_material in puvi-backend/puvi-backend-main/modules/purchase.py
@@ -2045,7 +2045,7 @@ Tables used: app
   - get_batches_for_oil_type in puvi-backend/puvi-backend-main/modules/blending.py
 
 ### success
-- Used by modules: tm_main, customers, material_sales, sku_management, package_sizes, tm_input_operations, tm_output_operations, locations, system_config, app, expiry_utils, cost_management, tm_production_operations, sku_production, batch_production, material_writeoff, purchase, masters_crud, sku_outbound, opening_balance, blending, writeoff_analytics
+- Used by modules: material_sales, expiry_utils, package_sizes, app, material_writeoff, cost_management, batch_production, purchase, tm_production_operations, tm_output_operations, customers, tm_main, sku_outbound, blending, locations, sku_management, system_config, masters_crud, opening_balance, writeoff_analytics, tm_input_operations, sku_production
 - Files: 22
 
 ### suggestions
@@ -2059,7 +2059,7 @@ Tables used: app
   - generate_blend_traceable_code in puvi-backend/puvi-backend-main/utils/traceability.py
 
 ### suppliers
-- Used by modules: db_utils, tm_input_operations, sku_production, purchase, opening_balance, app, system_config, masters_common, traceability
+- Used by modules: app, opening_balance, tm_input_operations, masters_common, db_utils, sku_production, traceability, system_config, purchase
 - Files: 14
 - Functions using this table:
   - system_info in puvi-backend/puvi-backend-main/app.py
@@ -2081,7 +2081,7 @@ Tables used: app
   - close_financial_year in puvi-backend/puvi-backend-main/modules/opening_balance.py
 
 ### system_configuration
-- Used by modules: opening_balance, db_utils, app
+- Used by modules: db_utils, app, opening_balance
 - Files: 3
 - Functions using this table:
   - system_info in puvi-backend/puvi-backend-main/app.py
@@ -2092,7 +2092,7 @@ Tables used: app
   - ... and 2 more
 
 ### tags
-- Used by modules: masters_common, db_utils, purchase
+- Used by modules: db_utils, masters_common, purchase
 - Files: 3
 - Functions using this table:
   - standardize_select_value in puvi-backend/puvi-backend-main/modules/masters_common.py
@@ -2101,7 +2101,7 @@ Tables used: app
   - get_tags in puvi-backend/puvi-backend-main/modules/purchase.py
 
 ### the
-- Used by modules: cost_management, db_utils, tm_input_operations, tm_production_operations, batch_production, masters_crud, traceability
+- Used by modules: tm_production_operations, masters_crud, tm_input_operations, cost_management, db_utils, traceability, batch_production
 - Files: 7
 - Functions using this table:
   - synchronize_all_sequences in puvi-backend/puvi-backend-main/db_utils.py
@@ -2134,7 +2134,7 @@ Tables used: app
 - Files: 1
 
 ### top_reasons
-- Used by modules: writeoff_analytics, material_writeoff
+- Used by modules: material_writeoff, writeoff_analytics
 - Files: 2
 
 ### total_batches
@@ -2170,7 +2170,7 @@ Tables used: app
 - Files: 1
 
 ### total_elements
-- Used by modules: cost_management, masters_crud
+- Used by modules: masters_crud, cost_management
 - Files: 2
 
 ### total_entries
@@ -2194,7 +2194,7 @@ Tables used: app
 - Files: 1
 
 ### total_loss
-- Used by modules: writeoff_analytics, material_writeoff
+- Used by modules: material_writeoff, writeoff_analytics
 - Files: 2
 
 ### total_materials
@@ -2246,11 +2246,11 @@ Tables used: app
 - Files: 1
 
 ### total_uses
-- Used by modules: cost_management, masters_crud
+- Used by modules: masters_crud, cost_management
 - Files: 2
 
 ### total_writeoffs
-- Used by modules: writeoff_analytics, material_writeoff
+- Used by modules: material_writeoff, writeoff_analytics
 - Files: 2
 
 ### totalsales
@@ -2286,7 +2286,7 @@ Tables used: app
 - Files: 1
 
 ### transaction_audit_log
-- Used by modules: tm_main, tm_production_operations, tm_input_operations, tm_output_operations
+- Used by modules: tm_production_operations, tm_input_operations, tm_main, tm_output_operations
 - Files: 4
 - Functions using this table:
   - log_transaction_audit in puvi-backend/puvi-backend-main/transaction_management/tm_output_operations.py
@@ -2311,7 +2311,7 @@ Tables used: app
 - Files: 1
 
 ### transport_charges
-- Used by modules: purchase, tm_input_operations, tm_configs
+- Used by modules: tm_configs, tm_input_operations, purchase
 - Files: 3
 
 ### transport_details
@@ -2319,7 +2319,7 @@ Tables used: app
 - Files: 1
 
 ### trends
-- Used by modules: writeoff_analytics, material_writeoff
+- Used by modules: material_writeoff, writeoff_analytics
 - Files: 2
 
 ### unique_buyers
@@ -2327,7 +2327,7 @@ Tables used: app
 - Files: 1
 
 ### unique_materials
-- Used by modules: purchase, material_writeoff
+- Used by modules: material_writeoff, purchase
 - Files: 2
 
 ### unique_reasons
@@ -2357,7 +2357,7 @@ Tables used: app
   - get_material_units in puvi-backend/puvi-backend-main/modules/system_config.py
 
 ### uom_master
-- Used by modules: masters_common, db_utils, system_config
+- Used by modules: db_utils, masters_common, system_config
 - Files: 3
 - Functions using this table:
   - standardize_select_value in puvi-backend/puvi-backend-main/modules/masters_common.py
@@ -2378,7 +2378,7 @@ Tables used: app
 - Files: 2
 
 ### usage_stats
-- Used by modules: cost_management, masters_crud
+- Used by modules: masters_crud, cost_management
 - Files: 2
 
 ### user
@@ -2388,7 +2388,7 @@ Tables used: app
   - generate_batch_code in puvi-backend/puvi-backend-main/utils/traceability.py
 
 ### utils
-- Used by modules: cost_management, customers, tm_input_operations, tm_production_operations, blending, sku_production, batch_production, material_writeoff, tm_output_operations, purchase, masters_crud, sku_outbound, opening_balance, material_sales, writeoff_analytics, locations, expiry_utils, sku_management
+- Used by modules: tm_production_operations, masters_crud, tm_output_operations, opening_balance, writeoff_analytics, customers, material_sales, expiry_utils, material_writeoff, sku_outbound, tm_input_operations, cost_management, sku_management, blending, sku_production, locations, batch_production, purchase
 - Files: 18
 
 ### v_writeoff_trends
@@ -2466,7 +2466,7 @@ Tables used: app
 - Files: 1
 
 ### writeoff_impact_tracking
-- Used by modules: writeoff_analytics, material_writeoff
+- Used by modules: material_writeoff, writeoff_analytics
 - Files: 2
 - Functions using this table:
   - get_writeoff_impact in puvi-backend/puvi-backend-main/modules/writeoff_analytics.py
@@ -2475,7 +2475,7 @@ Tables used: app
   - get_writeoff_dashboard in puvi-backend/puvi-backend-main/modules/material_writeoff.py
 
 ### writeoff_monthly_summary
-- Used by modules: writeoff_analytics, material_writeoff
+- Used by modules: material_writeoff, writeoff_analytics
 - Files: 2
 - Functions using this table:
   - get_writeoff_trends in puvi-backend/puvi-backend-main/modules/writeoff_analytics.py
@@ -2483,7 +2483,7 @@ Tables used: app
   - get_writeoff_trends in puvi-backend/puvi-backend-main/modules/material_writeoff.py
 
 ### writeoff_reasons
-- Used by modules: masters_common, system_config, writeoff_analytics, material_writeoff
+- Used by modules: material_writeoff, masters_common, system_config, writeoff_analytics
 - Files: 6
 - Functions using this table:
   - get_writeoff_dashboard in puvi-backend/puvi-backend-main/modules/writeoff_analytics.py
@@ -2494,11 +2494,11 @@ Tables used: app
   - ... and 3 more
 
 ### writeoffs
-- Used by modules: opening_balance, tm_input_operations, writeoff_analytics, material_writeoff
+- Used by modules: material_writeoff, tm_input_operations, opening_balance, writeoff_analytics
 - Files: 4
 
 ### year_end_closing
-- Used by modules: opening_balance, db_utils
+- Used by modules: db_utils, opening_balance
 - Files: 2
 - Functions using this table:
   - close_financial_year in puvi-backend/puvi-backend-main/modules/opening_balance.py
