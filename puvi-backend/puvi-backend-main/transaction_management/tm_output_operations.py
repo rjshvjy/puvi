@@ -676,6 +676,76 @@ def update_outbound(outbound_id, data, user='System'):
     finally:
         close_connection(conn, cur)
 
+def soft_delete_outbound(outbound_id, reason='', user='System'):
+    """Soft delete outbound record"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        # Get outbound details
+        cur.execute("""
+            SELECT * FROM sku_outbound 
+            WHERE outbound_id = %s AND status != 'cancelled'
+        """, (outbound_id,))
+        
+        columns = [desc[0] for desc in cur.description]
+        outbound_data = cur.fetchone()
+        
+        if not outbound_data:
+            return {'success': False, 'error': 'Outbound not found'}
+        
+        outbound = dict(zip(columns, outbound_data))
+        
+        # Check if invoice sent or boundary crossed
+        if outbound.get('invoice_number') or outbound.get('boundary_crossed'):
+            return {'success': False, 'error': 'Cannot delete - invoice sent'}
+        
+        # Check dependencies
+        dependencies = check_outbound_dependencies(outbound_id, cur)
+        if dependencies['has_dependencies']:
+            return {
+                'success': False,
+                'error': 'Cannot delete - invoice exists or boundary crossed'
+            }
+        
+        # Begin transaction
+        cur.execute("BEGIN")
+        
+        # Soft delete outbound
+        cur.execute("""
+            UPDATE sku_outbound 
+            SET status = 'cancelled',
+                edited_by = %s,
+                edited_at = CURRENT_TIMESTAMP
+            WHERE outbound_id = %s
+        """, (user, outbound_id))
+        
+        # Soft delete outbound items
+        cur.execute("""
+            UPDATE sku_outbound_items
+            SET status = 'cancelled'
+            WHERE outbound_id = %s
+        """, (outbound_id,))
+        
+        # Log audit
+        log_transaction_audit(
+            conn, cur, 'sku_outbound', outbound_id, 'DELETE',
+            outbound, None, user, reason
+        )
+        
+        conn.commit()
+        
+        return {
+            'success': True,
+            'message': f'Outbound {outbound["outbound_code"]} deleted successfully'
+        }
+        
+    except Exception as e:
+        conn.rollback()
+        return {'success': False, 'error': str(e)}
+    finally:
+        close_connection(conn, cur)
+
 def trigger_invoice_boundary(outbound_id, invoice_number, user='System'):
     """
     Trigger boundary crossing when invoice is sent
@@ -1099,6 +1169,72 @@ def list_outbounds_with_status(filters=None):
     finally:
         close_connection(conn, cur)
 
+def list_oil_cake_sales_with_status(filters=None):
+    """List oil cake sales with edit/delete status"""
+    conn = get_db_connection()
+    cur = conn.cursor()
+    
+    try:
+        query = """
+            SELECT 
+                ocs.sale_id,
+                ocs.sale_code,
+                ocs.sale_date,
+                ocs.buyer_name,
+                ocs.total_quantity,
+                ocs.total_value,
+                ocs.invoice_number,
+                ocs.status,
+                ocs.boundary_crossed,
+                ocs.created_at,
+                CASE 
+                    WHEN ocs.boundary_crossed = true OR ocs.invoice_number IS NOT NULL THEN 'locked'
+                    WHEN ocs.created_at::date = CURRENT_DATE THEN 'editable'
+                    ELSE 'partial'
+                END as edit_status
+            FROM oil_cake_sales ocs
+            WHERE ocs.status = 'active'
+        """
+        
+        params = []
+        if filters:
+            if filters.get('start_date'):
+                query += " AND ocs.sale_date >= %s"
+                params.append(parse_date(filters['start_date']))
+            if filters.get('end_date'):
+                query += " AND ocs.sale_date <= %s"
+                params.append(parse_date(filters['end_date']))
+        
+        query += " ORDER BY ocs.sale_date DESC, ocs.sale_id DESC LIMIT 100"
+        
+        cur.execute(query, params)
+        
+        sales = []
+        for row in cur.fetchall():
+            sales.append({
+                'sale_id': row[0],
+                'sale_code': row[1],
+                'sale_date': integer_to_date(row[2], '%d-%m-%Y') if row[2] else None,
+                'buyer_name': row[3],
+                'total_quantity': float(row[4]) if row[4] else 0,
+                'total_value': float(row[5]) if row[5] else 0,
+                'invoice_number': row[6],
+                'status': row[7],
+                'boundary_crossed': row[8],
+                'edit_status': row[10]
+            })
+        
+        return {
+            'success': True,
+            'sales': sales,
+            'count': len(sales)
+        }
+        
+    except Exception as e:
+        return {'success': False, 'error': str(e)}
+    finally:
+        close_connection(conn, cur)
+
 # ============================================
 # MODULE EXPORTS
 # ============================================
@@ -1115,11 +1251,13 @@ __all__ = [
     # SKU Outbound operations
     'get_outbound_for_edit',
     'update_outbound',
+    'soft_delete_outbound',
     'list_outbounds_with_status',
     # Oil Cake Sales operations
     'get_oil_cake_sale_for_edit',
     'update_oil_cake_sale',
     'soft_delete_oil_cake_sale',
+    'list_oil_cake_sales_with_status',
     # Utilities
     'check_sku_production_dependencies',
     'check_outbound_dependencies',
