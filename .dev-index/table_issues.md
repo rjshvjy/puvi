@@ -1,6 +1,6 @@
 # Table Usage Issues
 
-Generated: 2025-09-08 14:22:20.034826
+Generated: 2025-09-08 14:41:05.342613
 
 ## ⚠️ Orphaned Tables
 These tables exist in database but are not used in any code:
@@ -333,6 +333,8 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/transaction_management/tm_production_operations.py
 - list_fields
   Files: puvi-backend/puvi-backend-main/transaction_management/tm_main.py, puvi-backend/puvi-backend-main/transaction_management/tm_configs.py
+- list_oil_cake_sales_with_status
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_output_operations.py
 - list_outbounds_with_status
   Files: puvi-backend/puvi-backend-main/transaction_management/tm_output_operations.py
 - list_sku_productions_with_status
@@ -556,7 +558,7 @@ These tables are referenced in code but don't exist in database:
 - safe_fields
   Files: puvi-backend/puvi-backend-main/transaction_management/tm_input_operations.py, puvi-backend/puvi-backend-main/transaction_management/tm_main.py, puvi-backend/puvi-backend-main/transaction_management/tm_production_operations.py and 1 more
 - sales
-  Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/modules/material_sales.py, puvi-backend/puvi-backend-main/modules/sku_outbound.py and 1 more
+  Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/modules/material_sales.py, puvi-backend/puvi-backend-main/modules/sku_outbound.py and 2 more
 - same
   Files: puvi-backend/puvi-backend-main/utils/traceability.py, puvi-backend/puvi-backend-main/modules/sku_production.py
 - saved_costs
