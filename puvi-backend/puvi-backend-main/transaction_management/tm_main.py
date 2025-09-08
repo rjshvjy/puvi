@@ -37,10 +37,10 @@ from .tm_input_operations import (
 from .tm_production_operations import (
     get_batch_for_edit,
     update_batch,
-    soft_delete_batch,
+    delete_batch,
     get_blend_for_edit,
     update_blend,
-    soft_delete_blend,
+    delete_blend,
     list_batches_with_status,
     list_blends_with_status
 )
@@ -165,6 +165,23 @@ def list_transactions(module):
         result = list_func(filters)
         
         if result.get('success'):
+            # Normalize response format for frontend
+            # Backend returns module-specific keys (purchases, batches, etc.)
+            # Frontend expects 'records' or 'data'
+            module_data_keys = {
+                'purchases': 'purchases',
+                'material_writeoffs': 'writeoffs',
+                'batch': 'batches',
+                'blend_batches': 'blends',
+                'sku_production': 'productions',
+                'sku_outbound': 'outbounds',
+                'oil_cake_sales': 'sales'
+            }
+            
+            data_key = module_data_keys.get(module)
+            if data_key and data_key in result:
+                result['records'] = result[data_key]
+            
             return jsonify(result)
         else:
             return jsonify(result), 500
