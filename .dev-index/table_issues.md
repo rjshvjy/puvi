@@ -1,6 +1,6 @@
 # Table Usage Issues
 
-Generated: 2025-09-08 12:20:13.730502
+Generated: 2025-09-08 12:29:03.533213
 
 ## ⚠️ Orphaned Tables
 These tables exist in database but are not used in any code:
@@ -29,8 +29,10 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/modules/material_sales.py, puvi-backend/puvi-backend-main/modules/material_writeoff.py
 - alerts
   Files: puvi-backend/puvi-backend-main/modules/writeoff_analytics.py, puvi-backend/puvi-backend-main/modules/material_writeoff.py
+- allocation_id
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_configs.py
 - allocations
-  Files: puvi-backend/puvi-backend-main/utils/expiry_utils.py, puvi-backend/puvi-backend-main/modules/material_sales.py, puvi-backend/puvi-backend-main/modules/sku_production.py and 1 more
+  Files: puvi-backend/puvi-backend-main/utils/expiry_utils.py, puvi-backend/puvi-backend-main/modules/material_sales.py, puvi-backend/puvi-backend-main/modules/sku_production.py and 2 more
 - allow_backdated_entries
   Files: puvi-backend/puvi-backend-main/modules/opening_balance.py
 - allow_headers
@@ -96,7 +98,7 @@ These tables are referenced in code but don't exist in database:
 - caps
   Files: puvi-backend/puvi-backend-main/modules/system_config.py
 - cascade_fields
-  Files: puvi-backend/puvi-backend-main/transaction_management/tm_input_operations.py
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_input_operations.py, puvi-backend/puvi-backend-main/transaction_management/tm_configs.py
 - categories
   Files: puvi-backend/puvi-backend-main/modules/sku_production.py, puvi-backend/puvi-backend-main/modules/masters_common.py, puvi-backend/puvi-backend-main/modules/system_config.py and 6 more
 - codes
@@ -105,8 +107,10 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/modules/sku_management.py
 - completed_with_errors
   Files: puvi-backend/puvi-backend-main/app.py
+- component_id
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_configs.py
 - components
-  Files: puvi-backend/puvi-backend-main/modules/blending.py
+  Files: puvi-backend/puvi-backend-main/modules/blending.py, puvi-backend/puvi-backend-main/transaction_management/tm_configs.py
 - config
   Files: puvi-backend/puvi-backend-main/db_utils.py, puvi-frontend/puvi-frontend-main/src/services/configService.js, puvi-frontend/puvi-frontend-main/src/services/api/index.js and 20 more
 - configuration_status
@@ -142,7 +146,7 @@ These tables are referenced in code but don't exist in database:
 - date
   Files: puvi-backend/puvi-backend-main/utils/traceability.py
 - datetime
-  Files: puvi-backend/puvi-backend-main/inventory_utils.py, puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/utils/traceability.py and 12 more
+  Files: puvi-backend/puvi-backend-main/inventory_utils.py, puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/utils/traceability.py and 13 more
 - dateutil
   Files: puvi-backend/puvi-backend-main/utils/expiry_utils.py
 - days
@@ -157,6 +161,8 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/modules/batch_production.py
 - delivery_location_type
   Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
+- delivery_notes
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_configs.py
 - density_values
   Files: puvi-backend/puvi-backend-main/modules/system_config.py
 - dependencies
@@ -166,9 +172,9 @@ These tables are referenced in code but don't exist in database:
 - display
   Files: puvi-backend/puvi-backend-main/modules/package_sizes.py
 - drying_loss
-  Files: puvi-backend/puvi-backend-main/modules/batch_production.py
+  Files: puvi-backend/puvi-backend-main/modules/batch_production.py, puvi-backend/puvi-backend-main/transaction_management/tm_configs.py
 - edit_status
-  Files: puvi-backend/puvi-backend-main/transaction_management/tm_input_operations.py
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_input_operations.py, puvi-backend/puvi-backend-main/transaction_management/tm_configs.py
 - editable_fields
   Files: puvi-backend/puvi-backend-main/transaction_management/tm_input_operations.py
 - endpoints
@@ -230,7 +236,7 @@ These tables are referenced in code but don't exist in database:
 - gunny_bags
   Files: puvi-backend/puvi-backend-main/modules/material_sales.py
 - handling_charges
-  Files: puvi-backend/puvi-backend-main/modules/purchase.py, puvi-backend/puvi-backend-main/transaction_management/tm_input_operations.py
+  Files: puvi-backend/puvi-backend-main/modules/purchase.py, puvi-backend/puvi-backend-main/transaction_management/tm_input_operations.py, puvi-backend/puvi-backend-main/transaction_management/tm_configs.py
 - has_dependencies
   Files: puvi-backend/puvi-backend-main/modules/masters_common.py, puvi-backend/puvi-backend-main/modules/masters_crud.py, puvi-backend/puvi-backend-main/modules/locations.py and 1 more
 - has_transactions
@@ -245,8 +251,14 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/utils/date_utils.py
 - if
   Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
+- immutable_allocation_fields
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_configs.py
+- immutable_component_fields
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_configs.py
 - immutable_fields
-  Files: puvi-backend/puvi-backend-main/transaction_management/tm_input_operations.py
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_input_operations.py, puvi-backend/puvi-backend-main/transaction_management/tm_configs.py
+- immutable_item_fields
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_configs.py
 - impact
   Files: puvi-backend/puvi-backend-main/modules/writeoff_analytics.py, puvi-backend/puvi-backend-main/modules/material_writeoff.py, puvi-backend/puvi-backend-main/transaction_management/tm_input_operations.py
 - in
@@ -265,8 +277,10 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/modules/blending.py, puvi-backend/puvi-backend-main/modules/masters_crud.py
 - item_charges
   Files: puvi-backend/puvi-backend-main/transaction_management/tm_input_operations.py
+- item_id
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_configs.py
 - items
-  Files: puvi-backend/puvi-backend-main/modules/sku_production.py, puvi-backend/puvi-backend-main/modules/sku_outbound.py, puvi-backend/puvi-backend-main/modules/purchase.py and 2 more
+  Files: puvi-backend/puvi-backend-main/modules/sku_production.py, puvi-backend/puvi-backend-main/modules/sku_outbound.py, puvi-backend/puvi-backend-main/modules/purchase.py and 3 more
 - javascript
   Files: puvi-backend/puvi-backend-main/utils/validation.py
 - json_sort_keys
@@ -281,10 +295,12 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/modules/batch_production.py
 - last_updated
   Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
+- list_fields
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_configs.py
 - litres
   Files: puvi-backend/puvi-backend-main/modules/masters_common.py
 - loading_charges
-  Files: puvi-backend/puvi-backend-main/transaction_management/tm_input_operations.py
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_input_operations.py, puvi-backend/puvi-backend-main/transaction_management/tm_configs.py
 - location
   Files: puvi-backend/puvi-backend-main/utils/expiry_utils.py, puvi-backend/puvi-backend-main/modules/sku_outbound.py, puvi-backend/puvi-backend-main/modules/locations.py
 - locations
@@ -333,6 +349,8 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/modules/material_writeoff.py
 - movements
   Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
+- mrp
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_configs.py
 - mrp_history
   Files: puvi-backend/puvi-backend-main/modules/sku_production.py
 - multiple
@@ -342,13 +360,13 @@ These tables are referenced in code but don't exist in database:
 - net
   Files: puvi-backend/puvi-backend-main/modules/material_sales.py
 - net_loss
-  Files: puvi-backend/puvi-backend-main/modules/writeoff_analytics.py, puvi-backend/puvi-backend-main/modules/material_writeoff.py, puvi-backend/puvi-backend-main/transaction_management/tm_input_operations.py
+  Files: puvi-backend/puvi-backend-main/modules/writeoff_analytics.py, puvi-backend/puvi-backend-main/modules/material_writeoff.py, puvi-backend/puvi-backend-main/transaction_management/tm_input_operations.py and 1 more
 - new_location_id
   Files: puvi-backend/puvi-backend-main/utils/expiry_utils.py
 - nos
   Files: puvi-backend/puvi-backend-main/modules/material_sales.py
 - notes
-  Files: puvi-backend/puvi-backend-main/modules/opening_balance.py, puvi-backend/puvi-backend-main/modules/material_sales.py, puvi-backend/puvi-backend-main/modules/cost_management.py and 8 more
+  Files: puvi-backend/puvi-backend-main/modules/opening_balance.py, puvi-backend/puvi-backend-main/modules/material_sales.py, puvi-backend/puvi-backend-main/modules/cost_management.py and 9 more
 - numbers
   Files: puvi-backend/puvi-backend-main/modules/masters_common.py
 - oil
@@ -367,6 +385,8 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
 - oil_types
   Files: puvi-backend/puvi-backend-main/modules/material_sales.py, puvi-backend/puvi-backend-main/modules/blending.py, puvi-backend/puvi-backend-main/modules/batch_production.py and 4 more
+- oil_used_liters
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_configs.py
 - oil_yield
   Files: puvi-backend/puvi-backend-main/modules/blending.py
 - oldest_stock_days
@@ -381,6 +401,10 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/app.py
 - orphaned_oil_types
   Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
+- outbound_id
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_configs.py
+- outbound_item_id
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_configs.py
 - outbound_transactions
   Files: puvi-backend/puvi-backend-main/modules/locations.py
 - outbounds
@@ -397,10 +421,18 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/modules/sku_management.py
 - packing_costs
   Files: puvi-backend/puvi-backend-main/modules/sku_production.py
+- packing_loss
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_configs.py
 - pages
   Files: puvi-backend/puvi-backend-main/modules/sku_management.py, puvi-backend/puvi-backend-main/modules/masters_crud.py
 - parameters
   Files: puvi-backend/puvi-backend-main/modules/cost_management.py, puvi-backend/puvi-backend-main/modules/sku_outbound.py, puvi-backend/puvi-backend-main/modules/masters_crud.py
+- payment_notes
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_configs.py
+- payment_status
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_configs.py
+- payment_terms
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_configs.py
 - pendingdeliveries
   Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
 - permissions
@@ -461,6 +493,8 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/transaction_management/tm_input_operations.py
 - remaining
   Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py, puvi-backend/puvi-backend-main/modules/material_writeoff.py
+- remarks
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_configs.py
 - report_period_days
   Files: puvi-backend/puvi-backend-main/modules/cost_management.py, puvi-backend/puvi-backend-main/modules/masters_crud.py
 - request
@@ -472,7 +506,7 @@ These tables are referenced in code but don't exist in database:
 - rounded_hours
   Files: puvi-backend/puvi-backend-main/modules/cost_management.py
 - safe_fields
-  Files: puvi-backend/puvi-backend-main/transaction_management/tm_input_operations.py
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_input_operations.py, puvi-backend/puvi-backend-main/transaction_management/tm_configs.py
 - sales
   Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/modules/material_sales.py, puvi-backend/puvi-backend-main/modules/sku_outbound.py and 1 more
 - same
@@ -526,7 +560,7 @@ These tables are referenced in code but don't exist in database:
 - stats
   Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
 - status
-  Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/modules/opening_balance.py, puvi-backend/puvi-backend-main/modules/sku_production.py and 3 more
+  Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/modules/opening_balance.py, puvi-backend/puvi-backend-main/modules/sku_production.py and 4 more
 - subcategories
   Files: puvi-backend/puvi-backend-main/modules/batch_production.py, puvi-backend/puvi-backend-main/modules/masters_common.py, puvi-backend/puvi-backend-main/modules/masters_crud.py and 5 more
 - subcategory
@@ -623,6 +657,8 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/modules/purchase.py
 - tracking
   Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
+- tracking_id
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_configs.py
 - transaction_counts
   Files: puvi-backend/puvi-backend-main/modules/opening_balance.py
 - transaction_type
@@ -630,7 +666,9 @@ These tables are referenced in code but don't exist in database:
 - transactions
   Files: puvi-backend/puvi-backend-main/app.py
 - transport_charges
-  Files: puvi-backend/puvi-backend-main/modules/purchase.py, puvi-backend/puvi-backend-main/transaction_management/tm_input_operations.py
+  Files: puvi-backend/puvi-backend-main/modules/purchase.py, puvi-backend/puvi-backend-main/transaction_management/tm_input_operations.py, puvi-backend/puvi-backend-main/transaction_management/tm_configs.py
+- transport_details
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_configs.py
 - trends
   Files: puvi-backend/puvi-backend-main/modules/writeoff_analytics.py, puvi-backend/puvi-backend-main/modules/material_writeoff.py
 - unique_buyers
@@ -687,6 +725,8 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/modules/writeoff_analytics.py
 - writeoff_details
   Files: puvi-backend/puvi-backend-main/modules/writeoff_analytics.py
+- writeoff_id
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_configs.py
 - writeoffs
   Files: puvi-backend/puvi-backend-main/modules/opening_balance.py, puvi-backend/puvi-backend-main/modules/writeoff_analytics.py, puvi-backend/puvi-backend-main/modules/material_writeoff.py and 1 more
 - yes
