@@ -1,5 +1,5 @@
 # PUVI Database Schema
-# Generated: 2025-09-08 14:42:40.669608
+# Generated: 2025-09-08 17:46:11.662109
 # Total Tables: 90
 
 === available_oil_types ===
@@ -41,6 +41,7 @@ status: character varying(20) DEFAULT 'active'::character varying
 edited_by: character varying(255)
 edited_at: timestamp without time zone
 boundary_crossed: boolean DEFAULT false
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 
 === batch_cost_details ===
 cost_detail_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('batch_cost_details_cost_detail_id_seq'::regclass)
@@ -148,6 +149,7 @@ traceable_code: character varying(100)
 status: character varying(20) DEFAULT 'active'::character varying
 edited_by: character varying(255)
 edited_at: timestamp without time zone
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 
 === blend_batches ===
 blend_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('blend_batches_blend_id_seq'::regclass)
@@ -445,6 +447,7 @@ actual_sale_rate: numeric(10,2)
 cost_adjustment_per_kg: numeric(10,2)
 oil_cost_adjustment: numeric(10,2)
 created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+status: character varying(20) DEFAULT 'active'::character varying
 
 === oil_cake_sales ===
 sale_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('oil_cake_sales_sale_id_seq'::regclass)
@@ -594,6 +597,7 @@ edited_at: timestamp without time zone
 status: character varying(20) DEFAULT 'active'::character varying
 traceable_code: character varying(50) [UQ]
 boundary_crossed: boolean DEFAULT false
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 
 === purchases_backup ===
 purchase_id: integer(32,0)
@@ -748,6 +752,7 @@ material_cost_per_unit: numeric(10,2) NOT NULL
 total_cost: numeric(10,2) NOT NULL
 notes: text
 created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+status: character varying(20) DEFAULT 'active'::character varying
 
 === sku_mrp_history ===
 mrp_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('sku_mrp_history_mrp_id_seq'::regclass)
@@ -770,6 +775,7 @@ quantity_allocated: numeric(10,2) NOT NULL
 oil_cost_per_kg: numeric(10,2) NOT NULL
 allocation_cost: numeric(10,2) NOT NULL
 created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+status: character varying(20) DEFAULT 'active'::character varying
 
 === sku_outbound ===
 outbound_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('sku_outbound_outbound_id_seq'::regclass)
@@ -827,6 +833,7 @@ gst_amount: numeric(10,2)
 status: character varying(20) DEFAULT 'active'::character varying
 edited_by: character varying(255)
 edited_at: timestamp without time zone
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 
 === sku_production ===
 production_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('sku_production_production_id_seq'::regclass)

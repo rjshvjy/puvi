@@ -1,185 +1,98 @@
 {
-  "timestamp": "2025-09-08 12:20:15.035187",
+  "timestamp": "2025-09-08 17:46:11.666408",
   "changes": {
-    "added": [
-      "sku_production_dependencies",
-      "writeoff_dependencies",
-      "batch_dependencies",
-      "purchase_dependencies",
-      "transaction_audit_log",
-      "edit_delete_rules"
-    ],
+    "added": [],
     "removed": [],
     "modified": [
       {
-        "table": "batch",
+        "table": "sku_oil_allocation",
         "added_columns": [
-          "status",
-          "edited_by",
-          "boundary_crossed",
-          "edited_at"
-        ],
-        "removed_columns": []
-      },
-      {
-        "table": "sku_outbound",
-        "added_columns": [
-          "edited_by",
-          "boundary_crossed",
-          "edited_at"
-        ],
-        "removed_columns": []
-      },
-      {
-        "table": "sku_production",
-        "added_columns": [
-          "status",
-          "edited_by",
-          "boundary_crossed",
-          "edited_at"
-        ],
-        "removed_columns": []
-      },
-      {
-        "table": "sku_outbound_items",
-        "added_columns": [
-          "status",
-          "edited_by",
-          "edited_at"
-        ],
-        "removed_columns": []
-      },
-      {
-        "table": "oil_cake_sales",
-        "added_columns": [
-          "edited_by",
-          "boundary_crossed",
-          "status",
-          "edited_at"
-        ],
-        "removed_columns": []
-      },
-      {
-        "table": "purchase_items",
-        "added_columns": [
-          "edited_by",
-          "status",
-          "edited_at"
-        ],
-        "removed_columns": []
-      },
-      {
-        "table": "writeoff_monthly_summary",
-        "added_columns": [
-          "status",
-          "edited_by",
-          "edited_at"
+          "status"
         ],
         "removed_columns": []
       },
       {
         "table": "blend_batch_components",
         "added_columns": [
-          "edited_by",
-          "status",
-          "edited_at"
+          "created_at"
         ],
         "removed_columns": []
       },
       {
-        "table": "oil_cake_inventory",
+        "table": "sku_outbound_items",
         "added_columns": [
-          "edited_by",
-          "status",
-          "edited_at"
-        ],
-        "removed_columns": []
-      },
-      {
-        "table": "writeoff_impact_tracking",
-        "added_columns": [
-          "status",
-          "edited_by",
-          "edited_at"
-        ],
-        "removed_columns": []
-      },
-      {
-        "table": "blend_batches",
-        "added_columns": [
-          "edited_by",
-          "boundary_crossed",
-          "status",
-          "edited_at"
-        ],
-        "removed_columns": []
-      },
-      {
-        "table": "batch_extended_costs",
-        "added_columns": [
-          "edited_by",
-          "status",
-          "edited_at"
-        ],
-        "removed_columns": []
-      },
-      {
-        "table": "material_writeoffs",
-        "added_columns": [
-          "status",
-          "edited_by",
-          "boundary_crossed",
-          "edited_at"
+          "created_at"
         ],
         "removed_columns": []
       },
       {
         "table": "purchases",
         "added_columns": [
-          "boundary_crossed"
+          "created_at"
+        ],
+        "removed_columns": []
+      },
+      {
+        "table": "batch",
+        "added_columns": [
+          "created_at"
+        ],
+        "removed_columns": []
+      },
+      {
+        "table": "sku_material_consumption",
+        "added_columns": [
+          "status"
+        ],
+        "removed_columns": []
+      },
+      {
+        "table": "oil_cake_sale_allocations",
+        "added_columns": [
+          "status"
         ],
         "removed_columns": []
       }
     ],
     "index_changes": [
-      "opening_balances",
+      "categories_master",
+      "serial_number_tracking",
+      "bom_category_mapping",
       "subcategories_master",
-      "uom_master",
-      "batch_cost_details",
-      "sku_material_consumption",
-      "batch",
-      "sku_mrp_history",
-      "sku_outbound",
-      "cost_element_categories",
-      "sku_production",
-      "sku_expiry_tracking",
-      "customer_ship_to_locations",
-      "cost_elements_master",
-      "sku_outbound_items",
+      "blend_batch_components",
       "sku_master",
-      "suppliers",
-      "package_sizes_master",
-      "sku_inventory",
-      "cost_element_activities",
-      "writeoff_reasons",
-      "purchase_items",
-      "year_end_closing",
-      "writeoff_monthly_summary",
-      "batch_time_tracking",
-      "material_tags",
-      "cost_override_log",
-      "materials",
-      "oil_cake_inventory",
-      "writeoff_impact_tracking",
       "blend_batches",
-      "customers",
+      "cost_elements_master",
+      "inventory",
       "masters_audit_log",
-      "batch_extended_costs",
-      "sku_bom_details",
-      "sku_cost_overrides",
-      "material_writeoffs",
+      "sku_outbound_items",
       "purchases",
-      "tags"
+      "uom_master",
+      "opening_balances",
+      "edit_delete_rules",
+      "batch",
+      "sku_expiry_tracking",
+      "writeoff_impact_tracking",
+      "sku_production",
+      "production_units",
+      "customers",
+      "purchase_items",
+      "sku_mrp_history",
+      "material_writeoffs",
+      "transaction_audit_log",
+      "materials",
+      "cost_element_activities",
+      "cost_override_log",
+      "batch_time_tracking",
+      "locations_master",
+      "year_end_closing",
+      "sku_inventory",
+      "oil_cake_inventory",
+      "sku_bom_master",
+      "seed_batch_tracking",
+      "customer_ship_to_locations",
+      "sku_bom_details",
+      "sku_outbound"
     ]
   }
 }
