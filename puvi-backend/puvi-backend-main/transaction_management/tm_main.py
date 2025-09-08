@@ -63,14 +63,14 @@ MODULE_OPERATIONS = {
     'batch': {
         'get': get_batch_for_edit,
         'update': update_batch,
-        'delete': delete_batch,
+        'delete': soft_delete_batch,
         'list': list_batches_with_status,
         'type': 'production'
     },
     'blend_batches': {
         'get': get_blend_for_edit,
         'update': update_blend,
-        'delete': delete_blend,
+        'delete': soft_delete_blend,
         'list': list_blends_with_status,
         'type': 'production'
     },
