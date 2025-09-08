@@ -1,5 +1,5 @@
 # Feature Pack: UNIFIED-WRITEOFF-INVENTORY
-Generated: 2025-09-08T14:09:26.691Z
+Generated: 2025-09-08T14:22:18.157Z
 Routes: 1 | Tables: 13 | Files: 1
 
 ## Table of Contents
