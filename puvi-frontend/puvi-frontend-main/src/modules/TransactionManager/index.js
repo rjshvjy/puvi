@@ -49,7 +49,7 @@ const formatDateForDisplay = (dateValue) => {
     date = epochDate;
   } else if (typeof dateValue === 'string') {
     // Check if already in DD-MM-YYYY format
-    if (dateValue.match(/^\d{2}-\d{2}-\d{4}$/)) {
+    if (String(dateValue).match(/^\d{2}-\d{2}-\d{4}$/)) {
       return dateValue;
     }
     date = new Date(dateValue);
@@ -68,7 +68,7 @@ const formatDateForAPI = (dateString) => {
   if (!dateString) return null;
   
   // If in DD-MM-YYYY format, convert to YYYY-MM-DD
-  if (dateString.match(/^\d{2}-\d{2}-\d{4}$/)) {
+  if (String(dateString).match(/^\d{2}-\d{2}-\d{4}$/)) {
     const [day, month, year] = dateString.split('-');
     return `${year}-${month}-${day}`;
   }
