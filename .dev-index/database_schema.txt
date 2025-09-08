@@ -1,6 +1,6 @@
 # PUVI Database Schema
-# Generated: 2025-09-07 18:52:08.522367
-# Total Tables: 84
+# Generated: 2025-09-08 12:20:15.031202
+# Total Tables: 90
 
 === available_oil_types ===
 oil_type: character varying(50)
@@ -37,6 +37,10 @@ sludge_sold_quantity: numeric(10,2) DEFAULT 0
 traceable_code: character varying(50) [UQ]
 seed_purchase_code: character varying(50)
 seed_material_id: integer(32,0) [FK] -> materials.material_id
+status: character varying(20) DEFAULT 'active'::character varying
+edited_by: character varying(255)
+edited_at: timestamp without time zone
+boundary_crossed: boolean DEFAULT false
 
 === batch_cost_details ===
 cost_detail_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('batch_cost_details_cost_detail_id_seq'::regclass)
@@ -72,6 +76,17 @@ oil_cost_per_kg: numeric(10,2)
 time_tracking_entries: bigint(64,0)
 total_tracked_hours: numeric
 
+=== batch_dependencies ===
+batch_id: integer(32,0)
+batch_code: character varying(50)
+traceable_code: character varying(50)
+status: character varying(20)
+boundary_crossed: boolean
+sku_allocation_count: bigint(64,0)
+blend_count: bigint(64,0)
+cake_sale_count: bigint(64,0)
+has_locked_sku: boolean
+
 === batch_extended_costs ===
 cost_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('batch_extended_costs_cost_id_seq'::regclass)
 batch_id: integer(32,0) [FK] -> batch.batch_id
@@ -84,6 +99,9 @@ is_applied: boolean DEFAULT true
 override_reason: text
 created_by: character varying(100)
 created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+status: character varying(20) DEFAULT 'active'::character varying
+edited_by: character varying(255)
+edited_at: timestamp without time zone
 
 === batch_summary ===
 batch_id: integer(32,0)
@@ -127,6 +145,9 @@ quantity_used: numeric(10,2) NOT NULL
 percentage: numeric(5,2) NOT NULL
 cost_per_unit: numeric(10,2) NOT NULL
 traceable_code: character varying(100)
+status: character varying(20) DEFAULT 'active'::character varying
+edited_by: character varying(255)
+edited_at: timestamp without time zone
 
 === blend_batches ===
 blend_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('blend_batches_blend_id_seq'::regclass)
@@ -139,6 +160,10 @@ traceable_code: character varying(100)
 created_by: character varying(100)
 created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 result_oil_type: character varying(50)
+status: character varying(20) DEFAULT 'active'::character varying
+edited_by: character varying(255)
+edited_at: timestamp without time zone
+boundary_crossed: boolean DEFAULT false
 
 === bom_category_mapping ===
 mapping_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('bom_category_mapping_mapping_id_seq'::regclass)
@@ -270,6 +295,16 @@ is_active: boolean DEFAULT true
 created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 created_by: character varying(100)
 
+=== edit_delete_rules ===
+rule_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('edit_delete_rules_rule_id_seq'::regclass)
+table_name: character varying(50) NOT NULL
+field_name: character varying(50)
+is_safe_field: boolean DEFAULT false
+is_immutable: boolean DEFAULT false
+affects_downstream: boolean DEFAULT false
+notes: text
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+
 === inventory ===
 inventory_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('inventory_inventory_id_seq'::regclass)
 material_id: integer(32,0) [FK] -> materials.material_id
@@ -363,6 +398,10 @@ reference_id: integer(32,0)
 notes: text
 created_by: character varying(255)
 created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+status: character varying(20) DEFAULT 'active'::character varying
+edited_by: character varying(255)
+edited_at: timestamp without time zone
+boundary_crossed: boolean DEFAULT false
 
 === materials ===
 material_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('materials_material_id_seq'::regclass)
@@ -392,6 +431,9 @@ quantity_remaining: numeric(10,2)
 estimated_rate: numeric(10,2)
 production_date: integer(32,0)
 created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+status: character varying(20) DEFAULT 'active'::character varying
+edited_by: character varying(255)
+edited_at: timestamp without time zone
 
 === oil_cake_sale_allocations ===
 allocation_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('oil_cake_sale_allocations_allocation_id_seq'::regclass)
@@ -419,6 +461,10 @@ net_rate: numeric(10,2)
 notes: text
 created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 packing_cost: numeric(10,2) DEFAULT 0
+status: character varying(20) DEFAULT 'active'::character varying
+edited_by: character varying(255)
+edited_at: timestamp without time zone
+boundary_crossed: boolean DEFAULT false
 
 === opening_balances ===
 balance_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('opening_balances_balance_id_seq'::regclass)
@@ -477,6 +523,15 @@ package_size: character varying(50)
 density: numeric(5,2) DEFAULT 0.91
 weight: numeric(10,2)
 
+=== purchase_dependencies ===
+purchase_id: integer(32,0)
+invoice_ref: character varying(50)
+traceable_code: character varying(50)
+status: character varying(20)
+boundary_crossed: boolean
+batch_count: bigint(64,0)
+has_locked_batches: boolean
+
 === purchase_details_view ===
 purchase_id: integer(32,0)
 invoice_ref: character varying(50)
@@ -513,6 +568,9 @@ handling_charges: numeric(10,2) DEFAULT 0
 total_amount: numeric(10,2) NOT NULL
 landed_cost_per_unit: numeric(10,2) NOT NULL
 created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+status: character varying(20) DEFAULT 'active'::character varying
+edited_by: character varying(255)
+edited_at: timestamp without time zone
 
 === purchases ===
 purchase_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('purchases_purchase_id_seq'::regclass)
@@ -535,6 +593,7 @@ edited_by: character varying(255)
 edited_at: timestamp without time zone
 status: character varying(20) DEFAULT 'active'::character varying
 traceable_code: character varying(50) [UQ]
+boundary_crossed: boolean DEFAULT false
 
 === purchases_backup ===
 purchase_id: integer(32,0)
@@ -743,6 +802,9 @@ shipment_id: character varying(50)
 subtotal: numeric(12,2)
 total_gst_amount: numeric(10,2)
 grand_total: numeric(12,2)
+edited_by: character varying(255)
+edited_at: timestamp without time zone
+boundary_crossed: boolean DEFAULT false
 
 === sku_outbound_items ===
 item_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('sku_outbound_items_item_id_seq'::regclass)
@@ -762,6 +824,9 @@ handling_cost_per_kg: numeric(10,4)
 gst_rate: numeric(5,2)
 base_price: numeric(10,2)
 gst_amount: numeric(10,2)
+status: character varying(20) DEFAULT 'active'::character varying
+edited_by: character varying(255)
+edited_at: timestamp without time zone
 
 === sku_production ===
 production_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('sku_production_production_id_seq'::regclass)
@@ -792,6 +857,19 @@ created_by: character varying(100)
 created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 expiry_date: integer(32,0)
 mrp_at_production: numeric(10,2)
+status: character varying(20) DEFAULT 'active'::character varying
+edited_by: character varying(255)
+edited_at: timestamp without time zone
+boundary_crossed: boolean DEFAULT false
+
+=== sku_production_dependencies ===
+production_id: integer(32,0)
+production_code: character varying(50)
+traceable_code: character varying(10)
+status: character varying(20)
+boundary_crossed: boolean
+outbound_items_count: bigint(64,0)
+has_invoiced_shipments: boolean
 
 === stock_by_location ===
 location_id: integer(32,0)
@@ -844,6 +922,22 @@ tag_name: character varying(100) [UQ] NOT NULL
 tag_category: character varying(50)
 created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 is_active: boolean DEFAULT true
+
+=== transaction_audit_log ===
+audit_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('transaction_audit_log_audit_id_seq'::regclass)
+table_name: character varying(50) NOT NULL
+record_id: integer(32,0) NOT NULL
+action: character varying(20) NOT NULL
+module: character varying(50)
+changed_by: character varying(255)
+old_values: jsonb
+new_values: jsonb
+changed_fields: ARRAY
+reason: text
+changed_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+ip_address: character varying(45)
+user_agent: text
+session_id: character varying(100)
 
 === uom_master ===
 uom_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('uom_master_uom_id_seq'::regclass)
@@ -1072,6 +1166,15 @@ top_reason_value: numeric(12,2)
 prev_month_writeoffs: numeric
 month_change_percent: numeric
 
+=== writeoff_dependencies ===
+writeoff_id: integer(32,0)
+writeoff_date: integer(32,0)
+reference_type: character varying(50)
+reference_id: integer(32,0)
+status: character varying(20)
+boundary_crossed: boolean
+has_downstream_impact: boolean
+
 === writeoff_impact_tracking ===
 tracking_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('writeoff_impact_tracking_tracking_id_seq'::regclass)
 calculation_date: integer(32,0) NOT NULL
@@ -1090,6 +1193,9 @@ process_loss_writeoffs: numeric(12,2) DEFAULT 0
 other_writeoffs: numeric(12,2) DEFAULT 0
 created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 notes: text
+status: character varying(20) DEFAULT 'active'::character varying
+edited_by: character varying(255)
+edited_at: timestamp without time zone
 
 === writeoff_monthly_summary ===
 summary_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('writeoff_monthly_summary_summary_id_seq'::regclass)
@@ -1108,6 +1214,9 @@ top_writeoff_reason: character varying(50)
 top_reason_count: integer(32,0)
 top_reason_value: numeric(12,2)
 created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+status: character varying(20) DEFAULT 'active'::character varying
+edited_by: character varying(255)
+edited_at: timestamp without time zone
 
 === writeoff_reasons ===
 reason_code: character varying(50) [PK] NOT NULL
