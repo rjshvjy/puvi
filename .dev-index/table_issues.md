@@ -1,6 +1,6 @@
 # Table Usage Issues
 
-Generated: 2025-09-08 14:02:49.450225
+Generated: 2025-09-08 14:05:24.560637
 
 ## ⚠️ Orphaned Tables
 These tables exist in database but are not used in any code:
@@ -718,7 +718,7 @@ These tables are referenced in code but don't exist in database:
 - transaction_counts
   Files: puvi-backend/puvi-backend-main/modules/opening_balance.py
 - transaction_management
-  Files: puvi-backend/puvi-backend-main/transaction_management/tm_main.py
+  Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/transaction_management/tm_main.py
 - transaction_type
   Files: puvi-backend/puvi-backend-main/modules/sku_outbound.py
 - transactions
