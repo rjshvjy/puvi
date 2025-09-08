@@ -2,7 +2,7 @@
 Transaction Manager - Main Orchestrator Module
 File Path: puvi-backend/puvi-backend-main/transaction_management/tm_main.py
 Purpose: Flask routes and orchestration for centralized edit/delete functionality
-Version: 1.0.0
+Version: 1.0.1 - FIXED import names for batch and blend delete functions
 
 This module provides the main API endpoints for the Transaction Management Console,
 routing requests to appropriate operation modules based on transaction type.
@@ -12,7 +12,7 @@ from flask import Blueprint, request, jsonify
 from datetime import datetime
 import json
 
-# Import operation modules
+# Import operation modules - FIXED: Using correct function names
 from transaction_management.tm_input_operations import (
     get_purchase_for_edit, update_purchase, delete_purchase,
     get_writeoff_for_edit, update_writeoff, delete_writeoff,
@@ -20,9 +20,10 @@ from transaction_management.tm_input_operations import (
     check_edit_permissions
 )
 
+# FIXED: Changed delete_batch to soft_delete_batch, delete_blend to soft_delete_blend
 from transaction_management.tm_production_operations import (
-    get_batch_for_edit, update_batch, delete_batch,
-    get_blend_for_edit, update_blend, delete_blend,
+    get_batch_for_edit, update_batch, soft_delete_batch,
+    get_blend_for_edit, update_blend, soft_delete_blend,
     list_batches_with_status, list_blends_with_status
 )
 
@@ -45,6 +46,7 @@ tm_bp = Blueprint('transaction_manager', __name__)
 # MODULE ROUTING CONFIGURATION
 # ============================================
 
+# FIXED: Using correct function names in MODULE_OPERATIONS
 MODULE_OPERATIONS = {
     'purchases': {
         'get': get_purchase_for_edit,
@@ -63,14 +65,14 @@ MODULE_OPERATIONS = {
     'batch': {
         'get': get_batch_for_edit,
         'update': update_batch,
-        'delete': soft_delete_batch,
+        'delete': soft_delete_batch,  # FIXED: Was delete_batch
         'list': list_batches_with_status,
         'type': 'production'
     },
     'blend_batches': {
         'get': get_blend_for_edit,
         'update': update_blend,
-        'delete': soft_delete_blend,
+        'delete': soft_delete_blend,  # FIXED: Was delete_blend
         'list': list_blends_with_status,
         'type': 'production'
     },
