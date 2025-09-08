@@ -37,10 +37,10 @@ from .tm_input_operations import (
 from .tm_production_operations import (
     get_batch_for_edit,
     update_batch,
-    delete_batch,
+    soft_delete_batch,
     get_blend_for_edit,
     update_blend,
-    delete_blend,
+    soft_delete_blend,
     list_batches_with_status,
     list_blends_with_status
 )
