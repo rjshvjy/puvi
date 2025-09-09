@@ -1,5 +1,5 @@
 # Feature Pack: SKU-FOR-WRITEOFF
-Generated: 2025-09-09T06:01:55.555Z
+Generated: 2025-09-09T06:18:29.916Z
 Routes: 1 | Tables: 13 | Files: 1
 
 ## Table of Contents
