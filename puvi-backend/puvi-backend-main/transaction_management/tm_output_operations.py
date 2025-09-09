@@ -6,6 +6,14 @@ Implements: Critical boundary crossing logic that locks entire upstream chain
 
 This module provides centralized edit/delete functionality for output transactions
 including the boundary crossing mechanism when invoices are sent.
+
+FIXED ISSUES:
+1. Date formatting - Now uses DUAL FORMAT (Option 3):
+   - Sends DD-MM-YYYY as _display fields for user viewing
+   - Sends YYYY-MM-DD for HTML date inputs
+2. Oil cake sales SQL - Uses correct column names
+3. NULL handling - Properly handles missing traceable codes
+4. SKU production list index error prevention
 """
 
 from flask import jsonify
@@ -229,7 +237,7 @@ def check_oil_cake_sale_dependencies(sale_id, cur):
 # ============================================
 
 def get_sku_production_for_edit(production_id):
-    """Get SKU production details for editing"""
+    """Get SKU production details for editing with proper date formatting"""
     conn = get_db_connection()
     cur = conn.cursor()
     
@@ -250,13 +258,18 @@ def get_sku_production_for_edit(production_id):
         
         production = dict(zip(columns, prod_data))
         
-        # Format dates
-        if production.get('production_date'):
-            production['production_date_display'] = integer_to_date(production['production_date'], '%d-%m-%Y')
-        if production.get('packing_date'):
-            production['packing_date_display'] = integer_to_date(production['packing_date'], '%d-%m-%Y')
-        if production.get('expiry_date'):
-            production['expiry_date_display'] = integer_to_date(production['expiry_date'], '%d-%m-%Y')
+        # FIX: Convert integer dates to YYYY-MM-DD format for HTML date inputs
+        date_fields = ['production_date', 'packing_date', 'expiry_date']
+        for field in date_fields:
+            if production.get(field):
+                # Convert integer to YYYY-MM-DD for form editing
+                production[field] = integer_to_date(production[field], '%Y-%m-%d')
+                # Also keep display version
+                production[f'{field}_display'] = integer_to_date(production[field], '%d-%m-%Y')
+        
+        # FIX: Handle NULL traceable_code
+        if not production.get('traceable_code'):
+            production['traceable_code'] = ''
         
         # Get oil allocations
         cur.execute("""
@@ -423,7 +436,7 @@ def update_sku_production(production_id, data, user='System'):
     finally:
         close_connection(conn, cur)
 
-def soft_delete_sku_production(production_id, reason='', user='System'):
+def delete_sku_production(production_id, reason='', user='System'):
     """Soft delete SKU production record"""
     conn = get_db_connection()
     cur = conn.cursor()
@@ -505,7 +518,7 @@ def soft_delete_sku_production(production_id, reason='', user='System'):
 # ============================================
 
 def get_outbound_for_edit(outbound_id):
-    """Get outbound details for editing"""
+    """Get outbound details for editing with proper date formatting"""
     conn = get_db_connection()
     cur = conn.cursor()
     
@@ -530,11 +543,18 @@ def get_outbound_for_edit(outbound_id):
         
         outbound = dict(zip(columns, outbound_data))
         
-        # Format dates
-        if outbound.get('outbound_date'):
-            outbound['outbound_date_display'] = integer_to_date(outbound['outbound_date'], '%d-%m-%Y')
-        if outbound.get('dispatch_date'):
-            outbound['dispatch_date_display'] = integer_to_date(outbound['dispatch_date'], '%d-%m-%Y')
+        # FIX: Convert integer dates to YYYY-MM-DD format for HTML date inputs
+        date_fields = ['outbound_date', 'dispatch_date']
+        for field in date_fields:
+            if outbound.get(field):
+                # Convert integer to YYYY-MM-DD for form editing
+                outbound[field] = integer_to_date(outbound[field], '%Y-%m-%d')
+                # Also keep display version
+                outbound[f'{field}_display'] = integer_to_date(outbound[field], '%d-%m-%Y')
+        
+        # FIX: Handle NULL outbound_code
+        if not outbound.get('outbound_code'):
+            outbound['outbound_code'] = ''
         
         # Get items
         cur.execute("""
@@ -547,7 +567,11 @@ def get_outbound_for_edit(outbound_id):
         items = []
         for row in cur.fetchall():
             item_cols = [desc[0] for desc in cur.description]
-            items.append(dict(zip(item_cols, row)))
+            item = dict(zip(item_cols, row))
+            # FIX: Handle NULL SKU codes
+            if not item.get('sku_code'):
+                item['sku_code'] = ''
+            items.append(item)
         
         outbound['items'] = items
         
@@ -676,7 +700,7 @@ def update_outbound(outbound_id, data, user='System'):
     finally:
         close_connection(conn, cur)
 
-def soft_delete_outbound(outbound_id, reason='', user='System'):
+def delete_outbound(outbound_id, reason='', user='System'):
     """Soft delete outbound record"""
     conn = get_db_connection()
     cur = conn.cursor()
@@ -792,7 +816,7 @@ def trigger_invoice_boundary(outbound_id, invoice_number, user='System'):
 # ============================================
 
 def get_oil_cake_sale_for_edit(sale_id):
-    """Get oil cake sale details for editing"""
+    """Get oil cake sale details for editing with proper date formatting"""
     conn = get_db_connection()
     cur = conn.cursor()
     
@@ -811,13 +835,20 @@ def get_oil_cake_sale_for_edit(sale_id):
         
         sale = dict(zip(columns, sale_data))
         
-        # Format dates
+        # FIX: Convert integer dates to YYYY-MM-DD format for HTML date inputs
         if sale.get('sale_date'):
+            # Convert integer to YYYY-MM-DD for form editing
+            sale['sale_date'] = integer_to_date(sale['sale_date'], '%Y-%m-%d')
+            # Also keep display version
             sale['sale_date_display'] = integer_to_date(sale['sale_date'], '%d-%m-%Y')
+        
+        # FIX: Handle missing invoice_number (not sale_code)
+        if not sale.get('invoice_number'):
+            sale['invoice_number'] = ''
         
         # Get allocations
         cur.execute("""
-            SELECT oca.*, b.batch_code, b.oil_type
+            SELECT oca.*, b.batch_code, b.oil_type, b.traceable_code
             FROM oil_cake_sale_allocations oca
             JOIN batch b ON oca.batch_id = b.batch_id
             WHERE oca.sale_id = %s
@@ -826,7 +857,11 @@ def get_oil_cake_sale_for_edit(sale_id):
         allocations = []
         for row in cur.fetchall():
             alloc_cols = [desc[0] for desc in cur.description]
-            allocations.append(dict(zip(alloc_cols, row)))
+            alloc = dict(zip(alloc_cols, row))
+            # FIX: Handle NULL traceable codes
+            if not alloc.get('traceable_code'):
+                alloc['traceable_code'] = ''
+            allocations.append(alloc)
         
         sale['allocations'] = allocations
         
@@ -853,7 +888,7 @@ def get_oil_cake_sale_for_edit(sale_id):
             permissions['reason'] = 'Transaction locked - invoice exists'
         else:
             permissions['editable_fields'] = [
-                'invoice_number', 'transport_cost', 'notes'
+                'invoice_number', 'transport_cost', 'notes', 'packing_cost'
             ]
             permissions['reason'] = 'Limited edit allowed'
         
@@ -947,7 +982,7 @@ def update_oil_cake_sale(sale_id, data, user='System'):
     finally:
         close_connection(conn, cur)
 
-def soft_delete_oil_cake_sale(sale_id, reason='', user='System'):
+def delete_oil_cake_sale(sale_id, reason='', user='System'):
     """Soft delete oil cake sale record"""
     conn = get_db_connection()
     cur = conn.cursor()
@@ -1020,11 +1055,11 @@ def soft_delete_oil_cake_sale(sale_id, reason='', user='System'):
         close_connection(conn, cur)
 
 # ============================================
-# LIST OPERATIONS
+# LIST OPERATIONS - FIXED
 # ============================================
 
 def list_sku_productions_with_status(filters=None):
-    """List SKU productions with edit/delete status"""
+    """List SKU productions with edit/delete status - Handle NULLs"""
     conn = get_db_connection()
     cur = conn.cursor()
     
@@ -1033,7 +1068,7 @@ def list_sku_productions_with_status(filters=None):
             SELECT 
                 p.production_id,
                 p.production_code,
-                p.traceable_code,
+                COALESCE(p.traceable_code, ''),  -- FIX: Handle NULL
                 p.production_date,
                 s.sku_code,
                 s.product_name,
@@ -1075,11 +1110,11 @@ def list_sku_productions_with_status(filters=None):
         for row in cur.fetchall():
             productions.append({
                 'production_id': row[0],
-                'production_code': row[1],
-                'traceable_code': row[2],
+                'production_code': row[1] or '',  # Handle NULL
+                'traceable_code': row[2] or '',   # Already handled with COALESCE
                 'production_date': integer_to_date(row[3], '%d-%m-%Y') if row[3] else None,
-                'sku_code': row[4],
-                'product_name': row[5],
+                'sku_code': row[4] or '',         # Handle NULL
+                'product_name': row[5] or '',     # Handle NULL
                 'bottles_produced': row[6],
                 'status': row[7],
                 'boundary_crossed': row[8],
@@ -1098,7 +1133,7 @@ def list_sku_productions_with_status(filters=None):
         close_connection(conn, cur)
 
 def list_outbounds_with_status(filters=None):
-    """List outbounds with edit/delete status"""
+    """List outbounds with edit/delete status - Handle NULLs"""
     conn = get_db_connection()
     cur = conn.cursor()
     
@@ -1106,11 +1141,11 @@ def list_outbounds_with_status(filters=None):
         query = """
             SELECT 
                 o.outbound_id,
-                o.outbound_code,
+                COALESCE(o.outbound_code, ''),  -- FIX: Handle NULL
                 o.transaction_type,
                 o.outbound_date,
                 fl.location_name as from_location,
-                COALESCE(tl.location_name, c.customer_name) as destination,
+                COALESCE(tl.location_name, c.customer_name, '') as destination,
                 o.invoice_number,
                 o.status,
                 o.boundary_crossed,
@@ -1147,11 +1182,11 @@ def list_outbounds_with_status(filters=None):
         for row in cur.fetchall():
             outbounds.append({
                 'outbound_id': row[0],
-                'outbound_code': row[1],
+                'outbound_code': row[1] or f'OUT-{row[0]}',  # Generate if NULL
                 'transaction_type': row[2],
                 'outbound_date': integer_to_date(row[3], '%d-%m-%Y') if row[3] else None,
-                'from_location': row[4],
-                'destination': row[5],
+                'from_location': row[4] or '',
+                'destination': row[5] or '',
                 'invoice_number': row[6],
                 'status': row[7],
                 'boundary_crossed': row[8],
@@ -1170,19 +1205,20 @@ def list_outbounds_with_status(filters=None):
         close_connection(conn, cur)
 
 def list_oil_cake_sales_with_status(filters=None):
-    """List oil cake sales with edit/delete status"""
+    """List oil cake sales with edit/delete status - FIXED SQL"""
     conn = get_db_connection()
     cur = conn.cursor()
     
     try:
+        # FIX: Use invoice_number instead of non-existent sale_code
         query = """
             SELECT 
                 ocs.sale_id,
-                ocs.sale_code,
+                ocs.invoice_number,  -- FIXED: was ocs.sale_code
                 ocs.sale_date,
                 ocs.buyer_name,
-                ocs.total_quantity,
-                ocs.total_value,
+                ocs.quantity_sold,  -- FIXED: was total_quantity
+                ocs.total_amount,   -- FIXED: was total_value
                 ocs.invoice_number,
                 ocs.status,
                 ocs.boundary_crossed,
@@ -1213,7 +1249,7 @@ def list_oil_cake_sales_with_status(filters=None):
         for row in cur.fetchall():
             sales.append({
                 'sale_id': row[0],
-                'sale_code': row[1],
+                'sale_code': row[1] or f'SALE-{row[0]}',  # Use invoice or generate code
                 'sale_date': integer_to_date(row[2], '%d-%m-%Y') if row[2] else None,
                 'buyer_name': row[3],
                 'total_quantity': float(row[4]) if row[4] else 0,
@@ -1246,17 +1282,17 @@ __all__ = [
     # SKU Production operations
     'get_sku_production_for_edit',
     'update_sku_production',
-    'soft_delete_sku_production',
+    'delete_sku_production',
     'list_sku_productions_with_status',
     # SKU Outbound operations
     'get_outbound_for_edit',
     'update_outbound',
-    'soft_delete_outbound',
+    'delete_outbound',
     'list_outbounds_with_status',
     # Oil Cake Sales operations
     'get_oil_cake_sale_for_edit',
     'update_oil_cake_sale',
-    'soft_delete_oil_cake_sale',
+    'delete_oil_cake_sale',
     'list_oil_cake_sales_with_status',
     # Utilities
     'check_sku_production_dependencies',
