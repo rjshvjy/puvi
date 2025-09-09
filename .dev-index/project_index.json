@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-09-09T04:48:24.590Z",
+  "generatedAt": "2025-09-09T04:55:21.512Z",
   "filesScanned": 71,
   "jsFilesScanned": 44,
   "pyFilesScanned": 27,
@@ -1519,9 +1519,9 @@
         "puvi-frontend/puvi-frontend-main/src/components/Masters/OilConfigurationDashboard.jsx",
         "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoriesList.jsx",
         "puvi-frontend/puvi-frontend-main/src/components/Masters/SubcategoryForm.jsx",
+        "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
         "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
-        "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
-        "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js"
+        "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx"
       ]
     },
     {
@@ -2332,7 +2332,7 @@
     {
       "name": "TransactionManager",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 501,
+      "line": 504,
       "type": "const"
     },
     {
@@ -2474,6 +2474,12 @@
       "type": "const"
     },
     {
+      "name": "CostElementRow",
+      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
+      "line": 30,
+      "type": "const"
+    },
+    {
       "name": "OpeningBalanceEntry",
       "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
       "line": 34,
@@ -2483,12 +2489,6 @@
       "name": "SystemStatusDashboard",
       "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
       "line": 34,
-      "type": "const"
-    },
-    {
-      "name": "CostElementRow",
-      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
-      "line": 30,
       "type": "const"
     }
   ],
@@ -13445,7 +13445,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 501,
+      "line": 504,
       "name": "TransactionManager",
       "params": "",
       "type": "arrow",
@@ -13453,7 +13453,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 543,
+      "line": 546,
       "name": "loadRecords",
       "params": "",
       "type": "arrow",
@@ -13461,7 +13461,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 570,
+      "line": 573,
       "name": "loadStats",
       "params": "",
       "type": "arrow",
@@ -13469,7 +13469,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 582,
+      "line": 585,
       "name": "checkPermissions",
       "params": "record",
       "type": "arrow",
@@ -13477,7 +13477,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 600,
+      "line": 603,
       "name": "getPrimaryKey",
       "params": "module",
       "type": "arrow",
@@ -13485,7 +13485,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 614,
+      "line": 617,
       "name": "handleEdit",
       "params": "record",
       "type": "arrow",
@@ -13493,7 +13493,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 644,
+      "line": 647,
       "name": "handleSaveEdit",
       "params": "updatedData",
       "type": "arrow",
@@ -13501,7 +13501,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 668,
+      "line": 671,
       "name": "handleDelete",
       "params": "record",
       "type": "arrow",
@@ -13509,7 +13509,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 683,
+      "line": 686,
       "name": "handleConfirmDelete",
       "params": "reason",
       "type": "arrow",
@@ -13517,7 +13517,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 707,
+      "line": 710,
       "name": "handleViewAudit",
       "params": "record",
       "type": "arrow",
@@ -13525,7 +13525,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 715,
+      "line": 718,
       "name": "showMessage",
       "params": "type, text",
       "type": "arrow",
@@ -13533,7 +13533,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 721,
+      "line": 724,
       "name": "handleFilterChange",
       "params": "field, value",
       "type": "arrow",
@@ -15084,6 +15084,22 @@
       "isAsync": true
     },
     {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
+      "line": 76,
+      "name": "handleRateChange",
+      "params": "e",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
+      "line": 83,
+      "name": "getCategoryClass",
+      "params": "",
+      "type": "arrow",
+      "isAsync": false
+    },
+    {
       "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
       "line": 11,
       "name": "apiCall",
@@ -15272,22 +15288,6 @@
       "line": 96,
       "name": "formatCurrency",
       "params": "amount",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
-      "line": 76,
-      "name": "handleRateChange",
-      "params": "e",
-      "type": "arrow",
-      "isAsync": false
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
-      "line": 83,
-      "name": "getCategoryClass",
-      "params": "",
       "type": "arrow",
       "isAsync": false
     },
@@ -20282,7 +20282,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 503,
+      "line": 506,
       "type": "useState",
       "name": "activeModule",
       "setter": "setActiveModule",
@@ -20290,13 +20290,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 503,
+      "line": 506,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 504,
+      "line": 507,
       "type": "useState",
       "name": "records",
       "setter": "setRecords",
@@ -20304,13 +20304,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 504,
+      "line": 507,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 505,
+      "line": 508,
       "type": "useState",
       "name": "loading",
       "setter": "setLoading",
@@ -20318,13 +20318,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 505,
+      "line": 508,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 506,
+      "line": 509,
       "type": "useState",
       "name": "error",
       "setter": "setError",
@@ -20332,13 +20332,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 506,
+      "line": 509,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 507,
+      "line": 510,
       "type": "useState",
       "name": "message",
       "setter": "setMessage",
@@ -20346,13 +20346,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 507,
+      "line": 510,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 510,
+      "line": 513,
       "type": "useState",
       "name": "filters",
       "setter": "setFilters",
@@ -20360,13 +20360,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 510,
+      "line": 513,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 517,
+      "line": 520,
       "type": "useState",
       "name": "deleteModal",
       "setter": "setDeleteModal",
@@ -20374,13 +20374,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 517,
+      "line": 520,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 522,
+      "line": 525,
       "type": "useState",
       "name": "editModal",
       "setter": "setEditModal",
@@ -20388,13 +20388,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 522,
+      "line": 525,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 528,
+      "line": 531,
       "type": "useState",
       "name": "auditModal",
       "setter": "setAuditModal",
@@ -20402,13 +20402,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 528,
+      "line": 531,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 534,
+      "line": 537,
       "type": "useState",
       "name": "stats",
       "setter": "setStats",
@@ -20416,13 +20416,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 534,
+      "line": 537,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 537,
+      "line": 540,
       "type": "useEffect",
       "hook": "useEffect"
     },
@@ -22764,6 +22764,46 @@
       "hook": "useEffect"
     },
     {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
+      "line": 46,
+      "type": "useState",
+      "name": "localOverrideRate",
+      "setter": "setLocalOverrideRate",
+      "initial": null
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
+      "line": 46,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
+      "line": 47,
+      "type": "useState",
+      "name": "showOverrideWarning",
+      "setter": "setShowOverrideWarning",
+      "initial": null
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
+      "line": 47,
+      "type": "useState",
+      "hook": "useState"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
+      "line": 61,
+      "type": "useEffect",
+      "hook": "useEffect"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
+      "line": 71,
+      "type": "useEffect",
+      "hook": "useEffect"
+    },
+    {
       "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/OpeningBalanceEntry.jsx",
       "line": 36,
       "type": "useState",
@@ -23120,46 +23160,6 @@
     {
       "file": "puvi-frontend/puvi-frontend-main/src/components/OpeningBalance/SystemStatusDashboard.jsx",
       "line": 44,
-      "type": "useEffect",
-      "hook": "useEffect"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
-      "line": 46,
-      "type": "useState",
-      "name": "localOverrideRate",
-      "setter": "setLocalOverrideRate",
-      "initial": null
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
-      "line": 46,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
-      "line": 47,
-      "type": "useState",
-      "name": "showOverrideWarning",
-      "setter": "setShowOverrideWarning",
-      "initial": null
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
-      "line": 47,
-      "type": "useState",
-      "hook": "useState"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
-      "line": 61,
-      "type": "useEffect",
-      "hook": "useEffect"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/components/CostManagement/CostElementRow.js",
-      "line": 71,
       "type": "useEffect",
       "hook": "useEffect"
     }
@@ -25310,73 +25310,73 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 547,
+      "line": 550,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 561,
+      "line": 564,
       "type": "catch",
       "code": "} catch (err) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 571,
+      "line": 574,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 576,
+      "line": 579,
       "type": "catch",
       "code": "} catch (err) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 586,
+      "line": 589,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 594,
+      "line": 597,
       "type": "catch",
       "code": "} catch (err) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 626,
+      "line": 629,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 638,
+      "line": 641,
       "type": "catch",
       "code": "} catch (err) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 648,
+      "line": 651,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 662,
+      "line": 665,
       "type": "catch",
       "code": "} catch (err) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 687,
+      "line": 690,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 701,
+      "line": 704,
       "type": "catch",
       "code": "} catch (err) {"
     },
