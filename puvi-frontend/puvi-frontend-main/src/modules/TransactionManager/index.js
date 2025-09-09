@@ -417,6 +417,9 @@ const EditModal = ({ isOpen, record, module, permissions, onSave, onCancel }) =>
       <div className="modal-content modal-large">
         <div className="modal-header">
           <h3>Edit {config.label} Record</h3>
+          <button className="modal-close" type="button" onClick={onCancel}>
+            ×
+          </button>
         </div>
         
         <form onSubmit={handleSubmit}>
