@@ -1,5 +1,5 @@
 # PUVI Database Schema
-# Generated: 2025-09-09 06:01:56.644905
+# Generated: 2025-09-09 06:18:30.392237
 # Total Tables: 90
 
 === available_oil_types ===
