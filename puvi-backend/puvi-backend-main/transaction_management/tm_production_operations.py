@@ -6,6 +6,13 @@ Covers: Batch Production (with extended costs), Blend Batches (with components)
 
 This module provides centralized edit/delete functionality for production transactions
 following the business rules from the Edit/Delete Strategic Implementation Plan.
+
+FIXED ISSUES:
+1. Date formatting - Now uses DUAL FORMAT (Option 3):
+   - Sends DD-MM-YYYY as _display fields for user viewing
+   - Sends YYYY-MM-DD for HTML date inputs
+2. NULL handling - Properly handles missing codes and values
+3. Consistent with tm_output_operations.py approach
 """
 
 from flask import jsonify
@@ -190,7 +197,7 @@ def check_blend_dependencies(blend_id, cur):
 # ============================================
 
 def get_batch_for_edit(batch_id):
-    """Get batch details for editing"""
+    """Get batch details for editing with proper date formatting"""
     conn = get_db_connection()
     cur = conn.cursor()
     
@@ -211,9 +218,20 @@ def get_batch_for_edit(batch_id):
         
         batch = dict(zip(columns, batch_data))
         
-        # Format dates
+        # Option 3: Dual format - display and input fields
         if batch.get('production_date'):
+            # Display format for user to see (DD-MM-YYYY)
             batch['production_date_display'] = integer_to_date(batch['production_date'], '%d-%m-%Y')
+            # Input format for HTML date input (YYYY-MM-DD)
+            batch['production_date'] = integer_to_date(batch['production_date'], '%Y-%m-%d')
+        
+        # Handle NULL values for codes
+        if not batch.get('batch_code'):
+            batch['batch_code'] = ''
+        if not batch.get('traceable_code'):
+            batch['traceable_code'] = ''
+        if not batch.get('seed_purchase_code'):
+            batch['seed_purchase_code'] = ''
         
         # Get extended costs
         cur.execute("""
@@ -510,7 +528,7 @@ def soft_delete_batch(batch_id, reason='', user='System'):
         close_connection(conn, cur)
 
 def list_batches_with_status(filters=None):
-    """List batches with edit/delete status"""
+    """List batches with edit/delete status - Handle NULLs"""
     conn = get_db_connection()
     cur = conn.cursor()
     
@@ -518,7 +536,7 @@ def list_batches_with_status(filters=None):
         query = """
             SELECT 
                 b.batch_id,
-                b.batch_code,
+                COALESCE(b.batch_code, ''),
                 b.oil_type,
                 b.production_date,
                 b.oil_yield as oil_produced,
@@ -527,6 +545,7 @@ def list_batches_with_status(filters=None):
                 b.boundary_crossed,
                 b.created_at,
                 m.material_name as seed_material,
+                COALESCE(b.traceable_code, ''),
                 CASE 
                     WHEN b.boundary_crossed = true THEN 'locked'
                     WHEN EXISTS (
@@ -564,15 +583,16 @@ def list_batches_with_status(filters=None):
         for row in cur.fetchall():
             batches.append({
                 'batch_id': row[0],
-                'batch_code': row[1],
-                'oil_type': row[2],
+                'batch_code': row[1] or f'BATCH-{row[0]}',  # Generate if NULL
+                'oil_type': row[2] or '',
                 'production_date': integer_to_date(row[3], '%d-%m-%Y') if row[3] else None,
                 'oil_produced': float(row[4]) if row[4] else 0,
                 'cake_produced': float(row[5]) if row[5] else 0,
                 'status': row[6],
                 'boundary_crossed': row[7],
-                'seed_material': row[9],
-                'edit_status': row[10]
+                'seed_material': row[9] or '',
+                'traceable_code': row[10] or '',
+                'edit_status': row[11]
             })
         
         return {
@@ -591,7 +611,7 @@ def list_batches_with_status(filters=None):
 # ============================================
 
 def get_blend_for_edit(blend_id):
-    """Get blend details for editing"""
+    """Get blend details for editing with proper date formatting"""
     conn = get_db_connection()
     cur = conn.cursor()
     
@@ -610,9 +630,18 @@ def get_blend_for_edit(blend_id):
         
         blend = dict(zip(columns, blend_data))
         
-        # Format dates
+        # Option 3: Dual format - display and input fields
         if blend.get('blend_date'):
+            # Display format for user to see (DD-MM-YYYY)
             blend['blend_date_display'] = integer_to_date(blend['blend_date'], '%d-%m-%Y')
+            # Input format for HTML date input (YYYY-MM-DD)
+            blend['blend_date'] = integer_to_date(blend['blend_date'], '%Y-%m-%d')
+        
+        # Handle NULL values for codes
+        if not blend.get('blend_code'):
+            blend['blend_code'] = ''
+        if not blend.get('traceable_code'):
+            blend['traceable_code'] = ''
         
         # Get components
         cur.execute("""
@@ -627,6 +656,9 @@ def get_blend_for_edit(blend_id):
         for row in cur.fetchall():
             comp_cols = [desc[0] for desc in cur.description]
             component = dict(zip(comp_cols, row))
+            # Handle NULL batch codes
+            if not component.get('batch_code'):
+                component['batch_code'] = ''
             components.append(component)
         
         blend['components'] = components
@@ -715,6 +747,10 @@ def update_blend(blend_id, data, user='System'):
             if dependencies['has_dependencies']:
                 if field not in BLEND_CONFIG['safe_fields']['header']:
                     continue
+            
+            # Parse dates if needed
+            if field == 'blend_date' and isinstance(value, str):
+                value = parse_date(value)
             
             # Track changes
             if current.get(field) != value:
@@ -852,7 +888,7 @@ def soft_delete_blend(blend_id, reason='', user='System'):
         close_connection(conn, cur)
 
 def list_blends_with_status(filters=None):
-    """List blends with edit/delete status"""
+    """List blends with edit/delete status - Handle NULLs"""
     conn = get_db_connection()
     cur = conn.cursor()
     
@@ -860,7 +896,7 @@ def list_blends_with_status(filters=None):
         query = """
             SELECT 
                 bb.blend_id,
-                bb.blend_code,
+                COALESCE(bb.blend_code, ''),
                 bb.result_oil_type,
                 bb.blend_date,
                 bb.total_quantity,
@@ -868,6 +904,7 @@ def list_blends_with_status(filters=None):
                 bb.status,
                 bb.boundary_crossed,
                 bb.created_at,
+                COALESCE(bb.traceable_code, ''),
                 CASE 
                     WHEN bb.boundary_crossed = true THEN 'locked'
                     WHEN EXISTS (
@@ -901,14 +938,15 @@ def list_blends_with_status(filters=None):
         for row in cur.fetchall():
             blends.append({
                 'blend_id': row[0],
-                'blend_code': row[1],
-                'result_oil_type': row[2],
+                'blend_code': row[1] or f'BLEND-{row[0]}',  # Generate if NULL
+                'result_oil_type': row[2] or '',
                 'blend_date': integer_to_date(row[3], '%d-%m-%Y') if row[3] else None,
                 'total_quantity': float(row[4]) if row[4] else 0,
                 'weighted_avg_cost': float(row[5]) if row[5] else 0,
                 'status': row[6],
                 'boundary_crossed': row[7],
-                'edit_status': row[9]
+                'traceable_code': row[9] or '',
+                'edit_status': row[10]
             })
         
         return {
