@@ -1,6 +1,6 @@
 {
   "version": "2.0",
-  "generatedAt": "2025-09-09T05:44:56.422Z",
+  "generatedAt": "2025-09-09T05:48:38.635Z",
   "filesScanned": 71,
   "jsFilesScanned": 44,
   "pyFilesScanned": 27,
@@ -2302,37 +2302,37 @@
     {
       "name": "StatusBadge",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 147,
+      "line": 155,
       "type": "const"
     },
     {
       "name": "ActionButtons",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 175,
+      "line": 183,
       "type": "const"
     },
     {
       "name": "DeleteModal",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 216,
+      "line": 224,
       "type": "const"
     },
     {
       "name": "AuditModal",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 268,
+      "line": 276,
       "type": "const"
     },
     {
       "name": "EditModal",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 366,
+      "line": 374,
       "type": "const"
     },
     {
       "name": "TransactionManager",
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 504,
+      "line": 549,
       "type": "const"
     },
     {
@@ -13349,7 +13349,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 67,
+      "line": 68,
       "name": "formatDateForAPI",
       "params": "dateString",
       "type": "arrow",
@@ -13357,7 +13357,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 147,
+      "line": 155,
       "name": "StatusBadge",
       "params": "{ status, editStatus, boundaryMissed }",
       "type": "arrow",
@@ -13365,7 +13365,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 148,
+      "line": 156,
       "name": "getStatusConfig",
       "params": "",
       "type": "arrow",
@@ -13373,7 +13373,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 175,
+      "line": 183,
       "name": "ActionButtons",
       "params": "{ record, permissions, onEdit, onDelete, onViewAudit }",
       "type": "arrow",
@@ -13381,7 +13381,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 216,
+      "line": 224,
       "name": "DeleteModal",
       "params": "{ isOpen, record, onConfirm, onCancel, loading }",
       "type": "arrow",
@@ -13389,7 +13389,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 268,
+      "line": 276,
       "name": "AuditModal",
       "params": "{ isOpen, record, module, onClose }",
       "type": "arrow",
@@ -13397,7 +13397,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 278,
+      "line": 286,
       "name": "fetchAuditTrail",
       "params": "",
       "type": "arrow",
@@ -13405,7 +13405,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 296,
+      "line": 304,
       "name": "getPrimaryKey",
       "params": "module",
       "type": "arrow",
@@ -13413,7 +13413,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 366,
+      "line": 374,
       "name": "EditModal",
       "params": "{ isOpen, record, module, permissions, onSave, onCancel }",
       "type": "arrow",
@@ -13421,7 +13421,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 378,
+      "line": 386,
       "name": "handleFieldChange",
       "params": "field, value",
       "type": "arrow",
@@ -13429,7 +13429,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 390,
+      "line": 399,
       "name": "isFieldEditable",
       "params": "field",
       "type": "arrow",
@@ -13437,7 +13437,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 399,
+      "line": 420,
       "name": "handleSubmit",
       "params": "e",
       "type": "arrow",
@@ -13445,7 +13445,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 504,
+      "line": 549,
       "name": "TransactionManager",
       "params": "",
       "type": "arrow",
@@ -13453,7 +13453,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 546,
+      "line": 591,
       "name": "loadRecords",
       "params": "",
       "type": "arrow",
@@ -13461,7 +13461,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 573,
+      "line": 622,
       "name": "loadStats",
       "params": "",
       "type": "arrow",
@@ -13469,15 +13469,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 585,
-      "name": "checkPermissions",
-      "params": "record",
-      "type": "arrow",
-      "isAsync": true
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 603,
+      "line": 634,
       "name": "getPrimaryKey",
       "params": "module",
       "type": "arrow",
@@ -13485,7 +13477,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 617,
+      "line": 648,
       "name": "handleEdit",
       "params": "record",
       "type": "arrow",
@@ -13493,7 +13485,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 647,
+      "line": 677,
       "name": "handleSaveEdit",
       "params": "updatedData",
       "type": "arrow",
@@ -13501,15 +13493,15 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 671,
+      "line": 701,
       "name": "handleDelete",
       "params": "record",
       "type": "arrow",
-      "isAsync": true
+      "isAsync": false
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 686,
+      "line": 709,
       "name": "handleConfirmDelete",
       "params": "reason",
       "type": "arrow",
@@ -13517,7 +13509,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 710,
+      "line": 733,
       "name": "handleViewAudit",
       "params": "record",
       "type": "arrow",
@@ -13525,7 +13517,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 718,
+      "line": 741,
       "name": "showMessage",
       "params": "type, text",
       "type": "arrow",
@@ -13533,7 +13525,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 724,
+      "line": 747,
       "name": "handleFilterChange",
       "params": "field, value",
       "type": "arrow",
@@ -20186,7 +20178,7 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 217,
+      "line": 225,
       "type": "useState",
       "name": "reason",
       "setter": "setReason",
@@ -20194,13 +20186,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 217,
+      "line": 225,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 269,
+      "line": 277,
       "type": "useState",
       "name": "auditData",
       "setter": "setAuditData",
@@ -20208,13 +20200,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 269,
+      "line": 277,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 270,
+      "line": 278,
       "type": "useState",
       "name": "loading",
       "setter": "setLoading",
@@ -20222,19 +20214,19 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 270,
+      "line": 278,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 272,
+      "line": 280,
       "type": "useEffect",
       "hook": "useEffect"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 367,
+      "line": 375,
       "type": "useState",
       "name": "formData",
       "setter": "setFormData",
@@ -20242,13 +20234,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 367,
+      "line": 375,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 368,
+      "line": 376,
       "type": "useState",
       "name": "loading",
       "setter": "setLoading",
@@ -20256,13 +20248,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 368,
+      "line": 376,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 369,
+      "line": 377,
       "type": "useState",
       "name": "errors",
       "setter": "setErrors",
@@ -20270,19 +20262,19 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 369,
+      "line": 377,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 371,
+      "line": 379,
       "type": "useEffect",
       "hook": "useEffect"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 506,
+      "line": 551,
       "type": "useState",
       "name": "activeModule",
       "setter": "setActiveModule",
@@ -20290,13 +20282,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 506,
+      "line": 551,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 507,
+      "line": 552,
       "type": "useState",
       "name": "records",
       "setter": "setRecords",
@@ -20304,13 +20296,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 507,
+      "line": 552,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 508,
+      "line": 553,
       "type": "useState",
       "name": "loading",
       "setter": "setLoading",
@@ -20318,13 +20310,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 508,
+      "line": 553,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 509,
+      "line": 554,
       "type": "useState",
       "name": "error",
       "setter": "setError",
@@ -20332,13 +20324,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 509,
+      "line": 554,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 510,
+      "line": 555,
       "type": "useState",
       "name": "message",
       "setter": "setMessage",
@@ -20346,13 +20338,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 510,
+      "line": 555,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 513,
+      "line": 558,
       "type": "useState",
       "name": "filters",
       "setter": "setFilters",
@@ -20360,13 +20352,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 513,
+      "line": 558,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 520,
+      "line": 565,
       "type": "useState",
       "name": "deleteModal",
       "setter": "setDeleteModal",
@@ -20374,13 +20366,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 520,
+      "line": 565,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 525,
+      "line": 570,
       "type": "useState",
       "name": "editModal",
       "setter": "setEditModal",
@@ -20388,13 +20380,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 525,
+      "line": 570,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 531,
+      "line": 576,
       "type": "useState",
       "name": "auditModal",
       "setter": "setAuditModal",
@@ -20402,13 +20394,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 531,
+      "line": 576,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 537,
+      "line": 582,
       "type": "useState",
       "name": "stats",
       "setter": "setStats",
@@ -20416,13 +20408,13 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 537,
+      "line": 582,
       "type": "useState",
       "hook": "useState"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 540,
+      "line": 585,
       "type": "useEffect",
       "hook": "useEffect"
     },
@@ -25286,97 +25278,85 @@
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 280,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
       "line": 288,
+      "type": "try-catch",
+      "code": "try {"
+    },
+    {
+      "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
+      "line": 296,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 402,
+      "line": 423,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 404,
+      "line": 425,
       "type": "catch",
       "code": "} catch (error) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 550,
+      "line": 595,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 564,
+      "line": 613,
       "type": "catch",
       "code": "} catch (err) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 574,
+      "line": 623,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 579,
+      "line": 628,
       "type": "catch",
       "code": "} catch (err) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 589,
+      "line": 652,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 597,
+      "line": 671,
       "type": "catch",
       "code": "} catch (err) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 629,
+      "line": 681,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 641,
+      "line": 695,
       "type": "catch",
       "code": "} catch (err) {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 651,
+      "line": 713,
       "type": "try-catch",
       "code": "try {"
     },
     {
       "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 665,
-      "type": "catch",
-      "code": "} catch (err) {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 690,
-      "type": "try-catch",
-      "code": "try {"
-    },
-    {
-      "file": "puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js",
-      "line": 704,
+      "line": 727,
       "type": "catch",
       "code": "} catch (err) {"
     },
@@ -29085,9 +29065,9 @@
     "hardcodedValues": 26,
     "databaseQueries": 537,
     "databaseTables": 69,
-    "functions": 779,
+    "functions": 778,
     "stateHooks": 828,
     "missingEndpoints": 1,
-    "errorHandlers": 752
+    "errorHandlers": 750
   }
 }
