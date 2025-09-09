@@ -1,6 +1,6 @@
 // File Path: puvi-frontend/puvi-frontend-main/src/modules/TransactionManager/index.js
 // Transaction Management Console - Centralized Edit/Delete Interface
-// Version: 1.0.0 - Complete implementation with boundary crossing visualization
+// Version: 2.0.0 - Fixed with Option 3 dual date format and permissions
 
 import React, { useState, useEffect, useCallback } from 'react';
 import './TransactionManager.css';
@@ -40,6 +40,11 @@ const apiCall = async (url, options = {}) => {
 const formatDateForDisplay = (dateValue) => {
   if (!dateValue) return 'N/A';
   
+  // If already in DD-MM-YYYY format, return as is
+  if (typeof dateValue === 'string' && dateValue.match(/^\d{2}-\d{2}-\d{4}$/)) {
+    return dateValue;
+  }
+  
   let date;
   
   // Handle integer days since epoch
@@ -48,10 +53,6 @@ const formatDateForDisplay = (dateValue) => {
     epochDate.setDate(epochDate.getDate() + dateValue);
     date = epochDate;
   } else if (typeof dateValue === 'string') {
-    // Check if already in DD-MM-YYYY format
-    if (String(dateValue).match(/^\d{2}-\d{2}-\d{4}$/)) {
-      return dateValue;
-    }
     date = new Date(dateValue);
   } else {
     date = new Date(dateValue);
@@ -87,7 +88,8 @@ const MODULE_CONFIG = {
     primaryField: 'invoice_ref',
     dateField: 'purchase_date',
     valueField: 'total_cost',
-    group: 'input'
+    group: 'input',
+    dateFields: ['purchase_date'] // Track date fields for Option 3
   },
   material_writeoffs: {
     icon: '❌',
@@ -95,23 +97,26 @@ const MODULE_CONFIG = {
     primaryField: 'material_name',
     dateField: 'writeoff_date',
     valueField: 'total_cost',
-    group: 'input'
+    group: 'input',
+    dateFields: ['writeoff_date']
   },
   batch: {
     icon: '🏭',
     label: 'Batch Production',
-    primaryField: 'traceable_code',
+    primaryField: 'batch_code',
     dateField: 'production_date',
-    valueField: 'total_cost',
-    group: 'production'
+    valueField: 'total_production_cost',
+    group: 'production',
+    dateFields: ['production_date']
   },
   blend_batches: {
     icon: '🔄',
     label: 'Blend Batches',
-    primaryField: 'traceable_code',
+    primaryField: 'blend_code',
     dateField: 'blend_date',
     valueField: 'total_quantity',
-    group: 'production'
+    group: 'production',
+    dateFields: ['blend_date']
   },
   sku_production: {
     icon: '📦',
@@ -119,23 +124,26 @@ const MODULE_CONFIG = {
     primaryField: 'production_code',
     dateField: 'production_date',
     valueField: 'bottles_produced',
-    group: 'output'
+    group: 'output',
+    dateFields: ['production_date', 'packing_date', 'expiry_date']
   },
   sku_outbound: {
     icon: '🚚',
     label: 'SKU Outbound',
-    primaryField: 'outbound_number',
-    dateField: 'transaction_date',
-    valueField: 'total_value',
-    group: 'output'
+    primaryField: 'outbound_code',
+    dateField: 'outbound_date',
+    valueField: 'total_units',
+    group: 'output',
+    dateFields: ['outbound_date', 'dispatch_date']
   },
   oil_cake_sales: {
     icon: '💰',
     label: 'Oil Cake Sales',
-    primaryField: 'sale_number',
+    primaryField: 'sale_code',
     dateField: 'sale_date',
-    valueField: 'total_amount',
-    group: 'output'
+    valueField: 'total_value',
+    group: 'output',
+    dateFields: ['sale_date']
   }
 };
 
@@ -362,7 +370,7 @@ const AuditModal = ({ isOpen, record, module, onClose }) => {
   );
 };
 
-// Edit Form Modal
+// Edit Form Modal - FIXED WITH OPTION 3
 const EditModal = ({ isOpen, record, module, permissions, onSave, onCancel }) => {
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(false);
@@ -387,12 +395,25 @@ const EditModal = ({ isOpen, record, module, permissions, onSave, onCancel }) =>
     }
   };
   
+  // FIX: Properly check if field is editable
   const isFieldEditable = (field) => {
     if (!permissions) return false;
+    
+    // If permissions.editable_fields is a string
     if (permissions.editable_fields === 'all') return true;
+    if (permissions.editable_fields === 'all_except_immutable') {
+      // Define immutable fields
+      const immutableFields = ['id', 'created_at', 'updated_at', 'status', 
+                               'boundary_crossed', 'traceable_code', 'production_code',
+                               'batch_code', 'blend_code', 'outbound_code'];
+      return !immutableFields.includes(field);
+    }
+    
+    // If permissions.editable_fields is an array
     if (Array.isArray(permissions.editable_fields)) {
       return permissions.editable_fields.includes(field);
     }
+    
     return false;
   };
   
@@ -411,6 +432,7 @@ const EditModal = ({ isOpen, record, module, permissions, onSave, onCancel }) =>
   if (!isOpen) return null;
   
   const config = MODULE_CONFIG[module];
+  const dateFields = config.dateFields || [];
   
   return (
     <div className="modal-overlay">
@@ -436,14 +458,46 @@ const EditModal = ({ isOpen, record, module, permissions, onSave, onCancel }) =>
             
             <div className="form-grid">
               {Object.entries(formData).map(([field, value]) => {
-                // Skip system fields
-                if (['created_at', 'updated_at', 'status', 'boundary_crossed'].includes(field)) {
+                // Skip system fields and display fields
+                if (['created_at', 'updated_at', 'status', 'boundary_crossed'].includes(field) ||
+                    field.endsWith('_display')) {
                   return null;
                 }
                 
                 const isEditable = isFieldEditable(field);
-                const isDate = field.includes('date');
+                const isDateField = dateFields.includes(field);
                 
+                // OPTION 3: Special handling for date fields
+                if (isDateField) {
+                  const displayValue = formData[`${field}_display`] || formatDateForDisplay(value);
+                  
+                  return (
+                    <div key={field} className="form-group date-group">
+                      <label className={!isEditable ? 'field-readonly' : ''}>
+                        {field.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+                        {!isEditable && ' (Read Only)'}
+                      </label>
+                      
+                      {/* Show current value in DD-MM-YYYY */}
+                      <div className="date-display">
+                        Current: <strong>{displayValue || 'Not set'}</strong>
+                      </div>
+                      
+                      {/* Date input for editing */}
+                      {isEditable && (
+                        <input
+                          type="date"
+                          value={value || ''}
+                          onChange={(e) => handleFieldChange(field, e.target.value)}
+                          disabled={loading}
+                          className="form-control"
+                        />
+                      )}
+                    </div>
+                  );
+                }
+                
+                // Regular fields (non-date)
                 return (
                   <div key={field} className="form-group">
                     <label className={!isEditable ? 'field-readonly' : ''}>
@@ -451,23 +505,14 @@ const EditModal = ({ isOpen, record, module, permissions, onSave, onCancel }) =>
                       {!isEditable && ' (Read Only)'}
                     </label>
                     
-                    {isDate ? (
-                      <input
-                        type="date"
-                        value={formatDateForAPI(value) || ''}
-                        onChange={(e) => handleFieldChange(field, e.target.value)}
-                        disabled={!isEditable || loading}
-                        className="form-control"
-                      />
-                    ) : (
-                      <input
-                        type={typeof value === 'number' ? 'number' : 'text'}
-                        value={value || ''}
-                        onChange={(e) => handleFieldChange(field, e.target.value)}
-                        disabled={!isEditable || loading}
-                        className="form-control"
-                      />
-                    )}
+                    <input
+                      type={typeof value === 'number' ? 'number' : 'text'}
+                      value={value || ''}
+                      onChange={(e) => handleFieldChange(field, e.target.value)}
+                      disabled={!isEditable || loading}
+                      className="form-control"
+                      readOnly={!isEditable}
+                    />
                   </div>
                 );
               })}
@@ -486,7 +531,7 @@ const EditModal = ({ isOpen, record, module, permissions, onSave, onCancel }) =>
             <button
               type="submit"
               className="btn btn-primary"
-              disabled={loading}
+              disabled={loading || !permissions.can_edit}
             >
               {loading ? 'Saving...' : 'Save Changes'}
             </button>
@@ -559,7 +604,11 @@ const TransactionManager = () => {
       );
       
       if (response.success) {
-        setRecords(response.records || response.data || []);
+        // FIX: Handle different response structures
+        const recordsData = response.records || response.data || 
+                           response[activeModule] || response.productions || 
+                           response.outbounds || response.sales || [];
+        setRecords(recordsData);
       }
     } catch (err) {
       setError(err.message);
@@ -581,25 +630,7 @@ const TransactionManager = () => {
     }
   };
   
-  // Check permissions for a record
-  const checkPermissions = async (record) => {
-    const primaryKey = getPrimaryKey(activeModule);
-    const recordId = record[primaryKey];
-    
-    try {
-      const response = await apiCall(
-        `/api/transaction-manager/${activeModule}/${recordId}/permissions`
-      );
-      
-      if (response.success) {
-        return response.permissions;
-      }
-    } catch (err) {
-      console.error('Error checking permissions:', err);
-      return { can_edit: false, can_delete: false, reason: 'Error checking permissions' };
-    }
-  };
-  
+  // Get primary key for module
   const getPrimaryKey = (module) => {
     const keys = {
       purchases: 'purchase_id',
@@ -615,31 +646,30 @@ const TransactionManager = () => {
   
   // Handle edit
   const handleEdit = async (record) => {
-    const permissions = await checkPermissions(record);
-    
-    if (!permissions.can_edit) {
-      showMessage('error', permissions.reason || 'Cannot edit this record');
-      return;
-    }
-    
-    // Get full record data for editing
     const primaryKey = getPrimaryKey(activeModule);
     const recordId = record[primaryKey];
     
     try {
+      // Get full record with permissions
       const response = await apiCall(
         `/api/transaction-manager/${activeModule}/${recordId}`
       );
       
       if (response.success) {
+        // Extract the actual record and permissions
+        const fullRecord = response.data || response.record || 
+                          response.production || response.outbound || 
+                          response.sale || response.batch || response.blend;
+        const permissions = response.permissions || {};
+        
         setEditModal({
           isOpen: true,
-          record: response.data || response.record,
-          permissions
+          record: fullRecord,
+          permissions: permissions
         });
       }
     } catch (err) {
-      showMessage('error', 'Failed to load record for editing');
+      showMessage('error', 'Failed to load record for editing: ' + err.message);
     }
   };
   
@@ -668,14 +698,7 @@ const TransactionManager = () => {
   };
   
   // Handle delete
-  const handleDelete = async (record) => {
-    const permissions = await checkPermissions(record);
-    
-    if (!permissions.can_delete) {
-      showMessage('error', permissions.reason || 'Cannot delete this record');
-      return;
-    }
-    
+  const handleDelete = (record) => {
     setDeleteModal({
       isOpen: true,
       record
@@ -882,7 +905,7 @@ const TransactionManager = () => {
                       {record[getPrimaryKey(activeModule)]}
                     </td>
                     <td className="td-primary">
-                      {record[config.primaryField] || 'N/A'}
+                      {record[config.primaryField] || record.traceable_code || 'N/A'}
                     </td>
                     <td className="td-date">
                       {formatDateForDisplay(record[config.dateField])}
@@ -931,7 +954,7 @@ const TransactionManager = () => {
         loading={false}
       />
       
-      {/* Edit Modal */}
+      {/* Edit Modal - USING FIXED VERSION */}
       <EditModal
         isOpen={editModal.isOpen}
         record={editModal.record}
@@ -952,9 +975,9 @@ const TransactionManager = () => {
       {/* Footer */}
       <div className="tm-footer">
         <div className="footer-info">
-          <span>Transaction Manager v1.0</span>
+          <span>Transaction Manager v2.0</span>
           <span className="separator">•</span>
-          <span>Centralized Edit/Delete with Boundary Crossing</span>
+          <span>Date Format: DD-MM-YYYY</span>
           <span className="separator">•</span>
           <span>All changes are audited</span>
         </div>
