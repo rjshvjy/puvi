@@ -14,6 +14,7 @@ FIXED ISSUES:
 2. Oil cake sales SQL - Uses correct column names
 3. NULL handling - Properly handles missing traceable codes
 4. SKU production list index error prevention
+5. CRITICAL FIX: Added aliases for backward compatibility with tm_main.py imports
 """
 
 from flask import jsonify
@@ -1272,6 +1273,15 @@ def list_oil_cake_sales_with_status(filters=None):
         close_connection(conn, cur)
 
 # ============================================
+# CRITICAL ALIASES FOR BACKWARD COMPATIBILITY
+# ============================================
+
+# Create aliases for backward compatibility with tm_main.py imports
+soft_delete_sku_production = delete_sku_production
+soft_delete_outbound = delete_outbound
+# Note: soft_delete_oil_cake_sale already has the correct name
+
+# ============================================
 # MODULE EXPORTS
 # ============================================
 
@@ -1283,16 +1293,18 @@ __all__ = [
     'get_sku_production_for_edit',
     'update_sku_production',
     'delete_sku_production',
+    'soft_delete_sku_production',  # ALIAS ADDED
     'list_sku_productions_with_status',
     # SKU Outbound operations
     'get_outbound_for_edit',
     'update_outbound',
     'delete_outbound',
+    'soft_delete_outbound',  # ALIAS ADDED
     'list_outbounds_with_status',
     # Oil Cake Sales operations
     'get_oil_cake_sale_for_edit',
     'update_oil_cake_sale',
-    'delete_oil_cake_sale',
+    'soft_delete_oil_cake_sale',  # ALREADY CORRECT NAME
     'list_oil_cake_sales_with_status',
     # Utilities
     'check_sku_production_dependencies',
