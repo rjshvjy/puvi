@@ -982,7 +982,7 @@ def update_oil_cake_sale(sale_id, data, user='System'):
     finally:
         close_connection(conn, cur)
 
-def delete_oil_cake_sale(sale_id, reason='', user='System'):
+def soft_delete_oil_cake_sale(sale_id, reason='', user='System'):
     """Soft delete oil cake sale record"""
     conn = get_db_connection()
     cur = conn.cursor()
