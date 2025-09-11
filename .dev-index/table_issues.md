@@ -1,6 +1,6 @@
 # Table Usage Issues
 
-Generated: 2025-09-11 10:28:56.437689
+Generated: 2025-09-11 10:51:28.832673
 
 ## ⚠️ Orphaned Tables
 These tables exist in database but are not used in any code:
@@ -30,7 +30,7 @@ These tables are referenced in code but don't exist in database:
 - adjustment_options
   Files: puvi-backend/puvi-backend-main/transaction_management/tm_input_operations.py
 - adjustments
-  Files: puvi-backend/puvi-backend-main/transaction_management/tm_input_operations.py
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_input_operations.py, puvi-backend/puvi-backend-main/transaction_management/tm_main.py
 - age_days
   Files: puvi-backend/puvi-backend-main/modules/material_sales.py, puvi-backend/puvi-backend-main/modules/material_writeoff.py
 - alerts
@@ -144,17 +144,23 @@ These tables are referenced in code but don't exist in database:
 - components
   Files: puvi-backend/puvi-backend-main/modules/blending.py, puvi-backend/puvi-backend-main/transaction_management/tm_production_operations.py, puvi-backend/puvi-backend-main/transaction_management/tm_configs.py
 - config
-  Files: puvi-backend/puvi-backend-main/db_utils.py, puvi-backend/puvi-backend-main/transaction_management/tm_main.py, puvi-frontend/puvi-frontend-main/src/services/configService.js and 21 more
+  Files: puvi-backend/puvi-backend-main/db_utils.py, puvi-frontend/puvi-frontend-main/src/services/configService.js, puvi-frontend/puvi-frontend-main/src/services/api/index.js and 20 more
 - configuration_status
   Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
 - configurations
   Files: puvi-backend/puvi-backend-main/modules/opening_balance.py
 - configured_materials
   Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
+- correction_capabilities
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_main.py
+- correction_methods
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_main.py
 - correction_options
-  Files: puvi-backend/puvi-backend-main/transaction_management/tm_input_operations.py
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_input_operations.py, puvi-backend/puvi-backend-main/transaction_management/tm_main.py
 - correction_status
   Files: puvi-backend/puvi-backend-main/transaction_management/tm_input_operations.py
+- corrections
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_main.py
 - cos
   Files: puvi-backend/puvi-backend-main/utils/traceability.py
 - cost
@@ -240,7 +246,7 @@ These tables are referenced in code but don't exist in database:
 - failed_updates
   Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
 - features
-  Files: puvi-backend/puvi-backend-main/app.py
+  Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/transaction_management/tm_main.py
 - fields
   Files: puvi-backend/puvi-backend-main/modules/masters_common.py, puvi-backend/puvi-backend-main/modules/masters_crud.py
 - finished_products
@@ -259,8 +265,6 @@ These tables are referenced in code but don't exist in database:
   Files: puvi-backend/puvi-backend-main/modules/sku_production.py
 - frontend
   Files: puvi-backend/puvi-backend-main/modules/sku_production.py, puvi-backend/puvi-backend-main/modules/batch_production.py
-- function
-  Files: puvi-backend/puvi-backend-main/transaction_management/tm_main.py
 - global
   Files: puvi-backend/puvi-backend-main/app.py
 - gns
@@ -324,13 +328,11 @@ These tables are referenced in code but don't exist in database:
 - item_validations
   Files: puvi-backend/puvi-backend-main/transaction_management/tm_input_operations.py
 - items
-  Files: puvi-backend/puvi-backend-main/modules/sku_production.py, puvi-backend/puvi-backend-main/modules/sku_outbound.py, puvi-backend/puvi-backend-main/modules/purchase.py and 4 more
+  Files: puvi-backend/puvi-backend-main/modules/sku_production.py, puvi-backend/puvi-backend-main/modules/sku_outbound.py, puvi-backend/puvi-backend-main/modules/purchase.py and 5 more
 - javascript
   Files: puvi-backend/puvi-backend-main/utils/validation.py
 - json_sort_keys
   Files: puvi-backend/puvi-backend-main/app.py
-- jwt
-  Files: puvi-backend/puvi-backend-main/transaction_management/tm_main.py
 - keywords
   Files: puvi-backend/puvi-backend-main/modules/masters_common.py, puvi-backend/puvi-backend-main/modules/system_config.py
 - labels
@@ -530,7 +532,7 @@ These tables are referenced in code but don't exist in database:
 - quantity_or_hours
   Files: puvi-backend/puvi-backend-main/transaction_management/tm_production_operations.py
 - query
-  Files: puvi-backend/puvi-backend-main/modules/package_sizes.py, puvi-backend/puvi-backend-main/modules/masters_common.py, puvi-backend/puvi-backend-main/modules/customers.py and 7 more
+  Files: puvi-backend/puvi-backend-main/modules/package_sizes.py, puvi-backend/puvi-backend-main/modules/masters_common.py, puvi-backend/puvi-backend-main/modules/customers.py and 6 more
 - r
   Files: puvi-backend/puvi-backend-main/app.py
 - rate
@@ -574,9 +576,9 @@ These tables are referenced in code but don't exist in database:
 - returns
   Files: puvi-backend/puvi-backend-main/transaction_management/tm_input_operations.py
 - reversal_status
-  Files: puvi-backend/puvi-backend-main/transaction_management/tm_input_operations.py
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_input_operations.py, puvi-backend/puvi-backend-main/transaction_management/tm_main.py
 - reversals
-  Files: puvi-backend/puvi-backend-main/transaction_management/tm_input_operations.py
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_input_operations.py, puvi-backend/puvi-backend-main/transaction_management/tm_main.py
 - rounded_hours
   Files: puvi-backend/puvi-backend-main/modules/cost_management.py
 - safe_fields
@@ -650,11 +652,17 @@ These tables are referenced in code but don't exist in database:
 - success
   Files: puvi-backend/puvi-backend-main/app.py, puvi-backend/puvi-backend-main/utils/expiry_utils.py, puvi-backend/puvi-backend-main/modules/opening_balance.py and 19 more
 - suggestions
-  Files: puvi-backend/puvi-backend-main/modules/masters_crud.py
+  Files: puvi-backend/puvi-backend-main/modules/masters_crud.py, puvi-backend/puvi-backend-main/transaction_management/tm_main.py
 - supplier
   Files: puvi-backend/puvi-backend-main/utils/traceability.py
+- supports_adjustments
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_main.py
 - supports_credentials
   Files: puvi-backend/puvi-backend-main/app.py
+- supports_returns
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_main.py
+- supports_reversals
+  Files: puvi-backend/puvi-backend-main/transaction_management/tm_main.py
 - system
   Files: puvi-backend/puvi-backend-main/modules/opening_balance.py, puvi-frontend/puvi-frontend-main/src/index.js, puvi-frontend/puvi-frontend-main/src/index.js
 - the
