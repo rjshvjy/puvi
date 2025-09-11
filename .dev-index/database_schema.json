@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-09-09T06:18:25.422668+00:00",
+  "generated_at": "2025-09-11T10:28:51.503405+00:00",
   "database": "postgres",
   "version": "PostgreSQL 17.4 on aarch64-unknown-linux-gnu, compiled by gcc (GCC) 13.2.0, 64-bit",
   "tables": {
@@ -507,23 +507,30 @@
       ],
       "check_constraints": [
         {
-          "constraint_name": "2200_17322_1_not_null",
-          "check_clause": "batch_id IS NOT NULL"
-        },
-        {
-          "constraint_name": "check_traceable_format",
-          "check_clause": "((traceable_code)::text !~~ 'BATCH-%'::text)"
+          "constraint_name": "2200_17322_2_not_null",
+          "check_clause": "batch_code IS NOT NULL"
         },
         {
           "constraint_name": "2200_17322_4_not_null",
           "check_clause": "oil_type IS NOT NULL"
         },
         {
-          "constraint_name": "2200_17322_2_not_null",
-          "check_clause": "batch_code IS NOT NULL"
+          "constraint_name": "check_traceable_format",
+          "check_clause": "((traceable_code)::text !~~ 'BATCH-%'::text)"
+        },
+        {
+          "constraint_name": "2200_17322_1_not_null",
+          "check_clause": "batch_id IS NOT NULL"
         }
       ],
       "indexes": [
+        {
+          "index_name": "batch_pkey",
+          "is_unique": true,
+          "is_primary": false,
+          "definition": "CREATE UNIQUE INDEX batch_pkey ON public.batch USING btree (batch_id)",
+          "columns": "batch_id"
+        },
         {
           "index_name": "batch_batch_code_key",
           "is_unique": true,
@@ -551,13 +558,6 @@
           "is_primary": false,
           "definition": "CREATE UNIQUE INDEX batch_traceable_code_key ON public.batch USING btree (traceable_code)",
           "columns": "traceable_code"
-        },
-        {
-          "index_name": "batch_pkey",
-          "is_unique": true,
-          "is_primary": false,
-          "definition": "CREATE UNIQUE INDEX batch_pkey ON public.batch USING btree (batch_id)",
-          "columns": "batch_id"
         }
       ],
       "triggers": [
@@ -702,32 +702,32 @@
       "unique_constraints": null,
       "check_constraints": [
         {
-          "constraint_name": "2200_31971_1_not_null",
-          "check_clause": "cost_detail_id IS NOT NULL"
-        },
-        {
           "constraint_name": "2200_31971_2_not_null",
           "check_clause": "batch_id IS NOT NULL"
         },
         {
           "constraint_name": "2200_31971_3_not_null",
           "check_clause": "cost_element IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_31971_1_not_null",
+          "check_clause": "cost_detail_id IS NOT NULL"
         }
       ],
       "indexes": [
-        {
-          "index_name": "batch_cost_details_pkey",
-          "is_unique": true,
-          "is_primary": false,
-          "definition": "CREATE UNIQUE INDEX batch_cost_details_pkey ON public.batch_cost_details USING btree (cost_detail_id)",
-          "columns": "cost_detail_id"
-        },
         {
           "index_name": "idx_batch_cost_details_batch_id",
           "is_unique": false,
           "is_primary": false,
           "definition": "CREATE INDEX idx_batch_cost_details_batch_id ON public.batch_cost_details USING btree (batch_id)",
           "columns": "batch_id"
+        },
+        {
+          "index_name": "batch_cost_details_pkey",
+          "is_unique": true,
+          "is_primary": false,
+          "definition": "CREATE UNIQUE INDEX batch_cost_details_pkey ON public.batch_cost_details USING btree (cost_detail_id)",
+          "columns": "cost_detail_id"
         }
       ],
       "triggers": null,
@@ -1317,19 +1317,19 @@
       ],
       "foreign_keys": [
         {
-          "column": "batch_id",
-          "references_table": "batch",
-          "references_column": "batch_id",
-          "constraint_name": "batch_extended_costs_batch_id_fkey",
-          "on_delete": "CASCADE",
-          "on_update": "NO ACTION"
-        },
-        {
           "column": "element_id",
           "references_table": "cost_elements_master",
           "references_column": "element_id",
           "constraint_name": "batch_extended_costs_element_id_fkey",
           "on_delete": "NO ACTION",
+          "on_update": "NO ACTION"
+        },
+        {
+          "column": "batch_id",
+          "references_table": "batch",
+          "references_column": "batch_id",
+          "constraint_name": "batch_extended_costs_batch_id_fkey",
+          "on_delete": "CASCADE",
           "on_update": "NO ACTION"
         }
       ],
@@ -1342,11 +1342,11 @@
       ],
       "indexes": [
         {
-          "index_name": "batch_extended_costs_pkey",
-          "is_unique": true,
+          "index_name": "idx_batch_extended_costs_batch",
+          "is_unique": false,
           "is_primary": false,
-          "definition": "CREATE UNIQUE INDEX batch_extended_costs_pkey ON public.batch_extended_costs USING btree (cost_id)",
-          "columns": "cost_id"
+          "definition": "CREATE INDEX idx_batch_extended_costs_batch ON public.batch_extended_costs USING btree (batch_id)",
+          "columns": "batch_id"
         },
         {
           "index_name": "idx_batch_extended_costs_element",
@@ -1356,11 +1356,11 @@
           "columns": "element_id"
         },
         {
-          "index_name": "idx_batch_extended_costs_batch",
-          "is_unique": false,
+          "index_name": "batch_extended_costs_pkey",
+          "is_unique": true,
           "is_primary": false,
-          "definition": "CREATE INDEX idx_batch_extended_costs_batch ON public.batch_extended_costs USING btree (batch_id)",
-          "columns": "batch_id"
+          "definition": "CREATE UNIQUE INDEX batch_extended_costs_pkey ON public.batch_extended_costs USING btree (cost_id)",
+          "columns": "cost_id"
         }
       ],
       "triggers": null,
@@ -1733,18 +1733,18 @@
       ],
       "indexes": [
         {
-          "index_name": "batch_time_tracking_pkey",
-          "is_unique": true,
-          "is_primary": false,
-          "definition": "CREATE UNIQUE INDEX batch_time_tracking_pkey ON public.batch_time_tracking USING btree (tracking_id)",
-          "columns": "tracking_id"
-        },
-        {
           "index_name": "idx_batch_time_tracking_date",
           "is_unique": false,
           "is_primary": false,
           "definition": "CREATE INDEX idx_batch_time_tracking_date ON public.batch_time_tracking USING btree (start_datetime)",
           "columns": "start_datetime"
+        },
+        {
+          "index_name": "batch_time_tracking_pkey",
+          "is_unique": true,
+          "is_primary": false,
+          "definition": "CREATE UNIQUE INDEX batch_time_tracking_pkey ON public.batch_time_tracking USING btree (tracking_id)",
+          "columns": "tracking_id"
         },
         {
           "index_name": "idx_batch_time_tracking_batch",
@@ -1965,24 +1965,24 @@
       "unique_constraints": null,
       "check_constraints": [
         {
-          "constraint_name": "2200_22167_4_not_null",
-          "check_clause": "source_type IS NOT NULL"
-        },
-        {
           "constraint_name": "2200_22167_1_not_null",
           "check_clause": "component_id IS NOT NULL"
         },
         {
-          "constraint_name": "2200_22167_10_not_null",
-          "check_clause": "cost_per_unit IS NOT NULL"
+          "constraint_name": "2200_22167_4_not_null",
+          "check_clause": "source_type IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_22167_8_not_null",
+          "check_clause": "quantity_used IS NOT NULL"
         },
         {
           "constraint_name": "2200_22167_9_not_null",
           "check_clause": "percentage IS NOT NULL"
         },
         {
-          "constraint_name": "2200_22167_8_not_null",
-          "check_clause": "quantity_used IS NOT NULL"
+          "constraint_name": "2200_22167_10_not_null",
+          "check_clause": "cost_per_unit IS NOT NULL"
         },
         {
           "constraint_name": "2200_22167_3_not_null",
@@ -1998,18 +1998,18 @@
           "columns": "component_id"
         },
         {
-          "index_name": "idx_blend_components_blend",
-          "is_unique": false,
-          "is_primary": false,
-          "definition": "CREATE INDEX idx_blend_components_blend ON public.blend_batch_components USING btree (blend_id)",
-          "columns": "blend_id"
-        },
-        {
           "index_name": "idx_blend_components_source",
           "is_unique": false,
           "is_primary": false,
           "definition": "CREATE INDEX idx_blend_components_source ON public.blend_batch_components USING btree (source_batch_id)",
           "columns": "source_batch_id"
+        },
+        {
+          "index_name": "idx_blend_components_blend",
+          "is_unique": false,
+          "is_primary": false,
+          "definition": "CREATE INDEX idx_blend_components_blend ON public.blend_batch_components USING btree (blend_id)",
+          "columns": "blend_id"
         }
       ],
       "triggers": null,
@@ -2213,16 +2213,16 @@
           "check_clause": "blend_date IS NOT NULL"
         },
         {
-          "constraint_name": "2200_22157_6_not_null",
-          "check_clause": "weighted_avg_cost IS NOT NULL"
+          "constraint_name": "2200_22157_2_not_null",
+          "check_clause": "blend_code IS NOT NULL"
         },
         {
           "constraint_name": "2200_22157_1_not_null",
           "check_clause": "blend_id IS NOT NULL"
         },
         {
-          "constraint_name": "2200_22157_2_not_null",
-          "check_clause": "blend_code IS NOT NULL"
+          "constraint_name": "2200_22157_6_not_null",
+          "check_clause": "weighted_avg_cost IS NOT NULL"
         },
         {
           "constraint_name": "2200_22157_5_not_null",
@@ -2231,18 +2231,18 @@
       ],
       "indexes": [
         {
+          "index_name": "idx_blend_batches_code",
+          "is_unique": false,
+          "is_primary": false,
+          "definition": "CREATE INDEX idx_blend_batches_code ON public.blend_batches USING btree (blend_code)",
+          "columns": "blend_code"
+        },
+        {
           "index_name": "blend_batches_pkey",
           "is_unique": true,
           "is_primary": false,
           "definition": "CREATE UNIQUE INDEX blend_batches_pkey ON public.blend_batches USING btree (blend_id)",
           "columns": "blend_id"
-        },
-        {
-          "index_name": "idx_blend_batches_date",
-          "is_unique": false,
-          "is_primary": false,
-          "definition": "CREATE INDEX idx_blend_batches_date ON public.blend_batches USING btree (blend_date)",
-          "columns": "blend_date"
         },
         {
           "index_name": "blend_batches_blend_code_key",
@@ -2252,11 +2252,11 @@
           "columns": "blend_code"
         },
         {
-          "index_name": "idx_blend_batches_code",
+          "index_name": "idx_blend_batches_date",
           "is_unique": false,
           "is_primary": false,
-          "definition": "CREATE INDEX idx_blend_batches_code ON public.blend_batches USING btree (blend_code)",
-          "columns": "blend_code"
+          "definition": "CREATE INDEX idx_blend_batches_date ON public.blend_batches USING btree (blend_date)",
+          "columns": "blend_date"
         }
       ],
       "triggers": null,
@@ -2598,12 +2598,12 @@
       ],
       "check_constraints": [
         {
-          "constraint_name": "2200_65506_2_not_null",
-          "check_clause": "activity_name IS NOT NULL"
-        },
-        {
           "constraint_name": "2200_65506_1_not_null",
           "check_clause": "id IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_65506_2_not_null",
+          "check_clause": "activity_name IS NOT NULL"
         }
       ],
       "indexes": [
@@ -2976,28 +2976,28 @@
       ],
       "check_constraints": [
         {
-          "constraint_name": "2200_65519_2_not_null",
-          "check_clause": "unit_type IS NOT NULL"
-        },
-        {
           "constraint_name": "2200_65519_1_not_null",
           "check_clause": "id IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_65519_2_not_null",
+          "check_clause": "unit_type IS NOT NULL"
         }
       ],
       "indexes": [
-        {
-          "index_name": "cost_element_unit_types_unit_type_key",
-          "is_unique": true,
-          "is_primary": false,
-          "definition": "CREATE UNIQUE INDEX cost_element_unit_types_unit_type_key ON public.cost_element_unit_types USING btree (unit_type)",
-          "columns": "unit_type"
-        },
         {
           "index_name": "cost_element_unit_types_pkey",
           "is_unique": true,
           "is_primary": false,
           "definition": "CREATE UNIQUE INDEX cost_element_unit_types_pkey ON public.cost_element_unit_types USING btree (id)",
           "columns": "id"
+        },
+        {
+          "index_name": "cost_element_unit_types_unit_type_key",
+          "is_unique": true,
+          "is_primary": false,
+          "definition": "CREATE UNIQUE INDEX cost_element_unit_types_unit_type_key ON public.cost_element_unit_types USING btree (unit_type)",
+          "columns": "unit_type"
         }
       ],
       "triggers": null,
@@ -3460,12 +3460,12 @@
           "check_clause": "default_rate IS NOT NULL"
         },
         {
-          "constraint_name": "2200_22405_2_not_null",
-          "check_clause": "element_name IS NOT NULL"
-        },
-        {
           "constraint_name": "2200_22405_1_not_null",
           "check_clause": "element_id IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_22405_2_not_null",
+          "check_clause": "element_name IS NOT NULL"
         }
       ],
       "indexes": [
@@ -3477,18 +3477,18 @@
           "columns": "element_id"
         },
         {
-          "index_name": "idx_cost_elements_module_specific",
-          "is_unique": false,
-          "is_primary": false,
-          "definition": "CREATE INDEX idx_cost_elements_module_specific ON public.cost_elements_master USING btree (module_specific)",
-          "columns": "module_specific"
-        },
-        {
           "index_name": "idx_cost_elements_activity",
           "is_unique": false,
           "is_primary": false,
           "definition": "CREATE INDEX idx_cost_elements_activity ON public.cost_elements_master USING btree (activity)",
           "columns": "activity"
+        },
+        {
+          "index_name": "idx_cost_elements_module_specific",
+          "is_unique": false,
+          "is_primary": false,
+          "definition": "CREATE INDEX idx_cost_elements_module_specific ON public.cost_elements_master USING btree (module_specific)",
+          "columns": "module_specific"
         },
         {
           "index_name": "idx_cost_elements_category",
@@ -3677,13 +3677,6 @@
       ],
       "indexes": [
         {
-          "index_name": "idx_cost_override_module",
-          "is_unique": false,
-          "is_primary": false,
-          "definition": "CREATE INDEX idx_cost_override_module ON public.cost_override_log USING btree (module_name, record_id)",
-          "columns": "module_name,record_id"
-        },
-        {
           "index_name": "idx_cost_override_date",
           "is_unique": false,
           "is_primary": false,
@@ -3696,6 +3689,13 @@
           "is_primary": false,
           "definition": "CREATE UNIQUE INDEX cost_override_log_pkey ON public.cost_override_log USING btree (log_id)",
           "columns": "log_id"
+        },
+        {
+          "index_name": "idx_cost_override_module",
+          "is_unique": false,
+          "is_primary": false,
+          "definition": "CREATE INDEX idx_cost_override_module ON public.cost_override_log USING btree (module_name, record_id)",
+          "columns": "module_name,record_id"
         }
       ],
       "triggers": null,
@@ -3928,8 +3928,8 @@
       ],
       "check_constraints": [
         {
-          "constraint_name": "2200_55243_1_not_null",
-          "check_clause": "ship_to_id IS NOT NULL"
+          "constraint_name": "2200_55243_2_not_null",
+          "check_clause": "customer_id IS NOT NULL"
         },
         {
           "constraint_name": "2200_55243_4_not_null",
@@ -3940,17 +3940,17 @@
           "check_clause": "location_code IS NOT NULL"
         },
         {
-          "constraint_name": "2200_55243_2_not_null",
-          "check_clause": "customer_id IS NOT NULL"
+          "constraint_name": "2200_55243_1_not_null",
+          "check_clause": "ship_to_id IS NOT NULL"
         }
       ],
       "indexes": [
         {
-          "index_name": "customer_ship_to_locations_location_code_key",
-          "is_unique": true,
+          "index_name": "idx_ship_to_customer",
+          "is_unique": false,
           "is_primary": false,
-          "definition": "CREATE UNIQUE INDEX customer_ship_to_locations_location_code_key ON public.customer_ship_to_locations USING btree (location_code)",
-          "columns": "location_code"
+          "definition": "CREATE INDEX idx_ship_to_customer ON public.customer_ship_to_locations USING btree (customer_id)",
+          "columns": "customer_id"
         },
         {
           "index_name": "idx_ship_to_active",
@@ -3967,11 +3967,11 @@
           "columns": "ship_to_id"
         },
         {
-          "index_name": "idx_ship_to_customer",
-          "is_unique": false,
+          "index_name": "customer_ship_to_locations_location_code_key",
+          "is_unique": true,
           "is_primary": false,
-          "definition": "CREATE INDEX idx_ship_to_customer ON public.customer_ship_to_locations USING btree (customer_id)",
-          "columns": "customer_id"
+          "definition": "CREATE UNIQUE INDEX customer_ship_to_locations_location_code_key ON public.customer_ship_to_locations USING btree (location_code)",
+          "columns": "location_code"
         }
       ],
       "triggers": null,
@@ -4161,17 +4161,24 @@
       ],
       "indexes": [
         {
-          "index_name": "customers_customer_code_key",
-          "is_unique": true,
-          "is_primary": false,
-          "definition": "CREATE UNIQUE INDEX customers_customer_code_key ON public.customers USING btree (customer_code)",
-          "columns": "customer_code"
-        },
-        {
           "index_name": "idx_customers_code",
           "is_unique": false,
           "is_primary": false,
           "definition": "CREATE INDEX idx_customers_code ON public.customers USING btree (customer_code)",
+          "columns": "customer_code"
+        },
+        {
+          "index_name": "customers_pkey",
+          "is_unique": true,
+          "is_primary": false,
+          "definition": "CREATE UNIQUE INDEX customers_pkey ON public.customers USING btree (customer_id)",
+          "columns": "customer_id"
+        },
+        {
+          "index_name": "customers_customer_code_key",
+          "is_unique": true,
+          "is_primary": false,
+          "definition": "CREATE UNIQUE INDEX customers_customer_code_key ON public.customers USING btree (customer_code)",
           "columns": "customer_code"
         },
         {
@@ -4180,13 +4187,6 @@
           "is_primary": false,
           "definition": "CREATE INDEX idx_customers_active ON public.customers USING btree (is_active)",
           "columns": "is_active"
-        },
-        {
-          "index_name": "customers_pkey",
-          "is_unique": true,
-          "is_primary": false,
-          "definition": "CREATE UNIQUE INDEX customers_pkey ON public.customers USING btree (customer_id)",
-          "columns": "customer_id"
         }
       ],
       "triggers": null,
@@ -4307,32 +4307,242 @@
       "unique_constraints": null,
       "check_constraints": [
         {
-          "constraint_name": "2200_66844_1_not_null",
-          "check_clause": "rule_id IS NOT NULL"
-        },
-        {
           "constraint_name": "2200_66844_2_not_null",
           "check_clause": "table_name IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_66844_1_not_null",
+          "check_clause": "rule_id IS NOT NULL"
         }
       ],
       "indexes": [
-        {
-          "index_name": "idx_unique_table_field_rule",
-          "is_unique": true,
-          "is_primary": false,
-          "definition": "CREATE UNIQUE INDEX idx_unique_table_field_rule ON public.edit_delete_rules USING btree (table_name, field_name)",
-          "columns": "table_name,field_name"
-        },
         {
           "index_name": "edit_delete_rules_pkey",
           "is_unique": true,
           "is_primary": false,
           "definition": "CREATE UNIQUE INDEX edit_delete_rules_pkey ON public.edit_delete_rules USING btree (rule_id)",
           "columns": "rule_id"
+        },
+        {
+          "index_name": "idx_unique_table_field_rule",
+          "is_unique": true,
+          "is_primary": false,
+          "definition": "CREATE UNIQUE INDEX idx_unique_table_field_rule ON public.edit_delete_rules USING btree (table_name, field_name)",
+          "columns": "table_name,field_name"
         }
       ],
       "triggers": null,
       "row_count": 63,
+      "dead_rows": 0,
+      "last_vacuum": null,
+      "last_autovacuum": null,
+      "total_size": "48 kB",
+      "table_size": "8192 bytes",
+      "indexes_size": "32 kB"
+    },
+    "field_edit_rules": {
+      "columns": [
+        {
+          "name": "rule_id",
+          "type": "integer",
+          "max_length": null,
+          "precision": 32,
+          "scale": 0,
+          "nullable": false,
+          "default": "nextval('field_edit_rules_rule_id_seq'::regclass)",
+          "position": 1,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "table_name",
+          "type": "character varying",
+          "max_length": 100,
+          "precision": null,
+          "scale": null,
+          "nullable": false,
+          "default": null,
+          "position": 2,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "field_name",
+          "type": "character varying",
+          "max_length": 100,
+          "precision": null,
+          "scale": null,
+          "nullable": false,
+          "default": null,
+          "position": 3,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "classification",
+          "type": "character varying",
+          "max_length": 20,
+          "precision": null,
+          "scale": null,
+          "nullable": false,
+          "default": null,
+          "position": 4,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "dependency_check_sql",
+          "type": "text",
+          "max_length": null,
+          "precision": null,
+          "scale": null,
+          "nullable": true,
+          "default": null,
+          "position": 5,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "edit_condition",
+          "type": "text",
+          "max_length": null,
+          "precision": null,
+          "scale": null,
+          "nullable": true,
+          "default": null,
+          "position": 6,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "reason_template",
+          "type": "text",
+          "max_length": null,
+          "precision": null,
+          "scale": null,
+          "nullable": true,
+          "default": null,
+          "position": 7,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "affects_calculation",
+          "type": "boolean",
+          "max_length": null,
+          "precision": null,
+          "scale": null,
+          "nullable": true,
+          "default": "false",
+          "position": 8,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "affects_inventory",
+          "type": "boolean",
+          "max_length": null,
+          "precision": null,
+          "scale": null,
+          "nullable": true,
+          "default": "false",
+          "position": 9,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "affects_traceability",
+          "type": "boolean",
+          "max_length": null,
+          "precision": null,
+          "scale": null,
+          "nullable": true,
+          "default": "false",
+          "position": 10,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "display_order",
+          "type": "integer",
+          "max_length": null,
+          "precision": 32,
+          "scale": 0,
+          "nullable": true,
+          "default": "0",
+          "position": 11,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "is_active",
+          "type": "boolean",
+          "max_length": null,
+          "precision": null,
+          "scale": null,
+          "nullable": true,
+          "default": "true",
+          "position": 12,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        }
+      ],
+      "primary_keys": [
+        {
+          "column": "rule_id",
+          "constraint_name": "field_edit_rules_pkey"
+        }
+      ],
+      "foreign_keys": null,
+      "unique_constraints": [
+        {
+          "columns": [
+            "table_name",
+            "field_name"
+          ],
+          "constraint_name": "field_edit_rules_table_name_field_name_key"
+        }
+      ],
+      "check_constraints": [
+        {
+          "constraint_name": "2200_70843_3_not_null",
+          "check_clause": "field_name IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_70843_2_not_null",
+          "check_clause": "table_name IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_70843_1_not_null",
+          "check_clause": "rule_id IS NOT NULL"
+        },
+        {
+          "constraint_name": "field_edit_rules_classification_check",
+          "check_clause": "((classification)::text = ANY ((ARRAY['IMMUTABLE'::character varying, 'CONDITIONAL'::character varying, 'SAFE'::character varying])::text[]))"
+        },
+        {
+          "constraint_name": "2200_70843_4_not_null",
+          "check_clause": "classification IS NOT NULL"
+        }
+      ],
+      "indexes": [
+        {
+          "index_name": "field_edit_rules_table_name_field_name_key",
+          "is_unique": true,
+          "is_primary": false,
+          "definition": "CREATE UNIQUE INDEX field_edit_rules_table_name_field_name_key ON public.field_edit_rules USING btree (table_name, field_name)",
+          "columns": "table_name,field_name"
+        },
+        {
+          "index_name": "field_edit_rules_pkey",
+          "is_unique": true,
+          "is_primary": false,
+          "definition": "CREATE UNIQUE INDEX field_edit_rules_pkey ON public.field_edit_rules USING btree (rule_id)",
+          "columns": "rule_id"
+        }
+      ],
+      "triggers": null,
+      "row_count": 27,
       "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
@@ -4507,18 +4717,18 @@
       ],
       "foreign_keys": [
         {
-          "column": "material_id",
-          "references_table": "materials",
-          "references_column": "material_id",
-          "constraint_name": "inventory_material_id_fkey",
-          "on_delete": "NO ACTION",
-          "on_update": "NO ACTION"
-        },
-        {
           "column": "product_id",
           "references_table": "products",
           "references_column": "product_id",
           "constraint_name": "inventory_product_id_fkey",
+          "on_delete": "NO ACTION",
+          "on_update": "NO ACTION"
+        },
+        {
+          "column": "material_id",
+          "references_table": "materials",
+          "references_column": "material_id",
+          "constraint_name": "inventory_material_id_fkey",
           "on_delete": "NO ACTION",
           "on_update": "NO ACTION"
         }
@@ -4949,20 +5159,16 @@
       ],
       "check_constraints": [
         {
-          "constraint_name": "locations_master_location_type_check",
-          "check_clause": "((location_type)::text = ANY ((ARRAY['factory'::character varying, 'warehouse'::character varying, 'customer'::character varying])::text[]))"
-        },
-        {
           "constraint_name": "check_third_party_customer",
           "check_clause": "((((ownership)::text = 'third_party'::text) AND (customer_id IS NOT NULL)) OR ((ownership)::text = 'own'::text))"
         },
         {
-          "constraint_name": "2200_55040_5_not_null",
-          "check_clause": "ownership IS NOT NULL"
-        },
-        {
           "constraint_name": "2200_55040_4_not_null",
           "check_clause": "location_type IS NOT NULL"
+        },
+        {
+          "constraint_name": "locations_master_ownership_check",
+          "check_clause": "((ownership)::text = ANY ((ARRAY['own'::character varying, 'third_party'::character varying])::text[]))"
         },
         {
           "constraint_name": "2200_55040_3_not_null",
@@ -4977,8 +5183,12 @@
           "check_clause": "location_id IS NOT NULL"
         },
         {
-          "constraint_name": "locations_master_ownership_check",
-          "check_clause": "((ownership)::text = ANY ((ARRAY['own'::character varying, 'third_party'::character varying])::text[]))"
+          "constraint_name": "2200_55040_5_not_null",
+          "check_clause": "ownership IS NOT NULL"
+        },
+        {
+          "constraint_name": "locations_master_location_type_check",
+          "check_clause": "((location_type)::text = ANY ((ARRAY['factory'::character varying, 'warehouse'::character varying, 'customer'::character varying])::text[]))"
         }
       ],
       "indexes": [
@@ -4990,18 +5200,11 @@
           "columns": "location_id"
         },
         {
-          "index_name": "locations_master_location_code_key",
-          "is_unique": true,
-          "is_primary": false,
-          "definition": "CREATE UNIQUE INDEX locations_master_location_code_key ON public.locations_master USING btree (location_code)",
-          "columns": "location_code"
-        },
-        {
-          "index_name": "idx_locations_type",
+          "index_name": "idx_locations_customer",
           "is_unique": false,
           "is_primary": false,
-          "definition": "CREATE INDEX idx_locations_type ON public.locations_master USING btree (location_type)",
-          "columns": "location_type"
+          "definition": "CREATE INDEX idx_locations_customer ON public.locations_master USING btree (customer_id)",
+          "columns": "customer_id"
         },
         {
           "index_name": "idx_locations_ownership",
@@ -5011,11 +5214,18 @@
           "columns": "ownership"
         },
         {
-          "index_name": "idx_locations_customer",
+          "index_name": "idx_locations_type",
           "is_unique": false,
           "is_primary": false,
-          "definition": "CREATE INDEX idx_locations_customer ON public.locations_master USING btree (customer_id)",
-          "columns": "customer_id"
+          "definition": "CREATE INDEX idx_locations_type ON public.locations_master USING btree (location_type)",
+          "columns": "location_type"
+        },
+        {
+          "index_name": "locations_master_location_code_key",
+          "is_unique": true,
+          "is_primary": false,
+          "definition": "CREATE UNIQUE INDEX locations_master_location_code_key ON public.locations_master USING btree (location_code)",
+          "columns": "location_code"
         }
       ],
       "triggers": null,
@@ -5196,6 +5406,10 @@
       "unique_constraints": null,
       "check_constraints": [
         {
+          "constraint_name": "2200_29150_2_not_null",
+          "check_clause": "table_name IS NOT NULL"
+        },
+        {
           "constraint_name": "2200_29150_3_not_null",
           "check_clause": "record_id IS NOT NULL"
         },
@@ -5206,19 +5420,29 @@
         {
           "constraint_name": "2200_29150_1_not_null",
           "check_clause": "audit_id IS NOT NULL"
-        },
-        {
-          "constraint_name": "2200_29150_2_not_null",
-          "check_clause": "table_name IS NOT NULL"
         }
       ],
       "indexes": [
+        {
+          "index_name": "idx_audit_action",
+          "is_unique": false,
+          "is_primary": false,
+          "definition": "CREATE INDEX idx_audit_action ON public.masters_audit_log USING btree (action)",
+          "columns": "action"
+        },
         {
           "index_name": "idx_audit_session",
           "is_unique": false,
           "is_primary": false,
           "definition": "CREATE INDEX idx_audit_session ON public.masters_audit_log USING btree (session_id)",
           "columns": "session_id"
+        },
+        {
+          "index_name": "idx_audit_user",
+          "is_unique": false,
+          "is_primary": false,
+          "definition": "CREATE INDEX idx_audit_user ON public.masters_audit_log USING btree (changed_by)",
+          "columns": "changed_by"
         },
         {
           "index_name": "idx_audit_date",
@@ -5240,20 +5464,6 @@
           "is_primary": false,
           "definition": "CREATE UNIQUE INDEX masters_audit_log_pkey ON public.masters_audit_log USING btree (audit_id)",
           "columns": "audit_id"
-        },
-        {
-          "index_name": "idx_audit_action",
-          "is_unique": false,
-          "is_primary": false,
-          "definition": "CREATE INDEX idx_audit_action ON public.masters_audit_log USING btree (action)",
-          "columns": "action"
-        },
-        {
-          "index_name": "idx_audit_user",
-          "is_unique": false,
-          "is_primary": false,
-          "definition": "CREATE INDEX idx_audit_user ON public.masters_audit_log USING btree (changed_by)",
-          "columns": "changed_by"
         }
       ],
       "triggers": null,
@@ -5294,11 +5504,11 @@
       ],
       "primary_keys": [
         {
-          "column": "material_id",
+          "column": "tag_id",
           "constraint_name": "material_tags_pkey"
         },
         {
-          "column": "tag_id",
+          "column": "material_id",
           "constraint_name": "material_tags_pkey"
         }
       ],
@@ -5340,18 +5550,18 @@
           "columns": "tag_id"
         },
         {
-          "index_name": "idx_material_tags_material_id",
-          "is_unique": false,
-          "is_primary": false,
-          "definition": "CREATE INDEX idx_material_tags_material_id ON public.material_tags USING btree (material_id)",
-          "columns": "material_id"
-        },
-        {
           "index_name": "material_tags_pkey",
           "is_unique": true,
           "is_primary": false,
           "definition": "CREATE UNIQUE INDEX material_tags_pkey ON public.material_tags USING btree (material_id, tag_id)",
           "columns": "material_id,tag_id"
+        },
+        {
+          "index_name": "idx_material_tags_material_id",
+          "is_unique": false,
+          "is_primary": false,
+          "definition": "CREATE INDEX idx_material_tags_material_id ON public.material_tags USING btree (material_id)",
+          "columns": "material_id"
         }
       ],
       "triggers": null,
@@ -5705,6 +5915,54 @@
           "position": 19,
           "is_generated": "NEVER",
           "generation_expression": null
+        },
+        {
+          "name": "reversal_status",
+          "type": "character varying",
+          "max_length": 20,
+          "precision": null,
+          "scale": null,
+          "nullable": true,
+          "default": null,
+          "position": 20,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "reversed_by",
+          "type": "integer",
+          "max_length": null,
+          "precision": 32,
+          "scale": 0,
+          "nullable": true,
+          "default": null,
+          "position": 21,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "reversal_of",
+          "type": "integer",
+          "max_length": null,
+          "precision": 32,
+          "scale": 0,
+          "nullable": true,
+          "default": null,
+          "position": 22,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "adjustment_type",
+          "type": "character varying",
+          "max_length": 50,
+          "precision": null,
+          "scale": null,
+          "nullable": true,
+          "default": null,
+          "position": 23,
+          "is_generated": "NEVER",
+          "generation_expression": null
         }
       ],
       "primary_keys": [
@@ -5715,16 +5973,40 @@
       ],
       "foreign_keys": [
         {
+          "column": "reversal_of",
+          "references_table": "material_writeoffs",
+          "references_column": "writeoff_id",
+          "constraint_name": "material_writeoffs_reversal_of_fkey",
+          "on_delete": "NO ACTION",
+          "on_update": "NO ACTION"
+        },
+        {
           "column": "material_id",
           "references_table": "materials",
           "references_column": "material_id",
           "constraint_name": "material_writeoffs_material_id_fkey",
           "on_delete": "RESTRICT",
           "on_update": "NO ACTION"
+        },
+        {
+          "column": "reversed_by",
+          "references_table": "material_writeoffs",
+          "references_column": "writeoff_id",
+          "constraint_name": "material_writeoffs_reversed_by_fkey",
+          "on_delete": "NO ACTION",
+          "on_update": "NO ACTION"
         }
       ],
       "unique_constraints": null,
       "check_constraints": [
+        {
+          "constraint_name": "2200_18571_8_not_null",
+          "check_clause": "net_loss IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_18571_5_not_null",
+          "check_clause": "weighted_avg_cost IS NOT NULL"
+        },
         {
           "constraint_name": "2200_18571_1_not_null",
           "check_clause": "writeoff_id IS NOT NULL"
@@ -5734,23 +6016,22 @@
           "check_clause": "total_cost IS NOT NULL"
         },
         {
-          "constraint_name": "2200_18571_3_not_null",
-          "check_clause": "writeoff_date IS NOT NULL"
-        },
-        {
           "constraint_name": "2200_18571_4_not_null",
           "check_clause": "quantity IS NOT NULL"
         },
         {
-          "constraint_name": "2200_18571_8_not_null",
-          "check_clause": "net_loss IS NOT NULL"
-        },
-        {
-          "constraint_name": "2200_18571_5_not_null",
-          "check_clause": "weighted_avg_cost IS NOT NULL"
+          "constraint_name": "2200_18571_3_not_null",
+          "check_clause": "writeoff_date IS NOT NULL"
         }
       ],
       "indexes": [
+        {
+          "index_name": "material_writeoffs_pkey",
+          "is_unique": true,
+          "is_primary": false,
+          "definition": "CREATE UNIQUE INDEX material_writeoffs_pkey ON public.material_writeoffs USING btree (writeoff_id)",
+          "columns": "writeoff_id"
+        },
         {
           "index_name": "idx_material_writeoffs_material",
           "is_unique": false,
@@ -5792,13 +6073,6 @@
           "is_primary": false,
           "definition": "CREATE INDEX idx_writeoffs_material_id ON public.material_writeoffs USING btree (material_id)",
           "columns": "material_id"
-        },
-        {
-          "index_name": "material_writeoffs_pkey",
-          "is_unique": true,
-          "is_primary": false,
-          "definition": "CREATE UNIQUE INDEX material_writeoffs_pkey ON public.material_writeoffs USING btree (writeoff_id)",
-          "columns": "writeoff_id"
         }
       ],
       "triggers": null,
@@ -6025,14 +6299,6 @@
       ],
       "foreign_keys": [
         {
-          "column": "unit",
-          "references_table": "uom_master",
-          "references_column": "uom_code",
-          "constraint_name": "fk_materials_unit",
-          "on_delete": "RESTRICT",
-          "on_update": "CASCADE"
-        },
-        {
           "column": "subcategory_id",
           "references_table": "subcategories_master",
           "references_column": "subcategory_id",
@@ -6047,6 +6313,14 @@
           "constraint_name": "materials_supplier_id_fkey",
           "on_delete": "NO ACTION",
           "on_update": "NO ACTION"
+        },
+        {
+          "column": "unit",
+          "references_table": "uom_master",
+          "references_column": "uom_code",
+          "constraint_name": "fk_materials_unit",
+          "on_delete": "RESTRICT",
+          "on_update": "CASCADE"
         }
       ],
       "unique_constraints": [
@@ -6059,28 +6333,28 @@
       ],
       "check_constraints": [
         {
-          "constraint_name": "2200_17269_5_not_null",
-          "check_clause": "current_cost IS NOT NULL"
-        },
-        {
           "constraint_name": "2200_17269_1_not_null",
           "check_clause": "material_id IS NOT NULL"
         },
         {
-          "constraint_name": "2200_17269_2_not_null",
-          "check_clause": "material_name IS NOT NULL"
+          "constraint_name": "2200_17269_8_not_null",
+          "check_clause": "last_updated IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_17269_5_not_null",
+          "check_clause": "current_cost IS NOT NULL"
         },
         {
           "constraint_name": "2200_17269_4_not_null",
           "check_clause": "unit IS NOT NULL"
         },
         {
-          "constraint_name": "check_material_short_code",
-          "check_clause": "((short_code)::text ~ '^[A-Z]{1,3}-[A-Z]{1,2}$'::text)"
+          "constraint_name": "2200_17269_2_not_null",
+          "check_clause": "material_name IS NOT NULL"
         },
         {
-          "constraint_name": "2200_17269_8_not_null",
-          "check_clause": "last_updated IS NOT NULL"
+          "constraint_name": "check_material_short_code",
+          "check_clause": "((short_code)::text ~ '^[A-Z]{1,3}-[A-Z]{1,2}$'::text)"
         }
       ],
       "indexes": [
@@ -6444,18 +6718,18 @@
       ],
       "foreign_keys": [
         {
-          "column": "sale_id",
-          "references_table": "oil_cake_sales",
-          "references_column": "sale_id",
-          "constraint_name": "oil_cake_sale_allocations_sale_id_fkey",
-          "on_delete": "NO ACTION",
-          "on_update": "NO ACTION"
-        },
-        {
           "column": "batch_id",
           "references_table": "batch",
           "references_column": "batch_id",
           "constraint_name": "oil_cake_sale_allocations_batch_id_fkey",
+          "on_delete": "NO ACTION",
+          "on_update": "NO ACTION"
+        },
+        {
+          "column": "sale_id",
+          "references_table": "oil_cake_sales",
+          "references_column": "sale_id",
+          "constraint_name": "oil_cake_sale_allocations_sale_id_fkey",
           "on_delete": "NO ACTION",
           "on_update": "NO ACTION"
         }
@@ -6926,10 +7200,6 @@
       ],
       "check_constraints": [
         {
-          "constraint_name": "2200_29128_4_not_null",
-          "check_clause": "quantity IS NOT NULL"
-        },
-        {
           "constraint_name": "2200_29128_1_not_null",
           "check_clause": "balance_id IS NOT NULL"
         },
@@ -6938,11 +7208,22 @@
           "check_clause": "rate_per_unit IS NOT NULL"
         },
         {
+          "constraint_name": "2200_29128_4_not_null",
+          "check_clause": "quantity IS NOT NULL"
+        },
+        {
           "constraint_name": "2200_29128_3_not_null",
           "check_clause": "balance_date IS NOT NULL"
         }
       ],
       "indexes": [
+        {
+          "index_name": "idx_opening_balances_processed",
+          "is_unique": false,
+          "is_primary": false,
+          "definition": "CREATE INDEX idx_opening_balances_processed ON public.opening_balances USING btree (is_processed)",
+          "columns": "is_processed"
+        },
         {
           "index_name": "idx_opening_balances_date",
           "is_unique": false,
@@ -6951,25 +7232,11 @@
           "columns": "balance_date"
         },
         {
-          "index_name": "unique_material_balance_date",
-          "is_unique": true,
-          "is_primary": false,
-          "definition": "CREATE UNIQUE INDEX unique_material_balance_date ON public.opening_balances USING btree (material_id, balance_date)",
-          "columns": "material_id,balance_date"
-        },
-        {
           "index_name": "idx_opening_balances_material",
           "is_unique": false,
           "is_primary": false,
           "definition": "CREATE INDEX idx_opening_balances_material ON public.opening_balances USING btree (material_id)",
           "columns": "material_id"
-        },
-        {
-          "index_name": "idx_opening_balances_processed",
-          "is_unique": false,
-          "is_primary": false,
-          "definition": "CREATE INDEX idx_opening_balances_processed ON public.opening_balances USING btree (is_processed)",
-          "columns": "is_processed"
         },
         {
           "index_name": "opening_balances_pkey",
@@ -6984,6 +7251,13 @@
           "is_primary": false,
           "definition": "CREATE INDEX idx_opening_balances_fy ON public.opening_balances USING btree (financial_year)",
           "columns": "financial_year"
+        },
+        {
+          "index_name": "unique_material_balance_date",
+          "is_unique": true,
+          "is_primary": false,
+          "definition": "CREATE UNIQUE INDEX unique_material_balance_date ON public.opening_balances USING btree (material_id, balance_date)",
+          "columns": "material_id,balance_date"
         }
       ],
       "triggers": null,
@@ -7300,16 +7574,16 @@
           "check_clause": "size_in_ml IS NOT NULL"
         },
         {
-          "constraint_name": "2200_44669_3_not_null",
-          "check_clause": "size_name IS NOT NULL"
+          "constraint_name": "2200_44669_1_not_null",
+          "check_clause": "size_id IS NOT NULL"
         },
         {
           "constraint_name": "2200_44669_2_not_null",
           "check_clause": "size_code IS NOT NULL"
         },
         {
-          "constraint_name": "2200_44669_1_not_null",
-          "check_clause": "size_id IS NOT NULL"
+          "constraint_name": "2200_44669_3_not_null",
+          "check_clause": "size_name IS NOT NULL"
         },
         {
           "constraint_name": "2200_44669_5_not_null",
@@ -7318,18 +7592,18 @@
       ],
       "indexes": [
         {
-          "index_name": "package_sizes_master_pkey",
-          "is_unique": true,
-          "is_primary": false,
-          "definition": "CREATE UNIQUE INDEX package_sizes_master_pkey ON public.package_sizes_master USING btree (size_id)",
-          "columns": "size_id"
-        },
-        {
           "index_name": "package_sizes_master_size_code_key",
           "is_unique": true,
           "is_primary": false,
           "definition": "CREATE UNIQUE INDEX package_sizes_master_size_code_key ON public.package_sizes_master USING btree (size_code)",
           "columns": "size_code"
+        },
+        {
+          "index_name": "package_sizes_master_pkey",
+          "is_unique": true,
+          "is_primary": false,
+          "definition": "CREATE UNIQUE INDEX package_sizes_master_pkey ON public.package_sizes_master USING btree (size_id)",
+          "columns": "size_id"
         }
       ],
       "triggers": [
@@ -7441,16 +7715,16 @@
       ],
       "check_constraints": [
         {
-          "constraint_name": "2200_22016_1_not_null",
-          "check_clause": "unit_id IS NOT NULL"
+          "constraint_name": "2200_22016_3_not_null",
+          "check_clause": "short_code IS NOT NULL"
         },
         {
           "constraint_name": "check_unit_short_code",
           "check_clause": "((short_code)::text ~ '^[A-Z]{1,3}$'::text)"
         },
         {
-          "constraint_name": "2200_22016_3_not_null",
-          "check_clause": "short_code IS NOT NULL"
+          "constraint_name": "2200_22016_1_not_null",
+          "check_clause": "unit_id IS NOT NULL"
         },
         {
           "constraint_name": "2200_22016_2_not_null",
@@ -7567,12 +7841,12 @@
       "unique_constraints": null,
       "check_constraints": [
         {
-          "constraint_name": "2200_17289_1_not_null",
-          "check_clause": "product_id IS NOT NULL"
-        },
-        {
           "constraint_name": "2200_17289_2_not_null",
           "check_clause": "product_name IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_17289_1_not_null",
+          "check_clause": "product_id IS NOT NULL"
         }
       ],
       "indexes": [
@@ -8173,20 +8447,12 @@
       "unique_constraints": null,
       "check_constraints": [
         {
-          "constraint_name": "2200_20221_7_not_null",
-          "check_clause": "gst_rate IS NOT NULL"
-        },
-        {
-          "constraint_name": "2200_20221_8_not_null",
-          "check_clause": "gst_amount IS NOT NULL"
-        },
-        {
-          "constraint_name": "2200_20221_5_not_null",
-          "check_clause": "rate IS NOT NULL"
-        },
-        {
           "constraint_name": "2200_20221_1_not_null",
           "check_clause": "item_id IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_20221_6_not_null",
+          "check_clause": "amount IS NOT NULL"
         },
         {
           "constraint_name": "2200_20221_4_not_null",
@@ -8201,18 +8467,19 @@
           "check_clause": "landed_cost_per_unit IS NOT NULL"
         },
         {
-          "constraint_name": "2200_20221_6_not_null",
-          "check_clause": "amount IS NOT NULL"
+          "constraint_name": "2200_20221_8_not_null",
+          "check_clause": "gst_amount IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_20221_7_not_null",
+          "check_clause": "gst_rate IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_20221_5_not_null",
+          "check_clause": "rate IS NOT NULL"
         }
       ],
       "indexes": [
-        {
-          "index_name": "idx_purchase_items_material_id",
-          "is_unique": false,
-          "is_primary": false,
-          "definition": "CREATE INDEX idx_purchase_items_material_id ON public.purchase_items USING btree (material_id)",
-          "columns": "material_id"
-        },
         {
           "index_name": "purchase_items_pkey",
           "is_unique": true,
@@ -8226,6 +8493,13 @@
           "is_primary": false,
           "definition": "CREATE INDEX idx_purchase_items_purchase_id ON public.purchase_items USING btree (purchase_id)",
           "columns": "purchase_id"
+        },
+        {
+          "index_name": "idx_purchase_items_material_id",
+          "is_unique": false,
+          "is_primary": false,
+          "definition": "CREATE INDEX idx_purchase_items_material_id ON public.purchase_items USING btree (material_id)",
+          "columns": "material_id"
         }
       ],
       "triggers": null,
@@ -8236,6 +8510,532 @@
       "total_size": "56 kB",
       "table_size": "8192 bytes",
       "indexes_size": "48 kB"
+    },
+    "purchase_return_items": {
+      "columns": [
+        {
+          "name": "return_item_id",
+          "type": "integer",
+          "max_length": null,
+          "precision": 32,
+          "scale": 0,
+          "nullable": false,
+          "default": "nextval('purchase_return_items_return_item_id_seq'::regclass)",
+          "position": 1,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "return_id",
+          "type": "integer",
+          "max_length": null,
+          "precision": 32,
+          "scale": 0,
+          "nullable": true,
+          "default": null,
+          "position": 2,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "original_item_id",
+          "type": "integer",
+          "max_length": null,
+          "precision": 32,
+          "scale": 0,
+          "nullable": true,
+          "default": null,
+          "position": 3,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "material_id",
+          "type": "integer",
+          "max_length": null,
+          "precision": 32,
+          "scale": 0,
+          "nullable": true,
+          "default": null,
+          "position": 4,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "quantity_returned",
+          "type": "numeric",
+          "max_length": null,
+          "precision": 10,
+          "scale": 2,
+          "nullable": false,
+          "default": null,
+          "position": 5,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "rate",
+          "type": "numeric",
+          "max_length": null,
+          "precision": 10,
+          "scale": 2,
+          "nullable": false,
+          "default": null,
+          "position": 6,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "amount",
+          "type": "numeric",
+          "max_length": null,
+          "precision": 12,
+          "scale": 2,
+          "nullable": false,
+          "default": null,
+          "position": 7,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "gst_amount",
+          "type": "numeric",
+          "max_length": null,
+          "precision": 10,
+          "scale": 2,
+          "nullable": true,
+          "default": null,
+          "position": 8,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "reason",
+          "type": "text",
+          "max_length": null,
+          "precision": null,
+          "scale": null,
+          "nullable": true,
+          "default": null,
+          "position": 9,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "batch_affected",
+          "type": "character varying",
+          "max_length": 50,
+          "precision": null,
+          "scale": null,
+          "nullable": true,
+          "default": null,
+          "position": 10,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "landed_cost_reversed",
+          "type": "numeric",
+          "max_length": null,
+          "precision": 10,
+          "scale": 2,
+          "nullable": true,
+          "default": null,
+          "position": 11,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        }
+      ],
+      "primary_keys": [
+        {
+          "column": "return_item_id",
+          "constraint_name": "purchase_return_items_pkey"
+        }
+      ],
+      "foreign_keys": [
+        {
+          "column": "return_id",
+          "references_table": "purchase_returns",
+          "references_column": "return_id",
+          "constraint_name": "purchase_return_items_return_id_fkey",
+          "on_delete": "NO ACTION",
+          "on_update": "NO ACTION"
+        },
+        {
+          "column": "material_id",
+          "references_table": "materials",
+          "references_column": "material_id",
+          "constraint_name": "purchase_return_items_material_id_fkey",
+          "on_delete": "NO ACTION",
+          "on_update": "NO ACTION"
+        },
+        {
+          "column": "original_item_id",
+          "references_table": "purchase_items",
+          "references_column": "item_id",
+          "constraint_name": "purchase_return_items_original_item_id_fkey",
+          "on_delete": "NO ACTION",
+          "on_update": "NO ACTION"
+        }
+      ],
+      "unique_constraints": null,
+      "check_constraints": [
+        {
+          "constraint_name": "2200_70717_5_not_null",
+          "check_clause": "quantity_returned IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_70717_6_not_null",
+          "check_clause": "rate IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_70717_1_not_null",
+          "check_clause": "return_item_id IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_70717_7_not_null",
+          "check_clause": "amount IS NOT NULL"
+        }
+      ],
+      "indexes": [
+        {
+          "index_name": "purchase_return_items_pkey",
+          "is_unique": true,
+          "is_primary": false,
+          "definition": "CREATE UNIQUE INDEX purchase_return_items_pkey ON public.purchase_return_items USING btree (return_item_id)",
+          "columns": "return_item_id"
+        },
+        {
+          "index_name": "idx_purchase_return_items_material",
+          "is_unique": false,
+          "is_primary": false,
+          "definition": "CREATE INDEX idx_purchase_return_items_material ON public.purchase_return_items USING btree (material_id)",
+          "columns": "material_id"
+        }
+      ],
+      "triggers": null,
+      "row_count": 0,
+      "dead_rows": 0,
+      "last_vacuum": null,
+      "last_autovacuum": null,
+      "total_size": "24 kB",
+      "table_size": "0 bytes",
+      "indexes_size": "16 kB"
+    },
+    "purchase_returns": {
+      "columns": [
+        {
+          "name": "return_id",
+          "type": "integer",
+          "max_length": null,
+          "precision": 32,
+          "scale": 0,
+          "nullable": false,
+          "default": "nextval('purchase_returns_return_id_seq'::regclass)",
+          "position": 1,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "return_code",
+          "type": "character varying",
+          "max_length": 50,
+          "precision": null,
+          "scale": null,
+          "nullable": false,
+          "default": null,
+          "position": 2,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "original_purchase_id",
+          "type": "integer",
+          "max_length": null,
+          "precision": 32,
+          "scale": 0,
+          "nullable": true,
+          "default": null,
+          "position": 3,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "supplier_id",
+          "type": "integer",
+          "max_length": null,
+          "precision": 32,
+          "scale": 0,
+          "nullable": true,
+          "default": null,
+          "position": 4,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "return_date",
+          "type": "integer",
+          "max_length": null,
+          "precision": 32,
+          "scale": 0,
+          "nullable": false,
+          "default": null,
+          "position": 5,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "return_type",
+          "type": "character varying",
+          "max_length": 50,
+          "precision": null,
+          "scale": null,
+          "nullable": true,
+          "default": null,
+          "position": 6,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "debit_note_number",
+          "type": "character varying",
+          "max_length": 50,
+          "precision": null,
+          "scale": null,
+          "nullable": true,
+          "default": null,
+          "position": 7,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "debit_note_date",
+          "type": "integer",
+          "max_length": null,
+          "precision": 32,
+          "scale": 0,
+          "nullable": true,
+          "default": null,
+          "position": 8,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "total_return_value",
+          "type": "numeric",
+          "max_length": null,
+          "precision": 12,
+          "scale": 2,
+          "nullable": true,
+          "default": null,
+          "position": 9,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "gst_reversed",
+          "type": "numeric",
+          "max_length": null,
+          "precision": 10,
+          "scale": 2,
+          "nullable": true,
+          "default": null,
+          "position": 10,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "transport_deduction",
+          "type": "numeric",
+          "max_length": null,
+          "precision": 10,
+          "scale": 2,
+          "nullable": true,
+          "default": null,
+          "position": 11,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "status",
+          "type": "character varying",
+          "max_length": 20,
+          "precision": null,
+          "scale": null,
+          "nullable": true,
+          "default": "'draft'::character varying",
+          "position": 12,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "approval_status",
+          "type": "character varying",
+          "max_length": 20,
+          "precision": null,
+          "scale": null,
+          "nullable": true,
+          "default": "'pending'::character varying",
+          "position": 13,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "approved_by",
+          "type": "character varying",
+          "max_length": 100,
+          "precision": null,
+          "scale": null,
+          "nullable": true,
+          "default": null,
+          "position": 14,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "approved_at",
+          "type": "timestamp without time zone",
+          "max_length": null,
+          "precision": null,
+          "scale": null,
+          "nullable": true,
+          "default": null,
+          "position": 15,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "notes",
+          "type": "text",
+          "max_length": null,
+          "precision": null,
+          "scale": null,
+          "nullable": true,
+          "default": null,
+          "position": 16,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "created_by",
+          "type": "character varying",
+          "max_length": 100,
+          "precision": null,
+          "scale": null,
+          "nullable": true,
+          "default": null,
+          "position": 17,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp without time zone",
+          "max_length": null,
+          "precision": null,
+          "scale": null,
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP",
+          "position": 18,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        }
+      ],
+      "primary_keys": [
+        {
+          "column": "return_id",
+          "constraint_name": "purchase_returns_pkey"
+        }
+      ],
+      "foreign_keys": [
+        {
+          "column": "original_purchase_id",
+          "references_table": "purchases",
+          "references_column": "purchase_id",
+          "constraint_name": "purchase_returns_original_purchase_id_fkey",
+          "on_delete": "NO ACTION",
+          "on_update": "NO ACTION"
+        },
+        {
+          "column": "supplier_id",
+          "references_table": "suppliers",
+          "references_column": "supplier_id",
+          "constraint_name": "purchase_returns_supplier_id_fkey",
+          "on_delete": "NO ACTION",
+          "on_update": "NO ACTION"
+        }
+      ],
+      "unique_constraints": [
+        {
+          "columns": [
+            "return_code"
+          ],
+          "constraint_name": "purchase_returns_return_code_key"
+        }
+      ],
+      "check_constraints": [
+        {
+          "constraint_name": "2200_70692_2_not_null",
+          "check_clause": "return_code IS NOT NULL"
+        },
+        {
+          "constraint_name": "purchase_returns_return_type_check",
+          "check_clause": "((return_type)::text = ANY ((ARRAY['quality_issue'::character varying, 'excess_quantity'::character varying, 'wrong_item'::character varying, 'price_dispute'::character varying, 'damaged_goods'::character varying, 'expiry_issue'::character varying])::text[]))"
+        },
+        {
+          "constraint_name": "2200_70692_1_not_null",
+          "check_clause": "return_id IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_70692_5_not_null",
+          "check_clause": "return_date IS NOT NULL"
+        }
+      ],
+      "indexes": [
+        {
+          "index_name": "purchase_returns_pkey",
+          "is_unique": true,
+          "is_primary": false,
+          "definition": "CREATE UNIQUE INDEX purchase_returns_pkey ON public.purchase_returns USING btree (return_id)",
+          "columns": "return_id"
+        },
+        {
+          "index_name": "idx_purchase_returns_supplier",
+          "is_unique": false,
+          "is_primary": false,
+          "definition": "CREATE INDEX idx_purchase_returns_supplier ON public.purchase_returns USING btree (supplier_id)",
+          "columns": "supplier_id"
+        },
+        {
+          "index_name": "idx_purchase_returns_date",
+          "is_unique": false,
+          "is_primary": false,
+          "definition": "CREATE INDEX idx_purchase_returns_date ON public.purchase_returns USING btree (return_date)",
+          "columns": "return_date"
+        },
+        {
+          "index_name": "idx_purchase_returns_status",
+          "is_unique": false,
+          "is_primary": false,
+          "definition": "CREATE INDEX idx_purchase_returns_status ON public.purchase_returns USING btree (status)",
+          "columns": "status"
+        },
+        {
+          "index_name": "purchase_returns_return_code_key",
+          "is_unique": true,
+          "is_primary": false,
+          "definition": "CREATE UNIQUE INDEX purchase_returns_return_code_key ON public.purchase_returns USING btree (return_code)",
+          "columns": "return_code"
+        }
+      ],
+      "triggers": null,
+      "row_count": 0,
+      "dead_rows": 0,
+      "last_vacuum": null,
+      "last_autovacuum": null,
+      "total_size": "48 kB",
+      "table_size": "0 bytes",
+      "indexes_size": "40 kB"
     },
     "purchases": {
       "columns": [
@@ -8502,6 +9302,66 @@
           "position": 22,
           "is_generated": "NEVER",
           "generation_expression": null
+        },
+        {
+          "name": "reversal_status",
+          "type": "character varying",
+          "max_length": 20,
+          "precision": null,
+          "scale": null,
+          "nullable": true,
+          "default": null,
+          "position": 23,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "reversed_by",
+          "type": "integer",
+          "max_length": null,
+          "precision": 32,
+          "scale": 0,
+          "nullable": true,
+          "default": null,
+          "position": 24,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "reversal_of",
+          "type": "integer",
+          "max_length": null,
+          "precision": 32,
+          "scale": 0,
+          "nullable": true,
+          "default": null,
+          "position": 25,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "replaces",
+          "type": "integer",
+          "max_length": null,
+          "precision": 32,
+          "scale": 0,
+          "nullable": true,
+          "default": null,
+          "position": 26,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "is_reversal",
+          "type": "boolean",
+          "max_length": null,
+          "precision": null,
+          "scale": null,
+          "nullable": true,
+          "default": "false",
+          "position": 27,
+          "is_generated": "NEVER",
+          "generation_expression": null
         }
       ],
       "primary_keys": [
@@ -8512,10 +9372,10 @@
       ],
       "foreign_keys": [
         {
-          "column": "supplier_id",
-          "references_table": "suppliers",
-          "references_column": "supplier_id",
-          "constraint_name": "purchases_supplier_id_fkey",
+          "column": "replaces",
+          "references_table": "purchases",
+          "references_column": "purchase_id",
+          "constraint_name": "purchases_replaces_fkey",
           "on_delete": "NO ACTION",
           "on_update": "NO ACTION"
         },
@@ -8524,6 +9384,30 @@
           "references_table": "materials",
           "references_column": "material_id",
           "constraint_name": "purchases_material_id_fkey",
+          "on_delete": "NO ACTION",
+          "on_update": "NO ACTION"
+        },
+        {
+          "column": "reversed_by",
+          "references_table": "purchases",
+          "references_column": "purchase_id",
+          "constraint_name": "purchases_reversed_by_fkey",
+          "on_delete": "NO ACTION",
+          "on_update": "NO ACTION"
+        },
+        {
+          "column": "supplier_id",
+          "references_table": "suppliers",
+          "references_column": "supplier_id",
+          "constraint_name": "purchases_supplier_id_fkey",
+          "on_delete": "NO ACTION",
+          "on_update": "NO ACTION"
+        },
+        {
+          "column": "reversal_of",
+          "references_table": "purchases",
+          "references_column": "purchase_id",
+          "constraint_name": "purchases_reversal_of_fkey",
           "on_delete": "NO ACTION",
           "on_update": "NO ACTION"
         }
@@ -8544,11 +9428,18 @@
       ],
       "indexes": [
         {
-          "index_name": "idx_purchases_purchase_date",
+          "index_name": "idx_purchases_reversal_status",
           "is_unique": false,
           "is_primary": false,
-          "definition": "CREATE INDEX idx_purchases_purchase_date ON public.purchases USING btree (purchase_date)",
-          "columns": "purchase_date"
+          "definition": "CREATE INDEX idx_purchases_reversal_status ON public.purchases USING btree (reversal_status)",
+          "columns": "reversal_status"
+        },
+        {
+          "index_name": "purchases_pkey",
+          "is_unique": true,
+          "is_primary": false,
+          "definition": "CREATE UNIQUE INDEX purchases_pkey ON public.purchases USING btree (purchase_id)",
+          "columns": "purchase_id"
         },
         {
           "index_name": "idx_purchases_supplier_name",
@@ -8556,6 +9447,13 @@
           "is_primary": false,
           "definition": "CREATE INDEX idx_purchases_supplier_name ON public.purchases USING btree (supplier_name)",
           "columns": "supplier_name"
+        },
+        {
+          "index_name": "idx_purchases_purchase_date",
+          "is_unique": false,
+          "is_primary": false,
+          "definition": "CREATE INDEX idx_purchases_purchase_date ON public.purchases USING btree (purchase_date)",
+          "columns": "purchase_date"
         },
         {
           "index_name": "idx_purchases_batch_number",
@@ -8570,13 +9468,6 @@
           "is_primary": false,
           "definition": "CREATE UNIQUE INDEX purchases_traceable_code_key ON public.purchases USING btree (traceable_code)",
           "columns": "traceable_code"
-        },
-        {
-          "index_name": "purchases_pkey",
-          "is_unique": true,
-          "is_primary": false,
-          "definition": "CREATE UNIQUE INDEX purchases_pkey ON public.purchases USING btree (purchase_id)",
-          "columns": "purchase_id"
         }
       ],
       "triggers": null,
@@ -8584,9 +9475,9 @@
       "dead_rows": 29,
       "last_vacuum": null,
       "last_autovacuum": null,
-      "total_size": "96 kB",
+      "total_size": "112 kB",
       "table_size": "8192 bytes",
-      "indexes_size": "80 kB"
+      "indexes_size": "96 kB"
     },
     "purchases_backup": {
       "columns": [
@@ -8867,12 +9758,12 @@
       "unique_constraints": null,
       "check_constraints": [
         {
-          "constraint_name": "2200_17297_1_not_null",
-          "check_clause": "recipe_id IS NOT NULL"
-        },
-        {
           "constraint_name": "2200_17297_2_not_null",
           "check_clause": "recipe_name IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_17297_1_not_null",
+          "check_clause": "recipe_id IS NOT NULL"
         },
         {
           "constraint_name": "recipes_type_check",
@@ -9183,18 +10074,18 @@
       ],
       "foreign_keys": [
         {
-          "column": "material_id",
-          "references_table": "materials",
-          "references_column": "material_id",
-          "constraint_name": "serial_number_tracking_material_id_fkey",
-          "on_delete": "NO ACTION",
-          "on_update": "NO ACTION"
-        },
-        {
           "column": "supplier_id",
           "references_table": "suppliers",
           "references_column": "supplier_id",
           "constraint_name": "serial_number_tracking_supplier_id_fkey",
+          "on_delete": "NO ACTION",
+          "on_update": "NO ACTION"
+        },
+        {
+          "column": "material_id",
+          "references_table": "materials",
+          "references_column": "material_id",
+          "constraint_name": "serial_number_tracking_material_id_fkey",
           "on_delete": "NO ACTION",
           "on_update": "NO ACTION"
         }
@@ -9527,10 +10418,6 @@
       "unique_constraints": null,
       "check_constraints": [
         {
-          "constraint_name": "2200_26417_4_not_null",
-          "check_clause": "material_category IS NOT NULL"
-        },
-        {
           "constraint_name": "sku_bom_details_quantity_per_unit_check",
           "check_clause": "(quantity_per_unit > (0)::numeric)"
         },
@@ -9547,11 +10434,22 @@
           "check_clause": "material_id IS NOT NULL"
         },
         {
+          "constraint_name": "2200_26417_4_not_null",
+          "check_clause": "material_category IS NOT NULL"
+        },
+        {
           "constraint_name": "2200_26417_5_not_null",
           "check_clause": "quantity_per_unit IS NOT NULL"
         }
       ],
       "indexes": [
+        {
+          "index_name": "idx_bom_details_bom",
+          "is_unique": false,
+          "is_primary": false,
+          "definition": "CREATE INDEX idx_bom_details_bom ON public.sku_bom_details USING btree (bom_id)",
+          "columns": "bom_id"
+        },
         {
           "index_name": "idx_bom_details_material",
           "is_unique": false,
@@ -9565,13 +10463,6 @@
           "is_primary": false,
           "definition": "CREATE UNIQUE INDEX sku_bom_details_pkey ON public.sku_bom_details USING btree (detail_id)",
           "columns": "detail_id"
-        },
-        {
-          "index_name": "idx_bom_details_bom",
-          "is_unique": false,
-          "is_primary": false,
-          "definition": "CREATE INDEX idx_bom_details_bom ON public.sku_bom_details USING btree (bom_id)",
-          "columns": "bom_id"
         }
       ],
       "triggers": null,
@@ -9721,24 +10612,24 @@
       ],
       "check_constraints": [
         {
-          "constraint_name": "2200_26398_4_not_null",
-          "check_clause": "effective_from IS NOT NULL"
+          "constraint_name": "2200_26398_2_not_null",
+          "check_clause": "sku_id IS NOT NULL"
+        },
+        {
+          "constraint_name": "sku_bom_master_version_number_check",
+          "check_clause": "(version_number > 0)"
         },
         {
           "constraint_name": "2200_26398_3_not_null",
           "check_clause": "version_number IS NOT NULL"
         },
         {
-          "constraint_name": "2200_26398_2_not_null",
-          "check_clause": "sku_id IS NOT NULL"
+          "constraint_name": "2200_26398_4_not_null",
+          "check_clause": "effective_from IS NOT NULL"
         },
         {
           "constraint_name": "2200_26398_1_not_null",
           "check_clause": "bom_id IS NOT NULL"
-        },
-        {
-          "constraint_name": "sku_bom_master_version_number_check",
-          "check_clause": "(version_number > 0)"
         }
       ],
       "indexes": [
@@ -9750,18 +10641,18 @@
           "columns": "sku_id,version_number"
         },
         {
-          "index_name": "sku_bom_master_pkey",
-          "is_unique": true,
-          "is_primary": false,
-          "definition": "CREATE UNIQUE INDEX sku_bom_master_pkey ON public.sku_bom_master USING btree (bom_id)",
-          "columns": "bom_id"
-        },
-        {
           "index_name": "idx_bom_current",
           "is_unique": false,
           "is_primary": false,
           "definition": "CREATE INDEX idx_bom_current ON public.sku_bom_master USING btree (sku_id, is_current) WHERE (is_current = true)",
           "columns": "is_current=true"
+        },
+        {
+          "index_name": "sku_bom_master_pkey",
+          "is_unique": true,
+          "is_primary": false,
+          "definition": "CREATE UNIQUE INDEX sku_bom_master_pkey ON public.sku_bom_master USING btree (bom_id)",
+          "columns": "bom_id"
         }
       ],
       "triggers": null,
@@ -9916,19 +10807,19 @@
       ],
       "foreign_keys": [
         {
-          "column": "element_id",
-          "references_table": "cost_elements_master",
-          "references_column": "element_id",
-          "constraint_name": "sku_cost_overrides_element_id_fkey",
-          "on_delete": "NO ACTION",
-          "on_update": "NO ACTION"
-        },
-        {
           "column": "production_id",
           "references_table": "sku_production",
           "references_column": "production_id",
           "constraint_name": "sku_cost_overrides_production_id_fkey",
           "on_delete": "CASCADE",
+          "on_update": "NO ACTION"
+        },
+        {
+          "column": "element_id",
+          "references_table": "cost_elements_master",
+          "references_column": "element_id",
+          "constraint_name": "sku_cost_overrides_element_id_fkey",
+          "on_delete": "NO ACTION",
           "on_update": "NO ACTION"
         }
       ],
@@ -9939,8 +10830,8 @@
           "check_clause": "reason IS NOT NULL"
         },
         {
-          "constraint_name": "2200_26513_1_not_null",
-          "check_clause": "override_id IS NOT NULL"
+          "constraint_name": "2200_26513_7_not_null",
+          "check_clause": "quantity IS NOT NULL"
         },
         {
           "constraint_name": "2200_26513_2_not_null",
@@ -9951,16 +10842,16 @@
           "check_clause": "original_rate IS NOT NULL"
         },
         {
-          "constraint_name": "2200_26513_6_not_null",
-          "check_clause": "override_rate IS NOT NULL"
-        },
-        {
-          "constraint_name": "2200_26513_7_not_null",
-          "check_clause": "quantity IS NOT NULL"
-        },
-        {
           "constraint_name": "2200_26513_4_not_null",
           "check_clause": "element_name IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_26513_1_not_null",
+          "check_clause": "override_id IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_26513_6_not_null",
+          "check_clause": "override_rate IS NOT NULL"
         }
       ],
       "indexes": [
@@ -10139,18 +11030,18 @@
           "on_update": "NO ACTION"
         },
         {
-          "column": "production_id",
-          "references_table": "sku_production",
-          "references_column": "production_id",
-          "constraint_name": "sku_expiry_tracking_production_id_fkey",
-          "on_delete": "NO ACTION",
-          "on_update": "NO ACTION"
-        },
-        {
           "column": "sku_id",
           "references_table": "sku_master",
           "references_column": "sku_id",
           "constraint_name": "sku_expiry_tracking_sku_id_fkey",
+          "on_delete": "NO ACTION",
+          "on_update": "NO ACTION"
+        },
+        {
+          "column": "production_id",
+          "references_table": "sku_production",
+          "references_column": "production_id",
+          "constraint_name": "sku_expiry_tracking_production_id_fkey",
           "on_delete": "NO ACTION",
           "on_update": "NO ACTION"
         }
@@ -10158,60 +11049,53 @@
       "unique_constraints": null,
       "check_constraints": [
         {
+          "constraint_name": "chk_quantity_valid",
+          "check_clause": "((quantity_remaining >= (0)::numeric) AND (quantity_remaining <= quantity_produced))"
+        },
+        {
           "constraint_name": "2200_27849_6_not_null",
           "check_clause": "quantity_produced IS NOT NULL"
-        },
-        {
-          "constraint_name": "2200_27849_1_not_null",
-          "check_clause": "tracking_id IS NOT NULL"
-        },
-        {
-          "constraint_name": "2200_27849_2_not_null",
-          "check_clause": "production_id IS NOT NULL"
-        },
-        {
-          "constraint_name": "2200_27849_3_not_null",
-          "check_clause": "sku_id IS NOT NULL"
-        },
-        {
-          "constraint_name": "2200_27849_4_not_null",
-          "check_clause": "production_date IS NOT NULL"
         },
         {
           "constraint_name": "2200_27849_5_not_null",
           "check_clause": "expiry_date IS NOT NULL"
         },
         {
+          "constraint_name": "2200_27849_4_not_null",
+          "check_clause": "production_date IS NOT NULL"
+        },
+        {
           "constraint_name": "2200_27849_7_not_null",
           "check_clause": "quantity_remaining IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_27849_3_not_null",
+          "check_clause": "sku_id IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_27849_2_not_null",
+          "check_clause": "production_id IS NOT NULL"
+        },
+        {
+          "constraint_name": "chk_expiry_valid",
+          "check_clause": "(expiry_date > production_date)"
         },
         {
           "constraint_name": "chk_status_valid",
           "check_clause": "((status)::text = ANY ((ARRAY['active'::character varying, 'near_expiry'::character varying, 'expired'::character varying, 'consumed'::character varying])::text[]))"
         },
         {
-          "constraint_name": "chk_quantity_valid",
-          "check_clause": "((quantity_remaining >= (0)::numeric) AND (quantity_remaining <= quantity_produced))"
-        },
-        {
-          "constraint_name": "chk_expiry_valid",
-          "check_clause": "(expiry_date > production_date)"
+          "constraint_name": "2200_27849_1_not_null",
+          "check_clause": "tracking_id IS NOT NULL"
         }
       ],
       "indexes": [
         {
-          "index_name": "idx_expiry_tracking_status",
+          "index_name": "idx_expiry_tracking_production",
           "is_unique": false,
           "is_primary": false,
-          "definition": "CREATE INDEX idx_expiry_tracking_status ON public.sku_expiry_tracking USING btree (status)",
-          "columns": "status"
-        },
-        {
-          "index_name": "idx_expiry_tracking_sku",
-          "is_unique": false,
-          "is_primary": false,
-          "definition": "CREATE INDEX idx_expiry_tracking_sku ON public.sku_expiry_tracking USING btree (sku_id)",
-          "columns": "sku_id"
+          "definition": "CREATE INDEX idx_expiry_tracking_production ON public.sku_expiry_tracking USING btree (production_id)",
+          "columns": "production_id"
         },
         {
           "index_name": "sku_expiry_tracking_pkey",
@@ -10221,18 +11105,18 @@
           "columns": "tracking_id"
         },
         {
-          "index_name": "idx_expiry_tracking_production",
+          "index_name": "idx_expiry_tracking_sku",
           "is_unique": false,
           "is_primary": false,
-          "definition": "CREATE INDEX idx_expiry_tracking_production ON public.sku_expiry_tracking USING btree (production_id)",
-          "columns": "production_id"
+          "definition": "CREATE INDEX idx_expiry_tracking_sku ON public.sku_expiry_tracking USING btree (sku_id)",
+          "columns": "sku_id"
         },
         {
-          "index_name": "idx_expiry_tracking_location",
+          "index_name": "idx_expiry_tracking_status",
           "is_unique": false,
           "is_primary": false,
-          "definition": "CREATE INDEX idx_expiry_tracking_location ON public.sku_expiry_tracking USING btree (location_id)",
-          "columns": "location_id"
+          "definition": "CREATE INDEX idx_expiry_tracking_status ON public.sku_expiry_tracking USING btree (status)",
+          "columns": "status"
         },
         {
           "index_name": "idx_expiry_tracking_expiry",
@@ -10240,6 +11124,13 @@
           "is_primary": false,
           "definition": "CREATE INDEX idx_expiry_tracking_expiry ON public.sku_expiry_tracking USING btree (expiry_date)",
           "columns": "expiry_date"
+        },
+        {
+          "index_name": "idx_expiry_tracking_location",
+          "is_unique": false,
+          "is_primary": false,
+          "definition": "CREATE INDEX idx_expiry_tracking_location ON public.sku_expiry_tracking USING btree (location_id)",
+          "columns": "location_id"
         }
       ],
       "triggers": null,
@@ -10430,10 +11321,10 @@
       ],
       "foreign_keys": [
         {
-          "column": "location_id",
-          "references_table": "locations_master",
-          "references_column": "location_id",
-          "constraint_name": "sku_inventory_location_id_fkey",
+          "column": "sku_id",
+          "references_table": "sku_master",
+          "references_column": "sku_id",
+          "constraint_name": "sku_inventory_sku_id_fkey",
           "on_delete": "NO ACTION",
           "on_update": "NO ACTION"
         },
@@ -10446,10 +11337,10 @@
           "on_update": "NO ACTION"
         },
         {
-          "column": "sku_id",
-          "references_table": "sku_master",
-          "references_column": "sku_id",
-          "constraint_name": "sku_inventory_sku_id_fkey",
+          "column": "location_id",
+          "references_table": "locations_master",
+          "references_column": "location_id",
+          "constraint_name": "sku_inventory_location_id_fkey",
           "on_delete": "NO ACTION",
           "on_update": "NO ACTION"
         }
@@ -10733,32 +11624,16 @@
       ],
       "check_constraints": [
         {
-          "constraint_name": "2200_26383_3_not_null",
-          "check_clause": "product_name IS NOT NULL"
-        },
-        {
-          "constraint_name": "2200_26383_2_not_null",
-          "check_clause": "sku_code IS NOT NULL"
-        },
-        {
           "constraint_name": "chk_mrp_positive",
           "check_clause": "((mrp_current IS NULL) OR (mrp_current > (0)::numeric))"
         },
         {
-          "constraint_name": "chk_shelf_life_valid",
-          "check_clause": "((shelf_life_months IS NULL) OR ((shelf_life_months >= 1) AND (shelf_life_months <= 60)))"
+          "constraint_name": "2200_26383_3_not_null",
+          "check_clause": "product_name IS NOT NULL"
         },
         {
-          "constraint_name": "2200_26383_1_not_null",
-          "check_clause": "sku_id IS NOT NULL"
-        },
-        {
-          "constraint_name": "sku_master_density_check",
-          "check_clause": "((density >= 0.8) AND (density <= 1.0))"
-        },
-        {
-          "constraint_name": "sku_master_package_size_check",
-          "check_clause": "((package_size)::text = ANY ((ARRAY['500ml'::character varying, '1L'::character varying, '5L'::character varying])::text[]))"
+          "constraint_name": "2200_26383_4_not_null",
+          "check_clause": "oil_type IS NOT NULL"
         },
         {
           "constraint_name": "2200_26383_5_not_null",
@@ -10769,31 +11644,33 @@
           "check_clause": "density IS NOT NULL"
         },
         {
-          "constraint_name": "2200_26383_4_not_null",
-          "check_clause": "oil_type IS NOT NULL"
+          "constraint_name": "chk_shelf_life_valid",
+          "check_clause": "((shelf_life_months IS NULL) OR ((shelf_life_months >= 1) AND (shelf_life_months <= 60)))"
+        },
+        {
+          "constraint_name": "sku_master_density_check",
+          "check_clause": "((density >= 0.8) AND (density <= 1.0))"
+        },
+        {
+          "constraint_name": "sku_master_package_size_check",
+          "check_clause": "((package_size)::text = ANY ((ARRAY['500ml'::character varying, '1L'::character varying, '5L'::character varying])::text[]))"
+        },
+        {
+          "constraint_name": "2200_26383_1_not_null",
+          "check_clause": "sku_id IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_26383_2_not_null",
+          "check_clause": "sku_code IS NOT NULL"
         }
       ],
       "indexes": [
         {
-          "index_name": "idx_sku_oil_type",
-          "is_unique": false,
+          "index_name": "sku_master_pkey",
+          "is_unique": true,
           "is_primary": false,
-          "definition": "CREATE INDEX idx_sku_oil_type ON public.sku_master USING btree (oil_type)",
-          "columns": "oil_type"
-        },
-        {
-          "index_name": "idx_sku_active",
-          "is_unique": false,
-          "is_primary": false,
-          "definition": "CREATE INDEX idx_sku_active ON public.sku_master USING btree (is_active)",
-          "columns": "is_active"
-        },
-        {
-          "index_name": "idx_sku_package_size",
-          "is_unique": false,
-          "is_primary": false,
-          "definition": "CREATE INDEX idx_sku_package_size ON public.sku_master USING btree (package_size)",
-          "columns": "package_size"
+          "definition": "CREATE UNIQUE INDEX sku_master_pkey ON public.sku_master USING btree (sku_id)",
+          "columns": "sku_id"
         },
         {
           "index_name": "sku_master_sku_code_key",
@@ -10803,11 +11680,25 @@
           "columns": "sku_code"
         },
         {
-          "index_name": "sku_master_pkey",
-          "is_unique": true,
+          "index_name": "idx_sku_oil_type",
+          "is_unique": false,
           "is_primary": false,
-          "definition": "CREATE UNIQUE INDEX sku_master_pkey ON public.sku_master USING btree (sku_id)",
-          "columns": "sku_id"
+          "definition": "CREATE INDEX idx_sku_oil_type ON public.sku_master USING btree (oil_type)",
+          "columns": "oil_type"
+        },
+        {
+          "index_name": "idx_sku_package_size",
+          "is_unique": false,
+          "is_primary": false,
+          "definition": "CREATE INDEX idx_sku_package_size ON public.sku_master USING btree (package_size)",
+          "columns": "package_size"
+        },
+        {
+          "index_name": "idx_sku_active",
+          "is_unique": false,
+          "is_primary": false,
+          "definition": "CREATE INDEX idx_sku_active ON public.sku_master USING btree (is_active)",
+          "columns": "is_active"
         }
       ],
       "triggers": [
@@ -10970,32 +11861,24 @@
       ],
       "foreign_keys": [
         {
-          "column": "material_id",
-          "references_table": "materials",
-          "references_column": "material_id",
-          "constraint_name": "sku_material_consumption_material_id_fkey",
-          "on_delete": "NO ACTION",
-          "on_update": "NO ACTION"
-        },
-        {
           "column": "production_id",
           "references_table": "sku_production",
           "references_column": "production_id",
           "constraint_name": "sku_material_consumption_production_id_fkey",
           "on_delete": "CASCADE",
           "on_update": "NO ACTION"
+        },
+        {
+          "column": "material_id",
+          "references_table": "materials",
+          "references_column": "material_id",
+          "constraint_name": "sku_material_consumption_material_id_fkey",
+          "on_delete": "NO ACTION",
+          "on_update": "NO ACTION"
         }
       ],
       "unique_constraints": null,
       "check_constraints": [
-        {
-          "constraint_name": "2200_26487_7_not_null",
-          "check_clause": "material_cost_per_unit IS NOT NULL"
-        },
-        {
-          "constraint_name": "2200_26487_8_not_null",
-          "check_clause": "total_cost IS NOT NULL"
-        },
         {
           "constraint_name": "2200_26487_5_not_null",
           "check_clause": "actual_quantity IS NOT NULL"
@@ -11003,18 +11886,6 @@
         {
           "constraint_name": "2200_26487_4_not_null",
           "check_clause": "planned_quantity IS NOT NULL"
-        },
-        {
-          "constraint_name": "2200_26487_3_not_null",
-          "check_clause": "material_id IS NOT NULL"
-        },
-        {
-          "constraint_name": "2200_26487_2_not_null",
-          "check_clause": "production_id IS NOT NULL"
-        },
-        {
-          "constraint_name": "2200_26487_1_not_null",
-          "check_clause": "consumption_id IS NOT NULL"
         },
         {
           "constraint_name": "sku_material_consumption_total_cost_check",
@@ -11031,22 +11902,42 @@
         {
           "constraint_name": "sku_material_consumption_actual_quantity_check",
           "check_clause": "(actual_quantity >= (0)::numeric)"
+        },
+        {
+          "constraint_name": "2200_26487_8_not_null",
+          "check_clause": "total_cost IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_26487_7_not_null",
+          "check_clause": "material_cost_per_unit IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_26487_3_not_null",
+          "check_clause": "material_id IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_26487_2_not_null",
+          "check_clause": "production_id IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_26487_1_not_null",
+          "check_clause": "consumption_id IS NOT NULL"
         }
       ],
       "indexes": [
-        {
-          "index_name": "idx_material_consumption_production",
-          "is_unique": false,
-          "is_primary": false,
-          "definition": "CREATE INDEX idx_material_consumption_production ON public.sku_material_consumption USING btree (production_id)",
-          "columns": "production_id"
-        },
         {
           "index_name": "sku_material_consumption_pkey",
           "is_unique": true,
           "is_primary": false,
           "definition": "CREATE UNIQUE INDEX sku_material_consumption_pkey ON public.sku_material_consumption USING btree (consumption_id)",
           "columns": "consumption_id"
+        },
+        {
+          "index_name": "idx_material_consumption_production",
+          "is_unique": false,
+          "is_primary": false,
+          "definition": "CREATE INDEX idx_material_consumption_production ON public.sku_material_consumption USING btree (production_id)",
+          "columns": "production_id"
         }
       ],
       "triggers": [
@@ -11203,37 +12094,37 @@
       "unique_constraints": null,
       "check_constraints": [
         {
-          "constraint_name": "chk_mrp_history_positive",
-          "check_clause": "(mrp_amount > (0)::numeric)"
-        },
-        {
-          "constraint_name": "2200_27828_1_not_null",
-          "check_clause": "mrp_id IS NOT NULL"
-        },
-        {
-          "constraint_name": "2200_27828_2_not_null",
-          "check_clause": "sku_id IS NOT NULL"
+          "constraint_name": "2200_27828_4_not_null",
+          "check_clause": "effective_from IS NOT NULL"
         },
         {
           "constraint_name": "2200_27828_3_not_null",
           "check_clause": "mrp_amount IS NOT NULL"
         },
         {
-          "constraint_name": "2200_27828_4_not_null",
-          "check_clause": "effective_from IS NOT NULL"
+          "constraint_name": "chk_mrp_history_positive",
+          "check_clause": "(mrp_amount > (0)::numeric)"
         },
         {
           "constraint_name": "chk_date_validity",
           "check_clause": "((effective_to IS NULL) OR (effective_to > effective_from))"
+        },
+        {
+          "constraint_name": "2200_27828_2_not_null",
+          "check_clause": "sku_id IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_27828_1_not_null",
+          "check_clause": "mrp_id IS NOT NULL"
         }
       ],
       "indexes": [
         {
-          "index_name": "idx_mrp_history_current",
-          "is_unique": false,
+          "index_name": "sku_mrp_history_pkey",
+          "is_unique": true,
           "is_primary": false,
-          "definition": "CREATE INDEX idx_mrp_history_current ON public.sku_mrp_history USING btree (is_current) WHERE (is_current = true)",
-          "columns": "is_current=true"
+          "definition": "CREATE UNIQUE INDEX sku_mrp_history_pkey ON public.sku_mrp_history USING btree (mrp_id)",
+          "columns": "mrp_id"
         },
         {
           "index_name": "idx_mrp_history_sku",
@@ -11243,18 +12134,18 @@
           "columns": "sku_id"
         },
         {
+          "index_name": "idx_mrp_history_current",
+          "is_unique": false,
+          "is_primary": false,
+          "definition": "CREATE INDEX idx_mrp_history_current ON public.sku_mrp_history USING btree (is_current) WHERE (is_current = true)",
+          "columns": "is_current=true"
+        },
+        {
           "index_name": "idx_mrp_history_dates",
           "is_unique": false,
           "is_primary": false,
           "definition": "CREATE INDEX idx_mrp_history_dates ON public.sku_mrp_history USING btree (effective_from, effective_to)",
           "columns": "effective_from,effective_to"
-        },
-        {
-          "index_name": "sku_mrp_history_pkey",
-          "is_unique": true,
-          "is_primary": false,
-          "definition": "CREATE UNIQUE INDEX sku_mrp_history_pkey ON public.sku_mrp_history USING btree (mrp_id)",
-          "columns": "mrp_id"
         }
       ],
       "triggers": null,
@@ -11408,16 +12299,44 @@
       "unique_constraints": null,
       "check_constraints": [
         {
-          "constraint_name": "2200_26470_1_not_null",
-          "check_clause": "allocation_id IS NOT NULL"
+          "constraint_name": "sku_oil_allocation_quantity_allocated_check",
+          "check_clause": "(quantity_allocated > (0)::numeric)"
+        },
+        {
+          "constraint_name": "2200_26470_8_not_null",
+          "check_clause": "allocation_cost IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_26470_7_not_null",
+          "check_clause": "oil_cost_per_kg IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_26470_6_not_null",
+          "check_clause": "quantity_allocated IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_26470_5_not_null",
+          "check_clause": "source_traceable_code IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_26470_4_not_null",
+          "check_clause": "source_id IS NOT NULL"
         },
         {
           "constraint_name": "2200_26470_3_not_null",
           "check_clause": "source_type IS NOT NULL"
         },
         {
-          "constraint_name": "2200_26470_4_not_null",
-          "check_clause": "source_id IS NOT NULL"
+          "constraint_name": "2200_26470_2_not_null",
+          "check_clause": "production_id IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_26470_1_not_null",
+          "check_clause": "allocation_id IS NOT NULL"
+        },
+        {
+          "constraint_name": "sku_oil_allocation_source_type_check",
+          "check_clause": "((source_type)::text = ANY ((ARRAY['batch'::character varying, 'blend'::character varying])::text[]))"
         },
         {
           "constraint_name": "sku_oil_allocation_oil_cost_per_kg_check",
@@ -11426,34 +12345,6 @@
         {
           "constraint_name": "sku_oil_allocation_allocation_cost_check",
           "check_clause": "(allocation_cost >= (0)::numeric)"
-        },
-        {
-          "constraint_name": "2200_26470_5_not_null",
-          "check_clause": "source_traceable_code IS NOT NULL"
-        },
-        {
-          "constraint_name": "2200_26470_2_not_null",
-          "check_clause": "production_id IS NOT NULL"
-        },
-        {
-          "constraint_name": "2200_26470_6_not_null",
-          "check_clause": "quantity_allocated IS NOT NULL"
-        },
-        {
-          "constraint_name": "2200_26470_7_not_null",
-          "check_clause": "oil_cost_per_kg IS NOT NULL"
-        },
-        {
-          "constraint_name": "2200_26470_8_not_null",
-          "check_clause": "allocation_cost IS NOT NULL"
-        },
-        {
-          "constraint_name": "sku_oil_allocation_source_type_check",
-          "check_clause": "((source_type)::text = ANY ((ARRAY['batch'::character varying, 'blend'::character varying])::text[]))"
-        },
-        {
-          "constraint_name": "sku_oil_allocation_quantity_allocated_check",
-          "check_clause": "(quantity_allocated > (0)::numeric)"
         }
       ],
       "indexes": [
@@ -11888,18 +12779,18 @@
       ],
       "foreign_keys": [
         {
-          "column": "ship_to_location_id",
-          "references_table": "customer_ship_to_locations",
-          "references_column": "ship_to_id",
-          "constraint_name": "sku_outbound_ship_to_location_id_fkey",
+          "column": "customer_id",
+          "references_table": "customers",
+          "references_column": "customer_id",
+          "constraint_name": "sku_outbound_customer_id_fkey",
           "on_delete": "NO ACTION",
           "on_update": "NO ACTION"
         },
         {
-          "column": "from_location_id",
-          "references_table": "locations_master",
-          "references_column": "location_id",
-          "constraint_name": "sku_outbound_from_location_id_fkey",
+          "column": "ship_to_location_id",
+          "references_table": "customer_ship_to_locations",
+          "references_column": "ship_to_id",
+          "constraint_name": "sku_outbound_ship_to_location_id_fkey",
           "on_delete": "NO ACTION",
           "on_update": "NO ACTION"
         },
@@ -11912,10 +12803,10 @@
           "on_update": "NO ACTION"
         },
         {
-          "column": "customer_id",
-          "references_table": "customers",
-          "references_column": "customer_id",
-          "constraint_name": "sku_outbound_customer_id_fkey",
+          "column": "from_location_id",
+          "references_table": "locations_master",
+          "references_column": "location_id",
+          "constraint_name": "sku_outbound_from_location_id_fkey",
           "on_delete": "NO ACTION",
           "on_update": "NO ACTION"
         }
@@ -11930,16 +12821,20 @@
       ],
       "check_constraints": [
         {
-          "constraint_name": "2200_55089_1_not_null",
-          "check_clause": "outbound_id IS NOT NULL"
-        },
-        {
           "constraint_name": "2200_55089_2_not_null",
           "check_clause": "outbound_code IS NOT NULL"
         },
         {
-          "constraint_name": "2200_55089_3_not_null",
-          "check_clause": "transaction_type IS NOT NULL"
+          "constraint_name": "2200_55089_1_not_null",
+          "check_clause": "outbound_id IS NOT NULL"
+        },
+        {
+          "constraint_name": "sku_outbound_status_check",
+          "check_clause": "((status)::text = ANY ((ARRAY['draft'::character varying, 'confirmed'::character varying, 'dispatched'::character varying, 'delivered'::character varying, 'cancelled'::character varying])::text[]))"
+        },
+        {
+          "constraint_name": "sku_outbound_transaction_type_check",
+          "check_clause": "((transaction_type)::text = ANY ((ARRAY['transfer'::character varying, 'sales'::character varying])::text[]))"
         },
         {
           "constraint_name": "2200_55089_10_not_null",
@@ -11950,21 +12845,59 @@
           "check_clause": "from_location_id IS NOT NULL"
         },
         {
-          "constraint_name": "sku_outbound_transaction_type_check",
-          "check_clause": "((transaction_type)::text = ANY ((ARRAY['transfer'::character varying, 'sales'::character varying])::text[]))"
-        },
-        {
-          "constraint_name": "sku_outbound_status_check",
-          "check_clause": "((status)::text = ANY ((ARRAY['draft'::character varying, 'confirmed'::character varying, 'dispatched'::character varying, 'delivered'::character varying, 'cancelled'::character varying])::text[]))"
+          "constraint_name": "2200_55089_3_not_null",
+          "check_clause": "transaction_type IS NOT NULL"
         }
       ],
       "indexes": [
+        {
+          "index_name": "idx_outbound_from_location",
+          "is_unique": false,
+          "is_primary": false,
+          "definition": "CREATE INDEX idx_outbound_from_location ON public.sku_outbound USING btree (from_location_id)",
+          "columns": "from_location_id"
+        },
+        {
+          "index_name": "idx_outbound_status",
+          "is_unique": false,
+          "is_primary": false,
+          "definition": "CREATE INDEX idx_outbound_status ON public.sku_outbound USING btree (status)",
+          "columns": "status"
+        },
+        {
+          "index_name": "idx_outbound_date",
+          "is_unique": false,
+          "is_primary": false,
+          "definition": "CREATE INDEX idx_outbound_date ON public.sku_outbound USING btree (outbound_date)",
+          "columns": "outbound_date"
+        },
+        {
+          "index_name": "idx_outbound_to_location",
+          "is_unique": false,
+          "is_primary": false,
+          "definition": "CREATE INDEX idx_outbound_to_location ON public.sku_outbound USING btree (to_location_id)",
+          "columns": "to_location_id"
+        },
+        {
+          "index_name": "idx_outbound_ship_to",
+          "is_unique": false,
+          "is_primary": false,
+          "definition": "CREATE INDEX idx_outbound_ship_to ON public.sku_outbound USING btree (ship_to_location_id)",
+          "columns": "ship_to_location_id"
+        },
         {
           "index_name": "idx_outbound_customer",
           "is_unique": false,
           "is_primary": false,
           "definition": "CREATE INDEX idx_outbound_customer ON public.sku_outbound USING btree (customer_id)",
           "columns": "customer_id"
+        },
+        {
+          "index_name": "idx_outbound_type",
+          "is_unique": false,
+          "is_primary": false,
+          "definition": "CREATE INDEX idx_outbound_type ON public.sku_outbound USING btree (transaction_type)",
+          "columns": "transaction_type"
         },
         {
           "index_name": "sku_outbound_pkey",
@@ -11979,48 +12912,6 @@
           "is_primary": false,
           "definition": "CREATE UNIQUE INDEX sku_outbound_outbound_code_key ON public.sku_outbound USING btree (outbound_code)",
           "columns": "outbound_code"
-        },
-        {
-          "index_name": "idx_outbound_from_location",
-          "is_unique": false,
-          "is_primary": false,
-          "definition": "CREATE INDEX idx_outbound_from_location ON public.sku_outbound USING btree (from_location_id)",
-          "columns": "from_location_id"
-        },
-        {
-          "index_name": "idx_outbound_to_location",
-          "is_unique": false,
-          "is_primary": false,
-          "definition": "CREATE INDEX idx_outbound_to_location ON public.sku_outbound USING btree (to_location_id)",
-          "columns": "to_location_id"
-        },
-        {
-          "index_name": "idx_outbound_date",
-          "is_unique": false,
-          "is_primary": false,
-          "definition": "CREATE INDEX idx_outbound_date ON public.sku_outbound USING btree (outbound_date)",
-          "columns": "outbound_date"
-        },
-        {
-          "index_name": "idx_outbound_status",
-          "is_unique": false,
-          "is_primary": false,
-          "definition": "CREATE INDEX idx_outbound_status ON public.sku_outbound USING btree (status)",
-          "columns": "status"
-        },
-        {
-          "index_name": "idx_outbound_type",
-          "is_unique": false,
-          "is_primary": false,
-          "definition": "CREATE INDEX idx_outbound_type ON public.sku_outbound USING btree (transaction_type)",
-          "columns": "transaction_type"
-        },
-        {
-          "index_name": "idx_outbound_ship_to",
-          "is_unique": false,
-          "is_primary": false,
-          "definition": "CREATE INDEX idx_outbound_ship_to ON public.sku_outbound USING btree (ship_to_location_id)",
-          "columns": "ship_to_location_id"
         }
       ],
       "triggers": null,
@@ -12295,32 +13186,24 @@
       ],
       "foreign_keys": [
         {
-          "column": "outbound_id",
-          "references_table": "sku_outbound",
-          "references_column": "outbound_id",
-          "constraint_name": "sku_outbound_items_outbound_id_fkey",
-          "on_delete": "CASCADE",
-          "on_update": "NO ACTION"
-        },
-        {
           "column": "sku_id",
           "references_table": "sku_master",
           "references_column": "sku_id",
           "constraint_name": "sku_outbound_items_sku_id_fkey",
           "on_delete": "NO ACTION",
           "on_update": "NO ACTION"
+        },
+        {
+          "column": "outbound_id",
+          "references_table": "sku_outbound",
+          "references_column": "outbound_id",
+          "constraint_name": "sku_outbound_items_outbound_id_fkey",
+          "on_delete": "CASCADE",
+          "on_update": "NO ACTION"
         }
       ],
       "unique_constraints": null,
       "check_constraints": [
-        {
-          "constraint_name": "2200_55127_3_not_null",
-          "check_clause": "sku_id IS NOT NULL"
-        },
-        {
-          "constraint_name": "2200_55127_1_not_null",
-          "check_clause": "item_id IS NOT NULL"
-        },
         {
           "constraint_name": "2200_55127_4_not_null",
           "check_clause": "quantity_ordered IS NOT NULL"
@@ -12328,9 +13211,24 @@
         {
           "constraint_name": "2200_55127_6_not_null",
           "check_clause": "allocation_data IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_55127_1_not_null",
+          "check_clause": "item_id IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_55127_3_not_null",
+          "check_clause": "sku_id IS NOT NULL"
         }
       ],
       "indexes": [
+        {
+          "index_name": "idx_outbound_items_outbound",
+          "is_unique": false,
+          "is_primary": false,
+          "definition": "CREATE INDEX idx_outbound_items_outbound ON public.sku_outbound_items USING btree (outbound_id)",
+          "columns": "outbound_id"
+        },
         {
           "index_name": "idx_outbound_items_allocation",
           "is_unique": false,
@@ -12351,13 +13249,6 @@
           "is_primary": false,
           "definition": "CREATE INDEX idx_outbound_items_sku ON public.sku_outbound_items USING btree (sku_id)",
           "columns": "sku_id"
-        },
-        {
-          "index_name": "idx_outbound_items_outbound",
-          "is_unique": false,
-          "is_primary": false,
-          "definition": "CREATE INDEX idx_outbound_items_outbound ON public.sku_outbound_items USING btree (outbound_id)",
-          "columns": "outbound_id"
         }
       ],
       "triggers": null,
@@ -12796,32 +13687,12 @@
       ],
       "check_constraints": [
         {
-          "constraint_name": "2200_26439_1_not_null",
-          "check_clause": "production_id IS NOT NULL"
-        },
-        {
-          "constraint_name": "2200_26439_18_not_null",
-          "check_clause": "cost_per_bottle IS NOT NULL"
-        },
-        {
-          "constraint_name": "2200_26439_17_not_null",
-          "check_clause": "total_production_cost IS NOT NULL"
-        },
-        {
-          "constraint_name": "2200_26439_11_not_null",
-          "check_clause": "bottles_produced IS NOT NULL"
-        },
-        {
-          "constraint_name": "2200_26439_10_not_null",
-          "check_clause": "bottles_planned IS NOT NULL"
-        },
-        {
-          "constraint_name": "2200_26439_9_not_null",
-          "check_clause": "weighted_oil_cost IS NOT NULL"
-        },
-        {
           "constraint_name": "2200_26439_8_not_null",
           "check_clause": "total_oil_quantity IS NOT NULL"
+        },
+        {
+          "constraint_name": "sku_production_weighted_oil_cost_check",
+          "check_clause": "(weighted_oil_cost >= (0)::numeric)"
         },
         {
           "constraint_name": "2200_26439_7_not_null",
@@ -12830,6 +13701,14 @@
         {
           "constraint_name": "2200_26439_6_not_null",
           "check_clause": "production_date IS NOT NULL"
+        },
+        {
+          "constraint_name": "sku_production_bottles_planned_check",
+          "check_clause": "(bottles_planned > 0)"
+        },
+        {
+          "constraint_name": "2200_26439_10_not_null",
+          "check_clause": "bottles_planned IS NOT NULL"
         },
         {
           "constraint_name": "2200_26439_5_not_null",
@@ -12848,37 +13727,35 @@
           "check_clause": "production_code IS NOT NULL"
         },
         {
-          "constraint_name": "sku_production_weighted_oil_cost_check",
-          "check_clause": "(weighted_oil_cost >= (0)::numeric)"
+          "constraint_name": "2200_26439_1_not_null",
+          "check_clause": "production_id IS NOT NULL"
         },
         {
-          "constraint_name": "sku_production_total_oil_quantity_check",
-          "check_clause": "(total_oil_quantity > (0)::numeric)"
+          "constraint_name": "2200_26439_11_not_null",
+          "check_clause": "bottles_produced IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_26439_17_not_null",
+          "check_clause": "total_production_cost IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_26439_18_not_null",
+          "check_clause": "cost_per_bottle IS NOT NULL"
         },
         {
           "constraint_name": "sku_production_bottles_produced_check",
           "check_clause": "(bottles_produced > 0)"
         },
         {
-          "constraint_name": "sku_production_bottles_planned_check",
-          "check_clause": "(bottles_planned > 0)"
+          "constraint_name": "2200_26439_9_not_null",
+          "check_clause": "weighted_oil_cost IS NOT NULL"
+        },
+        {
+          "constraint_name": "sku_production_total_oil_quantity_check",
+          "check_clause": "(total_oil_quantity > (0)::numeric)"
         }
       ],
       "indexes": [
-        {
-          "index_name": "sku_production_pkey",
-          "is_unique": true,
-          "is_primary": false,
-          "definition": "CREATE UNIQUE INDEX sku_production_pkey ON public.sku_production USING btree (production_id)",
-          "columns": "production_id"
-        },
-        {
-          "index_name": "idx_sku_production_sku",
-          "is_unique": false,
-          "is_primary": false,
-          "definition": "CREATE INDEX idx_sku_production_sku ON public.sku_production USING btree (sku_id)",
-          "columns": "sku_id"
-        },
         {
           "index_name": "idx_sku_production_date",
           "is_unique": false,
@@ -12899,6 +13776,20 @@
           "is_primary": false,
           "definition": "CREATE UNIQUE INDEX sku_production_production_code_key ON public.sku_production USING btree (production_code)",
           "columns": "production_code"
+        },
+        {
+          "index_name": "sku_production_pkey",
+          "is_unique": true,
+          "is_primary": false,
+          "definition": "CREATE UNIQUE INDEX sku_production_pkey ON public.sku_production USING btree (production_id)",
+          "columns": "production_id"
+        },
+        {
+          "index_name": "idx_sku_production_sku",
+          "is_unique": false,
+          "is_primary": false,
+          "definition": "CREATE INDEX idx_sku_production_sku ON public.sku_production USING btree (sku_id)",
+          "columns": "sku_id"
         }
       ],
       "triggers": null,
@@ -13292,12 +14183,12 @@
       ],
       "check_constraints": [
         {
-          "constraint_name": "2200_36909_1_not_null",
-          "check_clause": "subcategory_id IS NOT NULL"
-        },
-        {
           "constraint_name": "2200_36909_3_not_null",
           "check_clause": "subcategory_name IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_36909_1_not_null",
+          "check_clause": "subcategory_id IS NOT NULL"
         },
         {
           "constraint_name": "2200_36909_4_not_null",
@@ -13305,6 +14196,13 @@
         }
       ],
       "indexes": [
+        {
+          "index_name": "subcategories_master_subcategory_code_key",
+          "is_unique": true,
+          "is_primary": false,
+          "definition": "CREATE UNIQUE INDEX subcategories_master_subcategory_code_key ON public.subcategories_master USING btree (subcategory_code)",
+          "columns": "subcategory_code"
+        },
         {
           "index_name": "subcategories_master_category_id_subcategory_name_key",
           "is_unique": true,
@@ -13318,13 +14216,6 @@
           "is_primary": false,
           "definition": "CREATE UNIQUE INDEX subcategories_master_pkey ON public.subcategories_master USING btree (subcategory_id)",
           "columns": "subcategory_id"
-        },
-        {
-          "index_name": "subcategories_master_subcategory_code_key",
-          "is_unique": true,
-          "is_primary": false,
-          "definition": "CREATE UNIQUE INDEX subcategories_master_subcategory_code_key ON public.subcategories_master USING btree (subcategory_code)",
-          "columns": "subcategory_code"
         }
       ],
       "triggers": null,
@@ -13498,28 +14389,28 @@
           "check_clause": "((short_code)::text ~ '^[A-Z]{3}$'::text)"
         },
         {
-          "constraint_name": "2200_18488_1_not_null",
-          "check_clause": "supplier_id IS NOT NULL"
-        },
-        {
           "constraint_name": "2200_18488_2_not_null",
           "check_clause": "supplier_name IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_18488_1_not_null",
+          "check_clause": "supplier_id IS NOT NULL"
         }
       ],
       "indexes": [
-        {
-          "index_name": "suppliers_short_code_key",
-          "is_unique": true,
-          "is_primary": false,
-          "definition": "CREATE UNIQUE INDEX suppliers_short_code_key ON public.suppliers USING btree (short_code)",
-          "columns": "short_code"
-        },
         {
           "index_name": "idx_suppliers_active",
           "is_unique": false,
           "is_primary": false,
           "definition": "CREATE INDEX idx_suppliers_active ON public.suppliers USING btree (is_active)",
           "columns": "is_active"
+        },
+        {
+          "index_name": "suppliers_short_code_key",
+          "is_unique": true,
+          "is_primary": false,
+          "definition": "CREATE UNIQUE INDEX suppliers_short_code_key ON public.suppliers USING btree (short_code)",
+          "columns": "short_code"
         },
         {
           "index_name": "suppliers_supplier_name_key",
@@ -13818,6 +14709,274 @@
       "table_size": "8192 bytes",
       "indexes_size": "48 kB"
     },
+    "transaction_adjustments": {
+      "columns": [
+        {
+          "name": "adjustment_id",
+          "type": "integer",
+          "max_length": null,
+          "precision": 32,
+          "scale": 0,
+          "nullable": false,
+          "default": "nextval('transaction_adjustments_adjustment_id_seq'::regclass)",
+          "position": 1,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "adjustment_code",
+          "type": "character varying",
+          "max_length": 50,
+          "precision": null,
+          "scale": null,
+          "nullable": false,
+          "default": null,
+          "position": 2,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "transaction_type",
+          "type": "character varying",
+          "max_length": 50,
+          "precision": null,
+          "scale": null,
+          "nullable": false,
+          "default": null,
+          "position": 3,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "original_transaction_id",
+          "type": "integer",
+          "max_length": null,
+          "precision": 32,
+          "scale": 0,
+          "nullable": false,
+          "default": null,
+          "position": 4,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "adjustment_type",
+          "type": "character varying",
+          "max_length": 50,
+          "precision": null,
+          "scale": null,
+          "nullable": true,
+          "default": null,
+          "position": 5,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "adjustment_date",
+          "type": "integer",
+          "max_length": null,
+          "precision": 32,
+          "scale": 0,
+          "nullable": false,
+          "default": null,
+          "position": 6,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "impact_description",
+          "type": "text",
+          "max_length": null,
+          "precision": null,
+          "scale": null,
+          "nullable": true,
+          "default": null,
+          "position": 7,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "financial_impact",
+          "type": "numeric",
+          "max_length": null,
+          "precision": 12,
+          "scale": 2,
+          "nullable": true,
+          "default": null,
+          "position": 8,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "inventory_impact",
+          "type": "jsonb",
+          "max_length": null,
+          "precision": null,
+          "scale": null,
+          "nullable": true,
+          "default": null,
+          "position": 9,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "cannot_reverse_reason",
+          "type": "text",
+          "max_length": null,
+          "precision": null,
+          "scale": null,
+          "nullable": true,
+          "default": null,
+          "position": 10,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "approved_by",
+          "type": "character varying",
+          "max_length": 100,
+          "precision": null,
+          "scale": null,
+          "nullable": true,
+          "default": null,
+          "position": 11,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "approval_date",
+          "type": "timestamp without time zone",
+          "max_length": null,
+          "precision": null,
+          "scale": null,
+          "nullable": true,
+          "default": null,
+          "position": 12,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "status",
+          "type": "character varying",
+          "max_length": 20,
+          "precision": null,
+          "scale": null,
+          "nullable": true,
+          "default": "'pending'::character varying",
+          "position": 13,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "notes",
+          "type": "text",
+          "max_length": null,
+          "precision": null,
+          "scale": null,
+          "nullable": true,
+          "default": null,
+          "position": 14,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "created_by",
+          "type": "character varying",
+          "max_length": 100,
+          "precision": null,
+          "scale": null,
+          "nullable": true,
+          "default": null,
+          "position": 15,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp without time zone",
+          "max_length": null,
+          "precision": null,
+          "scale": null,
+          "nullable": true,
+          "default": "CURRENT_TIMESTAMP",
+          "position": 16,
+          "is_generated": "NEVER",
+          "generation_expression": null
+        }
+      ],
+      "primary_keys": [
+        {
+          "column": "adjustment_id",
+          "constraint_name": "transaction_adjustments_pkey"
+        }
+      ],
+      "foreign_keys": null,
+      "unique_constraints": [
+        {
+          "columns": [
+            "adjustment_code"
+          ],
+          "constraint_name": "transaction_adjustments_adjustment_code_key"
+        }
+      ],
+      "check_constraints": [
+        {
+          "constraint_name": "2200_70808_3_not_null",
+          "check_clause": "transaction_type IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_70808_4_not_null",
+          "check_clause": "original_transaction_id IS NOT NULL"
+        },
+        {
+          "constraint_name": "transaction_adjustments_adjustment_type_check",
+          "check_clause": "((adjustment_type)::text = ANY ((ARRAY['quantity_variance'::character varying, 'yield_correction'::character varying, 'cost_adjustment'::character varying, 'quality_adjustment'::character varying, 'measurement_error'::character varying, 'system_correction'::character varying])::text[]))"
+        },
+        {
+          "constraint_name": "2200_70808_2_not_null",
+          "check_clause": "adjustment_code IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_70808_1_not_null",
+          "check_clause": "adjustment_id IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_70808_6_not_null",
+          "check_clause": "adjustment_date IS NOT NULL"
+        }
+      ],
+      "indexes": [
+        {
+          "index_name": "transaction_adjustments_adjustment_code_key",
+          "is_unique": true,
+          "is_primary": false,
+          "definition": "CREATE UNIQUE INDEX transaction_adjustments_adjustment_code_key ON public.transaction_adjustments USING btree (adjustment_code)",
+          "columns": "adjustment_code"
+        },
+        {
+          "index_name": "transaction_adjustments_pkey",
+          "is_unique": true,
+          "is_primary": false,
+          "definition": "CREATE UNIQUE INDEX transaction_adjustments_pkey ON public.transaction_adjustments USING btree (adjustment_id)",
+          "columns": "adjustment_id"
+        },
+        {
+          "index_name": "idx_adjustments_type",
+          "is_unique": false,
+          "is_primary": false,
+          "definition": "CREATE INDEX idx_adjustments_type ON public.transaction_adjustments USING btree (transaction_type, original_transaction_id)",
+          "columns": "transaction_type,original_transaction_id"
+        }
+      ],
+      "triggers": null,
+      "row_count": 0,
+      "dead_rows": 0,
+      "last_vacuum": null,
+      "last_autovacuum": null,
+      "total_size": "32 kB",
+      "table_size": "0 bytes",
+      "indexes_size": "24 kB"
+    },
     "transaction_audit_log": {
       "columns": [
         {
@@ -13999,27 +15158,34 @@
       "unique_constraints": null,
       "check_constraints": [
         {
-          "constraint_name": "2200_66829_2_not_null",
-          "check_clause": "table_name IS NOT NULL"
-        },
-        {
-          "constraint_name": "transaction_audit_log_action_check",
-          "check_clause": "((action)::text = ANY ((ARRAY['CREATE'::character varying, 'UPDATE'::character varying, 'DELETE'::character varying, 'SOFT_DELETE'::character varying, 'RESTORE'::character varying])::text[]))"
+          "constraint_name": "2200_66829_3_not_null",
+          "check_clause": "record_id IS NOT NULL"
         },
         {
           "constraint_name": "2200_66829_4_not_null",
           "check_clause": "action IS NOT NULL"
         },
         {
-          "constraint_name": "2200_66829_3_not_null",
-          "check_clause": "record_id IS NOT NULL"
+          "constraint_name": "2200_66829_2_not_null",
+          "check_clause": "table_name IS NOT NULL"
         },
         {
           "constraint_name": "2200_66829_1_not_null",
           "check_clause": "audit_id IS NOT NULL"
+        },
+        {
+          "constraint_name": "transaction_audit_log_action_check",
+          "check_clause": "((action)::text = ANY ((ARRAY['CREATE'::character varying, 'UPDATE'::character varying, 'DELETE'::character varying, 'SOFT_DELETE'::character varying, 'RESTORE'::character varying])::text[]))"
         }
       ],
       "indexes": [
+        {
+          "index_name": "idx_trans_audit_date",
+          "is_unique": false,
+          "is_primary": false,
+          "definition": "CREATE INDEX idx_trans_audit_date ON public.transaction_audit_log USING btree (changed_at DESC)",
+          "columns": "changed_atDESC"
+        },
         {
           "index_name": "idx_trans_audit_user",
           "is_unique": false,
@@ -14033,13 +15199,6 @@
           "is_primary": false,
           "definition": "CREATE INDEX idx_trans_audit_action ON public.transaction_audit_log USING btree (action)",
           "columns": "action"
-        },
-        {
-          "index_name": "idx_trans_audit_date",
-          "is_unique": false,
-          "is_primary": false,
-          "definition": "CREATE INDEX idx_trans_audit_date ON public.transaction_audit_log USING btree (changed_at DESC)",
-          "columns": "changed_atDESC"
         },
         {
           "index_name": "idx_trans_audit_table_record",
@@ -14205,28 +15364,28 @@
       ],
       "check_constraints": [
         {
-          "constraint_name": "2200_44541_3_not_null",
-          "check_clause": "uom_name IS NOT NULL"
-        },
-        {
-          "constraint_name": "2200_44541_4_not_null",
-          "check_clause": "uom_symbol IS NOT NULL"
-        },
-        {
-          "constraint_name": "2200_44541_2_not_null",
-          "check_clause": "uom_code IS NOT NULL"
+          "constraint_name": "uom_category_check",
+          "check_clause": "((uom_category)::text = ANY ((ARRAY['Weight'::character varying, 'Count'::character varying, 'Volume'::character varying, 'Other'::character varying])::text[]))"
         },
         {
           "constraint_name": "2200_44541_5_not_null",
           "check_clause": "uom_category IS NOT NULL"
         },
         {
-          "constraint_name": "uom_category_check",
-          "check_clause": "((uom_category)::text = ANY ((ARRAY['Weight'::character varying, 'Count'::character varying, 'Volume'::character varying, 'Other'::character varying])::text[]))"
+          "constraint_name": "2200_44541_2_not_null",
+          "check_clause": "uom_code IS NOT NULL"
         },
         {
           "constraint_name": "2200_44541_1_not_null",
           "check_clause": "uom_id IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_44541_4_not_null",
+          "check_clause": "uom_symbol IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_44541_3_not_null",
+          "check_clause": "uom_name IS NOT NULL"
         }
       ],
       "indexes": [
@@ -14245,17 +15404,17 @@
           "columns": "uom_id"
         },
         {
-          "index_name": "uom_master_uom_code_key",
-          "is_unique": true,
-          "is_primary": false,
-          "definition": "CREATE UNIQUE INDEX uom_master_uom_code_key ON public.uom_master USING btree (uom_code)",
-          "columns": "uom_code"
-        },
-        {
           "index_name": "idx_uom_code",
           "is_unique": false,
           "is_primary": false,
           "definition": "CREATE INDEX idx_uom_code ON public.uom_master USING btree (uom_code)",
+          "columns": "uom_code"
+        },
+        {
+          "index_name": "uom_master_uom_code_key",
+          "is_unique": true,
+          "is_primary": false,
+          "definition": "CREATE UNIQUE INDEX uom_master_uom_code_key ON public.uom_master USING btree (uom_code)",
           "columns": "uom_code"
         }
       ],
@@ -17104,12 +18263,12 @@
       "unique_constraints": null,
       "check_constraints": [
         {
-          "constraint_name": "2200_47769_2_not_null",
-          "check_clause": "calculation_date IS NOT NULL"
-        },
-        {
           "constraint_name": "2200_47769_1_not_null",
           "check_clause": "tracking_id IS NOT NULL"
+        },
+        {
+          "constraint_name": "2200_47769_2_not_null",
+          "check_clause": "calculation_date IS NOT NULL"
         }
       ],
       "indexes": [
@@ -17395,11 +18554,11 @@
       ],
       "indexes": [
         {
-          "index_name": "unique_month_year",
-          "is_unique": true,
+          "index_name": "idx_writeoff_monthly_year",
+          "is_unique": false,
           "is_primary": false,
-          "definition": "CREATE UNIQUE INDEX unique_month_year ON public.writeoff_monthly_summary USING btree (month_year)",
-          "columns": "month_year"
+          "definition": "CREATE INDEX idx_writeoff_monthly_year ON public.writeoff_monthly_summary USING btree (month_year DESC)",
+          "columns": "month_yearDESC"
         },
         {
           "index_name": "writeoff_monthly_summary_pkey",
@@ -17409,11 +18568,11 @@
           "columns": "summary_id"
         },
         {
-          "index_name": "idx_writeoff_monthly_year",
-          "is_unique": false,
+          "index_name": "unique_month_year",
+          "is_unique": true,
           "is_primary": false,
-          "definition": "CREATE INDEX idx_writeoff_monthly_year ON public.writeoff_monthly_summary USING btree (month_year DESC)",
-          "columns": "month_yearDESC"
+          "definition": "CREATE UNIQUE INDEX unique_month_year ON public.writeoff_monthly_summary USING btree (month_year)",
+          "columns": "month_year"
         }
       ],
       "triggers": null,
@@ -17528,18 +18687,18 @@
       ],
       "indexes": [
         {
-          "index_name": "writeoff_reasons_pkey",
-          "is_unique": true,
-          "is_primary": false,
-          "definition": "CREATE UNIQUE INDEX writeoff_reasons_pkey ON public.writeoff_reasons USING btree (reason_code)",
-          "columns": "reason_code"
-        },
-        {
           "index_name": "idx_writeoff_reasons_active",
           "is_unique": false,
           "is_primary": false,
           "definition": "CREATE INDEX idx_writeoff_reasons_active ON public.writeoff_reasons USING btree (is_active)",
           "columns": "is_active"
+        },
+        {
+          "index_name": "writeoff_reasons_pkey",
+          "is_unique": true,
+          "is_primary": false,
+          "definition": "CREATE UNIQUE INDEX writeoff_reasons_pkey ON public.writeoff_reasons USING btree (reason_code)",
+          "columns": "reason_code"
         }
       ],
       "triggers": [
@@ -17825,18 +18984,18 @@
           "columns": "financial_year"
         },
         {
-          "index_name": "idx_year_end_status",
-          "is_unique": false,
-          "is_primary": false,
-          "definition": "CREATE INDEX idx_year_end_status ON public.year_end_closing USING btree (status)",
-          "columns": "status"
-        },
-        {
           "index_name": "year_end_closing_pkey",
           "is_unique": true,
           "is_primary": false,
           "definition": "CREATE UNIQUE INDEX year_end_closing_pkey ON public.year_end_closing USING btree (closing_id)",
           "columns": "closing_id"
+        },
+        {
+          "index_name": "idx_year_end_status",
+          "is_unique": false,
+          "is_primary": false,
+          "definition": "CREATE INDEX idx_year_end_status ON public.year_end_closing USING btree (status)",
+          "columns": "status"
         }
       ],
       "triggers": null,
@@ -18122,6 +19281,30 @@
       "cycle_option": "NO"
     },
     {
+      "sequence_name": "adjustment_seq",
+      "start_value": "1",
+      "minimum_value": "1",
+      "maximum_value": "9223372036854775807",
+      "increment": "1",
+      "cycle_option": "NO"
+    },
+    {
+      "sequence_name": "field_edit_rules_rule_id_seq",
+      "start_value": "1",
+      "minimum_value": "1",
+      "maximum_value": "2147483647",
+      "increment": "1",
+      "cycle_option": "NO"
+    },
+    {
+      "sequence_name": "purchase_return_seq",
+      "start_value": "1",
+      "minimum_value": "1",
+      "maximum_value": "9223372036854775807",
+      "increment": "1",
+      "cycle_option": "NO"
+    },
+    {
       "sequence_name": "cost_element_activities_id_seq",
       "start_value": "1",
       "minimum_value": "1",
@@ -18403,6 +19586,30 @@
     },
     {
       "sequence_name": "bom_category_mapping_mapping_id_seq",
+      "start_value": "1",
+      "minimum_value": "1",
+      "maximum_value": "2147483647",
+      "increment": "1",
+      "cycle_option": "NO"
+    },
+    {
+      "sequence_name": "purchase_returns_return_id_seq",
+      "start_value": "1",
+      "minimum_value": "1",
+      "maximum_value": "2147483647",
+      "increment": "1",
+      "cycle_option": "NO"
+    },
+    {
+      "sequence_name": "purchase_return_items_return_item_id_seq",
+      "start_value": "1",
+      "minimum_value": "1",
+      "maximum_value": "2147483647",
+      "increment": "1",
+      "cycle_option": "NO"
+    },
+    {
+      "sequence_name": "transaction_adjustments_adjustment_id_seq",
       "start_value": "1",
       "minimum_value": "1",
       "maximum_value": "2147483647",

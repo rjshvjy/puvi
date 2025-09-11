@@ -1,6 +1,6 @@
 # PUVI Database Schema
-# Generated: 2025-09-09 06:18:30.392237
-# Total Tables: 90
+# Generated: 2025-09-11 10:28:57.712609
+# Total Tables: 94
 
 === available_oil_types ===
 oil_type: character varying(50)
@@ -307,6 +307,20 @@ affects_downstream: boolean DEFAULT false
 notes: text
 created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 
+=== field_edit_rules ===
+rule_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('field_edit_rules_rule_id_seq'::regclass)
+table_name: character varying(100) [UQ] NOT NULL
+field_name: character varying(100) [UQ] NOT NULL
+classification: character varying(20) NOT NULL
+dependency_check_sql: text
+edit_condition: text
+reason_template: text
+affects_calculation: boolean DEFAULT false
+affects_inventory: boolean DEFAULT false
+affects_traceability: boolean DEFAULT false
+display_order: integer(32,0) DEFAULT 0
+is_active: boolean DEFAULT true
+
 === inventory ===
 inventory_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('inventory_inventory_id_seq'::regclass)
 material_id: integer(32,0) [FK] -> materials.material_id
@@ -404,6 +418,10 @@ status: character varying(20) DEFAULT 'active'::character varying
 edited_by: character varying(255)
 edited_at: timestamp without time zone
 boundary_crossed: boolean DEFAULT false
+reversal_status: character varying(20)
+reversed_by: integer(32,0) [FK] -> material_writeoffs.writeoff_id
+reversal_of: integer(32,0) [FK] -> material_writeoffs.writeoff_id
+adjustment_type: character varying(50)
 
 === materials ===
 material_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('materials_material_id_seq'::regclass)
@@ -575,6 +593,39 @@ status: character varying(20) DEFAULT 'active'::character varying
 edited_by: character varying(255)
 edited_at: timestamp without time zone
 
+=== purchase_return_items ===
+return_item_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('purchase_return_items_return_item_id_seq'::regclass)
+return_id: integer(32,0) [FK] -> purchase_returns.return_id
+original_item_id: integer(32,0) [FK] -> purchase_items.item_id
+material_id: integer(32,0) [FK] -> materials.material_id
+quantity_returned: numeric(10,2) NOT NULL
+rate: numeric(10,2) NOT NULL
+amount: numeric(12,2) NOT NULL
+gst_amount: numeric(10,2)
+reason: text
+batch_affected: character varying(50)
+landed_cost_reversed: numeric(10,2)
+
+=== purchase_returns ===
+return_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('purchase_returns_return_id_seq'::regclass)
+return_code: character varying(50) [UQ] NOT NULL
+original_purchase_id: integer(32,0) [FK] -> purchases.purchase_id
+supplier_id: integer(32,0) [FK] -> suppliers.supplier_id
+return_date: integer(32,0) NOT NULL
+return_type: character varying(50)
+debit_note_number: character varying(50)
+debit_note_date: integer(32,0)
+total_return_value: numeric(12,2)
+gst_reversed: numeric(10,2)
+transport_deduction: numeric(10,2)
+status: character varying(20) DEFAULT 'draft'::character varying
+approval_status: character varying(20) DEFAULT 'pending'::character varying
+approved_by: character varying(100)
+approved_at: timestamp without time zone
+notes: text
+created_by: character varying(100)
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+
 === purchases ===
 purchase_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('purchases_purchase_id_seq'::regclass)
 material_id: integer(32,0) [FK] -> materials.material_id
@@ -598,6 +649,11 @@ status: character varying(20) DEFAULT 'active'::character varying
 traceable_code: character varying(50) [UQ]
 boundary_crossed: boolean DEFAULT false
 created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
+reversal_status: character varying(20)
+reversed_by: integer(32,0) [FK] -> purchases.purchase_id
+reversal_of: integer(32,0) [FK] -> purchases.purchase_id
+replaces: integer(32,0) [FK] -> purchases.purchase_id
+is_reversal: boolean DEFAULT false
 
 === purchases_backup ===
 purchase_id: integer(32,0)
@@ -929,6 +985,24 @@ tag_name: character varying(100) [UQ] NOT NULL
 tag_category: character varying(50)
 created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 is_active: boolean DEFAULT true
+
+=== transaction_adjustments ===
+adjustment_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('transaction_adjustments_adjustment_id_seq'::regclass)
+adjustment_code: character varying(50) [UQ] NOT NULL
+transaction_type: character varying(50) NOT NULL
+original_transaction_id: integer(32,0) NOT NULL
+adjustment_type: character varying(50)
+adjustment_date: integer(32,0) NOT NULL
+impact_description: text
+financial_impact: numeric(12,2)
+inventory_impact: jsonb
+cannot_reverse_reason: text
+approved_by: character varying(100)
+approval_date: timestamp without time zone
+status: character varying(20) DEFAULT 'pending'::character varying
+notes: text
+created_by: character varying(100)
+created_at: timestamp without time zone DEFAULT CURRENT_TIMESTAMP
 
 === transaction_audit_log ===
 audit_id: integer(32,0) [PK] NOT NULL DEFAULT nextval('transaction_audit_log_audit_id_seq'::regclass)
