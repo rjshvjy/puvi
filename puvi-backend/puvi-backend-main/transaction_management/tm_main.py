@@ -1,11 +1,11 @@
 """
-Transaction Manager - Main Module
+Transaction Manager - Main Module (UPDATED VERSION)
 File Path: puvi-backend/puvi-backend-main/transaction_management/tm_main.py
-Purpose: Centralized transaction editing and deletion management
-Implements: Edit/Delete operations for all transaction types with dependency checking
+Purpose: Centralized transaction management with two-stream correction system
+Version: 2.0 - Implements Returns/Reversals Pattern
 
 This is the main entry point for the Transaction Manager module that provides
-unified edit/delete capabilities across all transaction types.
+unified transaction management with return documents and reversal entries.
 """
 
 from flask import Blueprint, request, jsonify
@@ -22,8 +22,23 @@ from .tm_configs import (
     get_modules_by_category
 )
 
-# Import operation modules
+# Import NEW operation modules with return/reversal functions
 from .tm_input_operations import (
+    # NEW: Return and reversal functions
+    validate_purchase_return,
+    create_purchase_return,
+    check_reversal_possibility,
+    reverse_and_correct_purchase,
+    create_adjustment_entry,
+    adjust_writeoff,
+    list_purchases_with_correction_status,
+    list_purchase_returns,
+    list_writeoffs_with_status,
+    get_purchase_for_correction,
+    get_writeoff_for_adjustment,
+    approve_purchase_return,
+    get_correction_summary,
+    # Legacy functions (kept for backward compatibility during transition)
     get_purchase_for_edit,
     update_purchase,
     delete_purchase,
@@ -65,23 +80,30 @@ from .tm_output_operations import (
 tm_bp = Blueprint('transaction_manager', __name__)
 
 # ============================================
-# MODULE OPERATIONS MAPPING
+# MODULE OPERATIONS MAPPING (UPDATED)
 # ============================================
 
 MODULE_OPERATIONS = {
     'purchases': {
         'type': 'input',
-        'get': get_purchase_for_edit,
-        'update': update_purchase,
-        'delete': delete_purchase,
-        'list': list_purchases_with_status
+        'get': get_purchase_for_correction,  # Changed to new function
+        'update': update_purchase,  # Legacy - will be phased out
+        'delete': delete_purchase,  # Legacy - will be phased out
+        'list': list_purchases_with_correction_status,  # Changed to new function
+        # NEW operations
+        'validate_return': validate_purchase_return,
+        'create_return': create_purchase_return,
+        'check_reversal': check_reversal_possibility,
+        'reverse_and_correct': reverse_and_correct_purchase
     },
     'material_writeoffs': {
         'type': 'input',
-        'get': get_writeoff_for_edit,
-        'update': update_writeoff,
-        'delete': delete_writeoff,
-        'list': list_writeoffs_with_status
+        'get': get_writeoff_for_adjustment,  # Changed to new function
+        'update': update_writeoff,  # Legacy
+        'delete': delete_writeoff,  # Legacy
+        'list': list_writeoffs_with_status,
+        # NEW operations
+        'adjust': adjust_writeoff  # Writeoffs can only be adjusted, not reversed
     },
     'batch': {
         'type': 'production',
@@ -134,40 +156,284 @@ def validate_module(module_name):
 
 def get_user_from_request():
     """Extract user from request headers or session"""
-    # For now, return a default user
-    # In production, this would extract from JWT or session
     return request.headers.get('X-User', 'System')
 
 # ============================================
-# MAIN API ENDPOINTS
+# NEW: RETURN AND REVERSAL ENDPOINTS
+# ============================================
+
+@tm_bp.route('/api/tm/purchase/returns/validate', methods=['POST'])
+def validate_purchase_return_endpoint():
+    """Validate if a purchase can be returned"""
+    try:
+        data = request.get_json()
+        purchase_id = data.get('purchase_id')
+        return_items = data.get('items', [])
+        
+        if not purchase_id:
+            return jsonify({'success': False, 'error': 'Purchase ID required'}), 400
+        
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        validation = validate_purchase_return(purchase_id, return_items, cur)
+        
+        close_connection(conn, cur)
+        
+        return jsonify({
+            'success': True,
+            'validation': validation
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@tm_bp.route('/api/tm/purchase/returns/create', methods=['POST'])
+def create_purchase_return_endpoint():
+    """Create a purchase return with inventory reversal"""
+    try:
+        data = request.get_json()
+        purchase_id = data.get('purchase_id')
+        return_data = data.get('return_data')
+        user = get_user_from_request()
+        
+        if not purchase_id or not return_data:
+            return jsonify({'success': False, 'error': 'Missing required data'}), 400
+        
+        result = create_purchase_return(purchase_id, return_data, user)
+        
+        if result.get('success'):
+            return jsonify(result)
+        else:
+            return jsonify(result), 400
+            
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@tm_bp.route('/api/tm/purchase/returns/list', methods=['GET'])
+def list_purchase_returns_endpoint():
+    """List all purchase returns with filters"""
+    try:
+        filters = {}
+        for key in request.args:
+            filters[key] = request.args.get(key)
+        
+        result = list_purchase_returns(filters)
+        
+        return jsonify(result)
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@tm_bp.route('/api/tm/purchase/returns/<int:return_id>/approve', methods=['POST'])
+def approve_purchase_return_endpoint(return_id):
+    """Approve a purchase return"""
+    try:
+        user = get_user_from_request()
+        result = approve_purchase_return(return_id, user)
+        
+        if result.get('success'):
+            return jsonify(result)
+        else:
+            return jsonify(result), 400
+            
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@tm_bp.route('/api/tm/purchase/reverse', methods=['POST'])
+def reverse_purchase_endpoint():
+    """Create reversal and correction entries for a purchase"""
+    try:
+        data = request.get_json()
+        purchase_id = data.get('purchase_id')
+        corrections = data.get('corrections', {})
+        reason = data.get('reason')
+        user = get_user_from_request()
+        
+        if not purchase_id:
+            return jsonify({'success': False, 'error': 'Purchase ID required'}), 400
+        
+        result = reverse_and_correct_purchase(purchase_id, corrections, user, reason)
+        
+        if result.get('success'):
+            return jsonify(result)
+        else:
+            return jsonify(result), 400
+            
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@tm_bp.route('/api/tm/<module>/check-reversal/<int:record_id>', methods=['GET'])
+def check_reversal_possibility_endpoint(module, record_id):
+    """Check if a transaction can be reversed"""
+    try:
+        is_valid, error = validate_module(module)
+        if not is_valid:
+            return jsonify({'success': False, 'error': error}), 400
+        
+        config = get_module_config(module)
+        table_name = config.get('table')
+        
+        conn = get_db_connection()
+        cur = conn.cursor()
+        
+        result = check_reversal_possibility(table_name, record_id, cur)
+        
+        close_connection(conn, cur)
+        
+        return jsonify({
+            'success': True,
+            'reversal_check': result
+        })
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@tm_bp.route('/api/tm/adjustment/create', methods=['POST'])
+def create_adjustment_endpoint():
+    """Create an adjustment entry when reversal is not possible"""
+    try:
+        data = request.get_json()
+        transaction_type = data.get('transaction_type')
+        transaction_id = data.get('transaction_id')
+        adjustment_data = data.get('adjustment_data')
+        user = get_user_from_request()
+        
+        if not all([transaction_type, transaction_id, adjustment_data]):
+            return jsonify({'success': False, 'error': 'Missing required data'}), 400
+        
+        result = create_adjustment_entry(transaction_type, transaction_id, adjustment_data, user)
+        
+        if result.get('success'):
+            return jsonify(result)
+        else:
+            return jsonify(result), 400
+            
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@tm_bp.route('/api/tm/writeoff/adjust/<int:writeoff_id>', methods=['POST'])
+def adjust_writeoff_endpoint(writeoff_id):
+    """Adjust a writeoff (safe fields only)"""
+    try:
+        data = request.get_json()
+        user = get_user_from_request()
+        
+        result = adjust_writeoff(writeoff_id, data, user)
+        
+        if result.get('success'):
+            return jsonify(result)
+        else:
+            return jsonify(result), 400
+            
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@tm_bp.route('/api/tm/corrections/summary', methods=['GET'])
+def get_corrections_summary():
+    """Get summary of all corrections in a period"""
+    try:
+        date_from = request.args.get('date_from')
+        date_to = request.args.get('date_to')
+        
+        result = get_correction_summary(date_from, date_to)
+        
+        return jsonify(result)
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+# ============================================
+# ENHANCED STATUS ENDPOINTS
+# ============================================
+
+@tm_bp.route('/api/tm/purchases/status', methods=['GET'])
+def get_purchases_with_correction_status():
+    """Get purchases with return/reversal status"""
+    try:
+        filters = {}
+        for key in request.args:
+            filters[key] = request.args.get(key)
+        
+        result = list_purchases_with_correction_status(filters)
+        
+        return jsonify(result)
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+@tm_bp.route('/api/tm/writeoffs/status', methods=['GET'])
+def get_writeoffs_with_adjustment_status():
+    """Get writeoffs with adjustment capability status"""
+    try:
+        filters = {}
+        for key in request.args:
+            filters[key] = request.args.get(key)
+        
+        result = list_writeoffs_with_status(filters)
+        
+        return jsonify(result)
+        
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
+# ============================================
+# LEGACY API ENDPOINTS (Kept for compatibility)
 # ============================================
 
 @tm_bp.route('/api/transaction-manager/<module>/list', methods=['GET'])
 def list_transactions(module):
     """List transactions with edit/delete status"""
     try:
-        # Validate module
         is_valid, error = validate_module(module)
         if not is_valid:
             return jsonify({'success': False, 'error': error}), 400
         
-        # Get filters from query params
         filters = {}
         for key in request.args:
             filters[key] = request.args.get(key)
         
-        # Get list function for module
         list_func = MODULE_OPERATIONS[module].get('list')
         if not list_func:
             return jsonify({'success': False, 'error': 'List operation not available'}), 400
         
-        # Execute list operation
         result = list_func(filters)
         
         if result.get('success'):
-            # Normalize response format for frontend
-            # Backend returns module-specific keys (purchases, batches, etc.)
-            # Frontend expects 'records' or 'data'
+            # Normalize response format
             module_data_keys = {
                 'purchases': 'purchases',
                 'material_writeoffs': 'writeoffs',
@@ -194,25 +460,20 @@ def list_transactions(module):
 
 @tm_bp.route('/api/transaction-manager/<module>/<int:record_id>', methods=['GET'])
 def get_transaction(module, record_id):
-    """Get transaction details for editing"""
+    """Get transaction details for editing/correction"""
     try:
-        # Validate module
         is_valid, error = validate_module(module)
         if not is_valid:
             return jsonify({'success': False, 'error': error}), 400
         
-        # Get function for module
         get_func = MODULE_OPERATIONS[module].get('get')
         if not get_func:
             return jsonify({'success': False, 'error': 'Get operation not available'}), 400
         
-        # Execute get operation
         result = get_func(record_id)
         
         if result.get('success'):
-            # Normalize response format for frontend
-            # Backend returns module-specific keys (purchase, batch, etc.)
-            # Frontend expects 'data' or 'record'
+            # Normalize response format
             module_data_keys = {
                 'purchases': 'purchase',
                 'material_writeoffs': 'writeoff',
@@ -226,7 +487,7 @@ def get_transaction(module, record_id):
             data_key = module_data_keys.get(module)
             if data_key and data_key in result:
                 result['record'] = result[data_key]
-                result['data'] = result[data_key]  # Support both keys
+                result['data'] = result[data_key]
             
             return jsonify(result)
         else:
@@ -240,27 +501,33 @@ def get_transaction(module, record_id):
 
 @tm_bp.route('/api/transaction-manager/<module>/<int:record_id>', methods=['PUT'])
 def update_transaction(module, record_id):
-    """Update transaction"""
+    """Update transaction (LEGACY - will be replaced by corrections)"""
     try:
-        # Validate module
         is_valid, error = validate_module(module)
         if not is_valid:
             return jsonify({'success': False, 'error': error}), 400
         
-        # Get update function for module
+        # Check if this should use new correction pattern
+        if module == 'purchases':
+            # Redirect to appropriate correction method
+            return jsonify({
+                'success': False,
+                'error': 'Direct edits deprecated. Use returns or reversals.',
+                'suggestions': {
+                    'physical_return': '/api/tm/purchase/returns/create',
+                    'clerical_error': '/api/tm/purchase/reverse'
+                }
+            }), 400
+        
         update_func = MODULE_OPERATIONS[module].get('update')
         if not update_func:
             return jsonify({'success': False, 'error': 'Update operation not available'}), 400
         
-        # Get request data
         data = request.get_json()
         if not data:
             return jsonify({'success': False, 'error': 'No data provided'}), 400
         
-        # Get user
         user = get_user_from_request()
-        
-        # Execute update operation
         result = update_func(record_id, data, user)
         
         if result.get('success'):
@@ -276,26 +543,31 @@ def update_transaction(module, record_id):
 
 @tm_bp.route('/api/transaction-manager/<module>/<int:record_id>', methods=['DELETE'])
 def delete_transaction(module, record_id):
-    """Delete (soft delete) transaction"""
+    """Delete transaction (LEGACY - will be replaced by corrections)"""
     try:
-        # Validate module
         is_valid, error = validate_module(module)
         if not is_valid:
             return jsonify({'success': False, 'error': error}), 400
         
-        # Get delete function for module
+        # Check if this should use new correction pattern
+        if module in ['purchases', 'material_writeoffs']:
+            return jsonify({
+                'success': False,
+                'error': 'Direct deletion deprecated. Use appropriate correction method.',
+                'suggestions': {
+                    'purchases': 'Use returns or reversals',
+                    'writeoffs': 'Use adjustments'
+                }
+            }), 400
+        
         delete_func = MODULE_OPERATIONS[module].get('delete')
         if not delete_func:
             return jsonify({'success': False, 'error': 'Delete operation not available'}), 400
         
-        # Get reason from request
         data = request.get_json() or {}
         reason = data.get('reason', '')
-        
-        # Get user
         user = get_user_from_request()
         
-        # Execute delete operation
         result = delete_func(record_id, reason, user)
         
         if result.get('success'):
@@ -313,23 +585,26 @@ def delete_transaction(module, record_id):
 def check_permissions(module, record_id):
     """Check edit/delete permissions for a record"""
     try:
-        # Validate module
         is_valid, error = validate_module(module)
         if not is_valid:
             return jsonify({'success': False, 'error': error}), 400
         
-        # Get function for module to fetch current state
         get_func = MODULE_OPERATIONS[module].get('get')
         if not get_func:
             return jsonify({'success': False, 'error': 'Operation not available'}), 400
         
-        # Get record with permissions
         result = get_func(record_id)
         
         if result.get('success'):
+            # Add correction options for new system
+            if module == 'purchases':
+                permissions = result.get('correction_options', {})
+            else:
+                permissions = result.get('permissions', {})
+            
             return jsonify({
                 'success': True,
-                'permissions': result.get('permissions', {})
+                'permissions': permissions
             })
         else:
             return jsonify(result), 404 if 'not found' in result.get('error', '').lower() else 500
@@ -345,19 +620,16 @@ def get_audit_trail(module, record_id):
     """Get audit trail for a record"""
     conn = None
     try:
-        # Validate module
         is_valid, error = validate_module(module)
         if not is_valid:
             return jsonify({'success': False, 'error': error}), 400
         
-        # Get table name from config
         config = get_module_config(module)
         table_name = config.get('table')
         
         conn = get_db_connection()
         cur = conn.cursor()
         
-        # Get audit trail
         cur.execute("""
             SELECT 
                 audit_id,
@@ -408,7 +680,6 @@ def get_audit_trail(module, record_id):
 def trigger_boundary_crossing(module, record_id):
     """Trigger boundary crossing for a transaction"""
     try:
-        # Only specific modules support boundary crossing
         if module not in ['sku_outbound']:
             return jsonify({
                 'success': False,
@@ -442,11 +713,11 @@ def trigger_boundary_crossing(module, record_id):
 
 @tm_bp.route('/api/transaction-manager/modules', methods=['GET'])
 def get_modules():
-    """Get list of available modules"""
+    """Get list of available modules with correction capabilities"""
     try:
         modules = []
         for module_name, config in TRANSACTION_MODULES.items():
-            modules.append({
+            module_info = {
                 'module': module_name,
                 'display_name': config.get('display_name', module_name),
                 'table': config.get('table'),
@@ -454,13 +725,27 @@ def get_modules():
                 'has_items': 'items_table' in config,
                 'supports_boundary': module_name in ['purchases', 'batch', 'blend_batches', 
                                                      'sku_production', 'sku_outbound', 
-                                                     'oil_cake_sales', 'material_writeoffs']
-            })
+                                                     'oil_cake_sales', 'material_writeoffs'],
+                'correction_methods': []
+            }
+            
+            # Add correction methods based on module
+            if module_name == 'purchases':
+                module_info['correction_methods'] = ['return', 'reversal', 'adjustment']
+            elif module_name == 'material_writeoffs':
+                module_info['correction_methods'] = ['adjustment']
+            elif module_name in ['batch', 'blend_batches', 'sku_production']:
+                module_info['correction_methods'] = ['reversal', 'adjustment']
+            elif module_name in ['sku_outbound', 'oil_cake_sales']:
+                module_info['correction_methods'] = ['return']
+            
+            modules.append(module_info)
         
         return jsonify({
             'success': True,
             'modules': modules,
-            'total': len(modules)
+            'total': len(modules),
+            'correction_system': 'two-stream'  # Indicate new system is active
         })
         
     except Exception as e:
@@ -473,17 +758,12 @@ def get_modules():
 def get_module_config_endpoint(module):
     """Get detailed configuration for a specific module"""
     try:
-        # Validate module
         is_valid, error = validate_module(module)
         if not is_valid:
             return jsonify({'success': False, 'error': error}), 400
         
         config = get_module_config(module)
         
-        # Add operation type
-        config['operation_type'] = MODULE_OPERATIONS.get(module, {}).get('type', 'unknown')
-        
-        # Remove sensitive information
         safe_config = {
             'module': module,
             'display_name': config.get('display_name'),
@@ -493,8 +773,23 @@ def get_module_config_endpoint(module):
             'safe_fields': config.get('safe_fields', {}),
             'cascade_fields': config.get('cascade_fields', {}),
             'list_fields': config.get('list_fields', []),
-            'operation_type': config.get('operation_type')
+            'operation_type': MODULE_OPERATIONS.get(module, {}).get('type', 'unknown'),
+            'correction_capabilities': {}
         }
+        
+        # Add correction capabilities
+        if module == 'purchases':
+            safe_config['correction_capabilities'] = {
+                'supports_returns': True,
+                'supports_reversals': True,
+                'supports_adjustments': True
+            }
+        elif module == 'material_writeoffs':
+            safe_config['correction_capabilities'] = {
+                'supports_returns': False,
+                'supports_reversals': False,
+                'supports_adjustments': True
+            }
         
         return jsonify({
             'success': True,
@@ -508,15 +803,12 @@ def get_module_config_endpoint(module):
         }), 500
 
 # ============================================
-# STATISTICS ENDPOINTS - FIXED VERSION
+# STATISTICS ENDPOINTS
 # ============================================
 
 @tm_bp.route('/api/transaction-manager/stats', methods=['GET'])
 def get_transaction_stats():
-    """
-    Get statistics about editable/locked transactions
-    FIXED: Handles tables without status column
-    """
+    """Get statistics about transactions and corrections"""
     conn = None
     try:
         conn = get_db_connection()
@@ -528,40 +820,39 @@ def get_transaction_stats():
         for module_name, config in TRANSACTION_MODULES.items():
             table = config['table']
             
-            # Check which columns exist in this table
+            # Check which columns exist
             cur.execute("""
                 SELECT column_name 
                 FROM information_schema.columns 
                 WHERE table_name = %s 
-                AND column_name IN ('status', 'boundary_crossed', 'created_at')
+                AND column_name IN ('status', 'boundary_crossed', 'created_at', 'reversal_status')
             """, (table,))
             
             existing_columns = [row[0] for row in cur.fetchall()]
             
-            # Build dynamic query based on available columns
+            # Build dynamic query
             select_parts = ["COUNT(*) as total"]
             
-            # Handle status column
             if 'status' in existing_columns:
                 select_parts.append("COUNT(CASE WHEN status = 'active' THEN 1 END) as active")
                 select_parts.append("COUNT(CASE WHEN status = 'deleted' THEN 1 END) as deleted")
             else:
-                # For tables without status column (like cost_override_log, batch_time_tracking)
-                # count all records as active
                 select_parts.append("COUNT(*) as active")
                 select_parts.append("0 as deleted")
             
-            # Handle created_at column
             if 'created_at' in existing_columns:
                 select_parts.append("COUNT(CASE WHEN created_at::date = CURRENT_DATE THEN 1 END) as today")
             else:
                 select_parts.append("0 as today")
             
-            # Handle boundary_crossed column
             if 'boundary_crossed' in existing_columns:
                 select_parts.append("COUNT(CASE WHEN boundary_crossed = true THEN 1 END) as locked")
             
-            # Execute query
+            # NEW: Add reversal status counts
+            if 'reversal_status' in existing_columns:
+                select_parts.append("COUNT(CASE WHEN reversal_status = 'reversed' THEN 1 END) as reversed")
+                select_parts.append("COUNT(CASE WHEN reversal_status IN ('reversal_entry', 'correction_entry') THEN 1 END) as corrections")
+            
             query = f"SELECT {', '.join(select_parts)} FROM {table}"
             cur.execute(query)
             
@@ -573,9 +864,30 @@ def get_transaction_stats():
                     'deleted': row[2],
                     'created_today': row[3]
                 }
-                # Add locked count if boundary_crossed column exists
+                
+                col_index = 4
                 if 'boundary_crossed' in existing_columns:
-                    stats[module_name]['locked'] = row[4]
+                    stats[module_name]['locked'] = row[col_index]
+                    col_index += 1
+                
+                if 'reversal_status' in existing_columns:
+                    stats[module_name]['reversed'] = row[col_index]
+                    stats[module_name]['corrections'] = row[col_index + 1]
+        
+        # Get return statistics
+        cur.execute("""
+            SELECT COUNT(*) as total_returns,
+                   COUNT(CASE WHEN status = 'draft' THEN 1 END) as pending,
+                   COUNT(CASE WHEN status = 'approved' THEN 1 END) as approved
+            FROM purchase_returns
+        """)
+        returns_row = cur.fetchone()
+        if returns_row:
+            stats['purchase_returns'] = {
+                'total': returns_row[0],
+                'pending': returns_row[1],
+                'approved': returns_row[2]
+            }
         
         close_connection(conn, cur)
         
@@ -599,16 +911,26 @@ def get_transaction_stats():
 
 @tm_bp.route('/api/transaction-manager/health', methods=['GET'])
 def health_check():
-    """
-    Health check for Transaction Manager
-    """
+    """Health check for Transaction Manager with correction system status"""
     try:
         return jsonify({
             'success': True,
             'status': 'healthy',
+            'version': '2.0',
+            'correction_system': 'two-stream',
             'modules_loaded': len(MODULE_OPERATIONS),
-            'operations_available': ['list', 'get', 'edit', 'delete', 'permissions', 'audit'],
-            'boundary_crossing': 'enabled',
+            'operations_available': [
+                'list', 'get', 'edit', 'delete',  # Legacy
+                'return', 'reverse', 'adjust',     # New correction methods
+                'permissions', 'audit'
+            ],
+            'features': {
+                'purchase_returns': 'enabled',
+                'reversals': 'enabled',
+                'adjustments': 'enabled',
+                'boundary_crossing': 'enabled',
+                'field_classification': 'enabled'
+            },
             'timestamp': datetime.now().isoformat()
         })
     except Exception as e:
