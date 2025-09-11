@@ -1,5 +1,5 @@
 # Feature Pack: WRITEOFF-TRENDS
-Generated: 2025-09-11T10:28:59.543Z
+Generated: 2025-09-11T10:51:35.889Z
 Routes: 2 | Tables: 15 | Files: 2
 
 ## Table of Contents
