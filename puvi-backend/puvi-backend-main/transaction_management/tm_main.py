@@ -80,6 +80,55 @@ from .tm_output_operations import (
 tm_bp = Blueprint('transaction_manager', __name__)
 
 # ============================================
+# LEGACY FUNCTION PLACEHOLDERS
+# These are temporary stubs until frontend migrates to new endpoints
+# ============================================
+
+def get_purchase_for_edit(purchase_id):
+    """Legacy stub - redirects to new correction function"""
+    return get_purchase_for_correction(purchase_id)
+
+def update_purchase(purchase_id, data, user='System'):
+    """Legacy stub - deprecated"""
+    return {
+        'success': False, 
+        'error': 'Direct edits deprecated. Use returns or reversals.',
+        'use_instead': '/api/tm/purchase/returns/create or /api/tm/purchase/reverse'
+    }
+
+def delete_purchase(purchase_id, reason='', user='System'):
+    """Legacy stub - deprecated"""
+    return {
+        'success': False,
+        'error': 'Direct deletion deprecated. Use returns or reversals.',
+        'use_instead': '/api/tm/purchase/returns/create or /api/tm/purchase/reverse'
+    }
+
+def get_writeoff_for_edit(writeoff_id):
+    """Legacy stub - redirects to new adjustment function"""
+    return get_writeoff_for_adjustment(writeoff_id)
+
+def update_writeoff(writeoff_id, data, user='System'):
+    """Legacy stub - redirects to adjustment"""
+    return adjust_writeoff(writeoff_id, data, user)
+
+def delete_writeoff(writeoff_id, reason='', user='System'):
+    """Legacy stub - deprecated"""
+    return {
+        'success': False,
+        'error': 'Writeoffs cannot be deleted. Use adjustments for corrections.',
+        'use_instead': '/api/tm/writeoff/adjust'
+    }
+
+def list_purchases_with_status(filters=None):
+    """Legacy stub - redirects to new status function"""
+    return list_purchases_with_correction_status(filters)
+
+def list_writeoffs_with_status(filters=None):
+    """Legacy stub - already exists in new module"""
+    return list_writeoffs_with_status(filters)
+
+# ============================================
 # MODULE OPERATIONS MAPPING (UPDATED)
 # ============================================
 
