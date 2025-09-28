@@ -1,6 +1,6 @@
 # PUVI Database Schema Documentation
 
-Generated: 2025-09-21 01:56:49.698850
+Generated: 2025-09-28 01:57:32.076208
 Database Version: PostgreSQL 17.4 on aarch64-unknown-linux-gnu, compiled by gcc (GCC) 13.2.0, 64-bit
 Total Tables: 94
 
@@ -9,79 +9,79 @@ Total Tables: 94
 | Table | Columns | Rows | Size | Foreign Keys |
 |-------|---------|------|------|-------------|
 | available_oil_types | 1 | 0 | None | 0 |
-| batch | 36 | 9 | 96 kB | 2 |
+| batch | 36 | 0 | 96 kB | 2 |
 | batch_cost_details | 8 | 0 | 48 kB | 1 |
-| batch_cost_details_backup | 8 | 7 | 8192 bytes | 0 |
+| batch_cost_details_backup | 8 | 0 | 8192 bytes | 0 |
 | batch_cost_summary | 12 | 0 | None | 0 |
 | batch_dependencies | 9 | 0 | None | 0 |
-| batch_extended_costs | 14 | 81 | 112 kB | 2 |
+| batch_extended_costs | 14 | 0 | 112 kB | 2 |
 | batch_summary | 16 | 0 | None | 0 |
-| batch_time_tracking | 10 | 9 | 64 kB | 1 |
-| blend_batch_components | 15 | 4 | 64 kB | 1 |
-| blend_batches | 14 | 2 | 80 kB | 0 |
-| bom_category_mapping | 7 | 8 | 48 kB | 0 |
-| categories_master | 5 | 5 | 40 kB | 0 |
-| cost_element_activities | 5 | 9 | 48 kB | 0 |
-| cost_element_categories | 5 | 6 | 48 kB | 0 |
+| batch_time_tracking | 10 | 0 | 64 kB | 1 |
+| blend_batch_components | 15 | 0 | 64 kB | 1 |
+| blend_batches | 14 | 0 | 80 kB | 0 |
+| bom_category_mapping | 7 | 0 | 48 kB | 0 |
+| categories_master | 5 | 0 | 40 kB | 0 |
+| cost_element_activities | 5 | 0 | 48 kB | 0 |
+| cost_element_categories | 5 | 0 | 48 kB | 0 |
 | cost_element_rate_history | 9 | 0 | 16 kB | 1 |
-| cost_element_unit_types | 5 | 6 | 48 kB | 0 |
+| cost_element_unit_types | 5 | 0 | 48 kB | 0 |
 | cost_element_usage_stats | 8 | 0 | None | 0 |
-| cost_elements_backup | 7 | 8 | 8192 bytes | 0 |
-| cost_elements_master | 17 | 18 | 144 kB | 1 |
+| cost_elements_backup | 7 | 0 | 8192 bytes | 0 |
+| cost_elements_master | 17 | 0 | 144 kB | 1 |
 | cost_override_log | 10 | 0 | 32 kB | 1 |
-| customer_ship_to_locations | 16 | 4 | 80 kB | 1 |
-| customers | 12 | 4 | 80 kB | 0 |
-| edit_delete_rules | 8 | 63 | 48 kB | 0 |
-| field_edit_rules | 12 | 27 | 48 kB | 0 |
-| inventory | 13 | 14 | 72 kB | 2 |
+| customer_ship_to_locations | 16 | 0 | 80 kB | 1 |
+| customers | 12 | 0 | 80 kB | 0 |
+| edit_delete_rules | 8 | 0 | 48 kB | 0 |
+| field_edit_rules | 12 | 0 | 48 kB | 0 |
+| inventory | 13 | 0 | 72 kB | 2 |
 | inventory_by_tags | 6 | 0 | None | 0 |
-| locations_master | 23 | 14 | 96 kB | 1 |
-| masters_audit_log | 13 | 18 | 144 kB | 0 |
-| material_tags | 2 | 12 | 56 kB | 2 |
+| locations_master | 23 | 0 | 96 kB | 1 |
+| masters_audit_log | 13 | 0 | 144 kB | 0 |
+| material_tags | 2 | 0 | 56 kB | 2 |
 | material_tags_view | 8 | 0 | None | 0 |
-| material_writeoffs | 23 | 1 | 128 kB | 3 |
-| materials | 17 | 9 | 112 kB | 3 |
-| oil_cake_inventory | 11 | 9 | 40 kB | 1 |
+| material_writeoffs | 23 | 0 | 128 kB | 3 |
+| materials | 17 | 0 | 112 kB | 3 |
+| oil_cake_inventory | 11 | 0 | 40 kB | 1 |
 | oil_cake_sale_allocations | 10 | 0 | 8192 bytes | 2 |
 | oil_cake_sales | 18 | 0 | 16 kB | 0 |
 | opening_balances | 13 | 0 | 56 kB | 1 |
 | outbound_summary | 12 | 0 | None | 0 |
-| package_sizes_master | 10 | 3 | 40 kB | 0 |
-| production_units | 6 | 1 | 40 kB | 0 |
-| products | 6 | 2 | 24 kB | 0 |
+| package_sizes_master | 10 | 0 | 40 kB | 0 |
+| production_units | 6 | 0 | 40 kB | 0 |
+| products | 6 | 0 | 24 kB | 0 |
 | purchase_dependencies | 7 | 0 | None | 0 |
 | purchase_details_view | 20 | 0 | None | 0 |
-| purchase_items | 16 | 9 | 56 kB | 2 |
+| purchase_items | 16 | 0 | 56 kB | 2 |
 | purchase_return_items | 11 | 0 | 24 kB | 3 |
 | purchase_returns | 18 | 0 | 48 kB | 2 |
-| purchases | 27 | 9 | 112 kB | 5 |
-| purchases_backup | 13 | 9 | 8192 bytes | 0 |
+| purchases | 27 | 0 | 112 kB | 5 |
+| purchases_backup | 13 | 0 | 8192 bytes | 0 |
 | recipes | 7 | 0 | 24 kB | 1 |
 | sales_by_ship_to_location | 7 | 0 | None | 0 |
-| seed_batch_tracking | 5 | 4 | 40 kB | 0 |
-| serial_number_tracking | 6 | 7 | 40 kB | 2 |
+| seed_batch_tracking | 5 | 0 | 40 kB | 0 |
+| serial_number_tracking | 6 | 0 | 40 kB | 2 |
 | sku_batch_traceability | 12 | 0 | None | 0 |
-| sku_bom_details | 8 | 2 | 64 kB | 2 |
-| sku_bom_master | 9 | 1 | 64 kB | 1 |
+| sku_bom_details | 8 | 0 | 64 kB | 2 |
+| sku_bom_master | 9 | 0 | 64 kB | 1 |
 | sku_cost_overrides | 11 | 0 | 24 kB | 2 |
-| sku_expiry_tracking | 11 | 3 | 104 kB | 3 |
-| sku_inventory | 14 | 2 | 120 kB | 3 |
-| sku_master | 15 | 3 | 88 kB | 0 |
-| sku_material_consumption | 11 | 8 | 48 kB | 2 |
-| sku_mrp_history | 9 | 2 | 80 kB | 1 |
-| sku_oil_allocation | 10 | 4 | 40 kB | 1 |
-| sku_outbound | 33 | 3 | 160 kB | 4 |
-| sku_outbound_items | 21 | 3 | 88 kB | 2 |
-| sku_production | 32 | 4 | 96 kB | 2 |
+| sku_expiry_tracking | 11 | 0 | 104 kB | 3 |
+| sku_inventory | 14 | 0 | 120 kB | 3 |
+| sku_master | 15 | 0 | 88 kB | 0 |
+| sku_material_consumption | 11 | 0 | 48 kB | 2 |
+| sku_mrp_history | 9 | 0 | 80 kB | 1 |
+| sku_oil_allocation | 10 | 0 | 40 kB | 1 |
+| sku_outbound | 33 | 0 | 160 kB | 4 |
+| sku_outbound_items | 21 | 0 | 88 kB | 2 |
+| sku_production | 32 | 0 | 96 kB | 2 |
 | sku_production_dependencies | 7 | 0 | None | 0 |
 | stock_by_location | 11 | 0 | None | 0 |
-| subcategories_master | 8 | 18 | 56 kB | 1 |
-| suppliers | 11 | 4 | 80 kB | 0 |
-| system_configuration | 7 | 7 | 48 kB | 0 |
-| tags | 5 | 12 | 56 kB | 0 |
+| subcategories_master | 8 | 0 | 56 kB | 1 |
+| suppliers | 11 | 0 | 80 kB | 0 |
+| system_configuration | 7 | 0 | 48 kB | 0 |
+| tags | 5 | 0 | 56 kB | 0 |
 | transaction_adjustments | 16 | 0 | 32 kB | 0 |
 | transaction_audit_log | 14 | 0 | 48 kB | 0 |
-| uom_master | 10 | 3 | 72 kB | 0 |
+| uom_master | 10 | 0 | 72 kB | 0 |
 | v_active_materials | 17 | 0 | None | 0 |
 | v_active_suppliers | 11 | 0 | None | 0 |
 | v_cost_elements_by_activity | 13 | 0 | None | 0 |
@@ -97,9 +97,9 @@ Total Tables: 94
 | v_writeoff_impact_current | 8 | 0 | None | 0 |
 | v_writeoff_trends | 11 | 0 | None | 0 |
 | writeoff_dependencies | 7 | 0 | None | 0 |
-| writeoff_impact_tracking | 20 | 3 | 48 kB | 0 |
-| writeoff_monthly_summary | 19 | 1 | 56 kB | 0 |
-| writeoff_reasons | 7 | 10 | 40 kB | 0 |
+| writeoff_impact_tracking | 20 | 0 | 48 kB | 0 |
+| writeoff_monthly_summary | 19 | 0 | 56 kB | 0 |
+| writeoff_reasons | 7 | 0 | 40 kB | 0 |
 | year_end_closing | 18 | 0 | 40 kB | 1 |
 | yield_ranges | 7 | 0 | 8192 bytes | 0 |
 
@@ -124,7 +124,7 @@ Total Tables: 94
 ### batch
 
 **Statistics:**
-- Rows: 9
+- Rows: 0
 - Total Size: 96 kB
 - Table Size: 8192 bytes
 - Indexes Size: 80 kB
@@ -224,7 +224,7 @@ Total Tables: 94
 ### batch_cost_details_backup
 
 **Statistics:**
-- Rows: 7
+- Rows: 0
 - Total Size: 8192 bytes
 - Table Size: 8192 bytes
 - Indexes Size: 0 bytes
@@ -298,7 +298,7 @@ Total Tables: 94
 ### batch_extended_costs
 
 **Statistics:**
-- Rows: 81
+- Rows: 0
 - Total Size: 112 kB
 - Table Size: 24 kB
 - Indexes Size: 48 kB
@@ -366,7 +366,7 @@ Total Tables: 94
 ### batch_time_tracking
 
 **Statistics:**
-- Rows: 9
+- Rows: 0
 - Total Size: 64 kB
 - Table Size: 8192 bytes
 - Indexes Size: 48 kB
@@ -400,7 +400,7 @@ Total Tables: 94
 ### blend_batch_components
 
 **Statistics:**
-- Rows: 4
+- Rows: 0
 - Total Size: 64 kB
 - Table Size: 8192 bytes
 - Indexes Size: 48 kB
@@ -443,7 +443,7 @@ Total Tables: 94
 ### blend_batches
 
 **Statistics:**
-- Rows: 2
+- Rows: 0
 - Total Size: 80 kB
 - Table Size: 8192 bytes
 - Indexes Size: 64 kB
@@ -485,7 +485,7 @@ Total Tables: 94
 ### bom_category_mapping
 
 **Statistics:**
-- Rows: 8
+- Rows: 0
 - Total Size: 48 kB
 - Table Size: 8192 bytes
 - Indexes Size: 32 kB
@@ -515,7 +515,7 @@ Total Tables: 94
 ### categories_master
 
 **Statistics:**
-- Rows: 5
+- Rows: 0
 - Total Size: 40 kB
 - Table Size: 8192 bytes
 - Indexes Size: 32 kB
@@ -543,7 +543,7 @@ Total Tables: 94
 ### cost_element_activities
 
 **Statistics:**
-- Rows: 9
+- Rows: 0
 - Total Size: 48 kB
 - Table Size: 8192 bytes
 - Indexes Size: 32 kB
@@ -571,7 +571,7 @@ Total Tables: 94
 ### cost_element_categories
 
 **Statistics:**
-- Rows: 6
+- Rows: 0
 - Total Size: 48 kB
 - Table Size: 8192 bytes
 - Indexes Size: 32 kB
@@ -629,7 +629,7 @@ Total Tables: 94
 ### cost_element_unit_types
 
 **Statistics:**
-- Rows: 6
+- Rows: 0
 - Total Size: 48 kB
 - Table Size: 8192 bytes
 - Indexes Size: 32 kB
@@ -680,7 +680,7 @@ Total Tables: 94
 ### cost_elements_backup
 
 **Statistics:**
-- Rows: 8
+- Rows: 0
 - Total Size: 8192 bytes
 - Table Size: 8192 bytes
 - Indexes Size: 0 bytes
@@ -702,7 +702,7 @@ Total Tables: 94
 ### cost_elements_master
 
 **Statistics:**
-- Rows: 18
+- Rows: 0
 - Total Size: 144 kB
 - Table Size: 8192 bytes
 - Indexes Size: 96 kB
@@ -783,7 +783,7 @@ Total Tables: 94
 ### customer_ship_to_locations
 
 **Statistics:**
-- Rows: 4
+- Rows: 0
 - Total Size: 80 kB
 - Table Size: 8192 bytes
 - Indexes Size: 64 kB
@@ -826,7 +826,7 @@ Total Tables: 94
 ### customers
 
 **Statistics:**
-- Rows: 4
+- Rows: 0
 - Total Size: 80 kB
 - Table Size: 8192 bytes
 - Indexes Size: 64 kB
@@ -864,7 +864,7 @@ Total Tables: 94
 ### edit_delete_rules
 
 **Statistics:**
-- Rows: 63
+- Rows: 0
 - Total Size: 48 kB
 - Table Size: 8192 bytes
 - Indexes Size: 32 kB
@@ -895,7 +895,7 @@ Total Tables: 94
 ### field_edit_rules
 
 **Statistics:**
-- Rows: 27
+- Rows: 0
 - Total Size: 48 kB
 - Table Size: 8192 bytes
 - Indexes Size: 32 kB
@@ -933,7 +933,7 @@ Total Tables: 94
 ### inventory
 
 **Statistics:**
-- Rows: 14
+- Rows: 0
 - Total Size: 72 kB
 - Table Size: 8192 bytes
 - Indexes Size: 32 kB
@@ -989,7 +989,7 @@ Total Tables: 94
 ### locations_master
 
 **Statistics:**
-- Rows: 14
+- Rows: 0
 - Total Size: 96 kB
 - Table Size: 8192 bytes
 - Indexes Size: 80 kB
@@ -1044,7 +1044,7 @@ Total Tables: 94
 ### masters_audit_log
 
 **Statistics:**
-- Rows: 18
+- Rows: 0
 - Total Size: 144 kB
 - Table Size: 16 kB
 - Indexes Size: 96 kB
@@ -1086,7 +1086,7 @@ Total Tables: 94
 ### material_tags
 
 **Statistics:**
-- Rows: 12
+- Rows: 0
 - Total Size: 56 kB
 - Table Size: 8192 bytes
 - Indexes Size: 48 kB
@@ -1135,7 +1135,7 @@ Total Tables: 94
 ### material_writeoffs
 
 **Statistics:**
-- Rows: 1
+- Rows: 0
 - Total Size: 128 kB
 - Table Size: 8192 bytes
 - Indexes Size: 112 kB
@@ -1190,7 +1190,7 @@ Total Tables: 94
 ### materials
 
 **Statistics:**
-- Rows: 9
+- Rows: 0
 - Total Size: 112 kB
 - Table Size: 8192 bytes
 - Indexes Size: 64 kB
@@ -1239,7 +1239,7 @@ Total Tables: 94
 ### oil_cake_inventory
 
 **Statistics:**
-- Rows: 9
+- Rows: 0
 - Total Size: 40 kB
 - Table Size: 8192 bytes
 - Indexes Size: 32 kB
@@ -1412,7 +1412,7 @@ Total Tables: 94
 ### package_sizes_master
 
 **Statistics:**
-- Rows: 3
+- Rows: 0
 - Total Size: 40 kB
 - Table Size: 8192 bytes
 - Indexes Size: 32 kB
@@ -1451,7 +1451,7 @@ Total Tables: 94
 ### production_units
 
 **Statistics:**
-- Rows: 1
+- Rows: 0
 - Total Size: 40 kB
 - Table Size: 8192 bytes
 - Indexes Size: 32 kB
@@ -1482,7 +1482,7 @@ Total Tables: 94
 ### products
 
 **Statistics:**
-- Rows: 2
+- Rows: 0
 - Total Size: 24 kB
 - Table Size: 8192 bytes
 - Indexes Size: 16 kB
@@ -1567,7 +1567,7 @@ Total Tables: 94
 ### purchase_items
 
 **Statistics:**
-- Rows: 9
+- Rows: 0
 - Total Size: 56 kB
 - Table Size: 8192 bytes
 - Indexes Size: 48 kB
@@ -1695,7 +1695,7 @@ Total Tables: 94
 ### purchases
 
 **Statistics:**
-- Rows: 9
+- Rows: 0
 - Total Size: 112 kB
 - Table Size: 8192 bytes
 - Indexes Size: 96 kB
@@ -1748,7 +1748,7 @@ Total Tables: 94
 ### purchases_backup
 
 **Statistics:**
-- Rows: 9
+- Rows: 0
 - Total Size: 8192 bytes
 - Table Size: 8192 bytes
 - Indexes Size: 0 bytes
@@ -1828,7 +1828,7 @@ Total Tables: 94
 ### seed_batch_tracking
 
 **Statistics:**
-- Rows: 4
+- Rows: 0
 - Total Size: 40 kB
 - Table Size: 8192 bytes
 - Indexes Size: 32 kB
@@ -1855,7 +1855,7 @@ Total Tables: 94
 ### serial_number_tracking
 
 **Statistics:**
-- Rows: 7
+- Rows: 0
 - Total Size: 40 kB
 - Table Size: 8192 bytes
 - Indexes Size: 32 kB
@@ -1910,7 +1910,7 @@ Total Tables: 94
 ### sku_bom_details
 
 **Statistics:**
-- Rows: 2
+- Rows: 0
 - Total Size: 64 kB
 - Table Size: 8192 bytes
 - Indexes Size: 48 kB
@@ -1946,7 +1946,7 @@ Total Tables: 94
 ### sku_bom_master
 
 **Statistics:**
-- Rows: 1
+- Rows: 0
 - Total Size: 64 kB
 - Table Size: 8192 bytes
 - Indexes Size: 48 kB
@@ -2021,7 +2021,7 @@ Total Tables: 94
 ### sku_expiry_tracking
 
 **Statistics:**
-- Rows: 3
+- Rows: 0
 - Total Size: 104 kB
 - Table Size: 8192 bytes
 - Indexes Size: 96 kB
@@ -2067,7 +2067,7 @@ Total Tables: 94
 ### sku_inventory
 
 **Statistics:**
-- Rows: 2
+- Rows: 0
 - Total Size: 120 kB
 - Table Size: 8192 bytes
 - Indexes Size: 112 kB
@@ -2109,7 +2109,7 @@ Total Tables: 94
 ### sku_master
 
 **Statistics:**
-- Rows: 3
+- Rows: 0
 - Total Size: 88 kB
 - Table Size: 8192 bytes
 - Indexes Size: 80 kB
@@ -2161,7 +2161,7 @@ Total Tables: 94
 ### sku_material_consumption
 
 **Statistics:**
-- Rows: 8
+- Rows: 0
 - Total Size: 48 kB
 - Table Size: 8192 bytes
 - Indexes Size: 32 kB
@@ -2208,7 +2208,7 @@ Total Tables: 94
 ### sku_mrp_history
 
 **Statistics:**
-- Rows: 2
+- Rows: 0
 - Total Size: 80 kB
 - Table Size: 8192 bytes
 - Indexes Size: 64 kB
@@ -2246,7 +2246,7 @@ Total Tables: 94
 ### sku_oil_allocation
 
 **Statistics:**
-- Rows: 4
+- Rows: 0
 - Total Size: 40 kB
 - Table Size: 8192 bytes
 - Indexes Size: 32 kB
@@ -2289,7 +2289,7 @@ Total Tables: 94
 ### sku_outbound
 
 **Statistics:**
-- Rows: 3
+- Rows: 0
 - Total Size: 160 kB
 - Table Size: 8192 bytes
 - Indexes Size: 144 kB
@@ -2357,7 +2357,7 @@ Total Tables: 94
 ### sku_outbound_items
 
 **Statistics:**
-- Rows: 3
+- Rows: 0
 - Total Size: 88 kB
 - Table Size: 8192 bytes
 - Indexes Size: 72 kB
@@ -2405,7 +2405,7 @@ Total Tables: 94
 ### sku_production
 
 **Statistics:**
-- Rows: 4
+- Rows: 0
 - Total Size: 96 kB
 - Table Size: 8192 bytes
 - Indexes Size: 80 kB
@@ -2526,7 +2526,7 @@ Total Tables: 94
 ### subcategories_master
 
 **Statistics:**
-- Rows: 18
+- Rows: 0
 - Total Size: 56 kB
 - Table Size: 8192 bytes
 - Indexes Size: 48 kB
@@ -2559,7 +2559,7 @@ Total Tables: 94
 ### suppliers
 
 **Statistics:**
-- Rows: 4
+- Rows: 0
 - Total Size: 80 kB
 - Table Size: 8192 bytes
 - Indexes Size: 64 kB
@@ -2599,7 +2599,7 @@ Total Tables: 94
 ### system_configuration
 
 **Statistics:**
-- Rows: 7
+- Rows: 0
 - Total Size: 48 kB
 - Table Size: 8192 bytes
 - Indexes Size: 32 kB
@@ -2629,7 +2629,7 @@ Total Tables: 94
 ### tags
 
 **Statistics:**
-- Rows: 12
+- Rows: 0
 - Total Size: 56 kB
 - Table Size: 8192 bytes
 - Indexes Size: 48 kB
@@ -2748,7 +2748,7 @@ Total Tables: 94
 ### uom_master
 
 **Statistics:**
-- Rows: 3
+- Rows: 0
 - Total Size: 72 kB
 - Table Size: 8192 bytes
 - Indexes Size: 64 kB
@@ -3206,7 +3206,7 @@ Total Tables: 94
 ### writeoff_impact_tracking
 
 **Statistics:**
-- Rows: 3
+- Rows: 0
 - Total Size: 48 kB
 - Table Size: 8192 bytes
 - Indexes Size: 32 kB
@@ -3249,7 +3249,7 @@ Total Tables: 94
 ### writeoff_monthly_summary
 
 **Statistics:**
-- Rows: 1
+- Rows: 0
 - Total Size: 56 kB
 - Table Size: 8192 bytes
 - Indexes Size: 48 kB
@@ -3292,7 +3292,7 @@ Total Tables: 94
 ### writeoff_reasons
 
 **Statistics:**
-- Rows: 10
+- Rows: 0
 - Total Size: 40 kB
 - Table Size: 8192 bytes
 - Indexes Size: 32 kB

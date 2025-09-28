@@ -1,5 +1,5 @@
 {
-  "generated_at": "2025-09-21T01:56:43.233777+00:00",
+  "generated_at": "2025-09-28T01:57:25.610347+00:00",
   "database": "postgres",
   "version": "PostgreSQL 17.4 on aarch64-unknown-linux-gnu, compiled by gcc (GCC) 13.2.0, 64-bit",
   "tables": {
@@ -576,8 +576,8 @@
           "statement": "EXECUTE FUNCTION validate_batch_dates()"
         }
       ],
-      "row_count": 9,
-      "dead_rows": 28,
+      "row_count": 0,
+      "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "96 kB",
@@ -734,7 +734,7 @@
       "row_count": 0,
       "dead_rows": 0,
       "last_vacuum": null,
-      "last_autovacuum": "2025-08-23T21:06:07.756723+00:00",
+      "last_autovacuum": null,
       "total_size": "48 kB",
       "table_size": "0 bytes",
       "indexes_size": "32 kB"
@@ -844,7 +844,7 @@
       "check_constraints": null,
       "indexes": null,
       "triggers": null,
-      "row_count": 7,
+      "row_count": 0,
       "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
@@ -1364,10 +1364,10 @@
         }
       ],
       "triggers": null,
-      "row_count": 81,
-      "dead_rows": 14,
+      "row_count": 0,
+      "dead_rows": 0,
       "last_vacuum": null,
-      "last_autovacuum": "2025-08-23T21:05:07.723557+00:00",
+      "last_autovacuum": null,
       "total_size": "112 kB",
       "table_size": "24 kB",
       "indexes_size": "48 kB"
@@ -1755,8 +1755,8 @@
         }
       ],
       "triggers": null,
-      "row_count": 9,
-      "dead_rows": 15,
+      "row_count": 0,
+      "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "64 kB",
@@ -2013,8 +2013,8 @@
         }
       ],
       "triggers": null,
-      "row_count": 4,
-      "dead_rows": 7,
+      "row_count": 0,
+      "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "64 kB",
@@ -2260,8 +2260,8 @@
         }
       ],
       "triggers": null,
-      "row_count": 2,
-      "dead_rows": 6,
+      "row_count": 0,
+      "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "80 kB",
@@ -2397,7 +2397,7 @@
         }
       ],
       "triggers": null,
-      "row_count": 8,
+      "row_count": 0,
       "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
@@ -2510,8 +2510,8 @@
         }
       ],
       "triggers": null,
-      "row_count": 5,
-      "dead_rows": 7,
+      "row_count": 0,
+      "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "40 kB",
@@ -2623,7 +2623,7 @@
         }
       ],
       "triggers": null,
-      "row_count": 9,
+      "row_count": 0,
       "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
@@ -2736,7 +2736,7 @@
         }
       ],
       "triggers": null,
-      "row_count": 6,
+      "row_count": 0,
       "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
@@ -3001,7 +3001,7 @@
         }
       ],
       "triggers": null,
-      "row_count": 6,
+      "row_count": 0,
       "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
@@ -3215,7 +3215,7 @@
       "check_constraints": null,
       "indexes": null,
       "triggers": null,
-      "row_count": 8,
+      "row_count": 0,
       "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
@@ -3521,10 +3521,10 @@
           "statement": "EXECUTE FUNCTION update_updated_at_column()"
         }
       ],
-      "row_count": 18,
-      "dead_rows": 24,
+      "row_count": 0,
+      "dead_rows": 0,
       "last_vacuum": null,
-      "last_autovacuum": "2025-08-22T11:59:24.862565+00:00",
+      "last_autovacuum": null,
       "total_size": "144 kB",
       "table_size": "8192 bytes",
       "indexes_size": "96 kB"
@@ -3975,7 +3975,7 @@
         }
       ],
       "triggers": null,
-      "row_count": 4,
+      "row_count": 0,
       "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
@@ -4190,7 +4190,7 @@
         }
       ],
       "triggers": null,
-      "row_count": 4,
+      "row_count": 0,
       "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
@@ -4332,7 +4332,7 @@
         }
       ],
       "triggers": null,
-      "row_count": 63,
+      "row_count": 0,
       "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
@@ -4542,7 +4542,7 @@
         }
       ],
       "triggers": null,
-      "row_count": 27,
+      "row_count": 0,
       "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
@@ -4757,10 +4757,10 @@
         }
       ],
       "triggers": null,
-      "row_count": 14,
-      "dead_rows": 16,
+      "row_count": 0,
+      "dead_rows": 0,
       "last_vacuum": null,
-      "last_autovacuum": "2025-08-23T21:05:07.714283+00:00",
+      "last_autovacuum": null,
       "total_size": "72 kB",
       "table_size": "8192 bytes",
       "indexes_size": "32 kB"
@@ -5229,8 +5229,8 @@
         }
       ],
       "triggers": null,
-      "row_count": 14,
-      "dead_rows": 28,
+      "row_count": 0,
+      "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "96 kB",
@@ -5467,7 +5467,7 @@
         }
       ],
       "triggers": null,
-      "row_count": 18,
+      "row_count": 0,
       "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
@@ -5565,7 +5565,7 @@
         }
       ],
       "triggers": null,
-      "row_count": 12,
+      "row_count": 0,
       "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
@@ -6076,8 +6076,8 @@
         }
       ],
       "triggers": null,
-      "row_count": 1,
-      "dead_rows": 1,
+      "row_count": 0,
+      "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "128 kB",
@@ -6396,10 +6396,10 @@
           "statement": "EXECUTE FUNCTION update_updated_at_column()"
         }
       ],
-      "row_count": 9,
-      "dead_rows": 27,
+      "row_count": 0,
+      "dead_rows": 0,
       "last_vacuum": null,
-      "last_autovacuum": "2025-08-13T17:44:54.937238+00:00",
+      "last_autovacuum": null,
       "total_size": "112 kB",
       "table_size": "8192 bytes",
       "indexes_size": "64 kB"
@@ -6579,8 +6579,8 @@
         }
       ],
       "triggers": null,
-      "row_count": 9,
-      "dead_rows": 19,
+      "row_count": 0,
+      "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "40 kB",
@@ -7615,7 +7615,7 @@
           "statement": "EXECUTE FUNCTION update_updated_at_column()"
         }
       ],
-      "row_count": 3,
+      "row_count": 0,
       "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
@@ -7748,8 +7748,8 @@
         }
       ],
       "triggers": null,
-      "row_count": 1,
-      "dead_rows": 2,
+      "row_count": 0,
+      "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "40 kB",
@@ -7859,8 +7859,8 @@
         }
       ],
       "triggers": null,
-      "row_count": 2,
-      "dead_rows": 2,
+      "row_count": 0,
+      "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "24 kB",
@@ -8503,8 +8503,8 @@
         }
       ],
       "triggers": null,
-      "row_count": 9,
-      "dead_rows": 9,
+      "row_count": 0,
+      "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "56 kB",
@@ -9471,8 +9471,8 @@
         }
       ],
       "triggers": null,
-      "row_count": 9,
-      "dead_rows": 29,
+      "row_count": 0,
+      "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "112 kB",
@@ -9644,7 +9644,7 @@
       "check_constraints": null,
       "indexes": null,
       "triggers": null,
-      "row_count": 9,
+      "row_count": 0,
       "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
@@ -9781,7 +9781,7 @@
       ],
       "triggers": null,
       "row_count": 0,
-      "dead_rows": 4,
+      "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "24 kB",
@@ -9983,8 +9983,8 @@
         }
       ],
       "triggers": null,
-      "row_count": 4,
-      "dead_rows": 40,
+      "row_count": 0,
+      "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "40 kB",
@@ -10123,8 +10123,8 @@
         }
       ],
       "triggers": null,
-      "row_count": 7,
-      "dead_rows": 9,
+      "row_count": 0,
+      "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "40 kB",
@@ -10466,7 +10466,7 @@
         }
       ],
       "triggers": null,
-      "row_count": 2,
+      "row_count": 0,
       "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
@@ -10656,7 +10656,7 @@
         }
       ],
       "triggers": null,
-      "row_count": 1,
+      "row_count": 0,
       "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
@@ -11134,8 +11134,8 @@
         }
       ],
       "triggers": null,
-      "row_count": 3,
-      "dead_rows": 16,
+      "row_count": 0,
+      "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "104 kB",
@@ -11416,8 +11416,8 @@
         }
       ],
       "triggers": null,
-      "row_count": 2,
-      "dead_rows": 13,
+      "row_count": 0,
+      "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "120 kB",
@@ -11710,8 +11710,8 @@
           "statement": "EXECUTE FUNCTION update_mrp_history()"
         }
       ],
-      "row_count": 3,
-      "dead_rows": 8,
+      "row_count": 0,
+      "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "88 kB",
@@ -11956,7 +11956,7 @@
           "statement": "EXECUTE FUNCTION calculate_variance()"
         }
       ],
-      "row_count": 8,
+      "row_count": 0,
       "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
@@ -12149,8 +12149,8 @@
         }
       ],
       "triggers": null,
-      "row_count": 2,
-      "dead_rows": 1,
+      "row_count": 0,
+      "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "80 kB",
@@ -12364,8 +12364,8 @@
         }
       ],
       "triggers": null,
-      "row_count": 4,
-      "dead_rows": 2,
+      "row_count": 0,
+      "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "40 kB",
@@ -12915,8 +12915,8 @@
         }
       ],
       "triggers": null,
-      "row_count": 3,
-      "dead_rows": 6,
+      "row_count": 0,
+      "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "160 kB",
@@ -13252,7 +13252,7 @@
         }
       ],
       "triggers": null,
-      "row_count": 3,
+      "row_count": 0,
       "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
@@ -13793,8 +13793,8 @@
         }
       ],
       "triggers": null,
-      "row_count": 4,
-      "dead_rows": 5,
+      "row_count": 0,
+      "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "96 kB",
@@ -14219,8 +14219,8 @@
         }
       ],
       "triggers": null,
-      "row_count": 18,
-      "dead_rows": 29,
+      "row_count": 0,
+      "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "56 kB",
@@ -14436,8 +14436,8 @@
           "statement": "EXECUTE FUNCTION update_updated_at_column()"
         }
       ],
-      "row_count": 4,
-      "dead_rows": 21,
+      "row_count": 0,
+      "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "80 kB",
@@ -14573,7 +14573,7 @@
         }
       ],
       "triggers": null,
-      "row_count": 7,
+      "row_count": 0,
       "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
@@ -14701,7 +14701,7 @@
           "statement": "EXECUTE FUNCTION update_updated_at_column()"
         }
       ],
-      "row_count": 12,
+      "row_count": 0,
       "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
@@ -15419,7 +15419,7 @@
         }
       ],
       "triggers": null,
-      "row_count": 3,
+      "row_count": 0,
       "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
@@ -18288,7 +18288,7 @@
         }
       ],
       "triggers": null,
-      "row_count": 3,
+      "row_count": 0,
       "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
@@ -18576,8 +18576,8 @@
         }
       ],
       "triggers": null,
-      "row_count": 1,
-      "dead_rows": 2,
+      "row_count": 0,
+      "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
       "total_size": "56 kB",
@@ -18710,7 +18710,7 @@
           "statement": "EXECUTE FUNCTION update_updated_at_column()"
         }
       ],
-      "row_count": 10,
+      "row_count": 0,
       "dead_rows": 0,
       "last_vacuum": null,
       "last_autovacuum": null,
